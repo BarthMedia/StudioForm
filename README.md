@@ -42,4 +42,4 @@ git remote add origin https://github.com/USER/REPO.git
 
 git remote set-url origin https://github.com/USER/REPO.git
 
-git push origin master
+git push origin main
