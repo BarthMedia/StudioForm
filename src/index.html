@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,600,700"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" href="src/img/favicon.png" type="image/x-icon" />
+
+    <link rel="stylesheet" href="src/sass/main.css" /> -->
+    <script type="module" src="js/controller.js"></script>
+    <webflow_io auto-redirect="false" src="https://xano-test-application.webflow.io"></webflow_io>
+    <webflow_documentation true></webflow_documentation>
+
+    <title>[BMG.studio] - Studio Form</title>
+  </head>
+
+  <body>
+    <div class="page-wrapper">
+      <main class="main-wrapper">
+        <section class="section_hero">
+          <div class="padding-global">
+            <div class="container-large">
+              <div class="padding-section-large">
+                <div class="margin-bottom margin-xsmall">
+                  <h1>Welcome!</h1>
+                </div>
+                <div>Here is your development url:</div>
+                <div bmg-elemnet="URL_PLACEHOLDER">...</div>
+                <br />
+                <div class="margin-top margin-tiny">
+                  <div>Here is your development snippet:</div>
+                  <div bmg-elemnet="SNIPPET_PLACEHOLDER">...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Template standard script -->
+    <script>
+      // Elements
+      const script = document.querySelector('head').querySelector('script'),
+        urlPlaceholer = document.querySelector(
+          '[bmg-elemnet="URL_PLACEHOLDER"]'
+        ),
+        snippetPlaceholer = document.querySelector(
+          '[bmg-elemnet="SNIPPET_PLACEHOLDER"]'
+        ),
+        webflowIo = document.querySelector('webflow_io'),
+        webflowDoc = document.querySelector('webflow_documentation')
+
+      // Values
+      const jsSrc = script.src,
+        webflowSrc = webflowIo.getAttribute('src'),
+        webflowDocUrl = 'https://bmg.studio/documentation/github-template';
+
+      // Actions
+      urlPlaceholer.innerText = '';
+      urlPlaceholer.insertAdjacentHTML(
+        'afterbegin',
+        `<a href=${webflowSrc}>${webflowSrc}</a>`
+      );
+
+      snippetPlaceholer.innerHTML = '';
+      snippetPlaceholer.insertAdjacentHTML(
+        'afterbegin',
+        `<pre><code>&lt;!-- ${document.title} -->
+&lt;script defer src="${jsSrc}">&lt;/script></code></pre>`
+      );
+
+      // Logic
+      if ( webflowIo.getAttribute('auto-redirect') == 'true' )
+      {
+        // Elements
+        const h1 = document.querySelector('h1')
+
+        // Values 
+        const url = `${ webflowDocUrl }?w_io=${ webflowSrc }&h_url=${ jsSrc }&d_title=${ document.title }`
+
+        // Actions
+        h1.innerText = 'Redirecting...'
+        window.location.href = webflowSrc
+      }
+      else if ( webflowDoc.hasAttribute('true') )
+      {
+        // Elements
+        const h1 = document.querySelector('h1')
+
+        // Values 
+        const url = `${ webflowDocUrl }?w_io=${ webflowSrc }&h_url=${ jsSrc }&d_title=${ document.title }`
+
+        // Actions
+        h1.innerText = 'Redirecting...'
+        window.location.href = url
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "studio-form",
+  "version": "0.0.0",
+  "description": "Universal, multi-step, conditional webflow form creation script",
+  "default": "src/index.html",
+  "scripts": {
+    "start": "parcel src/index.html",
+    "build": "parcel build src/index.html --dist-dir ./dist"
+  },
+  "author": "Leon B. Barth",
+  "license": "MIT",
+  "devDependencies": {
+    "parcel": "^2.8.3",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "core-js": "^3.29.0",
+    "fractional": "^1.0.0",
+    "regenerator-runtime": "^0.13.11"
+  }
+}
