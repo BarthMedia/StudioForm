@@ -1,7 +1,7 @@
 {
-  "name": "studio-form",
+  "name": "@bmg/github-template",
   "version": "0.0.0",
-  "description": "Universal, multi-step, conditional webflow form creation script",
+  "description": "Minimalistic template repository for building rich native JavaScript / jQuery applications for Webflow",
   "default": "src/index.html",
   "scripts": {
     "start": "parcel src/index.html",
