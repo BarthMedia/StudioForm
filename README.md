@@ -6,13 +6,13 @@ Minimalist template repository for building rich native JavaScript/jQuery applic
 
 ## How do you start? (GitHub Codespaces)
 
-You need to click "Use this template" --> "Open in a codespace" --> Wait 30 seconds to two minutes for everything to install automatically --> Type "npm start" in terminal --> You will be taken to a bmg.studio documentation page where you need to click "Copy snippet to clipboard" --> Paste this snippet into the header code of your page/project settings --> Publish your Webflow project --> Go back to the bmg.studio documentation page and press "Continue to Webflow.io"
+You need to click "Use this template" --> "Open in a codespace" --> Wait 30 seconds to two minutes for everything to install automatically --> Type "npm start" in terminal --> Open "http://localhost:1234" --> You will be taken to a bmg.studio documentation page where you need to click "Copy snippet to clipboard" --> Paste this snippet into the header code of your page/project settings --> Publish your Webflow project --> Go back to the bmg.studio documentation page and press "Continue to Webflow.io"
 
 <br>
 
 ## How do you start? (Desktop)
 
-Download the file (/zip) --> Open it in Visual Studio Code --> Open the terminal --> In the terminal type "npm i" --> And then "npm start" --> You will be redirected to a bmg.studio documentation page where you need to click "copy snippet to clipboard" --> Paste this snippet in the header code of your page/project settings --> Publish your Webflow project --> Go to the bmg.studio documentation page and press "Continue to Webflow.io"
+Download the file (/zip) --> Open it in Visual Studio Code --> Open the terminal --> In the terminal type "npm i" --> And then "npm start" --> Open "http://localhost:1234" --> You will be redirected to a bmg.studio documentation page where you need to click "copy snippet to clipboard" --> Paste this snippet in the header code of your page/project settings --> Publish your Webflow project --> Go to the bmg.studio documentation page and press "Continue to Webflow.io"
 
 (Make sure you have npm installed -> https://nodejs.org/en/download)
 
