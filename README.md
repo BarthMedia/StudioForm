@@ -32,7 +32,7 @@ Go to the "dist" folder and locate the JavaScript file that you have just create
 
 In case you want to push the file to GitHub with Git...
 
-## Initial Git(Hub) commit information from Windows:
+## Initial Git(Hub) commit information: (Windows)
 
 git init
 
