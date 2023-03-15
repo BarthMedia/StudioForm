@@ -7,30 +7,51 @@ import 'regenerator-runtime/runtime';
 // Custom
 import view from './views/view.js';
 import * as model from './model.js';
+import loader from './helper/loader.js';
+import { FORM_BLOCK_SELECTOR } from './config.js';
+import creatNextStepObject from './helper/creatNextStepObject.js';
 
 // + Functions +
 
-// Control test
-const controlTest = async function () {
-  try {
-    // 1st view test
-    view.consoleLog('loading...');
+// Main
+const controlMain = function () {
+  // Multi instance loop
+  $(FORM_BLOCK_SELECTOR).each(function (index) {
+    // Create state
+    const stateData = model.createState($(this), index);
 
-    // Model test
-    await model.testData();
+    // Values
+    const { devMode } = stateData,
+      { elements } = stateData,
+      { handlers } = stateData;
 
-    // Log test data
-    console.log(model.state.data);
+    // - Functions -
 
-    // 2nd view test
-    view.consoleLog();
-  } catch (err) {
-    console.log(`Error: ${err}`);
-  }
+    // Remove visual dividers
+    view.removeVisualDividers(devMode, elements);
+
+    // Initialize buttons
+    view.initButtons(stateData);
+
+    // - Create next step object -
+    stateData.stepLogic = creatNextStepObject(elements.$steps);
+
+    // Initialize progress bar
+    view.initProgressBar(stateData);
+
+    // Initialize progress bar
+    view.initAnchor(stateData);
+
+    // Add step view handlers
+    view.addStepViewHandlers(stateData);
+
+    // Dev mode log
+    handlers.devModeLog(stateData);
+  });
 };
 
 // + Initialize +
 const init = function () {
-  view.addHandler(controlTest);
+  loader(controlMain);
 };
 init();

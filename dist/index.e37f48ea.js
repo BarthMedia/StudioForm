@@ -567,34 +567,49 @@ var _runtime = require("regenerator-runtime/runtime");
 var _viewJs = require("./views/view.js");
 var _viewJsDefault = parcelHelpers.interopDefault(_viewJs);
 var _modelJs = require("./model.js");
+var _loaderJs = require("./helper/loader.js");
+var _loaderJsDefault = parcelHelpers.interopDefault(_loaderJs);
+var _configJs = require("./config.js");
+var _creatNextStepObjectJs = require("./helper/creatNextStepObject.js");
+var _creatNextStepObjectJsDefault = parcelHelpers.interopDefault(_creatNextStepObjectJs);
 // + Functions +
-// Control test
-const controlTest = async function() {
-    try {
-        // 1st view test
-        (0, _viewJsDefault.default).consoleLog("loading...");
-        // Model test
-        await _modelJs.testData();
-        // Log test data
-        console.log(_modelJs.state.data);
-        // 2nd view test
-        (0, _viewJsDefault.default).consoleLog();
-    } catch (err) {
-        console.log(`Error: ${err}`);
-    }
+// Main
+const controlMain = function() {
+    // Multi instance loop
+    $((0, _configJs.FORM_BLOCK_SELECTOR)).each(function(index) {
+        // Create state
+        const stateData = _modelJs.createState($(this), index);
+        // Values
+        const { devMode  } = stateData, { elements  } = stateData, { handlers  } = stateData;
+        // - Functions -
+        // Remove visual dividers
+        (0, _viewJsDefault.default).removeVisualDividers(devMode, elements);
+        // Initialize buttons
+        (0, _viewJsDefault.default).initButtons(stateData);
+        // - Create next step object -
+        stateData.stepLogic = (0, _creatNextStepObjectJsDefault.default)(elements.$steps);
+        // Initialize progress bar
+        (0, _viewJsDefault.default).initProgressBar(stateData);
+        // Initialize progress bar
+        (0, _viewJsDefault.default).initAnchor(stateData);
+        // Add step view handlers
+        (0, _viewJsDefault.default).addStepViewHandlers(stateData);
+        // Dev mode log
+        handlers.devModeLog(stateData);
+    });
 };
 // + Initialize +
 const init = function() {
-    (0, _viewJsDefault.default).addHandler(controlTest);
+    (0, _loaderJsDefault.default)(controlMain);
 };
 init();
 
-},{"core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./model.js":"Y4A21","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./views/view.js":"bWlJ9"}],"gSXXb":[function(require,module,exports) {
-var global = require("883b0d525f555275");
-var DESCRIPTORS = require("6b4c060830a7ca06");
-var defineBuiltInAccessor = require("c14224dc317eaa83");
-var regExpFlags = require("c2b8e0aef4cd2f20");
-var fails = require("b2b1d4dc9116ff40");
+},{"core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./views/view.js":"bWlJ9","./model.js":"Y4A21","./helper/loader.js":"iyspg","./config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./helper/creatNextStepObject.js":"cYr2M"}],"gSXXb":[function(require,module,exports) {
+var global = require("c2ac71b1e9895a4c");
+var DESCRIPTORS = require("e1b20573b451ef90");
+var defineBuiltInAccessor = require("21be03f45557950c");
+var regExpFlags = require("2abd130efb15bede");
+var fails = require("9c2d9b476fc52d56");
 // babel-minify and Closure Compiler transpiles RegExp('.', 'd') -> /./d and it causes SyntaxError
 var RegExp = global.RegExp;
 var RegExpPrototype = RegExp.prototype;
@@ -638,7 +653,7 @@ if (FORCED) defineBuiltInAccessor(RegExpPrototype, "flags", {
     get: regExpFlags
 });
 
-},{"883b0d525f555275":"i8HOC","6b4c060830a7ca06":"92ZIi","c14224dc317eaa83":"592rH","c2b8e0aef4cd2f20":"9bz1x","b2b1d4dc9116ff40":"hL6D2"}],"i8HOC":[function(require,module,exports) {
+},{"c2ac71b1e9895a4c":"i8HOC","e1b20573b451ef90":"92ZIi","21be03f45557950c":"592rH","2abd130efb15bede":"9bz1x","9c2d9b476fc52d56":"hL6D2"}],"i8HOC":[function(require,module,exports) {
 var global = arguments[3];
 var check = function(it) {
     return it && it.Math == Math && it;
@@ -652,7 +667,7 @@ function() {
 }() || Function("return this")();
 
 },{}],"92ZIi":[function(require,module,exports) {
-var fails = require("2e8127707501a121");
+var fails = require("36886925eb6f4ed3");
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function() {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
@@ -663,7 +678,7 @@ module.exports = !fails(function() {
     })[1] != 7;
 });
 
-},{"2e8127707501a121":"hL6D2"}],"hL6D2":[function(require,module,exports) {
+},{"36886925eb6f4ed3":"hL6D2"}],"hL6D2":[function(require,module,exports) {
 module.exports = function(exec) {
     try {
         return !!exec();
@@ -673,8 +688,8 @@ module.exports = function(exec) {
 };
 
 },{}],"592rH":[function(require,module,exports) {
-var makeBuiltIn = require("31f900fb21eda74c");
-var defineProperty = require("d1e78c2ecde316f");
+var makeBuiltIn = require("1d9beb75f88c551a");
+var defineProperty = require("f8cc9182159e13e3");
 module.exports = function(target, name, descriptor) {
     if (descriptor.get) makeBuiltIn(descriptor.get, name, {
         getter: true
@@ -685,15 +700,15 @@ module.exports = function(target, name, descriptor) {
     return defineProperty.f(target, name, descriptor);
 };
 
-},{"31f900fb21eda74c":"cTB4k","d1e78c2ecde316f":"iJR4w"}],"cTB4k":[function(require,module,exports) {
-var uncurryThis = require("7d8d4c323820cc25");
-var fails = require("6837f6f5a8e22473");
-var isCallable = require("86acbbeb325674f5");
-var hasOwn = require("8865191c9620b40a");
-var DESCRIPTORS = require("655d7c7e7cfa5d58");
-var CONFIGURABLE_FUNCTION_NAME = require("3ae4531c458429ba").CONFIGURABLE;
-var inspectSource = require("7b7efdd31cc940b");
-var InternalStateModule = require("5d13ca8064bd6be");
+},{"1d9beb75f88c551a":"cTB4k","f8cc9182159e13e3":"iJR4w"}],"cTB4k":[function(require,module,exports) {
+var uncurryThis = require("f1161bff7b1364c5");
+var fails = require("f1a9fd5c2c4eda6a");
+var isCallable = require("5b00d6af0304e7bd");
+var hasOwn = require("5df722c3f7b66f02");
+var DESCRIPTORS = require("af73dc844184c587");
+var CONFIGURABLE_FUNCTION_NAME = require("b4bc790cda3ff662").CONFIGURABLE;
+var inspectSource = require("84f27ea96ebc1fb0");
+var InternalStateModule = require("550b876a4d506645");
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
 var $String = String;
@@ -739,8 +754,8 @@ Function.prototype.toString = makeBuiltIn(function toString() {
     return isCallable(this) && getInternalState(this).source || inspectSource(this);
 }, "toString");
 
-},{"7d8d4c323820cc25":"7GlkT","6837f6f5a8e22473":"hL6D2","86acbbeb325674f5":"l3Kyn","8865191c9620b40a":"gC2Q5","655d7c7e7cfa5d58":"92ZIi","3ae4531c458429ba":"l6Kgd","7b7efdd31cc940b":"9jh7O","5d13ca8064bd6be":"7AMlF"}],"7GlkT":[function(require,module,exports) {
-var NATIVE_BIND = require("e087e9807203a978");
+},{"f1161bff7b1364c5":"7GlkT","f1a9fd5c2c4eda6a":"hL6D2","5b00d6af0304e7bd":"l3Kyn","5df722c3f7b66f02":"gC2Q5","af73dc844184c587":"92ZIi","b4bc790cda3ff662":"l6Kgd","84f27ea96ebc1fb0":"9jh7O","550b876a4d506645":"7AMlF"}],"7GlkT":[function(require,module,exports) {
+var NATIVE_BIND = require("5b906b3c34e9daf9");
 var FunctionPrototype = Function.prototype;
 var call = FunctionPrototype.call;
 var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
@@ -750,8 +765,8 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function(fn) {
     };
 };
 
-},{"e087e9807203a978":"i16Dq"}],"i16Dq":[function(require,module,exports) {
-var fails = require("38643b7124f07480");
+},{"5b906b3c34e9daf9":"i16Dq"}],"i16Dq":[function(require,module,exports) {
+var fails = require("c7127c9bee8e72d");
 module.exports = !fails(function() {
     // eslint-disable-next-line es/no-function-prototype-bind -- safe
     var test = (function() {}).bind();
@@ -759,8 +774,8 @@ module.exports = !fails(function() {
     return typeof test != "function" || test.hasOwnProperty("prototype");
 });
 
-},{"38643b7124f07480":"hL6D2"}],"l3Kyn":[function(require,module,exports) {
-var $documentAll = require("b6578d341791eb07");
+},{"c7127c9bee8e72d":"hL6D2"}],"l3Kyn":[function(require,module,exports) {
+var $documentAll = require("2cdc059d5d9e673c");
 var documentAll = $documentAll.all;
 // `IsCallable` abstract operation
 // https://tc39.es/ecma262/#sec-iscallable
@@ -770,7 +785,7 @@ module.exports = $documentAll.IS_HTMLDDA ? function(argument) {
     return typeof argument == "function";
 };
 
-},{"b6578d341791eb07":"5MHqB"}],"5MHqB":[function(require,module,exports) {
+},{"2cdc059d5d9e673c":"5MHqB"}],"5MHqB":[function(require,module,exports) {
 var documentAll = typeof document == "object" && document.all;
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
 // eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
@@ -781,8 +796,8 @@ module.exports = {
 };
 
 },{}],"gC2Q5":[function(require,module,exports) {
-var uncurryThis = require("961880f00bc58fde");
-var toObject = require("9a7d73ebe7a26cb3");
+var uncurryThis = require("cf258ba1e9133285");
+var toObject = require("a8c4c4b673624eaa");
 var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 // `HasOwnProperty` abstract operation
 // https://tc39.es/ecma262/#sec-hasownproperty
@@ -791,8 +806,8 @@ module.exports = Object.hasOwn || function hasOwn(it, key) {
     return hasOwnProperty(toObject(it), key);
 };
 
-},{"961880f00bc58fde":"7GlkT","9a7d73ebe7a26cb3":"5cb35"}],"5cb35":[function(require,module,exports) {
-var requireObjectCoercible = require("761d5c40f8aaed5d");
+},{"cf258ba1e9133285":"7GlkT","a8c4c4b673624eaa":"5cb35"}],"5cb35":[function(require,module,exports) {
+var requireObjectCoercible = require("297adb5ae08ccffd");
 var $Object = Object;
 // `ToObject` abstract operation
 // https://tc39.es/ecma262/#sec-toobject
@@ -800,8 +815,8 @@ module.exports = function(argument) {
     return $Object(requireObjectCoercible(argument));
 };
 
-},{"761d5c40f8aaed5d":"fOR0B"}],"fOR0B":[function(require,module,exports) {
-var isNullOrUndefined = require("11b5d846b6ae686d");
+},{"297adb5ae08ccffd":"fOR0B"}],"fOR0B":[function(require,module,exports) {
+var isNullOrUndefined = require("7f1508a6d7a18608");
 var $TypeError = TypeError;
 // `RequireObjectCoercible` abstract operation
 // https://tc39.es/ecma262/#sec-requireobjectcoercible
@@ -810,7 +825,7 @@ module.exports = function(it) {
     return it;
 };
 
-},{"11b5d846b6ae686d":"gM5ar"}],"gM5ar":[function(require,module,exports) {
+},{"7f1508a6d7a18608":"gM5ar"}],"gM5ar":[function(require,module,exports) {
 // we can't use just `it == null` since of `document.all` special case
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-aec
 module.exports = function(it) {
@@ -818,8 +833,8 @@ module.exports = function(it) {
 };
 
 },{}],"l6Kgd":[function(require,module,exports) {
-var DESCRIPTORS = require("12a2d28df93b5aa5");
-var hasOwn = require("2f6134ceb41a4a26");
+var DESCRIPTORS = require("c9c0029ceb2957b5");
+var hasOwn = require("31bdbcebf53c53ef");
 var FunctionPrototype = Function.prototype;
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
@@ -833,10 +848,10 @@ module.exports = {
     CONFIGURABLE: CONFIGURABLE
 };
 
-},{"12a2d28df93b5aa5":"92ZIi","2f6134ceb41a4a26":"gC2Q5"}],"9jh7O":[function(require,module,exports) {
-var uncurryThis = require("e2e73e6a7676a810");
-var isCallable = require("7bee6d8100be30d2");
-var store = require("c8b87a66c841f1f0");
+},{"c9c0029ceb2957b5":"92ZIi","31bdbcebf53c53ef":"gC2Q5"}],"9jh7O":[function(require,module,exports) {
+var uncurryThis = require("78492bea197a1e41");
+var isCallable = require("4636f835f370852");
+var store = require("b56347289da4f3e7");
 var functionToString = uncurryThis(Function.toString);
 // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 if (!isCallable(store.inspectSource)) store.inspectSource = function(it) {
@@ -844,15 +859,15 @@ if (!isCallable(store.inspectSource)) store.inspectSource = function(it) {
 };
 module.exports = store.inspectSource;
 
-},{"e2e73e6a7676a810":"7GlkT","7bee6d8100be30d2":"l3Kyn","c8b87a66c841f1f0":"l4ncH"}],"l4ncH":[function(require,module,exports) {
-var global = require("de421b5ed9542d9d");
-var defineGlobalProperty = require("fa6ee34391a012b3");
+},{"78492bea197a1e41":"7GlkT","4636f835f370852":"l3Kyn","b56347289da4f3e7":"l4ncH"}],"l4ncH":[function(require,module,exports) {
+var global = require("4f304ed85c64e5dc");
+var defineGlobalProperty = require("95ec54a47847e2b0");
 var SHARED = "__core-js_shared__";
 var store = global[SHARED] || defineGlobalProperty(SHARED, {});
 module.exports = store;
 
-},{"de421b5ed9542d9d":"i8HOC","fa6ee34391a012b3":"ggjnO"}],"ggjnO":[function(require,module,exports) {
-var global = require("a639454758eaf8d5");
+},{"4f304ed85c64e5dc":"i8HOC","95ec54a47847e2b0":"ggjnO"}],"ggjnO":[function(require,module,exports) {
+var global = require("d4cfcb706e06ec43");
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 module.exports = function(key, value) {
@@ -868,15 +883,15 @@ module.exports = function(key, value) {
     return value;
 };
 
-},{"a639454758eaf8d5":"i8HOC"}],"7AMlF":[function(require,module,exports) {
-var NATIVE_WEAK_MAP = require("e9a722b08a6d68f5");
-var global = require("428c4867205a6c1a");
-var isObject = require("2ec9513b7f60cb51");
-var createNonEnumerableProperty = require("b414e06a4e5679a5");
-var hasOwn = require("40aa0892fa75d889");
-var shared = require("47d91098b0129232");
-var sharedKey = require("9320af699a22ae64");
-var hiddenKeys = require("c62a872a29092082");
+},{"d4cfcb706e06ec43":"i8HOC"}],"7AMlF":[function(require,module,exports) {
+var NATIVE_WEAK_MAP = require("e9b020aece9520a9");
+var global = require("255de542e3e159b");
+var isObject = require("16cbb66dcf5461f4");
+var createNonEnumerableProperty = require("80bacf6344715aba");
+var hasOwn = require("236d2ec9960bf90c");
+var shared = require("dda5df3ef8277");
+var sharedKey = require("7a11d4ed668da1eb");
+var hiddenKeys = require("6e713636be2d19e7");
 var OBJECT_ALREADY_INITIALIZED = "Object already initialized";
 var TypeError = global.TypeError;
 var WeakMap = global.WeakMap;
@@ -932,15 +947,15 @@ module.exports = {
     getterFor: getterFor
 };
 
-},{"e9a722b08a6d68f5":"2PZTl","428c4867205a6c1a":"i8HOC","2ec9513b7f60cb51":"Z0pBo","b414e06a4e5679a5":"8CL42","40aa0892fa75d889":"gC2Q5","47d91098b0129232":"l4ncH","9320af699a22ae64":"eAjGz","c62a872a29092082":"661m4"}],"2PZTl":[function(require,module,exports) {
-var global = require("24362af4b03d22ac");
-var isCallable = require("53bb0528449302e5");
+},{"e9b020aece9520a9":"2PZTl","255de542e3e159b":"i8HOC","16cbb66dcf5461f4":"Z0pBo","80bacf6344715aba":"8CL42","236d2ec9960bf90c":"gC2Q5","dda5df3ef8277":"l4ncH","7a11d4ed668da1eb":"eAjGz","6e713636be2d19e7":"661m4"}],"2PZTl":[function(require,module,exports) {
+var global = require("d401d2e7bdff1b1d");
+var isCallable = require("910661b8a6bf5dd8");
 var WeakMap = global.WeakMap;
 module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
 
-},{"24362af4b03d22ac":"i8HOC","53bb0528449302e5":"l3Kyn"}],"Z0pBo":[function(require,module,exports) {
-var isCallable = require("633279c58fbd86d1");
-var $documentAll = require("365924fa3b68c75d");
+},{"d401d2e7bdff1b1d":"i8HOC","910661b8a6bf5dd8":"l3Kyn"}],"Z0pBo":[function(require,module,exports) {
+var isCallable = require("1e9ddab158bf95ce");
+var $documentAll = require("ae33f06562725d42");
 var documentAll = $documentAll.all;
 module.exports = $documentAll.IS_HTMLDDA ? function(it) {
     return typeof it == "object" ? it !== null : isCallable(it) || it === documentAll;
@@ -948,10 +963,10 @@ module.exports = $documentAll.IS_HTMLDDA ? function(it) {
     return typeof it == "object" ? it !== null : isCallable(it);
 };
 
-},{"633279c58fbd86d1":"l3Kyn","365924fa3b68c75d":"5MHqB"}],"8CL42":[function(require,module,exports) {
-var DESCRIPTORS = require("455fce441db9e314");
-var definePropertyModule = require("1b4c31bb33fee61d");
-var createPropertyDescriptor = require("8c862da5e07251e0");
+},{"1e9ddab158bf95ce":"l3Kyn","ae33f06562725d42":"5MHqB"}],"8CL42":[function(require,module,exports) {
+var DESCRIPTORS = require("d0b72d2f5bbc8c70");
+var definePropertyModule = require("2f991a0f4816b7ca");
+var createPropertyDescriptor = require("4d3eb61976c02b3c");
 module.exports = DESCRIPTORS ? function(object, key, value) {
     return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
 } : function(object, key, value) {
@@ -959,12 +974,12 @@ module.exports = DESCRIPTORS ? function(object, key, value) {
     return object;
 };
 
-},{"455fce441db9e314":"92ZIi","1b4c31bb33fee61d":"iJR4w","8c862da5e07251e0":"1lpav"}],"iJR4w":[function(require,module,exports) {
-var DESCRIPTORS = require("c319f53022243965");
-var IE8_DOM_DEFINE = require("7e8a885911233c0d");
-var V8_PROTOTYPE_DEFINE_BUG = require("61d01c5ce27e708a");
-var anObject = require("4e399eead468fc81");
-var toPropertyKey = require("d9f51e0c3ab9e632");
+},{"d0b72d2f5bbc8c70":"92ZIi","2f991a0f4816b7ca":"iJR4w","4d3eb61976c02b3c":"1lpav"}],"iJR4w":[function(require,module,exports) {
+var DESCRIPTORS = require("bf3629e3dbca932e");
+var IE8_DOM_DEFINE = require("5d4305105fef505b");
+var V8_PROTOTYPE_DEFINE_BUG = require("572dd259f2dbd7d6");
+var anObject = require("a1c688a8cb119653");
+var toPropertyKey = require("2a4dfa8ba7e053b0");
 var $TypeError = TypeError;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var $defineProperty = Object.defineProperty;
@@ -1003,10 +1018,10 @@ exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P
     return O;
 };
 
-},{"c319f53022243965":"92ZIi","7e8a885911233c0d":"qS9uN","61d01c5ce27e708a":"ka1Un","4e399eead468fc81":"4isCr","d9f51e0c3ab9e632":"5XWKd"}],"qS9uN":[function(require,module,exports) {
-var DESCRIPTORS = require("96756e813055b981");
-var fails = require("732d496d460b8738");
-var createElement = require("c4726c42f97fecbf");
+},{"bf3629e3dbca932e":"92ZIi","5d4305105fef505b":"qS9uN","572dd259f2dbd7d6":"ka1Un","a1c688a8cb119653":"4isCr","2a4dfa8ba7e053b0":"5XWKd"}],"qS9uN":[function(require,module,exports) {
+var DESCRIPTORS = require("8205046013be31cc");
+var fails = require("7ed34d99efa64d70");
+var createElement = require("a92860b85fc0745b");
 // Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function() {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
@@ -1017,9 +1032,9 @@ module.exports = !DESCRIPTORS && !fails(function() {
     }).a != 7;
 });
 
-},{"96756e813055b981":"92ZIi","732d496d460b8738":"hL6D2","c4726c42f97fecbf":"4bOHl"}],"4bOHl":[function(require,module,exports) {
-var global = require("bdb67725b2ca1179");
-var isObject = require("ea37f7c0b914d14c");
+},{"8205046013be31cc":"92ZIi","7ed34d99efa64d70":"hL6D2","a92860b85fc0745b":"4bOHl"}],"4bOHl":[function(require,module,exports) {
+var global = require("4b7b9400b0234aef");
+var isObject = require("515dbca6d5564388");
 var document = global.document;
 // typeof document.createElement is 'object' in old IE
 var EXISTS = isObject(document) && isObject(document.createElement);
@@ -1027,9 +1042,9 @@ module.exports = function(it) {
     return EXISTS ? document.createElement(it) : {};
 };
 
-},{"bdb67725b2ca1179":"i8HOC","ea37f7c0b914d14c":"Z0pBo"}],"ka1Un":[function(require,module,exports) {
-var DESCRIPTORS = require("62aea55bf7867f6d");
-var fails = require("10529fbb865c3780");
+},{"4b7b9400b0234aef":"i8HOC","515dbca6d5564388":"Z0pBo"}],"ka1Un":[function(require,module,exports) {
+var DESCRIPTORS = require("496308a37d39dc56");
+var fails = require("2090742dce06d93e");
 // V8 ~ Chrome 36-
 // https://bugs.chromium.org/p/v8/issues/detail?id=3334
 module.exports = DESCRIPTORS && fails(function() {
@@ -1040,8 +1055,8 @@ module.exports = DESCRIPTORS && fails(function() {
     }).prototype != 42;
 });
 
-},{"62aea55bf7867f6d":"92ZIi","10529fbb865c3780":"hL6D2"}],"4isCr":[function(require,module,exports) {
-var isObject = require("33d429b7dd2a25f7");
+},{"496308a37d39dc56":"92ZIi","2090742dce06d93e":"hL6D2"}],"4isCr":[function(require,module,exports) {
+var isObject = require("6e67b59453532b41");
 var $String = String;
 var $TypeError = TypeError;
 // `Assert: Type(argument) is Object`
@@ -1050,9 +1065,9 @@ module.exports = function(argument) {
     throw $TypeError($String(argument) + " is not an object");
 };
 
-},{"33d429b7dd2a25f7":"Z0pBo"}],"5XWKd":[function(require,module,exports) {
-var toPrimitive = require("fa239171c16a0692");
-var isSymbol = require("f5f5fd3151929b4");
+},{"6e67b59453532b41":"Z0pBo"}],"5XWKd":[function(require,module,exports) {
+var toPrimitive = require("5936b35cb58f7050");
+var isSymbol = require("78c8b6d086445742");
 // `ToPropertyKey` abstract operation
 // https://tc39.es/ecma262/#sec-topropertykey
 module.exports = function(argument) {
@@ -1060,13 +1075,13 @@ module.exports = function(argument) {
     return isSymbol(key) ? key : key + "";
 };
 
-},{"fa239171c16a0692":"a2mK1","f5f5fd3151929b4":"4aV4F"}],"a2mK1":[function(require,module,exports) {
-var call = require("7b0e164e84a74370");
-var isObject = require("760ef785c5c90fe4");
-var isSymbol = require("70fb7460e91e6aae");
-var getMethod = require("89483b76d18f691f");
-var ordinaryToPrimitive = require("b557f27e5512e6a2");
-var wellKnownSymbol = require("d1d0ff3a1b8e06aa");
+},{"5936b35cb58f7050":"a2mK1","78c8b6d086445742":"4aV4F"}],"a2mK1":[function(require,module,exports) {
+var call = require("89fdf5ee81edfc9d");
+var isObject = require("99a9c66e4eb8f2ac");
+var isSymbol = require("ab7a86accdd23523");
+var getMethod = require("58591b7fd8382c20");
+var ordinaryToPrimitive = require("ed59cb0245e1486c");
+var wellKnownSymbol = require("cc20b1e2090f3d04");
 var $TypeError = TypeError;
 var TO_PRIMITIVE = wellKnownSymbol("toPrimitive");
 // `ToPrimitive` abstract operation
@@ -1085,18 +1100,18 @@ module.exports = function(input, pref) {
     return ordinaryToPrimitive(input, pref);
 };
 
-},{"7b0e164e84a74370":"d7JlP","760ef785c5c90fe4":"Z0pBo","70fb7460e91e6aae":"4aV4F","89483b76d18f691f":"9Zfiw","b557f27e5512e6a2":"7MME2","d1d0ff3a1b8e06aa":"gTwyA"}],"d7JlP":[function(require,module,exports) {
-var NATIVE_BIND = require("273b6c774009e16");
+},{"89fdf5ee81edfc9d":"d7JlP","99a9c66e4eb8f2ac":"Z0pBo","ab7a86accdd23523":"4aV4F","58591b7fd8382c20":"9Zfiw","ed59cb0245e1486c":"7MME2","cc20b1e2090f3d04":"gTwyA"}],"d7JlP":[function(require,module,exports) {
+var NATIVE_BIND = require("9aabd5f16a5c7332");
 var call = Function.prototype.call;
 module.exports = NATIVE_BIND ? call.bind(call) : function() {
     return call.apply(call, arguments);
 };
 
-},{"273b6c774009e16":"i16Dq"}],"4aV4F":[function(require,module,exports) {
-var getBuiltIn = require("f3483daeaa77c212");
-var isCallable = require("f603982041a8ee5d");
-var isPrototypeOf = require("652aea132e09e154");
-var USE_SYMBOL_AS_UID = require("dac79ee1f4b61365");
+},{"9aabd5f16a5c7332":"i16Dq"}],"4aV4F":[function(require,module,exports) {
+var getBuiltIn = require("236735427648ae4e");
+var isCallable = require("2d19883e05475a1f");
+var isPrototypeOf = require("7899c3b7d5c14e15");
+var USE_SYMBOL_AS_UID = require("d28dc454fb6abf6f");
 var $Object = Object;
 module.exports = USE_SYMBOL_AS_UID ? function(it) {
     return typeof it == "symbol";
@@ -1105,9 +1120,9 @@ module.exports = USE_SYMBOL_AS_UID ? function(it) {
     return isCallable($Symbol) && isPrototypeOf($Symbol.prototype, $Object(it));
 };
 
-},{"f3483daeaa77c212":"6ZUSY","f603982041a8ee5d":"l3Kyn","652aea132e09e154":"3jtKQ","dac79ee1f4b61365":"2Ye8Q"}],"6ZUSY":[function(require,module,exports) {
-var global = require("8f8e066748e0e14e");
-var isCallable = require("bf3ff2815d25aff3");
+},{"236735427648ae4e":"6ZUSY","2d19883e05475a1f":"l3Kyn","7899c3b7d5c14e15":"3jtKQ","d28dc454fb6abf6f":"2Ye8Q"}],"6ZUSY":[function(require,module,exports) {
+var global = require("4df49c53a9ae2cc");
+var isCallable = require("f514b21982b01a64");
 var aFunction = function(argument) {
     return isCallable(argument) ? argument : undefined;
 };
@@ -1115,17 +1130,17 @@ module.exports = function(namespace, method) {
     return arguments.length < 2 ? aFunction(global[namespace]) : global[namespace] && global[namespace][method];
 };
 
-},{"8f8e066748e0e14e":"i8HOC","bf3ff2815d25aff3":"l3Kyn"}],"3jtKQ":[function(require,module,exports) {
-var uncurryThis = require("dc4f369d91d7cfae");
+},{"4df49c53a9ae2cc":"i8HOC","f514b21982b01a64":"l3Kyn"}],"3jtKQ":[function(require,module,exports) {
+var uncurryThis = require("b05d42b1f9de1c63");
 module.exports = uncurryThis({}.isPrototypeOf);
 
-},{"dc4f369d91d7cfae":"7GlkT"}],"2Ye8Q":[function(require,module,exports) {
-/* eslint-disable es/no-symbol -- required for testing */ var NATIVE_SYMBOL = require("9d423b694219440");
+},{"b05d42b1f9de1c63":"7GlkT"}],"2Ye8Q":[function(require,module,exports) {
+/* eslint-disable es/no-symbol -- required for testing */ var NATIVE_SYMBOL = require("462c089b49b3da01");
 module.exports = NATIVE_SYMBOL && !Symbol.sham && typeof Symbol.iterator == "symbol";
 
-},{"9d423b694219440":"8KyTD"}],"8KyTD":[function(require,module,exports) {
-/* eslint-disable es/no-symbol -- required for testing */ var V8_VERSION = require("a21cab18b81588ea");
-var fails = require("10c4164da71d20a3");
+},{"462c089b49b3da01":"8KyTD"}],"8KyTD":[function(require,module,exports) {
+/* eslint-disable es/no-symbol -- required for testing */ var V8_VERSION = require("47c4be53abaf5668");
+var fails = require("ce6bbc17d976f850");
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function() {
     var symbol = Symbol();
@@ -1135,9 +1150,9 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function() {
     !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
 
-},{"a21cab18b81588ea":"bjFlO","10c4164da71d20a3":"hL6D2"}],"bjFlO":[function(require,module,exports) {
-var global = require("403a6501556abbb");
-var userAgent = require("d602e7770879e083");
+},{"47c4be53abaf5668":"bjFlO","ce6bbc17d976f850":"hL6D2"}],"bjFlO":[function(require,module,exports) {
+var global = require("e3cf965fc4309b6f");
+var userAgent = require("ddfd8d98c5c70fda");
 var process = global.process;
 var Deno = global.Deno;
 var versions = process && process.versions || Deno && Deno.version;
@@ -1160,12 +1175,12 @@ if (!version && userAgent) {
 }
 module.exports = version;
 
-},{"403a6501556abbb":"i8HOC","d602e7770879e083":"73xBt"}],"73xBt":[function(require,module,exports) {
+},{"e3cf965fc4309b6f":"i8HOC","ddfd8d98c5c70fda":"73xBt"}],"73xBt":[function(require,module,exports) {
 module.exports = typeof navigator != "undefined" && String(navigator.userAgent) || "";
 
 },{}],"9Zfiw":[function(require,module,exports) {
-var aCallable = require("2ced10d7130e9b34");
-var isNullOrUndefined = require("f0cb8d73ab465168");
+var aCallable = require("95fa51a5645c41ff");
+var isNullOrUndefined = require("2bf1fdce248d2463");
 // `GetMethod` abstract operation
 // https://tc39.es/ecma262/#sec-getmethod
 module.exports = function(V, P) {
@@ -1173,9 +1188,9 @@ module.exports = function(V, P) {
     return isNullOrUndefined(func) ? undefined : aCallable(func);
 };
 
-},{"2ced10d7130e9b34":"gOMir","f0cb8d73ab465168":"gM5ar"}],"gOMir":[function(require,module,exports) {
-var isCallable = require("61d0fa2dbb71b4f5");
-var tryToString = require("a04d5b02af484b62");
+},{"95fa51a5645c41ff":"gOMir","2bf1fdce248d2463":"gM5ar"}],"gOMir":[function(require,module,exports) {
+var isCallable = require("5a7a97f506ef1cae");
+var tryToString = require("7086b57d862dafa6");
 var $TypeError = TypeError;
 // `Assert: IsCallable(argument) is true`
 module.exports = function(argument) {
@@ -1183,7 +1198,7 @@ module.exports = function(argument) {
     throw $TypeError(tryToString(argument) + " is not a function");
 };
 
-},{"61d0fa2dbb71b4f5":"l3Kyn","a04d5b02af484b62":"4O7d7"}],"4O7d7":[function(require,module,exports) {
+},{"5a7a97f506ef1cae":"l3Kyn","7086b57d862dafa6":"4O7d7"}],"4O7d7":[function(require,module,exports) {
 var $String = String;
 module.exports = function(argument) {
     try {
@@ -1194,9 +1209,9 @@ module.exports = function(argument) {
 };
 
 },{}],"7MME2":[function(require,module,exports) {
-var call = require("6e11ad261fcea815");
-var isCallable = require("44bf035b0e257a8d");
-var isObject = require("cff011d4685e28bd");
+var call = require("21cfa619c0d02e90");
+var isCallable = require("e1f831cee92ee191");
+var isObject = require("ff9902452be32f18");
 var $TypeError = TypeError;
 // `OrdinaryToPrimitive` abstract operation
 // https://tc39.es/ecma262/#sec-ordinarytoprimitive
@@ -1208,13 +1223,13 @@ module.exports = function(input, pref) {
     throw $TypeError("Can't convert object to primitive value");
 };
 
-},{"6e11ad261fcea815":"d7JlP","44bf035b0e257a8d":"l3Kyn","cff011d4685e28bd":"Z0pBo"}],"gTwyA":[function(require,module,exports) {
-var global = require("522dea7f70bb152b");
-var shared = require("927cfa8e8b5ba5e9");
-var hasOwn = require("e80163a856533045");
-var uid = require("26365f2b9561118a");
-var NATIVE_SYMBOL = require("27f4b3921a79cc50");
-var USE_SYMBOL_AS_UID = require("94c0cce2e53131f2");
+},{"21cfa619c0d02e90":"d7JlP","e1f831cee92ee191":"l3Kyn","ff9902452be32f18":"Z0pBo"}],"gTwyA":[function(require,module,exports) {
+var global = require("bc2d919b23d925fb");
+var shared = require("bd97bcb05efb6b2a");
+var hasOwn = require("e5dea2ec6b01dc86");
+var uid = require("6d4f85d6b5b4bc94");
+var NATIVE_SYMBOL = require("35eb1c61b3d8bf6");
+var USE_SYMBOL_AS_UID = require("909cfc2ddbe54a84");
 var Symbol = global.Symbol;
 var WellKnownSymbolsStore = shared("wks");
 var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol["for"] || Symbol : Symbol && Symbol.withoutSetter || uid;
@@ -1223,9 +1238,9 @@ module.exports = function(name) {
     return WellKnownSymbolsStore[name];
 };
 
-},{"522dea7f70bb152b":"i8HOC","927cfa8e8b5ba5e9":"i1mHK","e80163a856533045":"gC2Q5","26365f2b9561118a":"a3SEE","27f4b3921a79cc50":"8KyTD","94c0cce2e53131f2":"2Ye8Q"}],"i1mHK":[function(require,module,exports) {
-var IS_PURE = require("c74d13fcf4604c56");
-var store = require("7484bfbf064878a1");
+},{"bc2d919b23d925fb":"i8HOC","bd97bcb05efb6b2a":"i1mHK","e5dea2ec6b01dc86":"gC2Q5","6d4f85d6b5b4bc94":"a3SEE","35eb1c61b3d8bf6":"8KyTD","909cfc2ddbe54a84":"2Ye8Q"}],"i1mHK":[function(require,module,exports) {
+var IS_PURE = require("951e1a08b915cfac");
+var store = require("64a12b8ccdc41d57");
 (module.exports = function(key, value) {
     return store[key] || (store[key] = value !== undefined ? value : {});
 })("versions", []).push({
@@ -1236,11 +1251,11 @@ var store = require("7484bfbf064878a1");
     source: "https://github.com/zloirock/core-js"
 });
 
-},{"c74d13fcf4604c56":"5ZsyC","7484bfbf064878a1":"l4ncH"}],"5ZsyC":[function(require,module,exports) {
+},{"951e1a08b915cfac":"5ZsyC","64a12b8ccdc41d57":"l4ncH"}],"5ZsyC":[function(require,module,exports) {
 module.exports = false;
 
 },{}],"a3SEE":[function(require,module,exports) {
-var uncurryThis = require("3f4dc13f83504171");
+var uncurryThis = require("1ec5c591711716f4");
 var id = 0;
 var postfix = Math.random();
 var toString = uncurryThis(1.0.toString);
@@ -1248,7 +1263,7 @@ module.exports = function(key) {
     return "Symbol(" + (key === undefined ? "" : key) + ")_" + toString(++id + postfix, 36);
 };
 
-},{"3f4dc13f83504171":"7GlkT"}],"1lpav":[function(require,module,exports) {
+},{"1ec5c591711716f4":"7GlkT"}],"1lpav":[function(require,module,exports) {
 module.exports = function(bitmap, value) {
     return {
         enumerable: !(bitmap & 1),
@@ -1259,19 +1274,19 @@ module.exports = function(bitmap, value) {
 };
 
 },{}],"eAjGz":[function(require,module,exports) {
-var shared = require("66e3909a688e39be");
-var uid = require("1d0834b96ea73805");
+var shared = require("7d83b149af087579");
+var uid = require("88dd0d6e5df49830");
 var keys = shared("keys");
 module.exports = function(key) {
     return keys[key] || (keys[key] = uid(key));
 };
 
-},{"66e3909a688e39be":"i1mHK","1d0834b96ea73805":"a3SEE"}],"661m4":[function(require,module,exports) {
+},{"7d83b149af087579":"i1mHK","88dd0d6e5df49830":"a3SEE"}],"661m4":[function(require,module,exports) {
 module.exports = {};
 
 },{}],"9bz1x":[function(require,module,exports) {
 "use strict";
-var anObject = require("6ca36694e6fd3fa2");
+var anObject = require("b3ce076c6c822525");
 // `RegExp.prototype.flags` getter implementation
 // https://tc39.es/ecma262/#sec-get-regexp.prototype.flags
 module.exports = function() {
@@ -1288,15 +1303,15 @@ module.exports = function() {
     return result;
 };
 
-},{"6ca36694e6fd3fa2":"4isCr"}],"49tUX":[function(require,module,exports) {
+},{"b3ce076c6c822525":"4isCr"}],"49tUX":[function(require,module,exports) {
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
-require("d98adf55fa5ede59");
-require("df159b2d96e50bbc");
+require("155f6fd6fc562850");
+require("15ddebf5cbdc4660");
 
-},{"d98adf55fa5ede59":"fOGFr","df159b2d96e50bbc":"l7FDS"}],"fOGFr":[function(require,module,exports) {
-var $ = require("759a9dafb6c4e001");
-var global = require("8fac674bf171c76a");
-var clearImmediate = require("d7fb9aa6bc28928b").clear;
+},{"155f6fd6fc562850":"fOGFr","15ddebf5cbdc4660":"l7FDS"}],"fOGFr":[function(require,module,exports) {
+var $ = require("8b3c40fbf1a8b0ed");
+var global = require("c43c74933a407ad8");
+var clearImmediate = require("dc07e87ccd3a2253").clear;
 // `clearImmediate` method
 // http://w3c.github.io/setImmediate/#si-clearImmediate
 $({
@@ -1308,14 +1323,14 @@ $({
     clearImmediate: clearImmediate
 });
 
-},{"759a9dafb6c4e001":"dIGt4","8fac674bf171c76a":"i8HOC","d7fb9aa6bc28928b":"7jDg7"}],"dIGt4":[function(require,module,exports) {
-var global = require("cd91ea72b548ef5f");
-var getOwnPropertyDescriptor = require("44eac942e368cac3").f;
-var createNonEnumerableProperty = require("a7a5ea422c7ea1");
-var defineBuiltIn = require("bf87671dfb2e342d");
-var defineGlobalProperty = require("7b66476e441975ae");
-var copyConstructorProperties = require("e7cf39527ac36262");
-var isForced = require("91feef1209d8ef01");
+},{"8b3c40fbf1a8b0ed":"dIGt4","c43c74933a407ad8":"i8HOC","dc07e87ccd3a2253":"7jDg7"}],"dIGt4":[function(require,module,exports) {
+var global = require("2d361e68bc196328");
+var getOwnPropertyDescriptor = require("a456f0180637dc07").f;
+var createNonEnumerableProperty = require("1da295b476420dd");
+var defineBuiltIn = require("82df8237eeb9059b");
+var defineGlobalProperty = require("ad0dd8583d2a6078");
+var copyConstructorProperties = require("91843d5217dc56dc");
+var isForced = require("54c81064c16a2956");
 /*
   options.target         - name of the target object
   options.global         - target is the global object
@@ -1356,15 +1371,15 @@ var isForced = require("91feef1209d8ef01");
     }
 };
 
-},{"cd91ea72b548ef5f":"i8HOC","44eac942e368cac3":"lk5NI","a7a5ea422c7ea1":"8CL42","bf87671dfb2e342d":"6XwEX","7b66476e441975ae":"ggjnO","e7cf39527ac36262":"9Z12i","91feef1209d8ef01":"6uTCZ"}],"lk5NI":[function(require,module,exports) {
-var DESCRIPTORS = require("dd9c9d585897072f");
-var call = require("dac284e4cededc95");
-var propertyIsEnumerableModule = require("562727f90f98b5d1");
-var createPropertyDescriptor = require("830eafd6ac8ae32c");
-var toIndexedObject = require("c0d0e01abd5e4c50");
-var toPropertyKey = require("d0e56412a4a363b7");
-var hasOwn = require("932b0e62819cabc9");
-var IE8_DOM_DEFINE = require("91921f1166ba09bb");
+},{"2d361e68bc196328":"i8HOC","a456f0180637dc07":"lk5NI","1da295b476420dd":"8CL42","82df8237eeb9059b":"6XwEX","ad0dd8583d2a6078":"ggjnO","91843d5217dc56dc":"9Z12i","54c81064c16a2956":"6uTCZ"}],"lk5NI":[function(require,module,exports) {
+var DESCRIPTORS = require("d63b042f68412c46");
+var call = require("c948a37420b3822b");
+var propertyIsEnumerableModule = require("2d5cd0f785ee00dd");
+var createPropertyDescriptor = require("f401061a64d09ac8");
+var toIndexedObject = require("49df394a6a376549");
+var toPropertyKey = require("aed85c2a83e55bc1");
+var hasOwn = require("ecaae307606230b");
+var IE8_DOM_DEFINE = require("547b545637a306c9");
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 // `Object.getOwnPropertyDescriptor` method
@@ -1378,7 +1393,7 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
     if (hasOwn(O, P)) return createPropertyDescriptor(!call(propertyIsEnumerableModule.f, O, P), O[P]);
 };
 
-},{"dd9c9d585897072f":"92ZIi","dac284e4cededc95":"d7JlP","562727f90f98b5d1":"7SuiS","830eafd6ac8ae32c":"1lpav","c0d0e01abd5e4c50":"jLWwQ","d0e56412a4a363b7":"5XWKd","932b0e62819cabc9":"gC2Q5","91921f1166ba09bb":"qS9uN"}],"7SuiS":[function(require,module,exports) {
+},{"d63b042f68412c46":"92ZIi","c948a37420b3822b":"d7JlP","2d5cd0f785ee00dd":"7SuiS","f401061a64d09ac8":"1lpav","49df394a6a376549":"jLWwQ","aed85c2a83e55bc1":"5XWKd","ecaae307606230b":"gC2Q5","547b545637a306c9":"qS9uN"}],"7SuiS":[function(require,module,exports) {
 "use strict";
 var $propertyIsEnumerable = {}.propertyIsEnumerable;
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
@@ -1396,16 +1411,16 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 
 },{}],"jLWwQ":[function(require,module,exports) {
 // toObject with fallback for non-array-like ES3 strings
-var IndexedObject = require("b48a87b410089e76");
-var requireObjectCoercible = require("99466cca094bbf8f");
+var IndexedObject = require("194222834fd3ab31");
+var requireObjectCoercible = require("97d55064be90f448");
 module.exports = function(it) {
     return IndexedObject(requireObjectCoercible(it));
 };
 
-},{"b48a87b410089e76":"kPk5h","99466cca094bbf8f":"fOR0B"}],"kPk5h":[function(require,module,exports) {
-var uncurryThis = require("260e855b38cdfced");
-var fails = require("d5f174f84965b537");
-var classof = require("9594bdbf7125ddbd");
+},{"194222834fd3ab31":"kPk5h","97d55064be90f448":"fOR0B"}],"kPk5h":[function(require,module,exports) {
+var uncurryThis = require("8d2aa80bf2cd84cf");
+var fails = require("6f0b049f68fa06ae");
+var classof = require("e1fdc1d7b69c0439");
 var $Object = Object;
 var split = uncurryThis("".split);
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
@@ -1417,19 +1432,19 @@ module.exports = fails(function() {
     return classof(it) == "String" ? split(it, "") : $Object(it);
 } : $Object;
 
-},{"260e855b38cdfced":"7GlkT","d5f174f84965b537":"hL6D2","9594bdbf7125ddbd":"bdfmm"}],"bdfmm":[function(require,module,exports) {
-var uncurryThis = require("63562f1281164445");
+},{"8d2aa80bf2cd84cf":"7GlkT","6f0b049f68fa06ae":"hL6D2","e1fdc1d7b69c0439":"bdfmm"}],"bdfmm":[function(require,module,exports) {
+var uncurryThis = require("1eea47d12fdd1b2a");
 var toString = uncurryThis({}.toString);
 var stringSlice = uncurryThis("".slice);
 module.exports = function(it) {
     return stringSlice(toString(it), 8, -1);
 };
 
-},{"63562f1281164445":"7GlkT"}],"6XwEX":[function(require,module,exports) {
-var isCallable = require("4dbc3492865fc483");
-var definePropertyModule = require("68d94829b5bb698d");
-var makeBuiltIn = require("90737f83460eaece");
-var defineGlobalProperty = require("e102db2f0e29178");
+},{"1eea47d12fdd1b2a":"7GlkT"}],"6XwEX":[function(require,module,exports) {
+var isCallable = require("e80bc8aa5aa4971e");
+var definePropertyModule = require("da51de1dd34dc420");
+var makeBuiltIn = require("111c8c6921b7ebe5");
+var defineGlobalProperty = require("9d78caea96008b09");
 module.exports = function(O, key, value, options) {
     if (!options) options = {};
     var simple = options.enumerable;
@@ -1454,11 +1469,11 @@ module.exports = function(O, key, value, options) {
     return O;
 };
 
-},{"4dbc3492865fc483":"l3Kyn","68d94829b5bb698d":"iJR4w","90737f83460eaece":"cTB4k","e102db2f0e29178":"ggjnO"}],"9Z12i":[function(require,module,exports) {
-var hasOwn = require("148445ea382268c2");
-var ownKeys = require("c4d25fc3f1bde29b");
-var getOwnPropertyDescriptorModule = require("40e5f91c9175e92f");
-var definePropertyModule = require("346f8212bb2c0e92");
+},{"e80bc8aa5aa4971e":"l3Kyn","da51de1dd34dc420":"iJR4w","111c8c6921b7ebe5":"cTB4k","9d78caea96008b09":"ggjnO"}],"9Z12i":[function(require,module,exports) {
+var hasOwn = require("f660e70e95e953ef");
+var ownKeys = require("6e4caa64a6d253e1");
+var getOwnPropertyDescriptorModule = require("a3e89ff573b99812");
+var definePropertyModule = require("11dc50bcfe6944c7");
 module.exports = function(target, source, exceptions) {
     var keys = ownKeys(source);
     var defineProperty = definePropertyModule.f;
@@ -1469,12 +1484,12 @@ module.exports = function(target, source, exceptions) {
     }
 };
 
-},{"148445ea382268c2":"gC2Q5","c4d25fc3f1bde29b":"1CX1A","40e5f91c9175e92f":"lk5NI","346f8212bb2c0e92":"iJR4w"}],"1CX1A":[function(require,module,exports) {
-var getBuiltIn = require("779baf4c6c808bc");
-var uncurryThis = require("d984e7c2568a6b8c");
-var getOwnPropertyNamesModule = require("bb966a12fcb6c330");
-var getOwnPropertySymbolsModule = require("51ed596cd15db2d3");
-var anObject = require("e2696fb745b092d0");
+},{"f660e70e95e953ef":"gC2Q5","6e4caa64a6d253e1":"1CX1A","a3e89ff573b99812":"lk5NI","11dc50bcfe6944c7":"iJR4w"}],"1CX1A":[function(require,module,exports) {
+var getBuiltIn = require("da33a386066093ab");
+var uncurryThis = require("1f9c58f4206a488f");
+var getOwnPropertyNamesModule = require("fb0d419499c8509c");
+var getOwnPropertySymbolsModule = require("7b7a6d046287766b");
+var anObject = require("2cc67ec1d0f8124c");
 var concat = uncurryThis([].concat);
 // all object keys, includes non-enumerable and symbols
 module.exports = getBuiltIn("Reflect", "ownKeys") || function ownKeys(it) {
@@ -1483,9 +1498,9 @@ module.exports = getBuiltIn("Reflect", "ownKeys") || function ownKeys(it) {
     return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
 };
 
-},{"779baf4c6c808bc":"6ZUSY","d984e7c2568a6b8c":"7GlkT","bb966a12fcb6c330":"fjY04","51ed596cd15db2d3":"4DWO3","e2696fb745b092d0":"4isCr"}],"fjY04":[function(require,module,exports) {
-var internalObjectKeys = require("d4ad2848af3c0a86");
-var enumBugKeys = require("a7deb9786633f438");
+},{"da33a386066093ab":"6ZUSY","1f9c58f4206a488f":"7GlkT","fb0d419499c8509c":"fjY04","7b7a6d046287766b":"4DWO3","2cc67ec1d0f8124c":"4isCr"}],"fjY04":[function(require,module,exports) {
+var internalObjectKeys = require("dfc42b83221589b");
+var enumBugKeys = require("52dd5f881dff550e");
 var hiddenKeys = enumBugKeys.concat("length", "prototype");
 // `Object.getOwnPropertyNames` method
 // https://tc39.es/ecma262/#sec-object.getownpropertynames
@@ -1494,12 +1509,12 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
     return internalObjectKeys(O, hiddenKeys);
 };
 
-},{"d4ad2848af3c0a86":"hl5T1","a7deb9786633f438":"9RnJm"}],"hl5T1":[function(require,module,exports) {
-var uncurryThis = require("442ce80d8d760eb0");
-var hasOwn = require("6f8dc1b0ee94330a");
-var toIndexedObject = require("59f06c9fdefb1828");
-var indexOf = require("5aeab56d2a57d853").indexOf;
-var hiddenKeys = require("e3f948edba782623");
+},{"dfc42b83221589b":"hl5T1","52dd5f881dff550e":"9RnJm"}],"hl5T1":[function(require,module,exports) {
+var uncurryThis = require("936fb36d320048e4");
+var hasOwn = require("418873a32d44a852");
+var toIndexedObject = require("fe3c84d30693e23e");
+var indexOf = require("3e3f17dd9481c144").indexOf;
+var hiddenKeys = require("1e4b95ef61e6bcd5");
 var push = uncurryThis([].push);
 module.exports = function(object, names) {
     var O = toIndexedObject(object);
@@ -1512,10 +1527,10 @@ module.exports = function(object, names) {
     return result;
 };
 
-},{"442ce80d8d760eb0":"7GlkT","6f8dc1b0ee94330a":"gC2Q5","59f06c9fdefb1828":"jLWwQ","5aeab56d2a57d853":"n5IsC","e3f948edba782623":"661m4"}],"n5IsC":[function(require,module,exports) {
-var toIndexedObject = require("68e3115d745da862");
-var toAbsoluteIndex = require("97f80385bd3c2b0e");
-var lengthOfArrayLike = require("a8cba227fcff095f");
+},{"936fb36d320048e4":"7GlkT","418873a32d44a852":"gC2Q5","fe3c84d30693e23e":"jLWwQ","3e3f17dd9481c144":"n5IsC","1e4b95ef61e6bcd5":"661m4"}],"n5IsC":[function(require,module,exports) {
+var toIndexedObject = require("e583c312172bbcf2");
+var toAbsoluteIndex = require("ed94e62cd49edcb8");
+var lengthOfArrayLike = require("6159ea922198d62b");
 // `Array.prototype.{ indexOf, includes }` methods implementation
 var createMethod = function(IS_INCLUDES) {
     return function($this, el, fromIndex) {
@@ -1546,8 +1561,8 @@ module.exports = {
     indexOf: createMethod(false)
 };
 
-},{"68e3115d745da862":"jLWwQ","97f80385bd3c2b0e":"5yh27","a8cba227fcff095f":"lY4mS"}],"5yh27":[function(require,module,exports) {
-var toIntegerOrInfinity = require("cd5727a720d9b2b4");
+},{"e583c312172bbcf2":"jLWwQ","ed94e62cd49edcb8":"5yh27","6159ea922198d62b":"lY4mS"}],"5yh27":[function(require,module,exports) {
+var toIntegerOrInfinity = require("3f490eb5246643b0");
 var max = Math.max;
 var min = Math.min;
 // Helper for a popular repeating case of the spec:
@@ -1558,8 +1573,8 @@ module.exports = function(index, length) {
     return integer < 0 ? max(integer + length, 0) : min(integer, length);
 };
 
-},{"cd5727a720d9b2b4":"kLXGe"}],"kLXGe":[function(require,module,exports) {
-var trunc = require("b7b0407589a6ce62");
+},{"3f490eb5246643b0":"kLXGe"}],"kLXGe":[function(require,module,exports) {
+var trunc = require("39f01eb7c56a47a");
 // `ToIntegerOrInfinity` abstract operation
 // https://tc39.es/ecma262/#sec-tointegerorinfinity
 module.exports = function(argument) {
@@ -1568,7 +1583,7 @@ module.exports = function(argument) {
     return number !== number || number === 0 ? 0 : trunc(number);
 };
 
-},{"b7b0407589a6ce62":"7O8gb"}],"7O8gb":[function(require,module,exports) {
+},{"39f01eb7c56a47a":"7O8gb"}],"7O8gb":[function(require,module,exports) {
 var ceil = Math.ceil;
 var floor = Math.floor;
 // `Math.trunc` method
@@ -1580,15 +1595,15 @@ module.exports = Math.trunc || function trunc(x) {
 };
 
 },{}],"lY4mS":[function(require,module,exports) {
-var toLength = require("30685ffdce96f935");
+var toLength = require("388217bc5300008b");
 // `LengthOfArrayLike` abstract operation
 // https://tc39.es/ecma262/#sec-lengthofarraylike
 module.exports = function(obj) {
     return toLength(obj.length);
 };
 
-},{"30685ffdce96f935":"fU04N"}],"fU04N":[function(require,module,exports) {
-var toIntegerOrInfinity = require("c2ab16617b5082cb");
+},{"388217bc5300008b":"fU04N"}],"fU04N":[function(require,module,exports) {
+var toIntegerOrInfinity = require("d017c1726c914dd9");
 var min = Math.min;
 // `ToLength` abstract operation
 // https://tc39.es/ecma262/#sec-tolength
@@ -1596,7 +1611,7 @@ module.exports = function(argument) {
     return argument > 0 ? min(toIntegerOrInfinity(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
 };
 
-},{"c2ab16617b5082cb":"kLXGe"}],"9RnJm":[function(require,module,exports) {
+},{"d017c1726c914dd9":"kLXGe"}],"9RnJm":[function(require,module,exports) {
 // IE8- don't enum bug keys
 module.exports = [
     "constructor",
@@ -1613,8 +1628,8 @@ module.exports = [
 exports.f = Object.getOwnPropertySymbols;
 
 },{}],"6uTCZ":[function(require,module,exports) {
-var fails = require("a2832dc42a1f0b33");
-var isCallable = require("d78346dfffcf172f");
+var fails = require("565889e50948dbff");
+var isCallable = require("2271fc759f949278");
 var replacement = /#|\.prototype\./;
 var isForced = function(feature, detection) {
     var value = data[normalize(feature)];
@@ -1628,19 +1643,19 @@ var NATIVE = isForced.NATIVE = "N";
 var POLYFILL = isForced.POLYFILL = "P";
 module.exports = isForced;
 
-},{"a2832dc42a1f0b33":"hL6D2","d78346dfffcf172f":"l3Kyn"}],"7jDg7":[function(require,module,exports) {
-var global = require("31889fe4874351a0");
-var apply = require("9b366a98df7e7ed3");
-var bind = require("76f442c81a2f0879");
-var isCallable = require("f0526679daea54d5");
-var hasOwn = require("b4b888f21ec654b3");
-var fails = require("25c76a0d65bd16");
-var html = require("d54784442e278c45");
-var arraySlice = require("5ef23454cb0c27e6");
-var createElement = require("6d3bb66377a97745");
-var validateArgumentsLength = require("b0f8eceec965e1b9");
-var IS_IOS = require("be707d185908e8cc");
-var IS_NODE = require("8f86c259ee07ec87");
+},{"565889e50948dbff":"hL6D2","2271fc759f949278":"l3Kyn"}],"7jDg7":[function(require,module,exports) {
+var global = require("30893b3e727fb363");
+var apply = require("41593d8f0c91d0fd");
+var bind = require("5699edc4959878d5");
+var isCallable = require("c051fee8ef8e0a84");
+var hasOwn = require("e73f40a160dedfbd");
+var fails = require("bc15dff82e89f107");
+var html = require("13f99e73f55ca104");
+var arraySlice = require("b6dc57b24eb47b49");
+var createElement = require("a678782b1a3bf570");
+var validateArgumentsLength = require("b03e4e2a783966bc");
+var IS_IOS = require("3143aa8994408568");
+var IS_NODE = require("9693406cd4875180");
 var set = global.setImmediate;
 var clear = global.clearImmediate;
 var process = global.process;
@@ -1723,8 +1738,8 @@ module.exports = {
     clear: clear
 };
 
-},{"31889fe4874351a0":"i8HOC","9b366a98df7e7ed3":"148ka","76f442c81a2f0879":"7vpmS","f0526679daea54d5":"l3Kyn","b4b888f21ec654b3":"gC2Q5","25c76a0d65bd16":"hL6D2","d54784442e278c45":"2pze4","5ef23454cb0c27e6":"RsFXo","6d3bb66377a97745":"4bOHl","b0f8eceec965e1b9":"b9O3D","be707d185908e8cc":"bzGah","8f86c259ee07ec87":"2Jcp4"}],"148ka":[function(require,module,exports) {
-var NATIVE_BIND = require("406e5b2ac4cd1b56");
+},{"30893b3e727fb363":"i8HOC","41593d8f0c91d0fd":"148ka","5699edc4959878d5":"7vpmS","c051fee8ef8e0a84":"l3Kyn","e73f40a160dedfbd":"gC2Q5","bc15dff82e89f107":"hL6D2","13f99e73f55ca104":"2pze4","b6dc57b24eb47b49":"RsFXo","a678782b1a3bf570":"4bOHl","b03e4e2a783966bc":"b9O3D","3143aa8994408568":"bzGah","9693406cd4875180":"2Jcp4"}],"148ka":[function(require,module,exports) {
+var NATIVE_BIND = require("c15b71577cb391cf");
 var FunctionPrototype = Function.prototype;
 var apply = FunctionPrototype.apply;
 var call = FunctionPrototype.call;
@@ -1733,10 +1748,10 @@ module.exports = typeof Reflect == "object" && Reflect.apply || (NATIVE_BIND ? c
     return call.apply(apply, arguments);
 });
 
-},{"406e5b2ac4cd1b56":"i16Dq"}],"7vpmS":[function(require,module,exports) {
-var uncurryThis = require("cfb85dd24d5e9d9a");
-var aCallable = require("99c571dcd9fcf723");
-var NATIVE_BIND = require("bba6eec78ab5b647");
+},{"c15b71577cb391cf":"i16Dq"}],"7vpmS":[function(require,module,exports) {
+var uncurryThis = require("90d3f605a7d16728");
+var aCallable = require("5724bd92e383b95");
+var NATIVE_BIND = require("8c10a421eb77c2db");
 var bind = uncurryThis(uncurryThis.bind);
 // optional / simple context binding
 module.exports = function(fn, that) {
@@ -1746,9 +1761,9 @@ module.exports = function(fn, that) {
     };
 };
 
-},{"cfb85dd24d5e9d9a":"5Hioa","99c571dcd9fcf723":"gOMir","bba6eec78ab5b647":"i16Dq"}],"5Hioa":[function(require,module,exports) {
-var classofRaw = require("a9287be943867846");
-var uncurryThis = require("fe22f8cd22b512f");
+},{"90d3f605a7d16728":"5Hioa","5724bd92e383b95":"gOMir","8c10a421eb77c2db":"i16Dq"}],"5Hioa":[function(require,module,exports) {
+var classofRaw = require("7b8210665650ba6");
+var uncurryThis = require("b69b288e1e5d66c5");
 module.exports = function(fn) {
     // Nashorn bug:
     //   https://github.com/zloirock/core-js/issues/1128
@@ -1756,15 +1771,15 @@ module.exports = function(fn) {
     if (classofRaw(fn) === "Function") return uncurryThis(fn);
 };
 
-},{"a9287be943867846":"bdfmm","fe22f8cd22b512f":"7GlkT"}],"2pze4":[function(require,module,exports) {
-var getBuiltIn = require("fa8f8c49ab4c0765");
+},{"7b8210665650ba6":"bdfmm","b69b288e1e5d66c5":"7GlkT"}],"2pze4":[function(require,module,exports) {
+var getBuiltIn = require("8f4f6eff907565c1");
 module.exports = getBuiltIn("document", "documentElement");
 
-},{"fa8f8c49ab4c0765":"6ZUSY"}],"RsFXo":[function(require,module,exports) {
-var uncurryThis = require("5f24eb59b9a522fb");
+},{"8f4f6eff907565c1":"6ZUSY"}],"RsFXo":[function(require,module,exports) {
+var uncurryThis = require("930fabb68f859a8a");
 module.exports = uncurryThis([].slice);
 
-},{"5f24eb59b9a522fb":"7GlkT"}],"b9O3D":[function(require,module,exports) {
+},{"930fabb68f859a8a":"7GlkT"}],"b9O3D":[function(require,module,exports) {
 var $TypeError = TypeError;
 module.exports = function(passed, required) {
     if (passed < required) throw $TypeError("Not enough arguments");
@@ -1772,16 +1787,16 @@ module.exports = function(passed, required) {
 };
 
 },{}],"bzGah":[function(require,module,exports) {
-var userAgent = require("2dd9b69562de6d31");
+var userAgent = require("57a32cb5136f9ef2");
 // eslint-disable-next-line redos/no-vulnerable -- safe
 module.exports = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent);
 
-},{"2dd9b69562de6d31":"73xBt"}],"2Jcp4":[function(require,module,exports) {
-var process = require("210c688b92512e0b");
-var classof = require("6abf2ec4812ae3fb");
+},{"57a32cb5136f9ef2":"73xBt"}],"2Jcp4":[function(require,module,exports) {
+var process = require("45aec2adcca04e91");
+var classof = require("e06d8181d5aee80f");
 module.exports = typeof process != "undefined" && classof(process) == "process";
 
-},{"210c688b92512e0b":"d5jf4","6abf2ec4812ae3fb":"bdfmm"}],"d5jf4":[function(require,module,exports) {
+},{"45aec2adcca04e91":"d5jf4","e06d8181d5aee80f":"bdfmm"}],"d5jf4":[function(require,module,exports) {
 // shim for using process in browser
 var process = module.exports = {};
 // cached from whatever global is present so that test runners that stub it
@@ -1927,10 +1942,10 @@ process.umask = function() {
 };
 
 },{}],"l7FDS":[function(require,module,exports) {
-var $ = require("20c50a6e9ed06b9f");
-var global = require("9a01a24b7a1a8621");
-var setTask = require("762da007ee8a684f").set;
-var schedulersFix = require("5f22c3972febaf3e");
+var $ = require("ec05fdda27e62b88");
+var global = require("afa9984d947ef517");
+var setTask = require("133831b60199ac68").set;
+var schedulersFix = require("cfd901ac4a578a5c");
 // https://github.com/oven-sh/bun/issues/1633
 var setImmediate = global.setImmediate ? schedulersFix(setTask, false) : setTask;
 // `setImmediate` method
@@ -1944,15 +1959,15 @@ $({
     setImmediate: setImmediate
 });
 
-},{"20c50a6e9ed06b9f":"dIGt4","9a01a24b7a1a8621":"i8HOC","762da007ee8a684f":"7jDg7","5f22c3972febaf3e":"cAPb6"}],"cAPb6":[function(require,module,exports) {
+},{"ec05fdda27e62b88":"dIGt4","afa9984d947ef517":"i8HOC","133831b60199ac68":"7jDg7","cfd901ac4a578a5c":"cAPb6"}],"cAPb6":[function(require,module,exports) {
 "use strict";
-var global = require("19195ec9d7bc3f1a");
-var apply = require("e7e7698f27611df1");
-var isCallable = require("1e05c1f7d7b0d6a5");
-var ENGINE_IS_BUN = require("bd2c79068b521be");
-var USER_AGENT = require("58e13c2119953138");
-var arraySlice = require("6c60f0e1f6b51f1");
-var validateArgumentsLength = require("b7fe23e6715aa444");
+var global = require("6f9ff02aeef95856");
+var apply = require("c46df52e5de60b80");
+var isCallable = require("14eaf8ca0384b9bf");
+var ENGINE_IS_BUN = require("a09819e4b02c222e");
+var USER_AGENT = require("14e189365a76463e");
+var arraySlice = require("11eef772a169af8f");
+var validateArgumentsLength = require("a3204f970fbb6dd9");
 var Function = global.Function;
 // dirty IE9- and Bun 0.3.0- checks
 var WRAP = /MSIE .\./.test(USER_AGENT) || ENGINE_IS_BUN && function() {
@@ -1975,7 +1990,7 @@ module.exports = function(scheduler, hasTimeArg) {
     } : scheduler;
 };
 
-},{"19195ec9d7bc3f1a":"i8HOC","e7e7698f27611df1":"148ka","1e05c1f7d7b0d6a5":"l3Kyn","bd2c79068b521be":"2BA6V","58e13c2119953138":"73xBt","6c60f0e1f6b51f1":"RsFXo","b7fe23e6715aa444":"b9O3D"}],"2BA6V":[function(require,module,exports) {
+},{"6f9ff02aeef95856":"i8HOC","c46df52e5de60b80":"148ka","14eaf8ca0384b9bf":"l3Kyn","a09819e4b02c222e":"2BA6V","14e189365a76463e":"73xBt","11eef772a169af8f":"RsFXo","a3204f970fbb6dd9":"b9O3D"}],"2BA6V":[function(require,module,exports) {
 /* global Bun -- Deno case */ module.exports = typeof Bun == "function" && Bun && typeof Bun.version == "string";
 
 },{}],"dXNgZ":[function(require,module,exports) {
@@ -2565,69 +2580,351 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"Y4A21":[function(require,module,exports) {
+},{}],"bWlJ9":[function(require,module,exports) {
 // + Imports +
 // Base
+// Custom
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "state", ()=>state);
-parcelHelpers.export(exports, "testData", ()=>testData);
-var _regeneratorRuntime = require("regenerator-runtime");
-// Custom
-var _configJs = require("./config.js");
-var _helper = require("./helper");
-const state = {
-    data: {}
-};
-const testData = async function() {
-    try {
-        // Values
-        const data = await (0, _helper.getJson)(_configJs.API_URL);
-        // Update
-        state.data = data;
-    } catch (err) {
-        throw err;
+var _configJs = require("../config.js");
+var _buttonViewJs = require("./buttonView.js");
+var _buttonViewJsDefault = parcelHelpers.interopDefault(_buttonViewJs);
+var _progressBarViewJs = require("./progressBarView.js");
+var _progressBarViewJsDefault = parcelHelpers.interopDefault(_progressBarViewJs);
+var _anchorViewJs = require("./anchorView.js");
+var _anchorViewJsDefault = parcelHelpers.interopDefault(_anchorViewJs);
+var _stepViewJs = require("./stepView.js");
+var _stepViewJsDefault = parcelHelpers.interopDefault(_stepViewJs);
+// + Classes +
+// Base form view
+class WebflowView {
+    // Add step view handlers
+    addStepViewHandlers(stateData) {
+        (0, _stepViewJsDefault.default).addHandlers(stateData);
     }
-};
+    // Initialize progress bar
+    initProgressBar(stateData) {
+        // Init
+        (0, _progressBarViewJsDefault.default).update(stateData);
+    }
+    // Initialize buttons
+    initButtons(stateData) {
+        (0, _buttonViewJsDefault.default).init(stateData);
+    }
+    // Initialize anchor
+    initAnchor(stateData) {
+        (0, _anchorViewJsDefault.default).init(stateData);
+    }
+    // Delete visual dividers
+    removeVisualDividers(devMode, elements) {
+        if (devMode < 2) {
+            // If dev mode is 200% or higher, do not:
+            elements.$form.find(_configJs.DIVIDER_SELCTOR).remove();
+            elements.$steps.hide();
+            elements.$steps.eq(0).show();
+        } else console.log(`Dev mode ${devMode}: Visual dividers not removed...`);
+    }
+}
+// + Exports +
+// WebflowView object
+exports.default = new WebflowView();
 
-},{"regenerator-runtime":"dXNgZ","./helper":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./config.js":"k5Hzs"}],"lVRAz":[function(require,module,exports) {
-// + Imports +
-// Base
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./buttonView.js":"6ARYD","./progressBarView.js":"avjhP","./anchorView.js":"2Yxx6","./stepView.js":"igI8F"}],"k5Hzs":[function(require,module,exports) {
+// + Global strings +
+// Functional defaults
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "timeout", ()=>timeout);
-parcelHelpers.export(exports, "getJson", ()=>getJson);
-var _regeneratorRuntime = require("regenerator-runtime");
-// Custom
-var _configJs = require("./config.js");
-const timeout = function(s) {
-    // Return
-    return new Promise(function(_, reject) {
-        // Timeout
-        setTimeout(function() {
-            // Create error
-            reject(new Error(`Request took too long! Timeout after ${s} second`));
-        }, s * 1000);
-    });
+parcelHelpers.export(exports, "ESC_EVENT_DEFAULT", ()=>ESC_EVENT_DEFAULT);
+parcelHelpers.export(exports, "ENTER_EVENT_DEFAULT", ()=>ENTER_EVENT_DEFAULT);
+parcelHelpers.export(exports, "LEFT_EVENT_DEFAULT", ()=>LEFT_EVENT_DEFAULT);
+parcelHelpers.export(exports, "RIGHT_EVENT_DEFAULT", ()=>RIGHT_EVENT_DEFAULT);
+parcelHelpers.export(exports, "LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT", ()=>LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT);
+parcelHelpers.export(exports, "AUTO_DETECT_NEXT_STEP_DEFAULT", ()=>AUTO_DETECT_NEXT_STEP_DEFAULT);
+parcelHelpers.export(exports, "CSS_SHOW_DEFAULT", ()=>CSS_SHOW_DEFAULT);
+parcelHelpers.export(exports, "CSS_HIDE_DEFAULT", ()=>CSS_HIDE_DEFAULT);
+parcelHelpers.export(exports, "CSS_ACTIVE_DEFAULT", ()=>CSS_ACTIVE_DEFAULT);
+parcelHelpers.export(exports, "CSS_INACTIVE_DEFAULT", ()=>CSS_INACTIVE_DEFAULT);
+parcelHelpers.export(exports, "CSS_BACK_FORTH_ACTIVE_DEFAULT", ()=>CSS_BACK_FORTH_ACTIVE_DEFAULT);
+parcelHelpers.export(exports, "CSS_BACK_FORTH_INACTIVE_DEFAULT", ()=>CSS_BACK_FORTH_INACTIVE_DEFAULT);
+parcelHelpers.export(exports, "ANIMATION_MS_TIME_DEFAULT", ()=>ANIMATION_MS_TIME_DEFAULT);
+parcelHelpers.export(exports, "EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_DEFAULT", ()=>EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_DEFAULT);
+parcelHelpers.export(exports, "ERROR_COLOR_DEFAULT", ()=>ERROR_COLOR_DEFAULT);
+parcelHelpers.export(exports, "SLIDE_DIRECTION_DEFAULT", ()=>SLIDE_DIRECTION_DEFAULT);
+parcelHelpers.export(exports, "CUSTOM_NEXT_SLIDE_IN_DEFAULT", ()=>CUSTOM_NEXT_SLIDE_IN_DEFAULT);
+parcelHelpers.export(exports, "CUSTOM_NEXT_SLIDE_OUT_DEFAULT", ()=>CUSTOM_NEXT_SLIDE_OUT_DEFAULT);
+parcelHelpers.export(exports, "CUSTOM_PREV_SLIDE_IN_DEFAULT", ()=>CUSTOM_PREV_SLIDE_IN_DEFAULT);
+parcelHelpers.export(exports, "CUSTOM_PREV_SLIDE_OUT_DEFAULT", ()=>CUSTOM_PREV_SLIDE_OUT_DEFAULT);
+parcelHelpers.export(exports, "CUSTOM_X_MULTIPLIER_DEFAULT", ()=>CUSTOM_X_MULTIPLIER_DEFAULT);
+parcelHelpers.export(exports, "CUSTOM_Y_MULTIPLIER_DEFAULT", ()=>CUSTOM_Y_MULTIPLIER_DEFAULT);
+parcelHelpers.export(exports, "AUTO_RESIZE_TIME_MULTIPLIER_1_DEFAULT", ()=>AUTO_RESIZE_TIME_MULTIPLIER_1_DEFAULT);
+parcelHelpers.export(exports, "AUTO_RESIZE_TIME_MULTIPLIER_2_DEFAULT", ()=>AUTO_RESIZE_TIME_MULTIPLIER_2_DEFAULT);
+parcelHelpers.export(exports, "AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_DEFAULT", ()=>AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_DEFAULT);
+parcelHelpers.export(exports, "AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_DEFAULT", ()=>AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_DEFAULT);
+parcelHelpers.export(exports, "MAX_SWIPE_SCREEN_SIZE_DEFAULT", ()=>MAX_SWIPE_SCREEN_SIZE_DEFAULT);
+parcelHelpers.export(exports, "MIN_SWIPE_SCREEN_SIZE_DEFAULT", ()=>MIN_SWIPE_SCREEN_SIZE_DEFAULT);
+parcelHelpers.export(exports, "REDIRECT_MS_TIME_DEFAULT", ()=>REDIRECT_MS_TIME_DEFAULT);
+parcelHelpers.export(exports, "PROGRESS_BAR_AXIS_DEFAULT", ()=>PROGRESS_BAR_AXIS_DEFAULT);
+parcelHelpers.export(exports, "ANCHOR_MIN_SCREEN_SIZE_DEFAULT", ()=>ANCHOR_MIN_SCREEN_SIZE_DEFAULT);
+parcelHelpers.export(exports, "ANCHOR_MAX_SCREEN_SIZE_DEFAULT", ()=>ANCHOR_MAX_SCREEN_SIZE_DEFAULT);
+parcelHelpers.export(exports, "DEV_MODE_OBJECT", ()=>DEV_MODE_OBJECT);
+parcelHelpers.export(exports, "TYPEOF_GSAP_DEPENDENCY", ()=>TYPEOF_GSAP_DEPENDENCY);
+parcelHelpers.export(exports, "TYPEOF_GSAP_SCROLL_TO_DEPENDENCY", ()=>TYPEOF_GSAP_SCROLL_TO_DEPENDENCY);
+parcelHelpers.export(exports, "TYPEOF_HAMMER_JS_DEPENDENCY", ()=>TYPEOF_HAMMER_JS_DEPENDENCY);
+parcelHelpers.export(exports, "FORM_BLOCK_SELECTOR", ()=>FORM_BLOCK_SELECTOR);
+parcelHelpers.export(exports, "FORM_SELECTOR", ()=>FORM_SELECTOR);
+parcelHelpers.export(exports, "STEP_SELECTOR", ()=>STEP_SELECTOR);
+parcelHelpers.export(exports, "DIVIDER_SELCTOR", ()=>DIVIDER_SELCTOR);
+parcelHelpers.export(exports, "SUBMIT_BUTTON_SELECTOR", ()=>SUBMIT_BUTTON_SELECTOR);
+parcelHelpers.export(exports, "CONTINUE_BUTTON_SELECTOR", ()=>CONTINUE_BUTTON_SELECTOR);
+parcelHelpers.export(exports, "BACKWARDS_BUTTON_SELECTOR", ()=>BACKWARDS_BUTTON_SELECTOR);
+parcelHelpers.export(exports, "NOT_A_BUTTON_SELECTOR", ()=>NOT_A_BUTTON_SELECTOR);
+parcelHelpers.export(exports, "QUIZ_RESULT_SELECTOR", ()=>QUIZ_RESULT_SELECTOR);
+parcelHelpers.export(exports, "PROGRESS_BAR_SELECTOR", ()=>PROGRESS_BAR_SELECTOR);
+parcelHelpers.export(exports, "ANCHOR_ELEMENT_SELECTOR", ()=>ANCHOR_ELEMENT_SELECTOR);
+parcelHelpers.export(exports, "RADIO_SELECTOR", ()=>RADIO_SELECTOR);
+parcelHelpers.export(exports, "CHECKBOX_SELECTOR", ()=>CHECKBOX_SELECTOR);
+parcelHelpers.export(exports, "W_BUTTON_SELECTOR", ()=>W_BUTTON_SELECTOR);
+parcelHelpers.export(exports, "SUCCESS_SELECTOR", ()=>SUCCESS_SELECTOR);
+parcelHelpers.export(exports, "CONDITION_INVISIBLE_SELECTOR", ()=>CONDITION_INVISIBLE_SELECTOR);
+parcelHelpers.export(exports, "FORM_BLOCK_INDEX_ATTRIBUTE", ()=>FORM_BLOCK_INDEX_ATTRIBUTE);
+parcelHelpers.export(exports, "STEP_INDEX_ATTRIBUTE", ()=>STEP_INDEX_ATTRIBUTE);
+parcelHelpers.export(exports, "STEP_TYPE_ATTRIBUTE", ()=>STEP_TYPE_ATTRIBUTE);
+parcelHelpers.export(exports, "STEP_REQUIRED_ATTRIBUTE", ()=>STEP_REQUIRED_ATTRIBUTE);
+parcelHelpers.export(exports, "STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE", ()=>STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE);
+parcelHelpers.export(exports, "RELATIVE_LAST_STEP_ATTRIBUTE", ()=>RELATIVE_LAST_STEP_ATTRIBUTE);
+parcelHelpers.export(exports, "CONDITIONAL_ATTRIBUTE", ()=>CONDITIONAL_ATTRIBUTE);
+parcelHelpers.export(exports, "CONDITIONAL_NEXT_ATTRIBUTE", ()=>CONDITIONAL_NEXT_ATTRIBUTE);
+parcelHelpers.export(exports, "NOT_AUTO_CONTINUE_ATTRIBUTE", ()=>NOT_AUTO_CONTINUE_ATTRIBUTE);
+parcelHelpers.export(exports, "MARK_CLICK_ELEMENT_ATTRIBUTE", ()=>MARK_CLICK_ELEMENT_ATTRIBUTE);
+parcelHelpers.export(exports, "ELEMENT_GOT_CHECKED_ATTRIBUTE", ()=>ELEMENT_GOT_CHECKED_ATTRIBUTE);
+parcelHelpers.export(exports, "CLICK_ELEMENT_ID_ATTRIBUTE", ()=>CLICK_ELEMENT_ID_ATTRIBUTE);
+parcelHelpers.export(exports, "REMOVE_OTHER_STEPS_ATTRIBUTE", ()=>REMOVE_OTHER_STEPS_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_FOCUS_ATTRIBUTE", ()=>AUTO_FOCUS_ATTRIBUTE);
+parcelHelpers.export(exports, "KEYBOARD_EVENTS_ON_STEP_ATTRIBUTE", ()=>KEYBOARD_EVENTS_ON_STEP_ATTRIBUTE);
+parcelHelpers.export(exports, "ESC_EVENT_ATTRIBUTE", ()=>ESC_EVENT_ATTRIBUTE);
+parcelHelpers.export(exports, "ENTER_EVENT_ATTRIBUTE", ()=>ENTER_EVENT_ATTRIBUTE);
+parcelHelpers.export(exports, "LEFT_EVENT_ATTRIBUTE", ()=>LEFT_EVENT_ATTRIBUTE);
+parcelHelpers.export(exports, "LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE", ()=>LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE);
+parcelHelpers.export(exports, "RIGHT_EVENT_ATTRIBUTE", ()=>RIGHT_EVENT_ATTRIBUTE);
+parcelHelpers.export(exports, "DEV_MODE_ATTRIBUTE", ()=>DEV_MODE_ATTRIBUTE);
+parcelHelpers.export(exports, "SWIPE_ALLOWED_ATTRIBUTE", ()=>SWIPE_ALLOWED_ATTRIBUTE);
+parcelHelpers.export(exports, "QUIZ_PATH_ATTRIBUTE", ()=>QUIZ_PATH_ATTRIBUTE);
+parcelHelpers.export(exports, "REDIRECT_URL_ATTRIBUTE", ()=>REDIRECT_URL_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE", ()=>AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_DETECT_NEXT_STEP_ATTRIBUTE", ()=>AUTO_DETECT_NEXT_STEP_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_SHOW_ATTRIBUTE", ()=>CSS_SHOW_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_HIDE_ATTRIBUTE", ()=>CSS_HIDE_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_ACTIVE_ATTRIBUTE", ()=>CSS_ACTIVE_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_INACTIVE_ATTRIBUTE", ()=>CSS_INACTIVE_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_BACK_FORTH_ACTIVE_ATTRIBUTE", ()=>CSS_BACK_FORTH_ACTIVE_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_BACK_FORTH_INACTIVE_ATTRIBUTE", ()=>CSS_BACK_FORTH_INACTIVE_ATTRIBUTE);
+parcelHelpers.export(exports, "SET_CSS_INACTIVE_ATTRIBUTE", ()=>SET_CSS_INACTIVE_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_SELECT_ATTRIBUTE", ()=>CSS_SELECT_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_DESELECT_ATTRIBUTE", ()=>CSS_DESELECT_ATTRIBUTE);
+parcelHelpers.export(exports, "ANIMATION_MS_TIME_ATTRIBUTE", ()=>ANIMATION_MS_TIME_ATTRIBUTE);
+parcelHelpers.export(exports, "EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE", ()=>EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE);
+parcelHelpers.export(exports, "ERROR_COLOR_ATTRIBUTE", ()=>ERROR_COLOR_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_ERROR_STATUS_ATTRIBUTE", ()=>CSS_ERROR_STATUS_ATTRIBUTE);
+parcelHelpers.export(exports, "CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE", ()=>CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE);
+parcelHelpers.export(exports, "SLIDE_DIRECTION_ATTRIBUTE", ()=>SLIDE_DIRECTION_ATTRIBUTE);
+parcelHelpers.export(exports, "CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE", ()=>CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE);
+parcelHelpers.export(exports, "CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE", ()=>CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE);
+parcelHelpers.export(exports, "CUSTOM_PREV_SLIDE_IN_ATTRIBUTE", ()=>CUSTOM_PREV_SLIDE_IN_ATTRIBUTE);
+parcelHelpers.export(exports, "CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE", ()=>CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE);
+parcelHelpers.export(exports, "CUSTOM_X_MULTIPLIER_ATTRIBUTE", ()=>CUSTOM_X_MULTIPLIER_ATTRIBUTE);
+parcelHelpers.export(exports, "CUSTOM_Y_MULTIPLIER_ATTRIBUTE", ()=>CUSTOM_Y_MULTIPLIER_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE", ()=>AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_RESIZE_TIME_MULTIPLIER_2_ATTRIBUTE", ()=>AUTO_RESIZE_TIME_MULTIPLIER_2_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE", ()=>AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE", ()=>AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE);
+parcelHelpers.export(exports, "MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE", ()=>MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE);
+parcelHelpers.export(exports, "MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE", ()=>MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE);
+parcelHelpers.export(exports, "SWIPE_TYPE_ANIMATION_ATTRIBUTE", ()=>SWIPE_TYPE_ANIMATION_ATTRIBUTE);
+parcelHelpers.export(exports, "SUBMIT_MS_TIME_1_ATTRIBUTE", ()=>SUBMIT_MS_TIME_1_ATTRIBUTE);
+parcelHelpers.export(exports, "SUBMIT_MS_TIME_2_ATTRIBUTE", ()=>SUBMIT_MS_TIME_2_ATTRIBUTE);
+parcelHelpers.export(exports, "SUBMIT_SHOW_ATTRIBUTE", ()=>SUBMIT_SHOW_ATTRIBUTE);
+parcelHelpers.export(exports, "SUBMIT_HIDE_ATTRIBUTE", ()=>SUBMIT_HIDE_ATTRIBUTE);
+parcelHelpers.export(exports, "REDIRECT_MS_TIME_ATTRIBUTE", ()=>REDIRECT_MS_TIME_ATTRIBUTE);
+parcelHelpers.export(exports, "PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE", ()=>PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE);
+parcelHelpers.export(exports, "PROGRESS_BAR_AXIS_ATTRIBUTE", ()=>PROGRESS_BAR_AXIS_ATTRIBUTE);
+parcelHelpers.export(exports, "ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE", ()=>ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE);
+parcelHelpers.export(exports, "ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE", ()=>ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE);
+parcelHelpers.export(exports, "ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE", ()=>ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE);
+parcelHelpers.export(exports, "ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE", ()=>ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE);
+parcelHelpers.export(exports, "ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE", ()=>ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE);
+const ESC_EVENT_DEFAULT = "escape, esc, arrowup, up";
+const ENTER_EVENT_DEFAULT = "enter, arrowdown, down";
+const LEFT_EVENT_DEFAULT = "arrowleft, left";
+const RIGHT_EVENT_DEFAULT = "arrowright, right";
+const LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT = "true";
+const AUTO_DETECT_NEXT_STEP_DEFAULT = "true";
+const CSS_SHOW_DEFAULT = {
+    opacity: 1,
+    display: "flex"
 };
-const getJson = async function(url) {
-    try {
-        // Values
-        const res = await Promise.race([
-            fetch(url),
-            timeout(_configJs.TIMEOUT_SEC)
-        ]);
-        const data = await res.json();
-        // Logic
-        if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-        // Return
-        return data;
-    } catch (err) {
-        throw err;
+const CSS_HIDE_DEFAULT = {
+    opacity: 0,
+    display: "none"
+};
+const CSS_ACTIVE_DEFAULT = {
+    opacity: 1,
+    duration: 0.1
+};
+const CSS_INACTIVE_DEFAULT = {
+    opacity: 0.5,
+    duration: 0.1
+};
+const CSS_BACK_FORTH_ACTIVE_DEFAULT = {
+    opacity: 1
+};
+const CSS_BACK_FORTH_INACTIVE_DEFAULT = {
+    opacity: 0.5
+};
+const ANIMATION_MS_TIME_DEFAULT = 500;
+const EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_DEFAULT = 0.25;
+const ERROR_COLOR_DEFAULT = "red";
+const SLIDE_DIRECTION_DEFAULT = "to left";
+const CUSTOM_NEXT_SLIDE_IN_DEFAULT = {
+    ...CSS_SHOW_DEFAULT
+};
+const CUSTOM_NEXT_SLIDE_OUT_DEFAULT = {
+    ...CSS_HIDE_DEFAULT
+};
+const CUSTOM_PREV_SLIDE_IN_DEFAULT = {
+    ...CSS_SHOW_DEFAULT
+};
+const CUSTOM_PREV_SLIDE_OUT_DEFAULT = {
+    ...CSS_HIDE_DEFAULT
+};
+const CUSTOM_X_MULTIPLIER_DEFAULT = 0;
+const CUSTOM_Y_MULTIPLIER_DEFAULT = 0;
+const AUTO_RESIZE_TIME_MULTIPLIER_1_DEFAULT = 1;
+const AUTO_RESIZE_TIME_MULTIPLIER_2_DEFAULT = 0.5;
+const AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_DEFAULT = 1;
+const AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_DEFAULT = 0.85;
+const MAX_SWIPE_SCREEN_SIZE_DEFAULT = 767;
+const MIN_SWIPE_SCREEN_SIZE_DEFAULT = 0;
+const REDIRECT_MS_TIME_DEFAULT = 1;
+const PROGRESS_BAR_AXIS_DEFAULT = "x";
+const ANCHOR_MIN_SCREEN_SIZE_DEFAULT = 0;
+const ANCHOR_MAX_SCREEN_SIZE_DEFAULT = 767;
+const DEV_MODE_OBJECT = [
+    {
+        names: [
+            "false"
+        ],
+        value: 0
+    },
+    {
+        names: [
+            "half",
+            "50%"
+        ],
+        value: 0.5
+    },
+    {
+        names: [
+            "on",
+            "true",
+            "100%"
+        ],
+        value: 1
+    },
+    {
+        names: [
+            "extreme",
+            "200%"
+        ],
+        value: 2
     }
-};
+];
+const TYPEOF_GSAP_DEPENDENCY = typeof gsap;
+const TYPEOF_GSAP_SCROLL_TO_DEPENDENCY = typeof $("body").attr("bmg-data-gsap-scroll-already-installed");
+const TYPEOF_HAMMER_JS_DEPENDENCY = typeof Hammer;
+const FORM_BLOCK_SELECTOR = '[bmg-form = "Form Block"]';
+const FORM_SELECTOR = '[bmg-form = "Form"]';
+const STEP_SELECTOR = '[bmg-form = "Form Step"]';
+const DIVIDER_SELCTOR = '[bmg-form = "Visual Divider"]';
+const SUBMIT_BUTTON_SELECTOR = '[bmg-form = "Submit Button"]';
+const CONTINUE_BUTTON_SELECTOR = '[bmg-form = "Continue Button"]';
+const BACKWARDS_BUTTON_SELECTOR = '[bmg-form = "Backwards Button"]';
+const NOT_A_BUTTON_SELECTOR = '[bmg-form = "Not a Button"]';
+const QUIZ_RESULT_SELECTOR = '[bmg-form = "Quiz Result"]';
+const PROGRESS_BAR_SELECTOR = '[bmg-form = "Progress Bar"]';
+const ANCHOR_ELEMENT_SELECTOR = '[bmg-form = "Anchor Element"]';
+const RADIO_SELECTOR = ".w-radio";
+const CHECKBOX_SELECTOR = ".w-checkbox";
+const W_BUTTON_SELECTOR = ".w-button";
+const SUCCESS_SELECTOR = ".w-form-done";
+const CONDITION_INVISIBLE_SELECTOR = ".w-condition-invisible";
+const FORM_BLOCK_INDEX_ATTRIBUTE = "bmg-data-form-block-index";
+const STEP_INDEX_ATTRIBUTE = "bmg-data-step-index";
+const STEP_TYPE_ATTRIBUTE = "bmg-data-step-type";
+const STEP_REQUIRED_ATTRIBUTE = "bmg-data-required";
+const STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE = "bmg-data-custom-requirements-passed";
+const RELATIVE_LAST_STEP_ATTRIBUTE = "bmg-data-relative-last-step";
+const CONDITIONAL_ATTRIBUTE = "bmg-data-conditional";
+const CONDITIONAL_NEXT_ATTRIBUTE = "bmg-data-conditional-next";
+const NOT_AUTO_CONTINUE_ATTRIBUTE = "bmg-data-not-auto-continue";
+const MARK_CLICK_ELEMENT_ATTRIBUTE = "bmg-data-click-element";
+const ELEMENT_GOT_CHECKED_ATTRIBUTE = "bmg-data-element-checked";
+const CLICK_ELEMENT_ID_ATTRIBUTE = "bmg-data-click-element-id";
+const REMOVE_OTHER_STEPS_ATTRIBUTE = "bmg-data-remove-other-steps";
+const AUTO_FOCUS_ATTRIBUTE = "bmg-data-autofocus";
+const KEYBOARD_EVENTS_ON_STEP_ATTRIBUTE = "bmg-data-keyboard-events";
+const ESC_EVENT_ATTRIBUTE = "bmg-data-esc-event";
+const ENTER_EVENT_ATTRIBUTE = "bmg-data-enter-event";
+const LEFT_EVENT_ATTRIBUTE = "bmg-data-left-event";
+const LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE = "bmg-data-left-key-event-infintiy-allowed";
+const RIGHT_EVENT_ATTRIBUTE = "bmg-data-right-event";
+const DEV_MODE_ATTRIBUTE = "bmg-data-dev-mode";
+const SWIPE_ALLOWED_ATTRIBUTE = "bmg-data-swipe-allowed";
+const QUIZ_PATH_ATTRIBUTE = "bmg-data-quiz-path";
+const REDIRECT_URL_ATTRIBUTE = "bmg-data-redirect-url";
+const AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE = "bmg-data-auto-delete-conditionally-invisible-elements";
+const AUTO_DETECT_NEXT_STEP_ATTRIBUTE = "bmg-data-auto-detect-next-step";
+const CSS_SHOW_ATTRIBUTE = "bmg-data-css-show";
+const CSS_HIDE_ATTRIBUTE = "bmg-data-css-hide";
+const CSS_ACTIVE_ATTRIBUTE = "bmg-data-css-active";
+const CSS_INACTIVE_ATTRIBUTE = "bmg-data-css-inactive";
+const CSS_BACK_FORTH_ACTIVE_ATTRIBUTE = "bmg-data-back-forth-css-active";
+const CSS_BACK_FORTH_INACTIVE_ATTRIBUTE = "bmg-data-back-forth-css-inactive";
+const SET_CSS_INACTIVE_ATTRIBUTE = "bmg-data-set-css-inactive";
+const CSS_SELECT_ATTRIBUTE = "bmg-data-css-select";
+const CSS_DESELECT_ATTRIBUTE = "bmg-data-css-deselect";
+const ANIMATION_MS_TIME_ATTRIBUTE = "bmg-data-animation-ms-time";
+const EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE = "bmg-data-equal-height-transition-speed-multiplier";
+const ERROR_COLOR_ATTRIBUTE = "bmg-data-error-color";
+const CSS_ERROR_STATUS_ATTRIBUTE = "bmg-data-css-error-status";
+const CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE = "bmg-data-css-error-status-resolved";
+const SLIDE_DIRECTION_ATTRIBUTE = "bmg-data-slide-direction";
+const CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE = "bmg-data-custom-next-slide-in";
+const CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE = "bmg-data-custom-next-slide-out";
+const CUSTOM_PREV_SLIDE_IN_ATTRIBUTE = "bmg-data-custom-prev-slide-in";
+const CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE = "bmg-data-custom-prev-slide-out";
+const CUSTOM_X_MULTIPLIER_ATTRIBUTE = "bmg-data-custom-x-percentage-multiplier";
+const CUSTOM_Y_MULTIPLIER_ATTRIBUTE = "bmg-data-custom-y-percentage-multiplier";
+const AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE = "bmg-data-auto-resize-time-multiplier-1";
+const AUTO_RESIZE_TIME_MULTIPLIER_2_ATTRIBUTE = "bmg-data-auto-resize-time-multiplier-2";
+const AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE = "bmg-data-success-auto-resize-time-multiplier-1";
+const AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE = "bmg-data-success-auto-resize-time-multiplier-2";
+const MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE = "bmg-data-max-swipe-screen-size";
+const MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE = "bmg-data-min-swipe-screen-size";
+const SWIPE_TYPE_ANIMATION_ATTRIBUTE = "bmg-data-swipe-type-animation";
+const SUBMIT_MS_TIME_1_ATTRIBUTE = "bmg-data-submit-ms-time-1";
+const SUBMIT_MS_TIME_2_ATTRIBUTE = "bmg-data-submit-ms-time-2";
+const SUBMIT_SHOW_ATTRIBUTE = "bmg-data-submit-show";
+const SUBMIT_HIDE_ATTRIBUTE = "bmg-data-submit-hide";
+const REDIRECT_MS_TIME_ATTRIBUTE = "bmg-data-redirect-ms-time";
+const PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE = "bmg-data-progress-bar-ms-time";
+const PROGRESS_BAR_AXIS_ATTRIBUTE = "bmg-data-progress-bar-axis";
+const ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE = "bmg-data-anchor-min-screen-size";
+const ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE = "bmg-data-anchor-max-screen-size";
+const ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE = "bmg-data-anchor-animation-ms-time";
+const ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE = "bmg-data-anchor-y-offset-selector";
+const ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE = "bmg-data-anchor-related-element-to-scroll-selector";
 
-},{"regenerator-runtime":"dXNgZ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./config.js":"k5Hzs"}],"gkKU3":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -2657,48 +2954,835 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"k5Hzs":[function(require,module,exports) {
-// Selectors
+},{}],"6ARYD":[function(require,module,exports) {
+// + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "BODY_SELECTOR", ()=>BODY_SELECTOR);
-parcelHelpers.export(exports, "API_URL", ()=>API_URL);
-parcelHelpers.export(exports, "TIMEOUT_SEC", ()=>TIMEOUT_SEC);
-const BODY_SELECTOR = "body";
-const API_URL = "https://jsonplaceholder.typicode.com/todos";
-const TIMEOUT_SEC = 10;
+var _configJs = require("../config.js");
+var _defineStepTypeJs = require("../helper/defineStepType.js");
+var _defineStepTypeJsDefault = parcelHelpers.interopDefault(_defineStepTypeJs);
+var _helper = require("../helper");
+// + Classes +
+class ButtonView {
+    // Initialze buttons
+    init(stateData) {
+        // Initialize back & forth buttons
+        this.#initBackForthButtons(stateData.elements, stateData.styles);
+        // Initialize continue buttons
+        this.#initContinueButtons(stateData.elements);
+        // - Backwards buttons -
+        this.#addBackwardButtonHandler(stateData.elements);
+        // - Next button(s) -
+        this.#addNextButtonHandler(stateData.elements, stateData.autoDetectNextStep);
+        // - Submit buttons -
+        this.#addSubmitButtonHandler(stateData.elements);
+    }
+    // - Update next button -
+    #updateNextButton(stepId) {
+        // Security return check
+        if ($nextButton.length < 1) return;
+        // Elements
+        let $step = $form.find(`[${stepIndexAttribute} = "${stepId}"]`), $clickedButton = $step.find(`[${markClickElementAttribute} = "true"]`);
+        // Action logic
+        if ($clickedButton.length > 0 && stepRequirementsPassed($formBlock, $step)) // If a clicked button exists
+        gsap.to(nextButtons, stylesObject[formBlockIndex]["cssBackForthActive"]);
+        else gsap.to(nextButtons, stylesObject[formBlockIndex]["cssBackForthInactive"]);
+    }
+    // - Backwards buttons -
+    #addBackwardButtonHandler(elements) {
+        elements.$backwardsButtons.add(elements.$backButton).each(function() {
+            $(this).click(()=>{
+                goToPrevStep();
+            });
+        });
+    }
+    // - Next button(s) -
+    #addNextButtonHandler(elements1, autoDetectNextStep) {
+        elements1.$nextButton.each(function() {
+            $(this).click(()=>{
+                findNext(false, autoDetectNextStep);
+            });
+        });
+    }
+    // - Submit buttons -
+    #addSubmitButtonHandler(elements2) {
+        elements2.$submitButtons.each(function() {
+            $(this).click(()=>{
+                submitForm();
+            });
+        });
+    }
+    // Initialize back & forth buttons
+    #initBackForthButtons(elements3, styles) {
+        // Inactivate back and forth buttons
+        gsap.set([
+            elements3.backButtons,
+            elements3.nextButtons
+        ], {
+            ...styles.cssBackForthInactive,
+            duration: 0
+        });
+    }
+    // Initialize continue buttons
+    #initContinueButtons(elements4) {
+        // - For each step - Find continue buttons -
+        elements4.$steps.each(function(stepIndex) {
+            // Local elments
+            let $step = $(this), preventDoubleClick = false;
+            // Local functions
+            // Define step types
+            let $buttons = (0, _defineStepTypeJsDefault.default)($step, stepIndex, elements4.$formBlock); // Returns click elements
+            // Init click elements
+            (0, _helper.markClickElement)($buttons);
+            // Define click actions
+            $buttons.each(function(buttonIndex) {
+                // Element
+                let $button = $(this);
+                // Help future code by indexing
+                $button.attr(_configJs.CLICK_ELEMENT_ID_ATTRIBUTE, buttonIndex);
+                // Button click function
+                $button.click(()=>{
+                    // Prevent double clicking
+                    if (!preventDoubleClick) {
+                        setTimeout(()=>{
+                            preventDoubleClick = false;
+                        }, 10);
+                        // Call function
+                        (0, _helper.markClickElement)($buttons, $button);
+                        findNext();
+                    }
+                    preventDoubleClick = true;
+                });
+            });
+        });
+    }
+}
+// + Exports +
+exports.default = new ButtonView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bWlJ9":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","../helper/defineStepType.js":"iGQpR","../helper":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iGQpR":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+var _initActiveInactiveClickStateJs = require("./initActiveInactiveClickState.js");
+var _initActiveInactiveClickStateJsDefault = parcelHelpers.interopDefault(_initActiveInactiveClickStateJs);
+// + Exports +
+// - - Define step type - -
+exports.default = function($step, stepIndex, $formBlock) {
+    // Local elements
+    let $radios = $step.find(_configJs.RADIO_SELECTOR), $checkboxes = $step.find(_configJs.CHECKBOX_SELECTOR), $buttons = $step.find(`a, ${_configJs.CONTINUE_BUTTON_SELECTOR}, ${_configJs.W_BUTTON_SELECTOR}`).not(_configJs.NOT_A_BUTTON_SELECTOR).not(_configJs.BACKWARDS_BUTTON_SELECTOR), $inputs = $step.find("input"), formBlockIndex = parseInt($formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE));
+    // Set step index
+    $step.attr(_configJs.STEP_INDEX_ATTRIBUTE, stepIndex);
+    // Check for radio
+    if ($radios.length > 0) {
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
+        (0, _initActiveInactiveClickStateJsDefault.default)($radios, formBlockIndex, $step);
+        // Make sure to remove accidental radio requires
+        $radios.find("input").removeAttr("required");
+        return $step.attr(_configJs.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined ? $buttons : $radios;
+    }
+    // Check for checkbox
+    if ($checkboxes.length > 0) {
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "checkbox");
+        (0, _initActiveInactiveClickStateJsDefault.default)($checkboxes, formBlockIndex, $step);
+        // Make sure to remove accidental checkbox requires (for full checkbox steps only)
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == "checkbox") $checkboxes.find("input").removeAttr("required");
+        return $buttons;
+    }
+    // Check for checkbox
+    if ($inputs.length > 0) {
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "other input");
+        (0, _initActiveInactiveClickStateJsDefault.default)($checkboxes, formBlockIndex, $step);
+        return $buttons;
+    }
+    // Else return empty
+    if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "empty");
+    return $buttons;
+};
+
+},{"../config.js":"k5Hzs","./initActiveInactiveClickState.js":"i4vGN","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"i4vGN":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+var _modelJs = require("../model.js");
+var _helperJs = require("../helper.js");
+// + Exports +
+// - - Initialize click state for input fields - -
+exports.default = function($elements, styleObjectIndex, $parent) {
+    // Local variables
+    const styles = (0, _modelJs.state).data[`form${styleObjectIndex}`].styles, cssActive = styles["cssActive"], cssInactive = styles["cssInactive"], cssInactiveSet = styles["setCssInactive"], isRadio = $parent.attr(_configJs.STEP_TYPE_ATTRIBUTE) == "radio" ? true : false, elements = (0, _helperJs.jQueryToJs)($elements);
+    // Functions
+    gsap.set(elements, cssInactiveSet); // Init
+    if (isRadio) $elements.each(function() {
+        const $element = $(this);
+        $element.click(()=>{
+            // Animation
+            gsap.to(elements, cssInactive);
+            gsap.to($element[0], cssActive);
+            // Attributes
+            $elements.removeAttr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE);
+            $element.attr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE, true);
+        });
+    });
+    else $elements.each(function() {
+        const $element = $(this);
+        let firstClick = true, preventDoubleClick = false;
+        // Skip element if that is specified
+        if ($element.attr(_configJs.CSS_ACTIVE_ATTRIBUTE) == "none") return true;
+        // Click event
+        $element.click(()=>{
+            // Prevent double clicking
+            if (!preventDoubleClick) {
+                setTimeout(()=>{
+                    preventDoubleClick = false;
+                }, 10);
+                // Call checkbox click logic
+                if (firstClick) {
+                    // Animation
+                    gsap.to($element[0], cssActive);
+                    // Attributes
+                    $element.attr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE, true);
+                    // Logic
+                    firstClick = false; // Int 2nd click
+                } else {
+                    // Animation
+                    gsap.to($element[0], cssInactive);
+                    // Attributes
+                    $element.removeAttr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE);
+                    // Logic
+                    firstClick = true;
+                }
+            }
+            preventDoubleClick = true;
+        });
+    });
+};
+
+},{"../config.js":"k5Hzs","../model.js":"Y4A21","../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Y4A21":[function(require,module,exports) {
+// + Imports +
+// Base
+// Custom
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state);
+parcelHelpers.export(exports, "createState", ()=>createState);
+var _configJs = require("./config.js");
+var _helper = require("./helper");
+var _createElementsJs = require("./helper/createElements.js");
+var _createElementsJsDefault = parcelHelpers.interopDefault(_createElementsJs);
+var _populateStylesObjectJs = require("./helper/populateStylesObject.js");
+var _populateStylesObjectJsDefault = parcelHelpers.interopDefault(_populateStylesObjectJs);
+const state = {
+    data: {}
+};
+const createState = function($formBlock, index) {
+    // Add
+    state.data[`form${index}`] = {
+        // Index
+        formBlockIndex: index,
+        // Create initial elements
+        elements: (0, _createElementsJsDefault.default)($formBlock, index),
+        // Initial click record object
+        clickRecord: [
+            {
+                step: 0
+            }
+        ],
+        // Styles
+        styles: (0, _populateStylesObjectJsDefault.default)($formBlock),
+        // Environment variables
+        keyEventsAllowed: true,
+        devMode: (0, _helper.returnDevModeIndex)($formBlock),
+        autoDetectNextStep: ($formBlock.attr(_configJs.AUTO_DETECT_NEXT_STEP_ATTRIBUTE) || _configJs.AUTO_DETECT_NEXT_STEP_DEFAULT) == "true",
+        // Handlers
+        handlers: {
+            devModeLog: function(stateData) {
+                if (stateData.devMode) console.log(`Dev Mode ${stateData.devMode}:\nstate -> data -> form${stateData.formBlockIndex}:\n`, stateData);
+            }
+        }
+    };
+    // Return
+    return state.data[`form${index}`];
+};
+
+},{"./config.js":"k5Hzs","./helper":"lVRAz","./helper/createElements.js":"6bWx7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./helper/populateStylesObject.js":"aSMyv"}],"lVRAz":[function(require,module,exports) {
+// + Imports +
+// Base
+// Custom
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// + Functions +
+// Mark click element
+parcelHelpers.export(exports, "markClickElement", ()=>markClickElement);
+// jQuery to native JS
+parcelHelpers.export(exports, "jQueryToJs", ()=>jQueryToJs);
+// - - Return child elements - -
+parcelHelpers.export(exports, "returnChildElements", ()=>returnChildElements);
+// - - Development mode - -
+parcelHelpers.export(exports, "returnDevModeIndex", ()=>returnDevModeIndex);
+// - - String related functions - -
+// - Get attribute values -
+parcelHelpers.export(exports, "getJsonAttrVals", ()=>getJsonAttrVals);
+var _configJs = require("./config.js");
+function markClickElement($buttons, $button = false) {
+    $buttons.attr(_configJs.MARK_CLICK_ELEMENT_ATTRIBUTE, false);
+    if ($button) $button.attr(_configJs.MARK_CLICK_ELEMENT_ATTRIBUTE, true);
+}
+function jQueryToJs($elements) {
+    // Guard
+    if ($elements.length === 0) return "[not-findable]";
+    // Vars
+    let nodeList = [];
+    $elements.each(function() {
+        nodeList.push(this);
+    });
+    return nodeList;
+}
+function returnChildElements($element, selector, eqValue = "false", notSelector = "false") {
+    // Values
+    const $foundElements = $element.find(selector);
+    let $childElements = $element.children();
+    // Logic
+    if ($foundElements.length > 0) return $foundElements;
+    if (notSelector != "false") $childElements = $childElements.not(notSelector);
+    if (eqValue != "false") $childElements = $childElements.eq(eqValue);
+    return $childElements;
+}
+function returnDevModeIndex($element) {
+    // Local variables
+    let attrString = $element.attr(_configJs.DEV_MODE_ATTRIBUTE), returnValue = 0;
+    // Local function
+    _configJs.DEV_MODE_OBJECT.forEach((item)=>{
+        // Loop through
+        item.names.forEach((name)=>{
+            if (name == attrString) returnValue = item.value;
+        });
+    });
+    return returnValue;
+}
+function getJsonAttrVals($element, attribute, defaultVals, objectMode = true) {
+    let val = ($element.attr(attribute) || "{}") == "{}" ? {
+        ...defaultVals
+    } : JSON.parse(preJsonParse($element.attr(attribute), objectMode));
+    return val;
+}
+// - Prepare for JSON parse -
+function preJsonParse(string, objectMode = true) {
+    let array = trimBothStringSides(string.replace(/\, /g, ",")).split(","), newString = "", arrayLength = array.length - 1;
+    array.forEach((item, i)=>{
+        item.replace(/\'/g, "").replace(/\: /g, ":").split(":").forEach((item, i2)=>{
+            newString += `"${item}"${i2 > 0 ? "" : ": "}`;
+        });
+        newString += i < arrayLength ? ", " : "";
+    });
+    if (objectMode) return `{${newString}}`;
+    else return newString;
+}
+// Removes curly brackets
+function trimBothStringSides(string) {
+    return string.substring(1).slice(0, -1);
+}
+
+},{"./config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"6bWx7":[function(require,module,exports) {
 // + Imports +
 // Base
 // Custom
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _configJs = require("../config.js");
-// + Classes +
-// Base WebflowView
-class WebflowView {
-    // ELements
-    #body = $(_configJs.BODY_SELECTOR);
+var _autoDeleteConditionallyInvisibleElementsJs = require("./autoDeleteConditionallyInvisibleElements.js");
+var _autoDeleteConditionallyInvisibleElementsJsDefault = parcelHelpers.interopDefault(_autoDeleteConditionallyInvisibleElementsJs);
+var _helperJs = require("../helper.js");
+// + Exports +
+exports.default = function($this, formBlockIndex) {
+    // Auto delete
+    (0, _autoDeleteConditionallyInvisibleElementsJsDefault.default)($this);
     // Values
-    string = "hello, world!";
-    // Functions
-    // Test
-    consoleLog(message = this.string) {
-        console.log(this.#body, message);
-    }
-    // Event listeners
-    addHandler(handler) {
-        [
-            "hashchange",
-            "load"
-        ].forEach((event)=>window.addEventListener(event, handler));
+    const elements = {};
+    // Elements
+    elements.$formBlock = $this;
+    elements.$form = (0, _helperJs.returnChildElements)(elements.$formBlock, _configJs.FORM_SELECTOR, 0);
+    elements.$steps = (0, _helperJs.returnChildElements)(elements.$form, _configJs.STEP_SELECTOR, "false", `${_configJs.DIVIDER_SELCTOR}, ${_configJs.QUIZ_RESULT_SELECTOR}`);
+    elements.$backwardsButtons = elements.$form.find(_configJs.BACKWARDS_BUTTON_SELECTOR);
+    elements.$submitButtons = elements.$form.find(_configJs.SUBMIT_BUTTON_SELECTOR);
+    elements.$notForm = elements.$formBlock.children().not(elements.$form);
+    elements.$backButton = elements.$notForm.find(_configJs.BACKWARDS_BUTTON_SELECTOR);
+    elements.$nextButton = elements.$notForm.find(_configJs.CONTINUE_BUTTON_SELECTOR);
+    elements.backButtons = (0, _helperJs.jQueryToJs)(elements.$backButton);
+    elements.nextButtons = (0, _helperJs.jQueryToJs)(elements.$nextButton);
+    elements.$progressBar = elements.$formBlock.find(_configJs.PROGRESS_BAR_SELECTOR);
+    elements.progressBars = (0, _helperJs.jQueryToJs)(elements.$progressBar);
+    elements.$anchor = elements.$formBlock.find(_configJs.ANCHOR_ELEMENT_SELECTOR).eq(0);
+    // Save form block index in the DOM
+    elements.$formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE, formBlockIndex);
+    // Return
+    return elements;
+};
+
+},{"../config.js":"k5Hzs","./autoDeleteConditionallyInvisibleElements.js":"2PNJc","../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2PNJc":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _config = require("../config");
+// + Exports +
+// - - Remove webflow invisible steps / items / elements - -
+exports.default = function($formBlock) {
+    if ($formBlock.attr((0, _config.AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE)) != "false") $formBlock.find((0, _config.CONDITION_INVISIBLE_SELECTOR)).remove();
+};
+
+},{"../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"aSMyv":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+var _helperJs = require("../helper.js");
+// + Exports +
+// - - Populate styles object - -
+exports.default = function($element) {
+    // Initial varaible
+    const styles = {
+        animationMsTime: parseFloat($element.attr(_configJs.ANIMATION_MS_TIME_ATTRIBUTE) || _configJs.ANIMATION_MS_TIME_DEFAULT),
+        equalHeightTransitionSpeedMultiplier: parseFloat($element.attr(_configJs.EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE) || _configJs.EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_DEFAULT),
+        cssShow: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_SHOW_ATTRIBUTE, _configJs.CSS_SHOW_DEFAULT),
+        cssHide: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_HIDE_ATTRIBUTE, _configJs.CSS_HIDE_DEFAULT),
+        cssActive: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_ACTIVE_ATTRIBUTE, _configJs.CSS_ACTIVE_DEFAULT),
+        cssInactive: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_INACTIVE_ATTRIBUTE, _configJs.CSS_INACTIVE_DEFAULT),
+        cssBackForthActive: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_BACK_FORTH_ACTIVE_ATTRIBUTE, _configJs.CSS_BACK_FORTH_ACTIVE_DEFAULT),
+        cssBackForthInactive: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_BACK_FORTH_INACTIVE_ATTRIBUTE, _configJs.CSS_BACK_FORTH_INACTIVE_DEFAULT),
+        errorColor: $element.attr(_configJs.ERROR_COLOR_ATTRIBUTE) || _configJs.ERROR_COLOR_DEFAULT,
+        slideDirection: $element.attr(_configJs.SLIDE_DIRECTION_ATTRIBUTE) || _configJs.SLIDE_DIRECTION_DEFAULT,
+        customNextSlideIn: (0, _helperJs.getJsonAttrVals)($element, _configJs.CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE, _configJs.CUSTOM_NEXT_SLIDE_IN_DEFAULT),
+        customNextSlideOut: (0, _helperJs.getJsonAttrVals)($element, _configJs.CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE, _configJs.CUSTOM_NEXT_SLIDE_OUT_DEFAULT),
+        customPrevSlideIn: (0, _helperJs.getJsonAttrVals)($element, _configJs.CUSTOM_PREV_SLIDE_IN_ATTRIBUTE, _configJs.CUSTOM_PREV_SLIDE_IN_DEFAULT),
+        customPrevSlideOut: (0, _helperJs.getJsonAttrVals)($element, _configJs.CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE, _configJs.CUSTOM_PREV_SLIDE_OUT_DEFAULT),
+        customXMultiplier: parseFloat($element.attr(_configJs.CUSTOM_X_MULTIPLIER_ATTRIBUTE) || _configJs.CUSTOM_X_MULTIPLIER_DEFAULT),
+        customYMultiplier: parseFloat($element.attr(_configJs.CUSTOM_Y_MULTIPLIER_ATTRIBUTE) || _configJs.CUSTOM_Y_MULTIPLIER_DEFAULT),
+        autoResizeTimeMultiplier1: parseFloat($element.attr(_configJs.AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE) || _configJs.AUTO_RESIZE_TIME_MULTIPLIER_1_DEFAULT),
+        autoResizeTimeMultiplier2: parseFloat($element.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) || _configJs.AUTO_RESIZE_TIME_MULTIPLIER_2_DEFAULT),
+        autoResizeSuccessTimeMultiplier1: parseFloat($element.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE) || _configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_DEFAULT),
+        autoResizeSuccessTimeMultiplier2: parseFloat($element.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) || _configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_DEFAULT),
+        maxSwipeScreenSize: parseInt($element.attr(_configJs.MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE) || _configJs.MAX_SWIPE_SCREEN_SIZE_DEFAULT),
+        minSwipeScreenSize: parseInt($element.attr(_configJs.MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE) || _configJs.MIN_SWIPE_SCREEN_SIZE_DEFAULT),
+        leftRightKeyEventInfinityAllowed: $element.attr(_configJs.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE) || _configJs.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT,
+        redirectMsTime: parseFloat($element.attr(_configJs.REDIRECT_MS_TIME_ATTRIBUTE) || _configJs.REDIRECT_MS_TIME_DEFAULT)
+    };
+    // Iterate over created object
+    const cssShow = styles["cssShow"], cssHide = styles["cssHide"], cssBackForthActive = styles["cssBackForthActive"], cssBackForthInactive = styles["cssBackForthInactive"], cssActive = styles["cssActive"], cssInactive = styles["cssInactive"], customNextSlideIn = styles["customNextSlideIn"], customNextSlideOut = styles["customNextSlideOut"], customPrevSlideIn = styles["customPrevSlideIn"], customPrevSlideOut = styles["customPrevSlideOut"];
+    // Format time ms time
+    styles["animationSTime"] = styles["animationMsTime"] / 1000;
+    // Set duration if not declared
+    if (cssShow["duration"] == undefined) cssShow["duration"] = styles["animationSTime"];
+    if (cssHide["duration"] == undefined) cssHide["duration"] = styles["animationSTime"];
+    if (cssBackForthActive["duration"] == undefined) cssBackForthActive["duration"] = styles["animationSTime"];
+    if (cssBackForthInactive["duration"] == undefined) cssBackForthInactive["duration"] = styles["animationSTime"];
+    if (cssActive["duration"] == undefined) cssActive["duration"] = styles["animationSTime"];
+    if (cssInactive["duration"] == undefined) cssInactive["duration"] = styles["animationSTime"];
+    if (customNextSlideIn["duration"] == undefined) customNextSlideIn["duration"] = styles["animationSTime"];
+    if (customNextSlideOut["duration"] == undefined) customNextSlideOut["duration"] = styles["animationSTime"];
+    if (customPrevSlideIn["duration"] == undefined) customPrevSlideIn["duration"] = styles["animationSTime"];
+    if (customPrevSlideOut["duration"] == undefined) customPrevSlideOut["duration"] = styles["animationSTime"];
+    // Define submission time
+    styles["submitMsTime1"] = parseFloat($element.attr(_configJs.SUBMIT_MS_TIME_1_ATTRIBUTE)) || styles["animationMsTime"];
+    styles["submitMsTime2"] = parseFloat($element.attr(_configJs.SUBMIT_MS_TIME_2_ATTRIBUTE)) || styles["animationMsTime"];
+    // Define submit animation type
+    styles["submitHide"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.SUBMIT_HIDE_ATTRIBUTE, cssHide);
+    styles["submitShow"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.SUBMIT_SHOW_ATTRIBUTE, {
+        ...cssShow,
+        duration: styles["animationSTime"] * 1.5
+    });
+    if (styles["submitHide"]["duration"] == undefined) styles["submitHide"]["duration"] = styles["submitMsTime1"] / 1000;
+    if (styles["submitShow"]["duration"] == undefined) styles["submitShow"]["duration"] = styles["submitMsTime2"] / 1000;
+    // Set css inactive
+    styles["setCssInactive"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.SET_CSS_INACTIVE_ATTRIBUTE, cssInactive);
+    delete styles["setCssInactive"].duration;
+    // Select / Deselect
+    styles["cssSelect"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_SELECT_ATTRIBUTE, cssActive);
+    styles["cssDeselect"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_DESELECT_ATTRIBUTE, cssInactive);
+    // Error status CSS cssErrorStatusResolved
+    styles["cssErrorStatus"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_ERROR_STATUS_ATTRIBUTE, {
+        duration: styles["animationSTime"]
+    });
+    styles["cssErrorStatusResolved"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE, {
+        duration: styles["animationSTime"]
+    });
+    if (styles["cssErrorStatus"]["borderColor"] == undefined) styles["cssErrorStatus"]["borderColor"] = styles["errorColor"];
+    if (styles["cssErrorStatusResolved"]["borderColor"] == undefined) styles["cssErrorStatusResolved"]["borderColor"] = "";
+    // Progress bar
+    styles["progressBarAnimationSTime"] = parseFloat($element.attr(_configJs.PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE) || styles["animationMsTime"]) / 1000;
+    styles["progressBarAxis"] = $element.attr(_configJs.PROGRESS_BAR_AXIS_ATTRIBUTE) || _configJs.PROGRESS_BAR_AXIS_DEFAULT;
+    // Anchor functionality
+    styles["anchorAnimationSTime"] = parseFloat($element.attr(_configJs.ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE) || styles["animationMsTime"]) / 1000;
+    // Return
+    return styles;
+};
+
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../helper.js":"lVRAz"}],"avjhP":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _returnPathFloat = require("../helper/returnPathFloat");
+var _returnPathFloatDefault = parcelHelpers.interopDefault(_returnPathFloat);
+// + Classes +
+class ProgressBarView {
+    // Function
+    update(stateData, isSubmit = false) {
+        // Security return check
+        if (stateData.elements.$progressBar.length < 1) return;
+        // Values
+        const pbAnimationtime = stateData.styles["progressBarAnimationSTime"], pbAxis = stateData.styles["progressBarAxis"].toLowerCase();
+        // Values
+        const percentageFloat = isSubmit ? 100 : (0, _returnPathFloatDefault.default)("longest", stateData.clickRecord, stateData.stepLogic); // Return longest path
+        // Axis logic
+        if ([
+            "x",
+            "x, y",
+            "y, x"
+        ].includes(pbAxis)) // X axis animation
+        gsap.to(stateData.elements.progressBars, {
+            width: percentageFloat + "%",
+            duration: pbAnimationtime
+        });
+        if ([
+            "y",
+            "x, y",
+            "y, x"
+        ].includes(pbAxis)) // Y axis animation
+        gsap.to(stateData.elements.progressBars, {
+            height: percentageFloat + "%",
+            duration: pbAnimationtime
+        });
     }
 }
 // + Exports +
-// WebflowView object
-exports.default = new WebflowView();
+exports.default = new ProgressBarView();
 
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["d8XZh","aenu9"], "aenu9", "parcelRequiref377")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../helper/returnPathFloat":"bvKWK"}],"bvKWK":[function(require,module,exports) {
+// + Imports +
+// + Exports +
+// - Return longest or shortest path -
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+exports.default = function(mode, clickRecord, stepLogic) {
+    // Values
+    const latestRecordId = clickRecord[clickRecord.length - 1].step, clickRecordLength = clickRecord.length;
+    let min = stepLogic.length, max = 0, count = 0, tmpCount = 0, treeArray = [];
+    // Loop function
+    function objectLoop(object) {
+        // Values
+        let array = returnNextStepIds(object);
+        // Math
+        count++;
+        tmpCount++;
+        // Handle multi steps logic
+        if (array.length > 1) {
+            // a tree split
+            treeArray.push(tmpCount);
+            tmpCount = 0;
+        }
+        // Update values
+        if (object.isLast) {
+            // Update values
+            max = Math.max(max, count);
+            min = Math.min(min, count);
+            count = 0;
+            // Add base value to tree
+            treeArray.forEach((n)=>{
+                count += n;
+            });
+            // Trim back a leaf
+            treeArray.pop();
+            // Security conditional
+            return;
+        }
+        // Action loop
+        array.forEach((id, index)=>{
+            // Iniciate loop
+            objectLoop(stepLogic[id]);
+        });
+    }
+    // Return buttons
+    function returnNextStepIds(object) {
+        // Value
+        let arr = [];
+        object.buttons.forEach((button)=>{
+            if (arr.indexOf(button.nextStepId) === -1) arr.push(button.nextStepId);
+        });
+        // Return
+        return arr;
+    }
+    // Intiliaze loop
+    objectLoop(stepLogic[latestRecordId]);
+    // Finetune math values
+    min += clickRecordLength;
+    max += clickRecordLength;
+    // Logic
+    if (mode == "shortest") {
+        let x = clickRecordLength / min;
+        return x * 100;
+    } else {
+        let x = clickRecordLength / max;
+        return x * 100;
+    }
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2Yxx6":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+// + Classes +
+// - Anchor funcitonality -
+class AnchorView {
+    // Function
+    functionality(stateData) {
+        if (stateData.elements.$anchor.length == 1) {
+            // Values
+            let width = $(window).outerWidth(true), height = stateData.elements.$anchorYOffset.outerHeight(true) || 0;
+            // If within specified scren size
+            if (width <= stateData.anchorData.anchorMaxScreenSize && width >= stateData.anchorData.anchorMinScreenSize) gsap.to(stateData.elements.anchorScrollTarget, {
+                scrollTo: {
+                    y: `#anchor-element-${formBlockIndex}`,
+                    offsetY: height
+                },
+                duration: stateData.anchorData.anchorAnimationTime
+            });
+        }
+    }
+    init(stateData) {
+        // Values
+        let anchorMinScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MIN_SCREEN_SIZE_DEFAULT), anchorMaxScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MAX_SCREEN_SIZE_DEFAULT), anchorAnimationTime = stateData.styles["anchorAnimationSTime"], anchorYOffsetSelector = stateData.elements.$anchor.attr(_configJs.ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE);
+        // Elements
+        const $anchorYOffset = $(anchorYOffsetSelector);
+        let anchorScrollTarget = document.querySelectorAll(stateData.elements.$anchor.attr(_configJs.ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE));
+        anchorScrollTarget = anchorScrollTarget.length > 0 ? anchorScrollTarget : window; // Give webflower full customizability
+        // Dom preperation
+        stateData.elements.$anchor.attr("id", `anchor-element-${stateData.formBlockIndex}`);
+        // Enrich stateData
+        stateData.anchorData = {
+            anchorMinScreenSize: anchorMinScreenSize,
+            anchorMaxScreenSize: anchorMaxScreenSize,
+            anchorAnimationTime: anchorAnimationTime
+        };
+        stateData.elements.$anchorYOffset = $anchorYOffset;
+        stateData.elements.anchorScrollTarget = anchorScrollTarget;
+        // Function
+        this.functionality(stateData);
+    }
+}
+// + Exports +
+exports.default = new AnchorView();
+
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"igI8F":[function(require,module,exports) {
+// + Imports +
+// + Classes +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class StepView {
+    addHandlers(stateData) {
+        // Find next
+        stateData.handlers.findNextStep = this.#findNext(stateData, triggeredBySwipe, autoDetectNextStep);
+        // Go to next
+        stateData.handlers.goToNextStep = this.#goToNext(stateData, stepIndex, buttonIndex);
+        // Go to prev
+        stateData.handlers.goToPreviousStep = this.#goToPrev(stateData, triggeredBySwipe);
+        // Submit form
+        stateData.handlers.submit = this.#submitForm(stateData);
+    }
+    // - Find next -
+    #findNext(triggeredBySwipe1 = false, autoDetectNextStep1 = true) {
+        // Variables
+        let currentStepId = clickRecord[clickRecord.length - 1].step, object = stepLogicObject[currentStepId];
+        // Prevent swipe gestures when turned off on step
+        if (triggeredBySwipe1 && object.swipeAllowed.toLowerCase() == "false") return;
+         // Check if swipe gesture is allowed in stepLogicObject
+        // Elements
+        let $currentStep = object.$, $clickedButton = $currentStep.find(`[${markClickElementAttribute} = "true"]`), clickedButtonId = $clickedButton.attr(clickElementIdAttribute);
+        // Logic
+        if ($clickedButton.length == 1) {
+            if (stepRequirementsPassed($formBlock, $currentStep)) goToNextStep(currentStepId, clickedButtonId);
+        } else {
+            // Select button number 1
+            if (autoDetectNextStep1) selectButton(0, $currentStep, $formBlock);
+            // Update next button
+            updateNextButton(currentStepId);
+        }
+    }
+    // - Go to next step -
+    #goToNext(stepIndex1, buttonIndex1) {
+        // Variable
+        let nextStepId = stepLogicObject[stepIndex1].buttons[buttonIndex1].nextStepId;
+        // Activate back button
+        gsap.to(backButtons, stylesObject[formBlockIndex]["cssBackForthActive"]);
+        // Submit if last step
+        if (stepLogicObject[stepIndex1].isLast) submitForm();
+        else {
+            // Variables
+            let $currentStep = stepLogicObject[stepIndex1].$;
+            $nextStep = stepLogicObject[nextStepId].$;
+            // Functions
+            // Update click record
+            clickRecord.push({
+                step: nextStepId
+            });
+            // Call transition animation
+            animateStepTransition($currentStep, $nextStep, $form, devMode);
+            // Update next button
+            updateNextButton(nextStepId);
+            // Update progres bar
+            updateProgressBar();
+            // Perfomr anchor functionality
+            anchorFunctionality();
+        }
+        // Dev mode
+        if (devMode > 0.5) console.log(`Dev mode ${devMode}; Click record: `, clickRecord);
+    }
+    // - Go to prev step -
+    #goToPrev(triggeredBySwipe2 = false) {
+        // Variables
+        let currentStepId = clickRecord[clickRecord.length - 1].step, prevStepId = clickRecord[Math.max(clickRecord.length - 2, 0)].step;
+        // Prevent swipe gestures when turned off on step
+        if (triggeredBySwipe2 && stepLogicObject[currentStepId].swipeAllowed.toLowerCase() == "false") return;
+        // Prevent going before first step
+        if (currentStepId != prevStepId) {
+            // Elements
+            let $currentStep = $form.find(`[${stepIndexAttribute} = "${currentStepId}"]`), $prevStep = $form.find(`[${stepIndexAttribute} = "${prevStepId}"]`);
+            // Functions
+            clickRecord.pop(); // Remove last element
+            animateStepTransition($currentStep, $prevStep, $form, devMode);
+        }
+        if (clickRecord.length <= 1 && $backButton.length > 0) // Is approaching first step
+        // Inactivate back button
+        gsap.to(backButtons, stylesObject[formBlockIndex]["cssBackForthInactive"]);
+        // Update next button
+        updateNextButton(prevStepId);
+        // Update progres bar
+        updateProgressBar();
+        // Perfomr anchor functionality
+        anchorFunctionality();
+        // Dev mode
+        if (devMode > 0.5) console.log(`Dev mode ${devMode}; Click record: `, clickRecord);
+    }
+    // - - Submit Form - -
+    #submitForm() {
+        // - Requirement logic -
+        // Variables
+        let currentStepId = clickRecord[clickRecord.length - 1].step, object = stepLogicObject[currentStepId], $currentStep = object.$;
+        // Request
+        if (!stepRequirementsPassed($formBlock, $currentStep)) return false; // Break
+        // Turn off keyboard form navigation
+        keyEventsAllowed = false;
+        // Remove all steps that are not part of the click record before submitting
+        removeOtherSteps(stepLogicObject, clickRecord, $formBlock);
+        // Initialize quiz mode
+        initQuizMode($formBlock, clickRecord);
+        // Update progress bar
+        updateProgressBar(true);
+        // Hide back & next buttons
+        gsap.to([
+            backButtons,
+            nextButtons
+        ], stylesObject[formBlockIndex]["cssHide"]);
+        // Submit
+        performVisualSubmit($formBlock, $form, devMode);
+    }
+}
+// + Exports +
+exports.default = new StepView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iyspg":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _config = require("../config");
+// + Load helper +
+// Allows for loading other scripts
+jQuery.loadScript = function(url, callback) {
+    jQuery.ajax({
+        url: url,
+        dataType: "script",
+        success: callback,
+        async: true
+    });
+};
+// + Exports +
+// Loader
+exports.default = function(handler) {
+    "undefined" == (0, _config.TYPEOF_GSAP_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js", function() {
+        loadGsap();
+    }) : loadGsap();
+    function loadGsap() {
+        "undefined" == (0, _config.TYPEOF_GSAP_SCROLL_TO_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js", function() {
+            loadGsapScrollTo();
+        }) : loadGsapScrollTo();
+    }
+    function loadGsapScrollTo() {
+        "undefined" == (0, _config.TYPEOF_HAMMER_JS_DEPENDENCY) ? $.loadScript("https://cdn.jsdelivr.net/gh/BarthMedia/js@main/ScrollToPlugin.min.js", function() {
+            handler();
+        }) : handler();
+    }
+};
+
+},{"../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"cYr2M":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _config = require("../config");
+// + Exports +
+// - - Create next steps object - -
+exports.default = function($steps) {
+    // Local variables
+    let stepsObject = [];
+    // Initialize stepsObject
+    $steps.each(function(stepIndex) {
+        // Local elements
+        let $step = $(this), $buttons = $step.find(`[${_config.CLICK_ELEMENT_ID_ATTRIBUTE}]`), buttonsObject = [];
+        $buttons.each(function() {
+            // Element
+            let $button = $(this);
+            // Populate buttons object
+            buttonsObject.push({
+                id: $button.attr(_config.CLICK_ELEMENT_ID_ATTRIBUTE),
+                conditional: $button.attr(_config.CONDITIONAL_ATTRIBUTE)
+            });
+        });
+        // Populate steps object
+        stepsObject.push({
+            $: $step,
+            step: stepIndex,
+            swipeAllowed: $step.attr(_config.SWIPE_ALLOWED_ATTRIBUTE) || "true",
+            conditional: $step.attr(_config.CONDITIONAL_ATTRIBUTE),
+            conditionalNext: $step.attr(_config.CONDITIONAL_NEXT_ATTRIBUTE),
+            buttons: buttonsObject
+        });
+    });
+    // Add logic to stepsObject
+    let stepsCount = stepsObject.length;
+    stepsObject.forEach((step)=>{
+        // Local val
+        let stepIndex = step.step, relativeLast = step.$.attr(_config.RELATIVE_LAST_STEP_ATTRIBUTE);
+        // Conditional last logic
+        step.isLast = stepIndex == stepsCount - 1 ? true : false;
+        if (relativeLast == "true") step.isLast = true;
+        // Next id logic
+        step.buttons.forEach((button)=>{
+            if (button.conditional != undefined) button.nextStepId = (()=>{
+                for (step of stepsObject){
+                    if (step.conditional == button.conditional) return step.step;
+                }
+            })();
+            else if (step.conditionalNext != undefined) button.nextStepId = stepIndex + 1;
+            else button.nextStepId = (()=>{
+                for (step of stepsObject){
+                    if (step.step > stepIndex && step.conditional == undefined) return step.step;
+                }
+            })();
+        });
+    });
+    return stepsObject;
+};
+
+},{"../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["d8XZh","aenu9"], "aenu9", "parcelRequire1c1c")
 
 //# sourceMappingURL=index.e37f48ea.js.map

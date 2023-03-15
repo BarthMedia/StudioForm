@@ -1,38 +1,124 @@
 // + Imports +
 
 // Base
-import { async } from 'regenerator-runtime';
 
 // Custom
 import * as config from './config.js';
 
 // + Functions +
 
-// Timeout
-export const timeout = function (s) {
-  // Return
-  return new Promise(function (_, reject) {
-    // Timeout
-    setTimeout(function () {
-      // Create error
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
-
-// Return JSON
-export const getJson = async function (url) {
-  try {
-    // Values
-    const res = await Promise.race([fetch(url), timeout(config.TIMEOUT_SEC)]);
-    const data = await res.json();
-
-    // Logic
-    if (!res.ok) throw new Error(`${data.message} (${res.status})`);
-
-    // Return
-    return data;
-  } catch (err) {
-    throw err;
+// Mark click element
+export function markClickElement($buttons, $button = false) {
+  $buttons.attr(config.MARK_CLICK_ELEMENT_ATTRIBUTE, false);
+  if ($button) {
+    $button.attr(config.MARK_CLICK_ELEMENT_ATTRIBUTE, true);
   }
-};
+}
+
+// jQuery to native JS
+export function jQueryToJs($elements) {
+  // Guard
+  if ($elements.length === 0) return '[not-findable]';
+
+  // Vars
+  let nodeList = [];
+
+  $elements.each(function () {
+    nodeList.push(this);
+  });
+
+  return nodeList;
+}
+
+// - - Return child elements - -
+export function returnChildElements(
+  $element,
+  selector,
+  eqValue = 'false',
+  notSelector = 'false'
+) {
+  // Values
+  const $foundElements = $element.find(selector);
+  let $childElements = $element.children();
+
+  // Logic
+  if ($foundElements.length > 0) {
+    return $foundElements;
+  }
+
+  if (notSelector != 'false') {
+    $childElements = $childElements.not(notSelector);
+  }
+
+  if (eqValue != 'false') {
+    $childElements = $childElements.eq(eqValue);
+  }
+
+  return $childElements;
+}
+
+// - - Development mode - -
+export function returnDevModeIndex($element) {
+  // Local variables
+  let attrString = $element.attr(config.DEV_MODE_ATTRIBUTE),
+    returnValue = 0;
+
+  // Local function
+  config.DEV_MODE_OBJECT.forEach(item => {
+    // Loop through
+    item.names.forEach(name => {
+      if (name == attrString) {
+        returnValue = item.value;
+      }
+    });
+  });
+
+  return returnValue;
+}
+
+// - - String related functions - -
+
+// - Get attribute values -
+export function getJsonAttrVals(
+  $element,
+  attribute,
+  defaultVals,
+  objectMode = true
+) {
+  let val =
+    ($element.attr(attribute) || '{}') == '{}'
+      ? { ...defaultVals }
+      : JSON.parse(preJsonParse($element.attr(attribute), objectMode));
+
+  return val;
+}
+
+// - Prepare for JSON parse -
+function preJsonParse(string, objectMode = true) {
+  let array = trimBothStringSides(string.replace(/\, /g, ',')).split(','),
+    newString = '',
+    arrayLength = array.length - 1;
+
+  array.forEach((item, i) => {
+    item
+      .replace(/\'/g, '')
+      .replace(/\: /g, ':')
+      .split(':')
+      .forEach((item, i2) => {
+        newString += `"${item}"${i2 > 0 ? '' : ': '}`;
+      });
+
+    newString += i < arrayLength ? ', ' : '';
+  });
+
+  if (objectMode) {
+    return `{${newString}}`;
+  } else {
+    return newString;
+  }
+}
+
+// Removes curly brackets
+function trimBothStringSides(string) {
+  return string.substring(1).slice(0, -1);
+}

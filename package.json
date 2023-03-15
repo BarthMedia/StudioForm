@@ -1,7 +1,7 @@
 {
-  "name": "@bmg/github-template",
-  "version": "0.0.0",
-  "description": "Minimalistic template repository for building rich native JavaScript / jQuery applications for Webflow",
+  "name": "@bmg-studio/form",
+  "version": "0.0.2",
+  "description": "Universal, multi-step, conditional webflow form creation script",
   "default": "src/index.html",
   "scripts": {
     "start": "parcel src/index.html",
