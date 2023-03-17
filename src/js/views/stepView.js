@@ -3,28 +3,28 @@
 // + Classes +
 class StepView {
   addHandlers(stateData) {
+    // Fix the this Keyword
+    const thisClass = this;
+
     // Find next
-    stateData.handlers.findNextStep = this.#findNext(
-      stateData,
-      triggeredBySwipe,
-      autoDetectNextStep
-    );
+    stateData.handlers.findNextStep = () => {
+      thisClass.#findNext(stateData, triggeredBySwipe, autoDetectNextStep);
+    };
 
     // Go to next
-    stateData.handlers.goToNextStep = this.#goToNext(
-      stateData,
-      stepIndex,
-      buttonIndex
-    );
+    stateData.handlers.goToNextStep = () => {
+      thisClass.#goToNext(stateData, stepIndex, buttonIndex);
+    };
 
     // Go to prev
-    stateData.handlers.goToPreviousStep = this.#goToPrev(
-      stateData,
-      triggeredBySwipe
-    );
+    stateData.handlers.goToPreviousStep = () => {
+      thisClass.#goToPrev(stateData, triggeredBySwipe);
+    };
 
     // Submit form
-    stateData.handlers.submit = this.#submitForm(stateData);
+    stateData.handlers.submit = () => {
+      thisClass.#submitForm(stateData);
+    };
   }
 
   // - Find next -
