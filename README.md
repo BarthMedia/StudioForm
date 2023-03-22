@@ -27,3 +27,9 @@ git push origin main
 ## Pull from GitHub
 
 git pull https://github.com/BarthMedia/studioForm.git main
+
+
+
+###### Note:
+
+If you create a production version, make sure it is in the dist folder and has a correct version number so that jsDelivr and old users never lose access.
