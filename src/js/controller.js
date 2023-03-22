@@ -36,17 +36,17 @@ const controlMain = function () {
     // - Create next step object -
     stateData.stepLogic = creatNextStepObject(elements.$steps);
 
-    // Initialize progress bar
-    view.initProgressBar(stateData);
-
-    // Initialize progress bar
-    view.initAnchor(stateData);
-
     // Add step view handlers
     view.addStepViewHandlers(stateData);
 
     // Dev mode log
     handlers.devModeLog(stateData);
+
+    // Initialize keyboard events
+    view.initKeyboardEvents(stateData);
+
+    // Initialize swipe gestures
+    view.initSwipeGestures(stateData);
   });
 };
 

@@ -1,4 +1,10 @@
 // + Imports +
+import * as config from '../config.js';
+import stepRequirementsPassed from '../helper/stepRequirementsPassed.js';
+import animateStepTransition from '../helper/animateStepTransition.js';
+import selectButton from '../helper/selectButton.js';
+import progressBarView from './progressBarView.js';
+import anchorView from './anchorView.js';
 
 // + Classes +
 class StepView {
@@ -7,17 +13,17 @@ class StepView {
     const thisClass = this;
 
     // Find next
-    stateData.handlers.findNextStep = () => {
-      thisClass.#findNext(stateData, triggeredBySwipe, autoDetectNextStep);
+    stateData.handlers.findNextStep = (triggeredBySwipe = false) => {
+      thisClass.#findNext(stateData, triggeredBySwipe);
     };
 
     // Go to next
-    stateData.handlers.goToNextStep = () => {
-      thisClass.#goToNext(stateData, stepIndex, buttonIndex);
-    };
+    // stateData.handlers.goToNextStep = () => {
+    //   thisClass.#goToNext(stateData, stepIndex, buttonIndex);
+    // };
 
     // Go to prev
-    stateData.handlers.goToPreviousStep = () => {
+    stateData.handlers.goToPreviousStep = (triggeredBySwipe = false) => {
       thisClass.#goToPrev(stateData, triggeredBySwipe);
     };
 
@@ -25,13 +31,30 @@ class StepView {
     stateData.handlers.submit = () => {
       thisClass.#submitForm(stateData);
     };
+
+    // Fire anchor
+    stateData.handlers.anchorFunctionality = () => {
+      anchorView.functionality(stateData);
+    };
+
+    // Initialize progress bar
+    anchorView.init(stateData);
+
+    // Update progress bar
+    stateData.handlers.updateProgressBar = (isSubmit = false) => {
+      progressBarView.update(stateData, isSubmit);
+    };
+
+    // Initialize progress bar
+    stateData.handlers.updateProgressBar();
   }
 
   // - Find next -
-  #findNext(triggeredBySwipe = false, autoDetectNextStep = true) {
+  #findNext(stateData, triggeredBySwipe) {
     // Variables
-    let currentStepId = clickRecord[clickRecord.length - 1].step, // Get current click record entry
-      object = stepLogicObject[currentStepId];
+    const currentStepId =
+        stateData.clickRecord[stateData.clickRecord.length - 1].step, // Get current click record entry
+      object = stateData.stepLogic[currentStepId];
 
     // Prevent swipe gestures when turned off on step
     if (triggeredBySwipe && object.swipeAllowed.toLowerCase() == 'false') {
@@ -39,76 +62,115 @@ class StepView {
     } // Check if swipe gesture is allowed in stepLogicObject
 
     // Elements
-    let $currentStep = object.$, // find step with that id
+    const $currentStep = object.$, // find step with that id
       $clickedButton = $currentStep.find(
-        `[${markClickElementAttribute} = "true"]`
+        `[${config.MARK_CLICK_ELEMENT_ATTRIBUTE} = "true"]`
       ), // find button with got clicked attribute
-      clickedButtonId = $clickedButton.attr(clickElementIdAttribute);
+      clickedButtonId = $clickedButton.attr(config.CLICK_ELEMENT_ID_ATTRIBUTE);
 
     // Logic
     if ($clickedButton.length == 1) {
-      if (stepRequirementsPassed($formBlock, $currentStep)) {
-        goToNextStep(currentStepId, clickedButtonId);
+      if (stepRequirementsPassed(stateData.elements.$formBlock, $currentStep)) {
+        this.#goToNext(stateData, currentStepId, clickedButtonId);
       }
     } else {
       // Select button number 1
-      if (autoDetectNextStep) selectButton(0, $currentStep, $formBlock);
+      if (stateData.autoDetectNextStep)
+        selectButton(stateData, 0, $currentStep);
 
       // Update next button
-      updateNextButton(currentStepId);
+      this.#updateNextButton(stateData, currentStepId);
+    }
+  }
+
+  // - Update next button -
+  #updateNextButton(stateData, stepId) {
+    // Security return check
+    if (stateData.elements.$nextButton.length < 1) return;
+
+    // Elements
+    const $step = stateData.elements.$form.find(
+        `[${config.STEP_INDEX_ATTRIBUTE} = "${stepId}"]`
+      ),
+      $clickedButton = $step.find(
+        `[${config.MARK_CLICK_ELEMENT_ATTRIBUTE} = "true"]`
+      );
+
+    // Action logic
+    if (
+      $clickedButton.length > 0 &&
+      stepRequirementsPassed(stateData.elements.$formBlock, $step)
+    ) {
+      // If a clicked button exists
+      gsap.to(
+        stateData.elements.nextButtons,
+        stateData.styles['cssBackForthActive']
+      );
+    } else {
+      gsap.to(
+        stateData.elements.nextButtons,
+        stateData.styles['cssBackForthInactive']
+      );
     }
   }
 
   // - Go to next step -
-  #goToNext(stepIndex, buttonIndex) {
+  #goToNext(stateData, stepIndex, buttonIndex) {
     // Variable
-    let nextStepId = stepLogicObject[stepIndex].buttons[buttonIndex].nextStepId;
+    const nextStepId =
+      stateData.stepLogic[stepIndex].buttons[buttonIndex].nextStepId;
 
     // Activate back button
-    gsap.to(backButtons, stylesObject[formBlockIndex]['cssBackForthActive']);
+    gsap.to(
+      stateData.elements.backButtons,
+      stateData.styles['cssBackForthActive']
+    );
 
     // Submit if last step
-    if (stepLogicObject[stepIndex].isLast) {
+    if (stateData.stepLogic[stepIndex].isLast) {
       submitForm();
     } else {
       // Variables
-      let $currentStep = stepLogicObject[stepIndex].$;
-      $nextStep = stepLogicObject[nextStepId].$;
+      const $currentStep = stateData.stepLogic[stepIndex].$,
+        $nextStep = stateData.stepLogic[nextStepId].$;
 
       // Functions
 
       // Update click record
-      clickRecord.push({ step: nextStepId });
+      stateData.clickRecord.push({ step: nextStepId });
 
       // Call transition animation
-      animateStepTransition($currentStep, $nextStep, $form, devMode);
+      animateStepTransition(stateData, $currentStep, $nextStep);
 
       // Update next button
-      updateNextButton(nextStepId);
+      this.#updateNextButton(stateData, nextStepId);
 
       // Update progres bar
-      updateProgressBar();
+      stateData.handlers.updateProgressBar();
 
       // Perfomr anchor functionality
-      anchorFunctionality();
+      stateData.handlers.anchorFunctionality();
     }
 
     // Dev mode
-    if (devMode > 0.5) {
+    if (stateData.devMode > 0.5) {
       console.log(`Dev mode ${devMode}; Click record: `, clickRecord);
     }
   }
 
   // - Go to prev step -
-  #goToPrev(triggeredBySwipe = false) {
+  #goToPrev(stateData, triggeredBySwipe) {
     // Variables
-    let currentStepId = clickRecord[clickRecord.length - 1].step,
-      prevStepId = clickRecord[Math.max(clickRecord.length - 2, 0)].step;
+    const currentStepId =
+        stateData.clickRecord[stateData.clickRecord.length - 1].step,
+      prevStepId =
+        stateData.clickRecord[Math.max(stateData.clickRecord.length - 2, 0)]
+          .step;
 
     // Prevent swipe gestures when turned off on step
     if (
       triggeredBySwipe &&
-      stepLogicObject[currentStepId].swipeAllowed.toLowerCase() == 'false'
+      stateData.stepLogic[currentStepId].swipeAllowed.toLowerCase() == 'false'
     ) {
       return;
     }
@@ -116,56 +178,61 @@ class StepView {
     // Prevent going before first step
     if (currentStepId != prevStepId) {
       // Elements
-      let $currentStep = $form.find(
-          `[${stepIndexAttribute} = "${currentStepId}"]`
+      const $currentStep = stateData.elements.$form.find(
+          `[${config.STEP_INDEX_ATTRIBUTE} = "${currentStepId}"]`
         ),
-        $prevStep = $form.find(`[${stepIndexAttribute} = "${prevStepId}"]`);
+        $prevStep = stateData.elements.$form.find(
+          `[${config.STEP_INDEX_ATTRIBUTE} = "${prevStepId}"]`
+        );
 
       // Functions
-      clickRecord.pop(); // Remove last element
-      animateStepTransition($currentStep, $prevStep, $form, devMode);
+      stateData.clickRecord.pop(); // Remove last element
+      animateStepTransition(stateData, $currentStep, $prevStep);
     }
 
-    if (clickRecord.length <= 1 && $backButton.length > 0) {
+    if (
+      stateData.clickRecord.length <= 1 &&
+      stateData.elements.$backButton.length > 0
+    ) {
       // Is approaching first step
       // Inactivate back button
       gsap.to(
-        backButtons,
-        stylesObject[formBlockIndex]['cssBackForthInactive']
+        stateData.elements.backButtons,
+        stateData.styles['cssBackForthInactive']
       );
     }
 
     // Update next button
-    updateNextButton(prevStepId);
+    this.#updateNextButton(stateData, prevStepId);
 
     // Update progres bar
-    updateProgressBar();
+    stateData.handlers.updateProgressBar();
 
     // Perfomr anchor functionality
-    anchorFunctionality();
+    stateData.handlers.anchorFunctionality();
 
     // Dev mode
-    if (devMode > 0.5) {
+    if (stateData.devMode > 0.5) {
       console.log(`Dev mode ${devMode}; Click record: `, clickRecord);
     }
   }
 
   // - - Submit Form - -
-  #submitForm() {
+  #submitForm(stateData) {
     // - Requirement logic -
 
     // Variables
-    let currentStepId = clickRecord[clickRecord.length - 1].step, // Get current click record entry
-      object = stepLogicObject[currentStepId],
+    const currentStepId = stateData.clickRecord[clickRecord.length - 1].step, // Get current click record entry
+      object = stateData.stepLogic[currentStepId],
       $currentStep = object.$;
 
     // Request
-    if (!stepRequirementsPassed($formBlock, $currentStep)) {
+    if (!stepRequirementsPassed(stateData.elements.$formBlock, $currentStep)) {
       return false; // Break
     }
 
     // Turn off keyboard form navigation
-    keyEventsAllowed = false;
+    stateData.keyEventsAllowed = false;
 
     // Remove all steps that are not part of the click record before submitting
     removeOtherSteps(stepLogicObject, clickRecord, $formBlock);

@@ -8,6 +8,8 @@ import buttonView from './buttonView.js';
 import progressBarView from './progressBarView.js';
 import anchorView from './anchorView.js';
 import stepView from './stepView.js';
+import swipeGestureView from './swipeGestureView.js';
+import autoFocusAndKeyboardEventsView from './autoFocusAndKeyboardEventsView.js';
 
 // + Classes +
 
@@ -18,20 +20,30 @@ class WebflowView {
     stepView.addHandlers(stateData);
   }
 
-  // Initialize progress bar
-  initProgressBar(stateData) {
-    // Init
-    progressBarView.update(stateData);
-  }
+  // Initialize progress bar --- In stepView.js
+  // initProgressBar(stateData) {
+  //   // Init
+  //   progressBarView.update(stateData);
+  // }
 
   // Initialize buttons
   initButtons(stateData) {
     buttonView.init(stateData);
   }
 
-  // Initialize anchor
-  initAnchor(stateData) {
-    anchorView.init(stateData);
+  // Initialize anchor --- In stepView.js
+  // initAnchor(stateData) {
+  //   anchorView.init(stateData);
+  // }
+
+  // Initialize Keyboard events
+  initKeyboardEvents(stateData) {
+    autoFocusAndKeyboardEventsView.init(stateData);
+  }
+
+  // Initialize Hammer.js
+  initSwipeGestures(stateData) {
+    swipeGestureView.init(stateData);
   }
 
   // Delete visual dividers

@@ -4,7 +4,7 @@ import returnPathFloat from '../helper/returnPathFloat';
 // + Classes +
 class ProgressBarView {
   // Function
-  update(stateData, isSubmit = false) {
+  update(stateData, isSubmit) {
     // Security return check
     if (stateData.elements.$progressBar.length < 1) return;
 

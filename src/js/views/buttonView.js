@@ -11,68 +11,45 @@ class ButtonView {
     this.#initBackForthButtons(stateData.elements, stateData.styles);
 
     // Initialize continue buttons
-    this.#initContinueButtons(stateData.elements);
+    this.#initContinueButtons(stateData.handlers, stateData.elements);
 
     // - Backwards buttons -
-    this.#addBackwardButtonHandler(stateData.elements);
+    this.#addBackwardButtonHandler(stateData.handlers, stateData.elements);
 
     // - Next button(s) -
     this.#addNextButtonHandler(
+      stateData.handlers,
       stateData.elements,
       stateData.autoDetectNextStep
     );
 
     // - Submit buttons -
-    this.#addSubmitButtonHandler(stateData.elements);
-  }
-
-  // - Update next button -
-  #updateNextButton(stepId) {
-    // Security return check
-    if ($nextButton.length < 1) return;
-
-    // Elements
-    let $step = $form.find(`[${stepIndexAttribute} = "${stepId}"]`),
-      $clickedButton = $step.find(`[${markClickElementAttribute} = "true"]`);
-
-    // Action logic
-    if (
-      $clickedButton.length > 0 &&
-      stepRequirementsPassed($formBlock, $step)
-    ) {
-      // If a clicked button exists
-      gsap.to(nextButtons, stylesObject[formBlockIndex]['cssBackForthActive']);
-    } else {
-      gsap.to(
-        nextButtons,
-        stylesObject[formBlockIndex]['cssBackForthInactive']
-      );
-    }
+    this.#addSubmitButtonHandler(stateData.handlers, stateData.elements);
   }
 
   // - Backwards buttons -
-  #addBackwardButtonHandler(elements) {
+  #addBackwardButtonHandler(handlers, elements) {
     elements.$backwardsButtons.add(elements.$backButton).each(function () {
       $(this).click(() => {
-        goToPrevStep();
+        handlers.goToPreviousStep();
       });
     });
   }
 
   // - Next button(s) -
-  #addNextButtonHandler(elements, autoDetectNextStep) {
+  #addNextButtonHandler(handlers, elements, autoDetectNextStep) {
     elements.$nextButton.each(function () {
       $(this).click(() => {
-        findNext(false, autoDetectNextStep);
+        handlers.findNextStep(false, autoDetectNextStep);
       });
     });
   }
 
   // - Submit buttons -
-  #addSubmitButtonHandler(elements) {
+  #addSubmitButtonHandler(handlers, elements) {
     elements.$submitButtons.each(function () {
       $(this).click(() => {
-        submitForm();
+        handlers.submit();
       });
     });
   }
@@ -87,7 +64,7 @@ class ButtonView {
   }
 
   // Initialize continue buttons
-  #initContinueButtons(elements) {
+  #initContinueButtons(handlers, elements) {
     // - For each step - Find continue buttons -
     elements.$steps.each(function (stepIndex) {
       // Local elments
@@ -120,7 +97,7 @@ class ButtonView {
 
             // Call function
             markClickElement($buttons, $button);
-            findNext();
+            handlers.findNextStep();
           }
 
           preventDoubleClick = true;

@@ -1,34 +1,41 @@
 // + Imports +
 import * as config from '../config.js';
+import selectButton from '../helper/selectButton.js';
 
 // + Classes +
 
 // - - Handle bmg autofocus & keyboard events - -
 class AutoFocusAndKeyboardEventsView {
   init(stateData) {
+    // Elements
+    const $formBlock = stateData.elements.$formBlock;
+
     // Initialize autofocus attribute on 1st form
-    if (formBlockIndex == 0) {
-      $formBlock.attr(autoFocusAttribute, true);
+    if (stateData.formBlockIndex == 0) {
+      $formBlock.attr(config.AUTO_FOCUS_ATTRIBUTE, true);
     }
 
     // Allow key board controls only on the recently clicked form
     $formBlock.mouseenter(() => {
-      $(formBlockSelctor).attr(autoFocusAttribute, false);
-      $formBlock.attr(autoFocusAttribute, true);
+      $formBlock.attr(config.AUTO_FOCUS_ATTRIBUTE, false);
+      $formBlock.attr(config.AUTO_FOCUS_ATTRIBUTE, true);
     });
 
     // Keyboard variables
-    let escEvent = (
-        $formBlock.attr(escEventAttribute) || escEventDefault
+    const escEvent = (
+        $formBlock.attr(config.ESC_EVENT_ATTRIBUTE) || config.ESC_EVENT_DEFAULT
       ).split(', '),
       enterEvent = (
-        $formBlock.attr(enterEventAttribute) || enterEventDefault
+        $formBlock.attr(config.ENTER_EVENT_ATTRIBUTE) ||
+        config.ENTER_EVENT_DEFAULT
       ).split(', '),
       leftEvent = (
-        $formBlock.attr(leftEventAttribute) || leftEventDefault
+        $formBlock.attr(config.LEFT_EVENT_ATTRIBUTE) ||
+        config.LEFT_EVENT_DEFAULT
       ).split(', '),
       rightEvent = (
-        $formBlock.attr(rightEventAttribute) || rightEventDefault
+        $formBlock.attr(config.RIGHT_EVENT_ATTRIBUTE) ||
+        config.RIGHT_EVENT_DEFAULT
       ).split(', ');
 
     // - Initialize keyboard events -
@@ -37,28 +44,31 @@ class AutoFocusAndKeyboardEventsView {
       evt = evt || window.event;
 
       // Check if keyboard is turned off on current step
-      let currentStepId = clickRecord[clickRecord.length - 1].step,
-        $currentStep = $form.find(
-          `[${stepIndexAttribute} = "${currentStepId}"]`
+      const currentStepId =
+          stateData.clickRecord[stateData.clickRecord.length - 1].step,
+        $currentStep = stateData.elements.$form.find(
+          `[${config.STEP_INDEX_ATTRIBUTE} = "${currentStepId}"]`
         );
 
-      if ($currentStep.attr(keyboardEventsOnStepAttribute) == 'false') {
+      if (
+        $currentStep.attr(config.KEYBOARD_EVENTS_ON_STEP_ATTRIBUTE) == 'false'
+      ) {
         return;
       }
 
       if (
         'key' in evt &&
-        keyEventsAllowed &&
-        $formBlock.attr(autoFocusAttribute) == 'true'
+        stateData.keyEventsAllowed &&
+        $formBlock.attr(config.AUTO_FOCUS_ATTRIBUTE) == 'true'
       ) {
         // Variables
-        let key = evt.key.toLowerCase();
+        const key = evt.key.toLowerCase();
 
         if (escEvent.includes(key)) {
-          goToPrevStep();
+          stateData.handlers.goToPreviousStep();
         } else if (enterEvent.includes(key) && !evt.shiftKey) {
           // Only if shift is not pressed
-          findNext();
+          stateData.handlers.findNextStep();
         } else if (leftEvent.includes(key) && !evt.shiftKey) {
           // Only if shift is not pressed
           findNextButton(-1);
@@ -70,25 +80,27 @@ class AutoFocusAndKeyboardEventsView {
     };
 
     // - Select next button -
-    let isInfinity =
-      stylesObject[formBlockIndex]['leftRightKeyEventInfinityAllowed'] == 'true'
+    const isInfinity =
+      stateData.styles['leftRightKeyEventInfinityAllowed'] == 'true'
         ? true
         : false;
 
     function findNextButton(directionInt = 1) {
       // Variables
-      let currentStepId = clickRecord[clickRecord.length - 1].step, // Get current click record entry
-        object = stepLogicObject[currentStepId],
+      const currentStepId =
+          stateData.clickRecord[stateData.clickRecord.length - 1].step, // Get current click record entry
+        object = stateData.stepLogic[currentStepId],
         $currentStep = object.$, // find step with that id
         buttonLength =
-          $currentStep.find(`[${clickElementIdAttribute}]`).length - 1,
+          $currentStep.find(`[${config.CLICK_ELEMENT_ID_ATTRIBUTE}]`).length -
+          1,
         $clickedButton = $currentStep.find(
-          `[${markClickElementAttribute} = "true"]`
+          `[${config.MARK_CLICK_ELEMENT_ATTRIBUTE} = "true"]`
         ), // find button with got clicked attribute
         clickedButtonId = parseInt(
-          $clickedButton.attr(clickElementIdAttribute) || -2
-        ),
-        x = clickedButtonId == -2 ? 0 : clickedButtonId + directionInt;
+          $clickedButton.attr(config.CLICK_ELEMENT_ID_ATTRIBUTE) || -2
+        );
+      let x = clickedButtonId == -2 ? 0 : clickedButtonId + directionInt;
 
       // Logic
       if (isInfinity) {
@@ -100,7 +112,7 @@ class AutoFocusAndKeyboardEventsView {
       }
 
       // Action
-      selectButton(x, $currentStep, $formBlock);
+      selectButton(stateData, x, $currentStep);
     }
   }
 }
