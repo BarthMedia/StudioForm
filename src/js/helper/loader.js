@@ -23,28 +23,28 @@ jQuery.loadScript = function (url, callback) {
 export default function (handler) {
   'undefined' == TYPEOF_GSAP_DEPENDENCY
     ? $.loadScript(
-        'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js',
+        'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js',
         function () {
-          loadGsap();
+          load2ndScript();
         }
       )
-    : loadGsap();
+    : load2ndScript();
 
-  function loadGsap() {
+  function load2ndScript() {
     'undefined' == TYPEOF_GSAP_SCROLL_TO_DEPENDENCY
       ? $.loadScript(
-          'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js',
+          'https://cdn.jsdelivr.net/gh/BarthMedia/js@main/ScrollToPlugin.min.js',
           function () {
-            loadGsapScrollTo();
+            load3rdScript();
           }
         )
-      : loadGsapScrollTo();
+      : load3rdScript();
   }
 
-  function loadGsapScrollTo() {
+  function load3rdScript() {
     'undefined' == TYPEOF_HAMMER_JS_DEPENDENCY
       ? $.loadScript(
-          'https://cdn.jsdelivr.net/gh/BarthMedia/js@main/ScrollToPlugin.min.js',
+          'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js',
           function () {
             handler();
           }
