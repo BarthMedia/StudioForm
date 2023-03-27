@@ -30,6 +30,9 @@ const controlMain = function () {
     // Remove visual dividers
     view.removeVisualDividers(devMode, elements);
 
+    // Manipulate base css
+    view.manipulateSiteCss(stateData);
+
     // Initialize buttons
     view.initButtons(stateData);
 
@@ -39,14 +42,14 @@ const controlMain = function () {
     // Add step view handlers
     view.addStepViewHandlers(stateData);
 
-    // Dev mode log
-    handlers.devModeLog(stateData);
-
     // Initialize keyboard events
     view.initKeyboardEvents(stateData);
 
     // Initialize swipe gestures
     view.initSwipeGestures(stateData);
+
+    // Dev mode log
+    handlers.devModeLog(stateData);
   });
 };
 

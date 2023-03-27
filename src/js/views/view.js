@@ -5,11 +5,12 @@
 // Custom
 import * as config from '../config.js';
 import buttonView from './buttonView.js';
-import progressBarView from './progressBarView.js';
-import anchorView from './anchorView.js';
+// import progressBarView from './progressBarView.js';
+// import anchorView from './anchorView.js';
 import stepView from './stepView.js';
 import swipeGestureView from './swipeGestureView.js';
 import autoFocusAndKeyboardEventsView from './autoFocusAndKeyboardEventsView.js';
+import manipulateSiteCssView from './manipulateSiteCssView.js';
 
 // + Classes +
 
@@ -18,6 +19,11 @@ class WebflowView {
   // Add step view handlers
   addStepViewHandlers(stateData) {
     stepView.addHandlers(stateData);
+  }
+
+  // Manipulate base css; e.g. Overflow hidden & position absolute & relative
+  manipulateSiteCss(stateData) {
+    manipulateSiteCssView.init(stateData);
   }
 
   // Initialize progress bar --- In stepView.js

@@ -52,6 +52,12 @@ export const createState = function ($formBlock, index) {
     },
   };
 
+  // console.log(
+  //   'Implement idea that the closest section get set to overflow hidden automatically, if form block is not set to overflow hidden or the attribute allows / not disallows it.'
+  // );
+
+  // Implement an easy to use xano mode
+
   // Return
   return state.data[`form${index}`];
 };

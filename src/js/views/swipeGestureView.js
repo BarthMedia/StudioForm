@@ -1,17 +1,25 @@
 // + Imports +
 import * as config from '../config.js';
+import defineSwipeType from '../helper/defineSwipeType.js';
 
 // + Classes +
 
 // - - Handle mobile swipe gestures - -
 class SwipeGestureView {
-  init() {
+  init(stateData) {
+    // Elements
+    const $formBlock = stateData.elements.$formBlock;
+
+    // Handlers
+    const goToPrevStep = stateData.handlers.goToPreviousStep,
+      findNext = stateData.handlers.findNextStep;
+
     // Init
-    defineSwipeType($formBlock);
+    defineSwipeType(stateData);
 
     // Variables
     let hammer = Hammer($formBlock[0]),
-      animationType = $formBlock.attr(swipeTypeAnimationAttribute);
+      animationType = $formBlock.attr(config.SWIPE_TYPE_ANIMATION_ATTRIBUTE);
 
     // - Variations -
     if (animationType == 'false') {
