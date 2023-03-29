@@ -21,17 +21,13 @@ const controlMain = function () {
     const stateData = model.createState($(this), index);
 
     // Values
-    const { devMode } = stateData,
-      { elements } = stateData,
+    const { elements } = stateData,
       { handlers } = stateData;
 
     // - Functions -
 
-    // Remove visual dividers
-    view.removeVisualDividers(devMode, elements);
-
     // Manipulate base css
-    view.manipulateSiteCss(stateData);
+    view.initSiteCssManipulation(stateData);
 
     // Initialize buttons
     view.initButtons(stateData);

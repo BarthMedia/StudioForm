@@ -580,12 +580,10 @@ const controlMain = function() {
         // Create state
         const stateData = _modelJs.createState($(this), index);
         // Values
-        const { devMode  } = stateData, { elements  } = stateData, { handlers  } = stateData;
+        const { elements  } = stateData, { handlers  } = stateData;
         // - Functions -
-        // Remove visual dividers
-        (0, _viewJsDefault.default).removeVisualDividers(devMode, elements);
         // Manipulate base css
-        (0, _viewJsDefault.default).manipulateSiteCss(stateData);
+        (0, _viewJsDefault.default).initSiteCssManipulation(stateData);
         // Initialize buttons
         (0, _viewJsDefault.default).initButtons(stateData);
         // - Create next step object -
@@ -606,12 +604,12 @@ const init = function() {
 };
 init();
 
-},{"core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./views/view.js":"bWlJ9","./model.js":"Y4A21","./helper/loader.js":"iyspg","./config.js":"k5Hzs","./helper/creatNextStepObject.js":"cYr2M","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gSXXb":[function(require,module,exports) {
-var global = require("b0cf0149201a28cc");
-var DESCRIPTORS = require("ffa1d5c534534f31");
-var defineBuiltInAccessor = require("c615f51045b74363");
-var regExpFlags = require("1b43a89a9e7fbd9e");
-var fails = require("c4f59ffb597347e2");
+},{"core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./views/view.js":"bWlJ9","./model.js":"Y4A21","./helper/loader.js":"iyspg","./config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./helper/creatNextStepObject.js":"cYr2M"}],"gSXXb":[function(require,module,exports) {
+var global = require("c2ac71b1e9895a4c");
+var DESCRIPTORS = require("e1b20573b451ef90");
+var defineBuiltInAccessor = require("21be03f45557950c");
+var regExpFlags = require("2abd130efb15bede");
+var fails = require("9c2d9b476fc52d56");
 // babel-minify and Closure Compiler transpiles RegExp('.', 'd') -> /./d and it causes SyntaxError
 var RegExp = global.RegExp;
 var RegExpPrototype = RegExp.prototype;
@@ -655,7 +653,7 @@ if (FORCED) defineBuiltInAccessor(RegExpPrototype, "flags", {
     get: regExpFlags
 });
 
-},{"b0cf0149201a28cc":"i8HOC","ffa1d5c534534f31":"92ZIi","c615f51045b74363":"592rH","1b43a89a9e7fbd9e":"9bz1x","c4f59ffb597347e2":"hL6D2"}],"i8HOC":[function(require,module,exports) {
+},{"c2ac71b1e9895a4c":"i8HOC","e1b20573b451ef90":"92ZIi","21be03f45557950c":"592rH","2abd130efb15bede":"9bz1x","9c2d9b476fc52d56":"hL6D2"}],"i8HOC":[function(require,module,exports) {
 var global = arguments[3];
 var check = function(it) {
     return it && it.Math == Math && it;
@@ -669,7 +667,7 @@ function() {
 }() || Function("return this")();
 
 },{}],"92ZIi":[function(require,module,exports) {
-var fails = require("8541fb1913cb79a0");
+var fails = require("36886925eb6f4ed3");
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function() {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
@@ -680,7 +678,7 @@ module.exports = !fails(function() {
     })[1] != 7;
 });
 
-},{"8541fb1913cb79a0":"hL6D2"}],"hL6D2":[function(require,module,exports) {
+},{"36886925eb6f4ed3":"hL6D2"}],"hL6D2":[function(require,module,exports) {
 module.exports = function(exec) {
     try {
         return !!exec();
@@ -690,8 +688,8 @@ module.exports = function(exec) {
 };
 
 },{}],"592rH":[function(require,module,exports) {
-var makeBuiltIn = require("9c05b2764f27f88c");
-var defineProperty = require("f24fa074c16a9440");
+var makeBuiltIn = require("1d9beb75f88c551a");
+var defineProperty = require("f8cc9182159e13e3");
 module.exports = function(target, name, descriptor) {
     if (descriptor.get) makeBuiltIn(descriptor.get, name, {
         getter: true
@@ -702,15 +700,15 @@ module.exports = function(target, name, descriptor) {
     return defineProperty.f(target, name, descriptor);
 };
 
-},{"9c05b2764f27f88c":"cTB4k","f24fa074c16a9440":"iJR4w"}],"cTB4k":[function(require,module,exports) {
-var uncurryThis = require("d412f7183d71b69b");
-var fails = require("db33306d23394a26");
-var isCallable = require("74b21f85be494b90");
-var hasOwn = require("4ab92990d7956cb7");
-var DESCRIPTORS = require("7d196fae1aaadd24");
-var CONFIGURABLE_FUNCTION_NAME = require("c3b6cf8885638c9f").CONFIGURABLE;
-var inspectSource = require("b1e06d5d334fe06f");
-var InternalStateModule = require("63bcc9719ea893e7");
+},{"1d9beb75f88c551a":"cTB4k","f8cc9182159e13e3":"iJR4w"}],"cTB4k":[function(require,module,exports) {
+var uncurryThis = require("f1161bff7b1364c5");
+var fails = require("f1a9fd5c2c4eda6a");
+var isCallable = require("5b00d6af0304e7bd");
+var hasOwn = require("5df722c3f7b66f02");
+var DESCRIPTORS = require("af73dc844184c587");
+var CONFIGURABLE_FUNCTION_NAME = require("b4bc790cda3ff662").CONFIGURABLE;
+var inspectSource = require("84f27ea96ebc1fb0");
+var InternalStateModule = require("550b876a4d506645");
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
 var $String = String;
@@ -756,8 +754,8 @@ Function.prototype.toString = makeBuiltIn(function toString() {
     return isCallable(this) && getInternalState(this).source || inspectSource(this);
 }, "toString");
 
-},{"d412f7183d71b69b":"7GlkT","db33306d23394a26":"hL6D2","74b21f85be494b90":"l3Kyn","4ab92990d7956cb7":"gC2Q5","7d196fae1aaadd24":"92ZIi","c3b6cf8885638c9f":"l6Kgd","b1e06d5d334fe06f":"9jh7O","63bcc9719ea893e7":"7AMlF"}],"7GlkT":[function(require,module,exports) {
-var NATIVE_BIND = require("66845da3744c50c0");
+},{"f1161bff7b1364c5":"7GlkT","f1a9fd5c2c4eda6a":"hL6D2","5b00d6af0304e7bd":"l3Kyn","5df722c3f7b66f02":"gC2Q5","af73dc844184c587":"92ZIi","b4bc790cda3ff662":"l6Kgd","84f27ea96ebc1fb0":"9jh7O","550b876a4d506645":"7AMlF"}],"7GlkT":[function(require,module,exports) {
+var NATIVE_BIND = require("5b906b3c34e9daf9");
 var FunctionPrototype = Function.prototype;
 var call = FunctionPrototype.call;
 var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
@@ -767,8 +765,8 @@ module.exports = NATIVE_BIND ? uncurryThisWithBind : function(fn) {
     };
 };
 
-},{"66845da3744c50c0":"i16Dq"}],"i16Dq":[function(require,module,exports) {
-var fails = require("795d5e2208729ab3");
+},{"5b906b3c34e9daf9":"i16Dq"}],"i16Dq":[function(require,module,exports) {
+var fails = require("c7127c9bee8e72d");
 module.exports = !fails(function() {
     // eslint-disable-next-line es/no-function-prototype-bind -- safe
     var test = (function() {}).bind();
@@ -776,8 +774,8 @@ module.exports = !fails(function() {
     return typeof test != "function" || test.hasOwnProperty("prototype");
 });
 
-},{"795d5e2208729ab3":"hL6D2"}],"l3Kyn":[function(require,module,exports) {
-var $documentAll = require("8e30d2f9411e2b81");
+},{"c7127c9bee8e72d":"hL6D2"}],"l3Kyn":[function(require,module,exports) {
+var $documentAll = require("2cdc059d5d9e673c");
 var documentAll = $documentAll.all;
 // `IsCallable` abstract operation
 // https://tc39.es/ecma262/#sec-iscallable
@@ -787,7 +785,7 @@ module.exports = $documentAll.IS_HTMLDDA ? function(argument) {
     return typeof argument == "function";
 };
 
-},{"8e30d2f9411e2b81":"5MHqB"}],"5MHqB":[function(require,module,exports) {
+},{"2cdc059d5d9e673c":"5MHqB"}],"5MHqB":[function(require,module,exports) {
 var documentAll = typeof document == "object" && document.all;
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
 // eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
@@ -798,8 +796,8 @@ module.exports = {
 };
 
 },{}],"gC2Q5":[function(require,module,exports) {
-var uncurryThis = require("a69a6580be8f8a0e");
-var toObject = require("23addd60c8600e6a");
+var uncurryThis = require("cf258ba1e9133285");
+var toObject = require("a8c4c4b673624eaa");
 var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 // `HasOwnProperty` abstract operation
 // https://tc39.es/ecma262/#sec-hasownproperty
@@ -808,8 +806,8 @@ module.exports = Object.hasOwn || function hasOwn(it, key) {
     return hasOwnProperty(toObject(it), key);
 };
 
-},{"a69a6580be8f8a0e":"7GlkT","23addd60c8600e6a":"5cb35"}],"5cb35":[function(require,module,exports) {
-var requireObjectCoercible = require("b1567b8de597652");
+},{"cf258ba1e9133285":"7GlkT","a8c4c4b673624eaa":"5cb35"}],"5cb35":[function(require,module,exports) {
+var requireObjectCoercible = require("297adb5ae08ccffd");
 var $Object = Object;
 // `ToObject` abstract operation
 // https://tc39.es/ecma262/#sec-toobject
@@ -817,8 +815,8 @@ module.exports = function(argument) {
     return $Object(requireObjectCoercible(argument));
 };
 
-},{"b1567b8de597652":"fOR0B"}],"fOR0B":[function(require,module,exports) {
-var isNullOrUndefined = require("22faad2551fa6a9f");
+},{"297adb5ae08ccffd":"fOR0B"}],"fOR0B":[function(require,module,exports) {
+var isNullOrUndefined = require("7f1508a6d7a18608");
 var $TypeError = TypeError;
 // `RequireObjectCoercible` abstract operation
 // https://tc39.es/ecma262/#sec-requireobjectcoercible
@@ -827,7 +825,7 @@ module.exports = function(it) {
     return it;
 };
 
-},{"22faad2551fa6a9f":"gM5ar"}],"gM5ar":[function(require,module,exports) {
+},{"7f1508a6d7a18608":"gM5ar"}],"gM5ar":[function(require,module,exports) {
 // we can't use just `it == null` since of `document.all` special case
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot-aec
 module.exports = function(it) {
@@ -835,8 +833,8 @@ module.exports = function(it) {
 };
 
 },{}],"l6Kgd":[function(require,module,exports) {
-var DESCRIPTORS = require("9e2d5016de2fe888");
-var hasOwn = require("2722413256128305");
+var DESCRIPTORS = require("c9c0029ceb2957b5");
+var hasOwn = require("31bdbcebf53c53ef");
 var FunctionPrototype = Function.prototype;
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
@@ -850,10 +848,10 @@ module.exports = {
     CONFIGURABLE: CONFIGURABLE
 };
 
-},{"9e2d5016de2fe888":"92ZIi","2722413256128305":"gC2Q5"}],"9jh7O":[function(require,module,exports) {
-var uncurryThis = require("8e0266d15284822e");
-var isCallable = require("b35c2acd51eadab5");
-var store = require("9155dccaf2dd38ea");
+},{"c9c0029ceb2957b5":"92ZIi","31bdbcebf53c53ef":"gC2Q5"}],"9jh7O":[function(require,module,exports) {
+var uncurryThis = require("78492bea197a1e41");
+var isCallable = require("4636f835f370852");
+var store = require("b56347289da4f3e7");
 var functionToString = uncurryThis(Function.toString);
 // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 if (!isCallable(store.inspectSource)) store.inspectSource = function(it) {
@@ -861,15 +859,15 @@ if (!isCallable(store.inspectSource)) store.inspectSource = function(it) {
 };
 module.exports = store.inspectSource;
 
-},{"8e0266d15284822e":"7GlkT","b35c2acd51eadab5":"l3Kyn","9155dccaf2dd38ea":"l4ncH"}],"l4ncH":[function(require,module,exports) {
-var global = require("7e4964cb6bf7774c");
-var defineGlobalProperty = require("8ecee41b3b56d483");
+},{"78492bea197a1e41":"7GlkT","4636f835f370852":"l3Kyn","b56347289da4f3e7":"l4ncH"}],"l4ncH":[function(require,module,exports) {
+var global = require("4f304ed85c64e5dc");
+var defineGlobalProperty = require("95ec54a47847e2b0");
 var SHARED = "__core-js_shared__";
 var store = global[SHARED] || defineGlobalProperty(SHARED, {});
 module.exports = store;
 
-},{"7e4964cb6bf7774c":"i8HOC","8ecee41b3b56d483":"ggjnO"}],"ggjnO":[function(require,module,exports) {
-var global = require("89df9a4750a96260");
+},{"4f304ed85c64e5dc":"i8HOC","95ec54a47847e2b0":"ggjnO"}],"ggjnO":[function(require,module,exports) {
+var global = require("d4cfcb706e06ec43");
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 module.exports = function(key, value) {
@@ -885,15 +883,15 @@ module.exports = function(key, value) {
     return value;
 };
 
-},{"89df9a4750a96260":"i8HOC"}],"7AMlF":[function(require,module,exports) {
-var NATIVE_WEAK_MAP = require("3c34ce7fb35a4d33");
-var global = require("c0ca5c751ff6990");
-var isObject = require("a2d928ea70500999");
-var createNonEnumerableProperty = require("10ccbcb21866cb36");
-var hasOwn = require("1eb624c76793e504");
-var shared = require("79a2ae3432b9a24a");
-var sharedKey = require("4def1afd178999f8");
-var hiddenKeys = require("d2c8d4b49d9c626d");
+},{"d4cfcb706e06ec43":"i8HOC"}],"7AMlF":[function(require,module,exports) {
+var NATIVE_WEAK_MAP = require("e9b020aece9520a9");
+var global = require("255de542e3e159b");
+var isObject = require("16cbb66dcf5461f4");
+var createNonEnumerableProperty = require("80bacf6344715aba");
+var hasOwn = require("236d2ec9960bf90c");
+var shared = require("dda5df3ef8277");
+var sharedKey = require("7a11d4ed668da1eb");
+var hiddenKeys = require("6e713636be2d19e7");
 var OBJECT_ALREADY_INITIALIZED = "Object already initialized";
 var TypeError = global.TypeError;
 var WeakMap = global.WeakMap;
@@ -949,15 +947,15 @@ module.exports = {
     getterFor: getterFor
 };
 
-},{"3c34ce7fb35a4d33":"2PZTl","c0ca5c751ff6990":"i8HOC","a2d928ea70500999":"Z0pBo","10ccbcb21866cb36":"8CL42","1eb624c76793e504":"gC2Q5","79a2ae3432b9a24a":"l4ncH","4def1afd178999f8":"eAjGz","d2c8d4b49d9c626d":"661m4"}],"2PZTl":[function(require,module,exports) {
-var global = require("4830104d3b824c85");
-var isCallable = require("16fac726edc48fc4");
+},{"e9b020aece9520a9":"2PZTl","255de542e3e159b":"i8HOC","16cbb66dcf5461f4":"Z0pBo","80bacf6344715aba":"8CL42","236d2ec9960bf90c":"gC2Q5","dda5df3ef8277":"l4ncH","7a11d4ed668da1eb":"eAjGz","6e713636be2d19e7":"661m4"}],"2PZTl":[function(require,module,exports) {
+var global = require("d401d2e7bdff1b1d");
+var isCallable = require("910661b8a6bf5dd8");
 var WeakMap = global.WeakMap;
 module.exports = isCallable(WeakMap) && /native code/.test(String(WeakMap));
 
-},{"4830104d3b824c85":"i8HOC","16fac726edc48fc4":"l3Kyn"}],"Z0pBo":[function(require,module,exports) {
-var isCallable = require("ae63ce3632514176");
-var $documentAll = require("9e290e1db1ccc278");
+},{"d401d2e7bdff1b1d":"i8HOC","910661b8a6bf5dd8":"l3Kyn"}],"Z0pBo":[function(require,module,exports) {
+var isCallable = require("1e9ddab158bf95ce");
+var $documentAll = require("ae33f06562725d42");
 var documentAll = $documentAll.all;
 module.exports = $documentAll.IS_HTMLDDA ? function(it) {
     return typeof it == "object" ? it !== null : isCallable(it) || it === documentAll;
@@ -965,10 +963,10 @@ module.exports = $documentAll.IS_HTMLDDA ? function(it) {
     return typeof it == "object" ? it !== null : isCallable(it);
 };
 
-},{"ae63ce3632514176":"l3Kyn","9e290e1db1ccc278":"5MHqB"}],"8CL42":[function(require,module,exports) {
-var DESCRIPTORS = require("b7d947aa5240198d");
-var definePropertyModule = require("9c4e8f07c547debd");
-var createPropertyDescriptor = require("c12408089dcd2593");
+},{"1e9ddab158bf95ce":"l3Kyn","ae33f06562725d42":"5MHqB"}],"8CL42":[function(require,module,exports) {
+var DESCRIPTORS = require("d0b72d2f5bbc8c70");
+var definePropertyModule = require("2f991a0f4816b7ca");
+var createPropertyDescriptor = require("4d3eb61976c02b3c");
 module.exports = DESCRIPTORS ? function(object, key, value) {
     return definePropertyModule.f(object, key, createPropertyDescriptor(1, value));
 } : function(object, key, value) {
@@ -976,12 +974,12 @@ module.exports = DESCRIPTORS ? function(object, key, value) {
     return object;
 };
 
-},{"b7d947aa5240198d":"92ZIi","9c4e8f07c547debd":"iJR4w","c12408089dcd2593":"1lpav"}],"iJR4w":[function(require,module,exports) {
-var DESCRIPTORS = require("d5c11a30188c578d");
-var IE8_DOM_DEFINE = require("d31716cb9cb2d44b");
-var V8_PROTOTYPE_DEFINE_BUG = require("858bba15d6d872f3");
-var anObject = require("aedebf5f822497a7");
-var toPropertyKey = require("8bf99f9840705df8");
+},{"d0b72d2f5bbc8c70":"92ZIi","2f991a0f4816b7ca":"iJR4w","4d3eb61976c02b3c":"1lpav"}],"iJR4w":[function(require,module,exports) {
+var DESCRIPTORS = require("bf3629e3dbca932e");
+var IE8_DOM_DEFINE = require("5d4305105fef505b");
+var V8_PROTOTYPE_DEFINE_BUG = require("572dd259f2dbd7d6");
+var anObject = require("a1c688a8cb119653");
+var toPropertyKey = require("2a4dfa8ba7e053b0");
 var $TypeError = TypeError;
 // eslint-disable-next-line es/no-object-defineproperty -- safe
 var $defineProperty = Object.defineProperty;
@@ -1020,10 +1018,10 @@ exports.f = DESCRIPTORS ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P
     return O;
 };
 
-},{"d5c11a30188c578d":"92ZIi","d31716cb9cb2d44b":"qS9uN","858bba15d6d872f3":"ka1Un","aedebf5f822497a7":"4isCr","8bf99f9840705df8":"5XWKd"}],"qS9uN":[function(require,module,exports) {
-var DESCRIPTORS = require("19ca10101f199c9d");
-var fails = require("ee37a753a2b489d6");
-var createElement = require("27d4cb8445453358");
+},{"bf3629e3dbca932e":"92ZIi","5d4305105fef505b":"qS9uN","572dd259f2dbd7d6":"ka1Un","a1c688a8cb119653":"4isCr","2a4dfa8ba7e053b0":"5XWKd"}],"qS9uN":[function(require,module,exports) {
+var DESCRIPTORS = require("8205046013be31cc");
+var fails = require("7ed34d99efa64d70");
+var createElement = require("a92860b85fc0745b");
 // Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function() {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
@@ -1034,9 +1032,9 @@ module.exports = !DESCRIPTORS && !fails(function() {
     }).a != 7;
 });
 
-},{"19ca10101f199c9d":"92ZIi","ee37a753a2b489d6":"hL6D2","27d4cb8445453358":"4bOHl"}],"4bOHl":[function(require,module,exports) {
-var global = require("ae18bd1a8329d4b4");
-var isObject = require("5e0c123e757bcfa5");
+},{"8205046013be31cc":"92ZIi","7ed34d99efa64d70":"hL6D2","a92860b85fc0745b":"4bOHl"}],"4bOHl":[function(require,module,exports) {
+var global = require("4b7b9400b0234aef");
+var isObject = require("515dbca6d5564388");
 var document = global.document;
 // typeof document.createElement is 'object' in old IE
 var EXISTS = isObject(document) && isObject(document.createElement);
@@ -1044,9 +1042,9 @@ module.exports = function(it) {
     return EXISTS ? document.createElement(it) : {};
 };
 
-},{"ae18bd1a8329d4b4":"i8HOC","5e0c123e757bcfa5":"Z0pBo"}],"ka1Un":[function(require,module,exports) {
-var DESCRIPTORS = require("aecf547c9da9f6d");
-var fails = require("b66c1dfe34568361");
+},{"4b7b9400b0234aef":"i8HOC","515dbca6d5564388":"Z0pBo"}],"ka1Un":[function(require,module,exports) {
+var DESCRIPTORS = require("496308a37d39dc56");
+var fails = require("2090742dce06d93e");
 // V8 ~ Chrome 36-
 // https://bugs.chromium.org/p/v8/issues/detail?id=3334
 module.exports = DESCRIPTORS && fails(function() {
@@ -1057,8 +1055,8 @@ module.exports = DESCRIPTORS && fails(function() {
     }).prototype != 42;
 });
 
-},{"aecf547c9da9f6d":"92ZIi","b66c1dfe34568361":"hL6D2"}],"4isCr":[function(require,module,exports) {
-var isObject = require("5c23ef46d7797964");
+},{"496308a37d39dc56":"92ZIi","2090742dce06d93e":"hL6D2"}],"4isCr":[function(require,module,exports) {
+var isObject = require("6e67b59453532b41");
 var $String = String;
 var $TypeError = TypeError;
 // `Assert: Type(argument) is Object`
@@ -1067,9 +1065,9 @@ module.exports = function(argument) {
     throw $TypeError($String(argument) + " is not an object");
 };
 
-},{"5c23ef46d7797964":"Z0pBo"}],"5XWKd":[function(require,module,exports) {
-var toPrimitive = require("e50d839a0cf0679e");
-var isSymbol = require("7bd67b132abb3cb5");
+},{"6e67b59453532b41":"Z0pBo"}],"5XWKd":[function(require,module,exports) {
+var toPrimitive = require("5936b35cb58f7050");
+var isSymbol = require("78c8b6d086445742");
 // `ToPropertyKey` abstract operation
 // https://tc39.es/ecma262/#sec-topropertykey
 module.exports = function(argument) {
@@ -1077,13 +1075,13 @@ module.exports = function(argument) {
     return isSymbol(key) ? key : key + "";
 };
 
-},{"e50d839a0cf0679e":"a2mK1","7bd67b132abb3cb5":"4aV4F"}],"a2mK1":[function(require,module,exports) {
-var call = require("473d62729dd81104");
-var isObject = require("93ff439956af4d24");
-var isSymbol = require("708cd66e43f4679");
-var getMethod = require("eae26195543a4698");
-var ordinaryToPrimitive = require("380b46fdabb58094");
-var wellKnownSymbol = require("b025de62d559e8b0");
+},{"5936b35cb58f7050":"a2mK1","78c8b6d086445742":"4aV4F"}],"a2mK1":[function(require,module,exports) {
+var call = require("89fdf5ee81edfc9d");
+var isObject = require("99a9c66e4eb8f2ac");
+var isSymbol = require("ab7a86accdd23523");
+var getMethod = require("58591b7fd8382c20");
+var ordinaryToPrimitive = require("ed59cb0245e1486c");
+var wellKnownSymbol = require("cc20b1e2090f3d04");
 var $TypeError = TypeError;
 var TO_PRIMITIVE = wellKnownSymbol("toPrimitive");
 // `ToPrimitive` abstract operation
@@ -1102,18 +1100,18 @@ module.exports = function(input, pref) {
     return ordinaryToPrimitive(input, pref);
 };
 
-},{"473d62729dd81104":"d7JlP","93ff439956af4d24":"Z0pBo","708cd66e43f4679":"4aV4F","eae26195543a4698":"9Zfiw","380b46fdabb58094":"7MME2","b025de62d559e8b0":"gTwyA"}],"d7JlP":[function(require,module,exports) {
-var NATIVE_BIND = require("e286e45f55834031");
+},{"89fdf5ee81edfc9d":"d7JlP","99a9c66e4eb8f2ac":"Z0pBo","ab7a86accdd23523":"4aV4F","58591b7fd8382c20":"9Zfiw","ed59cb0245e1486c":"7MME2","cc20b1e2090f3d04":"gTwyA"}],"d7JlP":[function(require,module,exports) {
+var NATIVE_BIND = require("9aabd5f16a5c7332");
 var call = Function.prototype.call;
 module.exports = NATIVE_BIND ? call.bind(call) : function() {
     return call.apply(call, arguments);
 };
 
-},{"e286e45f55834031":"i16Dq"}],"4aV4F":[function(require,module,exports) {
-var getBuiltIn = require("f4db573accfc3c3b");
-var isCallable = require("d093680eade5cefb");
-var isPrototypeOf = require("77ae2fc1c1b108fe");
-var USE_SYMBOL_AS_UID = require("69e5a3f355df7206");
+},{"9aabd5f16a5c7332":"i16Dq"}],"4aV4F":[function(require,module,exports) {
+var getBuiltIn = require("236735427648ae4e");
+var isCallable = require("2d19883e05475a1f");
+var isPrototypeOf = require("7899c3b7d5c14e15");
+var USE_SYMBOL_AS_UID = require("d28dc454fb6abf6f");
 var $Object = Object;
 module.exports = USE_SYMBOL_AS_UID ? function(it) {
     return typeof it == "symbol";
@@ -1122,9 +1120,9 @@ module.exports = USE_SYMBOL_AS_UID ? function(it) {
     return isCallable($Symbol) && isPrototypeOf($Symbol.prototype, $Object(it));
 };
 
-},{"f4db573accfc3c3b":"6ZUSY","d093680eade5cefb":"l3Kyn","77ae2fc1c1b108fe":"3jtKQ","69e5a3f355df7206":"2Ye8Q"}],"6ZUSY":[function(require,module,exports) {
-var global = require("294dd200a9bd00d3");
-var isCallable = require("f2ee1caaae8f95df");
+},{"236735427648ae4e":"6ZUSY","2d19883e05475a1f":"l3Kyn","7899c3b7d5c14e15":"3jtKQ","d28dc454fb6abf6f":"2Ye8Q"}],"6ZUSY":[function(require,module,exports) {
+var global = require("4df49c53a9ae2cc");
+var isCallable = require("f514b21982b01a64");
 var aFunction = function(argument) {
     return isCallable(argument) ? argument : undefined;
 };
@@ -1132,17 +1130,17 @@ module.exports = function(namespace, method) {
     return arguments.length < 2 ? aFunction(global[namespace]) : global[namespace] && global[namespace][method];
 };
 
-},{"294dd200a9bd00d3":"i8HOC","f2ee1caaae8f95df":"l3Kyn"}],"3jtKQ":[function(require,module,exports) {
-var uncurryThis = require("1acc71c014e76a43");
+},{"4df49c53a9ae2cc":"i8HOC","f514b21982b01a64":"l3Kyn"}],"3jtKQ":[function(require,module,exports) {
+var uncurryThis = require("b05d42b1f9de1c63");
 module.exports = uncurryThis({}.isPrototypeOf);
 
-},{"1acc71c014e76a43":"7GlkT"}],"2Ye8Q":[function(require,module,exports) {
-/* eslint-disable es/no-symbol -- required for testing */ var NATIVE_SYMBOL = require("cd630b824e45a2d0");
+},{"b05d42b1f9de1c63":"7GlkT"}],"2Ye8Q":[function(require,module,exports) {
+/* eslint-disable es/no-symbol -- required for testing */ var NATIVE_SYMBOL = require("462c089b49b3da01");
 module.exports = NATIVE_SYMBOL && !Symbol.sham && typeof Symbol.iterator == "symbol";
 
-},{"cd630b824e45a2d0":"8KyTD"}],"8KyTD":[function(require,module,exports) {
-/* eslint-disable es/no-symbol -- required for testing */ var V8_VERSION = require("a3e070260ce2d44e");
-var fails = require("f751402616bcec91");
+},{"462c089b49b3da01":"8KyTD"}],"8KyTD":[function(require,module,exports) {
+/* eslint-disable es/no-symbol -- required for testing */ var V8_VERSION = require("47c4be53abaf5668");
+var fails = require("ce6bbc17d976f850");
 // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function() {
     var symbol = Symbol();
@@ -1152,9 +1150,9 @@ module.exports = !!Object.getOwnPropertySymbols && !fails(function() {
     !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
 
-},{"a3e070260ce2d44e":"bjFlO","f751402616bcec91":"hL6D2"}],"bjFlO":[function(require,module,exports) {
-var global = require("5264a10109b6f78b");
-var userAgent = require("324f4cff22dc9b6");
+},{"47c4be53abaf5668":"bjFlO","ce6bbc17d976f850":"hL6D2"}],"bjFlO":[function(require,module,exports) {
+var global = require("e3cf965fc4309b6f");
+var userAgent = require("ddfd8d98c5c70fda");
 var process = global.process;
 var Deno = global.Deno;
 var versions = process && process.versions || Deno && Deno.version;
@@ -1177,12 +1175,12 @@ if (!version && userAgent) {
 }
 module.exports = version;
 
-},{"5264a10109b6f78b":"i8HOC","324f4cff22dc9b6":"73xBt"}],"73xBt":[function(require,module,exports) {
+},{"e3cf965fc4309b6f":"i8HOC","ddfd8d98c5c70fda":"73xBt"}],"73xBt":[function(require,module,exports) {
 module.exports = typeof navigator != "undefined" && String(navigator.userAgent) || "";
 
 },{}],"9Zfiw":[function(require,module,exports) {
-var aCallable = require("7c6fd4701c2e2458");
-var isNullOrUndefined = require("7faba2a835c92a3e");
+var aCallable = require("95fa51a5645c41ff");
+var isNullOrUndefined = require("2bf1fdce248d2463");
 // `GetMethod` abstract operation
 // https://tc39.es/ecma262/#sec-getmethod
 module.exports = function(V, P) {
@@ -1190,9 +1188,9 @@ module.exports = function(V, P) {
     return isNullOrUndefined(func) ? undefined : aCallable(func);
 };
 
-},{"7c6fd4701c2e2458":"gOMir","7faba2a835c92a3e":"gM5ar"}],"gOMir":[function(require,module,exports) {
-var isCallable = require("491341e87964eac7");
-var tryToString = require("14f1532bca932794");
+},{"95fa51a5645c41ff":"gOMir","2bf1fdce248d2463":"gM5ar"}],"gOMir":[function(require,module,exports) {
+var isCallable = require("5a7a97f506ef1cae");
+var tryToString = require("7086b57d862dafa6");
 var $TypeError = TypeError;
 // `Assert: IsCallable(argument) is true`
 module.exports = function(argument) {
@@ -1200,7 +1198,7 @@ module.exports = function(argument) {
     throw $TypeError(tryToString(argument) + " is not a function");
 };
 
-},{"491341e87964eac7":"l3Kyn","14f1532bca932794":"4O7d7"}],"4O7d7":[function(require,module,exports) {
+},{"5a7a97f506ef1cae":"l3Kyn","7086b57d862dafa6":"4O7d7"}],"4O7d7":[function(require,module,exports) {
 var $String = String;
 module.exports = function(argument) {
     try {
@@ -1211,9 +1209,9 @@ module.exports = function(argument) {
 };
 
 },{}],"7MME2":[function(require,module,exports) {
-var call = require("d4e5ac15f72311db");
-var isCallable = require("9fe416a377dfeba0");
-var isObject = require("8a19c3f89072a424");
+var call = require("21cfa619c0d02e90");
+var isCallable = require("e1f831cee92ee191");
+var isObject = require("ff9902452be32f18");
 var $TypeError = TypeError;
 // `OrdinaryToPrimitive` abstract operation
 // https://tc39.es/ecma262/#sec-ordinarytoprimitive
@@ -1225,13 +1223,13 @@ module.exports = function(input, pref) {
     throw $TypeError("Can't convert object to primitive value");
 };
 
-},{"d4e5ac15f72311db":"d7JlP","9fe416a377dfeba0":"l3Kyn","8a19c3f89072a424":"Z0pBo"}],"gTwyA":[function(require,module,exports) {
-var global = require("7f3e13d1f3a24481");
-var shared = require("76e33c3fa23e3089");
-var hasOwn = require("2ee75b9fc46a8327");
-var uid = require("96d5b46f617c0e31");
-var NATIVE_SYMBOL = require("20ea883bed7b8692");
-var USE_SYMBOL_AS_UID = require("67c91472dfb786d4");
+},{"21cfa619c0d02e90":"d7JlP","e1f831cee92ee191":"l3Kyn","ff9902452be32f18":"Z0pBo"}],"gTwyA":[function(require,module,exports) {
+var global = require("bc2d919b23d925fb");
+var shared = require("bd97bcb05efb6b2a");
+var hasOwn = require("e5dea2ec6b01dc86");
+var uid = require("6d4f85d6b5b4bc94");
+var NATIVE_SYMBOL = require("35eb1c61b3d8bf6");
+var USE_SYMBOL_AS_UID = require("909cfc2ddbe54a84");
 var Symbol = global.Symbol;
 var WellKnownSymbolsStore = shared("wks");
 var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol["for"] || Symbol : Symbol && Symbol.withoutSetter || uid;
@@ -1240,9 +1238,9 @@ module.exports = function(name) {
     return WellKnownSymbolsStore[name];
 };
 
-},{"7f3e13d1f3a24481":"i8HOC","76e33c3fa23e3089":"i1mHK","2ee75b9fc46a8327":"gC2Q5","96d5b46f617c0e31":"a3SEE","20ea883bed7b8692":"8KyTD","67c91472dfb786d4":"2Ye8Q"}],"i1mHK":[function(require,module,exports) {
-var IS_PURE = require("11c84ff484f08590");
-var store = require("f3baa6c22bfd3cfa");
+},{"bc2d919b23d925fb":"i8HOC","bd97bcb05efb6b2a":"i1mHK","e5dea2ec6b01dc86":"gC2Q5","6d4f85d6b5b4bc94":"a3SEE","35eb1c61b3d8bf6":"8KyTD","909cfc2ddbe54a84":"2Ye8Q"}],"i1mHK":[function(require,module,exports) {
+var IS_PURE = require("951e1a08b915cfac");
+var store = require("64a12b8ccdc41d57");
 (module.exports = function(key, value) {
     return store[key] || (store[key] = value !== undefined ? value : {});
 })("versions", []).push({
@@ -1253,11 +1251,11 @@ var store = require("f3baa6c22bfd3cfa");
     source: "https://github.com/zloirock/core-js"
 });
 
-},{"11c84ff484f08590":"5ZsyC","f3baa6c22bfd3cfa":"l4ncH"}],"5ZsyC":[function(require,module,exports) {
+},{"951e1a08b915cfac":"5ZsyC","64a12b8ccdc41d57":"l4ncH"}],"5ZsyC":[function(require,module,exports) {
 module.exports = false;
 
 },{}],"a3SEE":[function(require,module,exports) {
-var uncurryThis = require("fc858732628f4b41");
+var uncurryThis = require("1ec5c591711716f4");
 var id = 0;
 var postfix = Math.random();
 var toString = uncurryThis(1.0.toString);
@@ -1265,7 +1263,7 @@ module.exports = function(key) {
     return "Symbol(" + (key === undefined ? "" : key) + ")_" + toString(++id + postfix, 36);
 };
 
-},{"fc858732628f4b41":"7GlkT"}],"1lpav":[function(require,module,exports) {
+},{"1ec5c591711716f4":"7GlkT"}],"1lpav":[function(require,module,exports) {
 module.exports = function(bitmap, value) {
     return {
         enumerable: !(bitmap & 1),
@@ -1276,19 +1274,19 @@ module.exports = function(bitmap, value) {
 };
 
 },{}],"eAjGz":[function(require,module,exports) {
-var shared = require("4b86e226f9173997");
-var uid = require("d43e5aee5c4ec3b2");
+var shared = require("7d83b149af087579");
+var uid = require("88dd0d6e5df49830");
 var keys = shared("keys");
 module.exports = function(key) {
     return keys[key] || (keys[key] = uid(key));
 };
 
-},{"4b86e226f9173997":"i1mHK","d43e5aee5c4ec3b2":"a3SEE"}],"661m4":[function(require,module,exports) {
+},{"7d83b149af087579":"i1mHK","88dd0d6e5df49830":"a3SEE"}],"661m4":[function(require,module,exports) {
 module.exports = {};
 
 },{}],"9bz1x":[function(require,module,exports) {
 "use strict";
-var anObject = require("a53b891ef35ed973");
+var anObject = require("b3ce076c6c822525");
 // `RegExp.prototype.flags` getter implementation
 // https://tc39.es/ecma262/#sec-get-regexp.prototype.flags
 module.exports = function() {
@@ -1305,15 +1303,15 @@ module.exports = function() {
     return result;
 };
 
-},{"a53b891ef35ed973":"4isCr"}],"49tUX":[function(require,module,exports) {
+},{"b3ce076c6c822525":"4isCr"}],"49tUX":[function(require,module,exports) {
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
-require("37ed591ac998f255");
-require("d3228eb5abe168ca");
+require("155f6fd6fc562850");
+require("15ddebf5cbdc4660");
 
-},{"37ed591ac998f255":"fOGFr","d3228eb5abe168ca":"l7FDS"}],"fOGFr":[function(require,module,exports) {
-var $ = require("993b519418b55485");
-var global = require("d50ff1df690a7100");
-var clearImmediate = require("2723e0e2d080bacc").clear;
+},{"155f6fd6fc562850":"fOGFr","15ddebf5cbdc4660":"l7FDS"}],"fOGFr":[function(require,module,exports) {
+var $ = require("8b3c40fbf1a8b0ed");
+var global = require("c43c74933a407ad8");
+var clearImmediate = require("dc07e87ccd3a2253").clear;
 // `clearImmediate` method
 // http://w3c.github.io/setImmediate/#si-clearImmediate
 $({
@@ -1325,14 +1323,14 @@ $({
     clearImmediate: clearImmediate
 });
 
-},{"993b519418b55485":"dIGt4","d50ff1df690a7100":"i8HOC","2723e0e2d080bacc":"7jDg7"}],"dIGt4":[function(require,module,exports) {
-var global = require("e33ed802693c2b25");
-var getOwnPropertyDescriptor = require("672a5e8c907c5184").f;
-var createNonEnumerableProperty = require("aa402d93cf73678c");
-var defineBuiltIn = require("b056bc2779804459");
-var defineGlobalProperty = require("142e1eb10a867301");
-var copyConstructorProperties = require("9633e971923231d5");
-var isForced = require("6884f3cfa5fe7038");
+},{"8b3c40fbf1a8b0ed":"dIGt4","c43c74933a407ad8":"i8HOC","dc07e87ccd3a2253":"7jDg7"}],"dIGt4":[function(require,module,exports) {
+var global = require("2d361e68bc196328");
+var getOwnPropertyDescriptor = require("a456f0180637dc07").f;
+var createNonEnumerableProperty = require("1da295b476420dd");
+var defineBuiltIn = require("82df8237eeb9059b");
+var defineGlobalProperty = require("ad0dd8583d2a6078");
+var copyConstructorProperties = require("91843d5217dc56dc");
+var isForced = require("54c81064c16a2956");
 /*
   options.target         - name of the target object
   options.global         - target is the global object
@@ -1373,15 +1371,15 @@ var isForced = require("6884f3cfa5fe7038");
     }
 };
 
-},{"e33ed802693c2b25":"i8HOC","672a5e8c907c5184":"lk5NI","aa402d93cf73678c":"8CL42","b056bc2779804459":"6XwEX","142e1eb10a867301":"ggjnO","9633e971923231d5":"9Z12i","6884f3cfa5fe7038":"6uTCZ"}],"lk5NI":[function(require,module,exports) {
-var DESCRIPTORS = require("52072a5a425f40cf");
-var call = require("a0385750f1011d99");
-var propertyIsEnumerableModule = require("d436ddb067d24d62");
-var createPropertyDescriptor = require("d78ed658b1b31e41");
-var toIndexedObject = require("7919b4889203fbfd");
-var toPropertyKey = require("6edc213810137954");
-var hasOwn = require("b641d1da4c399c4c");
-var IE8_DOM_DEFINE = require("93e08d4b7586457c");
+},{"2d361e68bc196328":"i8HOC","a456f0180637dc07":"lk5NI","1da295b476420dd":"8CL42","82df8237eeb9059b":"6XwEX","ad0dd8583d2a6078":"ggjnO","91843d5217dc56dc":"9Z12i","54c81064c16a2956":"6uTCZ"}],"lk5NI":[function(require,module,exports) {
+var DESCRIPTORS = require("d63b042f68412c46");
+var call = require("c948a37420b3822b");
+var propertyIsEnumerableModule = require("2d5cd0f785ee00dd");
+var createPropertyDescriptor = require("f401061a64d09ac8");
+var toIndexedObject = require("49df394a6a376549");
+var toPropertyKey = require("aed85c2a83e55bc1");
+var hasOwn = require("ecaae307606230b");
+var IE8_DOM_DEFINE = require("547b545637a306c9");
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 // `Object.getOwnPropertyDescriptor` method
@@ -1395,7 +1393,7 @@ exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDes
     if (hasOwn(O, P)) return createPropertyDescriptor(!call(propertyIsEnumerableModule.f, O, P), O[P]);
 };
 
-},{"52072a5a425f40cf":"92ZIi","a0385750f1011d99":"d7JlP","d436ddb067d24d62":"7SuiS","d78ed658b1b31e41":"1lpav","7919b4889203fbfd":"jLWwQ","6edc213810137954":"5XWKd","b641d1da4c399c4c":"gC2Q5","93e08d4b7586457c":"qS9uN"}],"7SuiS":[function(require,module,exports) {
+},{"d63b042f68412c46":"92ZIi","c948a37420b3822b":"d7JlP","2d5cd0f785ee00dd":"7SuiS","f401061a64d09ac8":"1lpav","49df394a6a376549":"jLWwQ","aed85c2a83e55bc1":"5XWKd","ecaae307606230b":"gC2Q5","547b545637a306c9":"qS9uN"}],"7SuiS":[function(require,module,exports) {
 "use strict";
 var $propertyIsEnumerable = {}.propertyIsEnumerable;
 // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
@@ -1413,16 +1411,16 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 
 },{}],"jLWwQ":[function(require,module,exports) {
 // toObject with fallback for non-array-like ES3 strings
-var IndexedObject = require("80aa031549d63f92");
-var requireObjectCoercible = require("e44d4b690f861eb9");
+var IndexedObject = require("194222834fd3ab31");
+var requireObjectCoercible = require("97d55064be90f448");
 module.exports = function(it) {
     return IndexedObject(requireObjectCoercible(it));
 };
 
-},{"80aa031549d63f92":"kPk5h","e44d4b690f861eb9":"fOR0B"}],"kPk5h":[function(require,module,exports) {
-var uncurryThis = require("2975c66dcf17f94f");
-var fails = require("5ef175fda5e88730");
-var classof = require("7d2ae751d2253171");
+},{"194222834fd3ab31":"kPk5h","97d55064be90f448":"fOR0B"}],"kPk5h":[function(require,module,exports) {
+var uncurryThis = require("8d2aa80bf2cd84cf");
+var fails = require("6f0b049f68fa06ae");
+var classof = require("e1fdc1d7b69c0439");
 var $Object = Object;
 var split = uncurryThis("".split);
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
@@ -1434,19 +1432,19 @@ module.exports = fails(function() {
     return classof(it) == "String" ? split(it, "") : $Object(it);
 } : $Object;
 
-},{"2975c66dcf17f94f":"7GlkT","5ef175fda5e88730":"hL6D2","7d2ae751d2253171":"bdfmm"}],"bdfmm":[function(require,module,exports) {
-var uncurryThis = require("5a9760896f60c2be");
+},{"8d2aa80bf2cd84cf":"7GlkT","6f0b049f68fa06ae":"hL6D2","e1fdc1d7b69c0439":"bdfmm"}],"bdfmm":[function(require,module,exports) {
+var uncurryThis = require("1eea47d12fdd1b2a");
 var toString = uncurryThis({}.toString);
 var stringSlice = uncurryThis("".slice);
 module.exports = function(it) {
     return stringSlice(toString(it), 8, -1);
 };
 
-},{"5a9760896f60c2be":"7GlkT"}],"6XwEX":[function(require,module,exports) {
-var isCallable = require("2272a4f7c2d4c1d2");
-var definePropertyModule = require("e83957a332c362de");
-var makeBuiltIn = require("28662a306c907b42");
-var defineGlobalProperty = require("e8f3580c296e0f89");
+},{"1eea47d12fdd1b2a":"7GlkT"}],"6XwEX":[function(require,module,exports) {
+var isCallable = require("e80bc8aa5aa4971e");
+var definePropertyModule = require("da51de1dd34dc420");
+var makeBuiltIn = require("111c8c6921b7ebe5");
+var defineGlobalProperty = require("9d78caea96008b09");
 module.exports = function(O, key, value, options) {
     if (!options) options = {};
     var simple = options.enumerable;
@@ -1471,11 +1469,11 @@ module.exports = function(O, key, value, options) {
     return O;
 };
 
-},{"2272a4f7c2d4c1d2":"l3Kyn","e83957a332c362de":"iJR4w","28662a306c907b42":"cTB4k","e8f3580c296e0f89":"ggjnO"}],"9Z12i":[function(require,module,exports) {
-var hasOwn = require("5d743ff876aaa81c");
-var ownKeys = require("efa7756724dcb747");
-var getOwnPropertyDescriptorModule = require("9c348c52a386dc12");
-var definePropertyModule = require("db8bba3113480e60");
+},{"e80bc8aa5aa4971e":"l3Kyn","da51de1dd34dc420":"iJR4w","111c8c6921b7ebe5":"cTB4k","9d78caea96008b09":"ggjnO"}],"9Z12i":[function(require,module,exports) {
+var hasOwn = require("f660e70e95e953ef");
+var ownKeys = require("6e4caa64a6d253e1");
+var getOwnPropertyDescriptorModule = require("a3e89ff573b99812");
+var definePropertyModule = require("11dc50bcfe6944c7");
 module.exports = function(target, source, exceptions) {
     var keys = ownKeys(source);
     var defineProperty = definePropertyModule.f;
@@ -1486,12 +1484,12 @@ module.exports = function(target, source, exceptions) {
     }
 };
 
-},{"5d743ff876aaa81c":"gC2Q5","efa7756724dcb747":"1CX1A","9c348c52a386dc12":"lk5NI","db8bba3113480e60":"iJR4w"}],"1CX1A":[function(require,module,exports) {
-var getBuiltIn = require("e3699a7cac80d994");
-var uncurryThis = require("8916b0e459d78022");
-var getOwnPropertyNamesModule = require("d4ed8d20b5c58f8e");
-var getOwnPropertySymbolsModule = require("bc4839d37d305c7d");
-var anObject = require("761080b358d40321");
+},{"f660e70e95e953ef":"gC2Q5","6e4caa64a6d253e1":"1CX1A","a3e89ff573b99812":"lk5NI","11dc50bcfe6944c7":"iJR4w"}],"1CX1A":[function(require,module,exports) {
+var getBuiltIn = require("da33a386066093ab");
+var uncurryThis = require("1f9c58f4206a488f");
+var getOwnPropertyNamesModule = require("fb0d419499c8509c");
+var getOwnPropertySymbolsModule = require("7b7a6d046287766b");
+var anObject = require("2cc67ec1d0f8124c");
 var concat = uncurryThis([].concat);
 // all object keys, includes non-enumerable and symbols
 module.exports = getBuiltIn("Reflect", "ownKeys") || function ownKeys(it) {
@@ -1500,9 +1498,9 @@ module.exports = getBuiltIn("Reflect", "ownKeys") || function ownKeys(it) {
     return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
 };
 
-},{"e3699a7cac80d994":"6ZUSY","8916b0e459d78022":"7GlkT","d4ed8d20b5c58f8e":"fjY04","bc4839d37d305c7d":"4DWO3","761080b358d40321":"4isCr"}],"fjY04":[function(require,module,exports) {
-var internalObjectKeys = require("48212ea0256f107c");
-var enumBugKeys = require("7040047da88cda86");
+},{"da33a386066093ab":"6ZUSY","1f9c58f4206a488f":"7GlkT","fb0d419499c8509c":"fjY04","7b7a6d046287766b":"4DWO3","2cc67ec1d0f8124c":"4isCr"}],"fjY04":[function(require,module,exports) {
+var internalObjectKeys = require("dfc42b83221589b");
+var enumBugKeys = require("52dd5f881dff550e");
 var hiddenKeys = enumBugKeys.concat("length", "prototype");
 // `Object.getOwnPropertyNames` method
 // https://tc39.es/ecma262/#sec-object.getownpropertynames
@@ -1511,12 +1509,12 @@ exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
     return internalObjectKeys(O, hiddenKeys);
 };
 
-},{"48212ea0256f107c":"hl5T1","7040047da88cda86":"9RnJm"}],"hl5T1":[function(require,module,exports) {
-var uncurryThis = require("15a1e0f07c3a350");
-var hasOwn = require("1ed6644498a93e85");
-var toIndexedObject = require("d623f862ca99735e");
-var indexOf = require("e32893fd5fc30396").indexOf;
-var hiddenKeys = require("1daee18adfdc4376");
+},{"dfc42b83221589b":"hl5T1","52dd5f881dff550e":"9RnJm"}],"hl5T1":[function(require,module,exports) {
+var uncurryThis = require("936fb36d320048e4");
+var hasOwn = require("418873a32d44a852");
+var toIndexedObject = require("fe3c84d30693e23e");
+var indexOf = require("3e3f17dd9481c144").indexOf;
+var hiddenKeys = require("1e4b95ef61e6bcd5");
 var push = uncurryThis([].push);
 module.exports = function(object, names) {
     var O = toIndexedObject(object);
@@ -1529,10 +1527,10 @@ module.exports = function(object, names) {
     return result;
 };
 
-},{"15a1e0f07c3a350":"7GlkT","1ed6644498a93e85":"gC2Q5","d623f862ca99735e":"jLWwQ","e32893fd5fc30396":"n5IsC","1daee18adfdc4376":"661m4"}],"n5IsC":[function(require,module,exports) {
-var toIndexedObject = require("98dc5a513583b4cc");
-var toAbsoluteIndex = require("c53b29bd3b31e126");
-var lengthOfArrayLike = require("4cbe3ff30e167d44");
+},{"936fb36d320048e4":"7GlkT","418873a32d44a852":"gC2Q5","fe3c84d30693e23e":"jLWwQ","3e3f17dd9481c144":"n5IsC","1e4b95ef61e6bcd5":"661m4"}],"n5IsC":[function(require,module,exports) {
+var toIndexedObject = require("e583c312172bbcf2");
+var toAbsoluteIndex = require("ed94e62cd49edcb8");
+var lengthOfArrayLike = require("6159ea922198d62b");
 // `Array.prototype.{ indexOf, includes }` methods implementation
 var createMethod = function(IS_INCLUDES) {
     return function($this, el, fromIndex) {
@@ -1563,8 +1561,8 @@ module.exports = {
     indexOf: createMethod(false)
 };
 
-},{"98dc5a513583b4cc":"jLWwQ","c53b29bd3b31e126":"5yh27","4cbe3ff30e167d44":"lY4mS"}],"5yh27":[function(require,module,exports) {
-var toIntegerOrInfinity = require("36dac57fa7ea258");
+},{"e583c312172bbcf2":"jLWwQ","ed94e62cd49edcb8":"5yh27","6159ea922198d62b":"lY4mS"}],"5yh27":[function(require,module,exports) {
+var toIntegerOrInfinity = require("3f490eb5246643b0");
 var max = Math.max;
 var min = Math.min;
 // Helper for a popular repeating case of the spec:
@@ -1575,8 +1573,8 @@ module.exports = function(index, length) {
     return integer < 0 ? max(integer + length, 0) : min(integer, length);
 };
 
-},{"36dac57fa7ea258":"kLXGe"}],"kLXGe":[function(require,module,exports) {
-var trunc = require("4678b57ac106ae26");
+},{"3f490eb5246643b0":"kLXGe"}],"kLXGe":[function(require,module,exports) {
+var trunc = require("39f01eb7c56a47a");
 // `ToIntegerOrInfinity` abstract operation
 // https://tc39.es/ecma262/#sec-tointegerorinfinity
 module.exports = function(argument) {
@@ -1585,7 +1583,7 @@ module.exports = function(argument) {
     return number !== number || number === 0 ? 0 : trunc(number);
 };
 
-},{"4678b57ac106ae26":"7O8gb"}],"7O8gb":[function(require,module,exports) {
+},{"39f01eb7c56a47a":"7O8gb"}],"7O8gb":[function(require,module,exports) {
 var ceil = Math.ceil;
 var floor = Math.floor;
 // `Math.trunc` method
@@ -1597,15 +1595,15 @@ module.exports = Math.trunc || function trunc(x) {
 };
 
 },{}],"lY4mS":[function(require,module,exports) {
-var toLength = require("90c64401994435bb");
+var toLength = require("388217bc5300008b");
 // `LengthOfArrayLike` abstract operation
 // https://tc39.es/ecma262/#sec-lengthofarraylike
 module.exports = function(obj) {
     return toLength(obj.length);
 };
 
-},{"90c64401994435bb":"fU04N"}],"fU04N":[function(require,module,exports) {
-var toIntegerOrInfinity = require("8f42fed9e939d286");
+},{"388217bc5300008b":"fU04N"}],"fU04N":[function(require,module,exports) {
+var toIntegerOrInfinity = require("d017c1726c914dd9");
 var min = Math.min;
 // `ToLength` abstract operation
 // https://tc39.es/ecma262/#sec-tolength
@@ -1613,7 +1611,7 @@ module.exports = function(argument) {
     return argument > 0 ? min(toIntegerOrInfinity(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
 };
 
-},{"8f42fed9e939d286":"kLXGe"}],"9RnJm":[function(require,module,exports) {
+},{"d017c1726c914dd9":"kLXGe"}],"9RnJm":[function(require,module,exports) {
 // IE8- don't enum bug keys
 module.exports = [
     "constructor",
@@ -1630,8 +1628,8 @@ module.exports = [
 exports.f = Object.getOwnPropertySymbols;
 
 },{}],"6uTCZ":[function(require,module,exports) {
-var fails = require("7cc393b6decaf4ba");
-var isCallable = require("4a87b38757f1beed");
+var fails = require("565889e50948dbff");
+var isCallable = require("2271fc759f949278");
 var replacement = /#|\.prototype\./;
 var isForced = function(feature, detection) {
     var value = data[normalize(feature)];
@@ -1645,19 +1643,19 @@ var NATIVE = isForced.NATIVE = "N";
 var POLYFILL = isForced.POLYFILL = "P";
 module.exports = isForced;
 
-},{"7cc393b6decaf4ba":"hL6D2","4a87b38757f1beed":"l3Kyn"}],"7jDg7":[function(require,module,exports) {
-var global = require("35dd5428751a2f72");
-var apply = require("4cedec0ae01adc98");
-var bind = require("603c564a3828969d");
-var isCallable = require("52f1ad9274c6f030");
-var hasOwn = require("dc6a786e5a4630f6");
-var fails = require("6086b91f9b375876");
-var html = require("e34c156f28ca362d");
-var arraySlice = require("a9047fa60b54ef28");
-var createElement = require("646bd2a3d807270a");
-var validateArgumentsLength = require("9498685ebadc28f1");
-var IS_IOS = require("e4bdb0ae822b97f8");
-var IS_NODE = require("8726023a6be9de86");
+},{"565889e50948dbff":"hL6D2","2271fc759f949278":"l3Kyn"}],"7jDg7":[function(require,module,exports) {
+var global = require("30893b3e727fb363");
+var apply = require("41593d8f0c91d0fd");
+var bind = require("5699edc4959878d5");
+var isCallable = require("c051fee8ef8e0a84");
+var hasOwn = require("e73f40a160dedfbd");
+var fails = require("bc15dff82e89f107");
+var html = require("13f99e73f55ca104");
+var arraySlice = require("b6dc57b24eb47b49");
+var createElement = require("a678782b1a3bf570");
+var validateArgumentsLength = require("b03e4e2a783966bc");
+var IS_IOS = require("3143aa8994408568");
+var IS_NODE = require("9693406cd4875180");
 var set = global.setImmediate;
 var clear = global.clearImmediate;
 var process = global.process;
@@ -1740,8 +1738,8 @@ module.exports = {
     clear: clear
 };
 
-},{"35dd5428751a2f72":"i8HOC","4cedec0ae01adc98":"148ka","603c564a3828969d":"7vpmS","52f1ad9274c6f030":"l3Kyn","dc6a786e5a4630f6":"gC2Q5","6086b91f9b375876":"hL6D2","e34c156f28ca362d":"2pze4","a9047fa60b54ef28":"RsFXo","646bd2a3d807270a":"4bOHl","9498685ebadc28f1":"b9O3D","e4bdb0ae822b97f8":"bzGah","8726023a6be9de86":"2Jcp4"}],"148ka":[function(require,module,exports) {
-var NATIVE_BIND = require("12ae2beed5e1518b");
+},{"30893b3e727fb363":"i8HOC","41593d8f0c91d0fd":"148ka","5699edc4959878d5":"7vpmS","c051fee8ef8e0a84":"l3Kyn","e73f40a160dedfbd":"gC2Q5","bc15dff82e89f107":"hL6D2","13f99e73f55ca104":"2pze4","b6dc57b24eb47b49":"RsFXo","a678782b1a3bf570":"4bOHl","b03e4e2a783966bc":"b9O3D","3143aa8994408568":"bzGah","9693406cd4875180":"2Jcp4"}],"148ka":[function(require,module,exports) {
+var NATIVE_BIND = require("c15b71577cb391cf");
 var FunctionPrototype = Function.prototype;
 var apply = FunctionPrototype.apply;
 var call = FunctionPrototype.call;
@@ -1750,10 +1748,10 @@ module.exports = typeof Reflect == "object" && Reflect.apply || (NATIVE_BIND ? c
     return call.apply(apply, arguments);
 });
 
-},{"12ae2beed5e1518b":"i16Dq"}],"7vpmS":[function(require,module,exports) {
-var uncurryThis = require("83930c775f4e7889");
-var aCallable = require("7088f4dd3b9b978a");
-var NATIVE_BIND = require("da1ee22f83ced05e");
+},{"c15b71577cb391cf":"i16Dq"}],"7vpmS":[function(require,module,exports) {
+var uncurryThis = require("90d3f605a7d16728");
+var aCallable = require("5724bd92e383b95");
+var NATIVE_BIND = require("8c10a421eb77c2db");
 var bind = uncurryThis(uncurryThis.bind);
 // optional / simple context binding
 module.exports = function(fn, that) {
@@ -1763,9 +1761,9 @@ module.exports = function(fn, that) {
     };
 };
 
-},{"83930c775f4e7889":"5Hioa","7088f4dd3b9b978a":"gOMir","da1ee22f83ced05e":"i16Dq"}],"5Hioa":[function(require,module,exports) {
-var classofRaw = require("790c47f07f60a776");
-var uncurryThis = require("452d78176a7ac84a");
+},{"90d3f605a7d16728":"5Hioa","5724bd92e383b95":"gOMir","8c10a421eb77c2db":"i16Dq"}],"5Hioa":[function(require,module,exports) {
+var classofRaw = require("7b8210665650ba6");
+var uncurryThis = require("b69b288e1e5d66c5");
 module.exports = function(fn) {
     // Nashorn bug:
     //   https://github.com/zloirock/core-js/issues/1128
@@ -1773,15 +1771,15 @@ module.exports = function(fn) {
     if (classofRaw(fn) === "Function") return uncurryThis(fn);
 };
 
-},{"790c47f07f60a776":"bdfmm","452d78176a7ac84a":"7GlkT"}],"2pze4":[function(require,module,exports) {
-var getBuiltIn = require("d04f359dd32d6e71");
+},{"7b8210665650ba6":"bdfmm","b69b288e1e5d66c5":"7GlkT"}],"2pze4":[function(require,module,exports) {
+var getBuiltIn = require("8f4f6eff907565c1");
 module.exports = getBuiltIn("document", "documentElement");
 
-},{"d04f359dd32d6e71":"6ZUSY"}],"RsFXo":[function(require,module,exports) {
-var uncurryThis = require("2f6995ce0ca3e57d");
+},{"8f4f6eff907565c1":"6ZUSY"}],"RsFXo":[function(require,module,exports) {
+var uncurryThis = require("930fabb68f859a8a");
 module.exports = uncurryThis([].slice);
 
-},{"2f6995ce0ca3e57d":"7GlkT"}],"b9O3D":[function(require,module,exports) {
+},{"930fabb68f859a8a":"7GlkT"}],"b9O3D":[function(require,module,exports) {
 var $TypeError = TypeError;
 module.exports = function(passed, required) {
     if (passed < required) throw $TypeError("Not enough arguments");
@@ -1789,16 +1787,16 @@ module.exports = function(passed, required) {
 };
 
 },{}],"bzGah":[function(require,module,exports) {
-var userAgent = require("a37e55b08f3efb72");
+var userAgent = require("57a32cb5136f9ef2");
 // eslint-disable-next-line redos/no-vulnerable -- safe
 module.exports = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent);
 
-},{"a37e55b08f3efb72":"73xBt"}],"2Jcp4":[function(require,module,exports) {
-var process = require("4effd5b98a361835");
-var classof = require("2d2a61e94dc1735a");
+},{"57a32cb5136f9ef2":"73xBt"}],"2Jcp4":[function(require,module,exports) {
+var process = require("45aec2adcca04e91");
+var classof = require("e06d8181d5aee80f");
 module.exports = typeof process != "undefined" && classof(process) == "process";
 
-},{"4effd5b98a361835":"d5jf4","2d2a61e94dc1735a":"bdfmm"}],"d5jf4":[function(require,module,exports) {
+},{"45aec2adcca04e91":"d5jf4","e06d8181d5aee80f":"bdfmm"}],"d5jf4":[function(require,module,exports) {
 // shim for using process in browser
 var process = module.exports = {};
 // cached from whatever global is present so that test runners that stub it
@@ -1944,10 +1942,10 @@ process.umask = function() {
 };
 
 },{}],"l7FDS":[function(require,module,exports) {
-var $ = require("ebf524d0d058a6f");
-var global = require("d3540e3d51afc34e");
-var setTask = require("d45376ee5c24def3").set;
-var schedulersFix = require("a2f16cf9b7ee6f9b");
+var $ = require("ec05fdda27e62b88");
+var global = require("afa9984d947ef517");
+var setTask = require("133831b60199ac68").set;
+var schedulersFix = require("cfd901ac4a578a5c");
 // https://github.com/oven-sh/bun/issues/1633
 var setImmediate = global.setImmediate ? schedulersFix(setTask, false) : setTask;
 // `setImmediate` method
@@ -1961,15 +1959,15 @@ $({
     setImmediate: setImmediate
 });
 
-},{"ebf524d0d058a6f":"dIGt4","d3540e3d51afc34e":"i8HOC","d45376ee5c24def3":"7jDg7","a2f16cf9b7ee6f9b":"cAPb6"}],"cAPb6":[function(require,module,exports) {
+},{"ec05fdda27e62b88":"dIGt4","afa9984d947ef517":"i8HOC","133831b60199ac68":"7jDg7","cfd901ac4a578a5c":"cAPb6"}],"cAPb6":[function(require,module,exports) {
 "use strict";
-var global = require("e2c0c56a0b3e96eb");
-var apply = require("e094a157ab81fbab");
-var isCallable = require("ba422feb3fee850c");
-var ENGINE_IS_BUN = require("ec674848842c1d68");
-var USER_AGENT = require("dc27630abadf4465");
-var arraySlice = require("2440bdc655663839");
-var validateArgumentsLength = require("b98e0932057ab995");
+var global = require("6f9ff02aeef95856");
+var apply = require("c46df52e5de60b80");
+var isCallable = require("14eaf8ca0384b9bf");
+var ENGINE_IS_BUN = require("a09819e4b02c222e");
+var USER_AGENT = require("14e189365a76463e");
+var arraySlice = require("11eef772a169af8f");
+var validateArgumentsLength = require("a3204f970fbb6dd9");
 var Function = global.Function;
 // dirty IE9- and Bun 0.3.0- checks
 var WRAP = /MSIE .\./.test(USER_AGENT) || ENGINE_IS_BUN && function() {
@@ -1992,7 +1990,7 @@ module.exports = function(scheduler, hasTimeArg) {
     } : scheduler;
 };
 
-},{"e2c0c56a0b3e96eb":"i8HOC","e094a157ab81fbab":"148ka","ba422feb3fee850c":"l3Kyn","ec674848842c1d68":"2BA6V","dc27630abadf4465":"73xBt","2440bdc655663839":"RsFXo","b98e0932057ab995":"b9O3D"}],"2BA6V":[function(require,module,exports) {
+},{"6f9ff02aeef95856":"i8HOC","c46df52e5de60b80":"148ka","14eaf8ca0384b9bf":"l3Kyn","a09819e4b02c222e":"2BA6V","14e189365a76463e":"73xBt","11eef772a169af8f":"RsFXo","a3204f970fbb6dd9":"b9O3D"}],"2BA6V":[function(require,module,exports) {
 /* global Bun -- Deno case */ module.exports = typeof Bun == "function" && Bun && typeof Bun.version == "string";
 
 },{}],"dXNgZ":[function(require,module,exports) {
@@ -2609,7 +2607,7 @@ class WebflowView {
         (0, _stepViewJsDefault.default).addHandlers(stateData);
     }
     // Manipulate base css; e.g. Overflow hidden & position absolute & relative
-    manipulateSiteCss(stateData) {
+    initSiteCssManipulation(stateData) {
         (0, _manipulateSiteCssViewJsDefault.default).init(stateData);
     }
     // Initialize progress bar --- In stepView.js
@@ -2633,21 +2631,12 @@ class WebflowView {
     initSwipeGestures(stateData) {
         (0, _swipeGestureViewJsDefault.default).init(stateData);
     }
-    // Delete visual dividers
-    removeVisualDividers(devMode, elements) {
-        if (devMode < 2) {
-            // If dev mode is 200% or higher, do not:
-            elements.$form.find(_configJs.DIVIDER_SELCTOR).remove();
-            elements.$steps.hide();
-            elements.$steps.eq(0).show();
-        } else console.log(`Dev mode ${devMode}: Visual dividers not removed...`);
-    }
 }
 // + Exports +
 // WebflowView object
 exports.default = new WebflowView();
 
-},{"../config.js":"k5Hzs","./buttonView.js":"6ARYD","./stepView.js":"igI8F","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./swipeGestureView.js":"iWahp","./autoFocusAndKeyboardEventsView.js":"8Lg9B","./manipulateSiteCssView.js":"8cT3D"}],"k5Hzs":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./buttonView.js":"6ARYD","./stepView.js":"igI8F","./swipeGestureView.js":"iWahp","./autoFocusAndKeyboardEventsView.js":"8Lg9B","./manipulateSiteCssView.js":"8cT3D"}],"k5Hzs":[function(require,module,exports) {
 // + Global strings +
 // Functional defaults
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -2777,8 +2766,7 @@ const RIGHT_EVENT_DEFAULT = "arrowright, right";
 const LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT = "true";
 const AUTO_DETECT_NEXT_STEP_DEFAULT = "true";
 const CSS_SHOW_DEFAULT = {
-    opacity: 1,
-    display: "flex"
+    opacity: 1 /*, display: 'flex'*/ 
 };
 const CSS_HIDE_DEFAULT = {
     opacity: 0,
@@ -2825,7 +2813,7 @@ const MIN_SWIPE_SCREEN_SIZE_DEFAULT = 0;
 const REDIRECT_MS_TIME_DEFAULT = 1;
 const PROGRESS_BAR_AXIS_DEFAULT = "x";
 const ANCHOR_MIN_SCREEN_SIZE_DEFAULT = 0;
-const ANCHOR_MAX_SCREEN_SIZE_DEFAULT = 767;
+const ANCHOR_MAX_SCREEN_SIZE_DEFAULT = 10000;
 const DEV_MODE_OBJECT = [
     {
         names: [
@@ -2857,90 +2845,90 @@ const DEV_MODE_OBJECT = [
     }
 ];
 const TYPEOF_GSAP_DEPENDENCY = typeof gsap;
-const TYPEOF_GSAP_SCROLL_TO_DEPENDENCY = typeof $("body").attr("bmg-data-gsap-scroll-already-installed");
+const TYPEOF_GSAP_SCROLL_TO_DEPENDENCY = typeof $("body").attr("data-gsap-scroll-already-installed");
 const TYPEOF_HAMMER_JS_DEPENDENCY = typeof Hammer;
-const FORM_BLOCK_SELECTOR = '[bmg-form = "Form Block"]';
-const FORM_SELECTOR = '[bmg-form = "Form"]';
-const STEP_SELECTOR = '[bmg-form = "Form Step"]';
-const DIVIDER_SELCTOR = '[bmg-form = "Visual Divider"]';
-const SUBMIT_BUTTON_SELECTOR = '[bmg-form = "Submit Button"]';
-const CONTINUE_BUTTON_SELECTOR = '[bmg-form = "Continue Button"]';
-const BACKWARDS_BUTTON_SELECTOR = '[bmg-form = "Backwards Button"]';
-const NOT_A_BUTTON_SELECTOR = '[bmg-form = "Not a Button"]';
-const QUIZ_RESULT_SELECTOR = '[bmg-form = "Quiz Result"]';
-const PROGRESS_BAR_SELECTOR = '[bmg-form = "Progress Bar"]';
-const ANCHOR_ELEMENT_SELECTOR = '[bmg-form = "Anchor Element"]';
+const FORM_BLOCK_SELECTOR = '[studio-form = "Form Block"]';
+const FORM_SELECTOR = '[studio-form = "Form"]';
+const STEP_SELECTOR = '[studio-form = "Form Step"]';
+const DIVIDER_SELCTOR = '[studio-form = "Visual Divider"]';
+const SUBMIT_BUTTON_SELECTOR = '[studio-form = "Submit Button"]';
+const CONTINUE_BUTTON_SELECTOR = '[studio-form = "Continue Button"]';
+const BACKWARDS_BUTTON_SELECTOR = '[studio-form = "Backwards Button"]';
+const NOT_A_BUTTON_SELECTOR = '[studio-form = "Not a Button"]';
+const QUIZ_RESULT_SELECTOR = '[studio-form = "Quiz Result"]';
+const PROGRESS_BAR_SELECTOR = '[studio-form = "Progress Bar"]';
+const ANCHOR_ELEMENT_SELECTOR = '[studio-form = "Anchor Element"]';
 const RADIO_SELECTOR = ".w-radio";
 const CHECKBOX_SELECTOR = ".w-checkbox";
 const W_BUTTON_SELECTOR = ".w-button";
 const SUCCESS_SELECTOR = ".w-form-done";
 const CONDITION_INVISIBLE_SELECTOR = ".w-condition-invisible";
-const FORM_BLOCK_INDEX_ATTRIBUTE = "bmg-data-form-block-index";
-const STEP_INDEX_ATTRIBUTE = "bmg-data-step-index";
-const STEP_TYPE_ATTRIBUTE = "bmg-data-step-type";
-const STEP_REQUIRED_ATTRIBUTE = "bmg-data-required";
-const STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE = "bmg-data-custom-requirements-passed";
-const RELATIVE_LAST_STEP_ATTRIBUTE = "bmg-data-relative-last-step";
-const CONDITIONAL_ATTRIBUTE = "bmg-data-conditional";
-const CONDITIONAL_NEXT_ATTRIBUTE = "bmg-data-conditional-next";
-const NOT_AUTO_CONTINUE_ATTRIBUTE = "bmg-data-not-auto-continue";
-const MARK_CLICK_ELEMENT_ATTRIBUTE = "bmg-data-click-element";
-const ELEMENT_GOT_CHECKED_ATTRIBUTE = "bmg-data-element-checked";
-const CLICK_ELEMENT_ID_ATTRIBUTE = "bmg-data-click-element-id";
-const REMOVE_OTHER_STEPS_ATTRIBUTE = "bmg-data-remove-other-steps";
-const AUTO_FOCUS_ATTRIBUTE = "bmg-data-autofocus";
-const KEYBOARD_EVENTS_ON_STEP_ATTRIBUTE = "bmg-data-keyboard-events";
-const ESC_EVENT_ATTRIBUTE = "bmg-data-esc-event";
-const ENTER_EVENT_ATTRIBUTE = "bmg-data-enter-event";
-const LEFT_EVENT_ATTRIBUTE = "bmg-data-left-event";
-const LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE = "bmg-data-left-key-event-infintiy-allowed";
-const RIGHT_EVENT_ATTRIBUTE = "bmg-data-right-event";
-const DEV_MODE_ATTRIBUTE = "bmg-data-dev-mode";
-const SWIPE_ALLOWED_ATTRIBUTE = "bmg-data-swipe-allowed";
-const QUIZ_PATH_ATTRIBUTE = "bmg-data-quiz-path";
-const REDIRECT_URL_ATTRIBUTE = "bmg-data-redirect-url";
-const AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE = "bmg-data-auto-delete-conditionally-invisible-elements";
-const AUTO_DETECT_NEXT_STEP_ATTRIBUTE = "bmg-data-auto-detect-next-step";
-const CSS_SHOW_ATTRIBUTE = "bmg-data-css-show";
-const CSS_HIDE_ATTRIBUTE = "bmg-data-css-hide";
-const CSS_ACTIVE_ATTRIBUTE = "bmg-data-css-active";
-const CSS_INACTIVE_ATTRIBUTE = "bmg-data-css-inactive";
-const CSS_BACK_FORTH_ACTIVE_ATTRIBUTE = "bmg-data-back-forth-css-active";
-const CSS_BACK_FORTH_INACTIVE_ATTRIBUTE = "bmg-data-back-forth-css-inactive";
-const SET_CSS_INACTIVE_ATTRIBUTE = "bmg-data-set-css-inactive";
-const CSS_SELECT_ATTRIBUTE = "bmg-data-css-select";
-const CSS_DESELECT_ATTRIBUTE = "bmg-data-css-deselect";
-const ANIMATION_MS_TIME_ATTRIBUTE = "bmg-data-animation-ms-time";
-const EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE = "bmg-data-equal-height-transition-speed-multiplier";
-const ERROR_COLOR_ATTRIBUTE = "bmg-data-error-color";
-const CSS_ERROR_STATUS_ATTRIBUTE = "bmg-data-css-error-status";
-const CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE = "bmg-data-css-error-status-resolved";
-const SLIDE_DIRECTION_ATTRIBUTE = "bmg-data-slide-direction";
-const CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE = "bmg-data-custom-next-slide-in";
-const CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE = "bmg-data-custom-next-slide-out";
-const CUSTOM_PREV_SLIDE_IN_ATTRIBUTE = "bmg-data-custom-prev-slide-in";
-const CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE = "bmg-data-custom-prev-slide-out";
-const CUSTOM_X_MULTIPLIER_ATTRIBUTE = "bmg-data-custom-x-percentage-multiplier";
-const CUSTOM_Y_MULTIPLIER_ATTRIBUTE = "bmg-data-custom-y-percentage-multiplier";
-const AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE = "bmg-data-auto-resize-time-multiplier-1";
-const AUTO_RESIZE_TIME_MULTIPLIER_2_ATTRIBUTE = "bmg-data-auto-resize-time-multiplier-2";
-const AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE = "bmg-data-success-auto-resize-time-multiplier-1";
-const AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE = "bmg-data-success-auto-resize-time-multiplier-2";
-const MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE = "bmg-data-max-swipe-screen-size";
-const MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE = "bmg-data-min-swipe-screen-size";
-const SWIPE_TYPE_ANIMATION_ATTRIBUTE = "bmg-data-swipe-type-animation";
-const SUBMIT_MS_TIME_1_ATTRIBUTE = "bmg-data-submit-ms-time-1";
-const SUBMIT_MS_TIME_2_ATTRIBUTE = "bmg-data-submit-ms-time-2";
-const SUBMIT_SHOW_ATTRIBUTE = "bmg-data-submit-show";
-const SUBMIT_HIDE_ATTRIBUTE = "bmg-data-submit-hide";
-const REDIRECT_MS_TIME_ATTRIBUTE = "bmg-data-redirect-ms-time";
-const PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE = "bmg-data-progress-bar-ms-time";
-const PROGRESS_BAR_AXIS_ATTRIBUTE = "bmg-data-progress-bar-axis";
-const ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE = "bmg-data-anchor-min-screen-size";
-const ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE = "bmg-data-anchor-max-screen-size";
-const ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE = "bmg-data-anchor-animation-ms-time";
-const ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE = "bmg-data-anchor-y-offset-selector";
-const ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE = "bmg-data-anchor-related-element-to-scroll-selector";
+const FORM_BLOCK_INDEX_ATTRIBUTE = "data-form-block-index";
+const STEP_INDEX_ATTRIBUTE = "data-step-index";
+const STEP_TYPE_ATTRIBUTE = "data-step-type";
+const STEP_REQUIRED_ATTRIBUTE = "data-required";
+const STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE = "data-custom-requirements-passed";
+const RELATIVE_LAST_STEP_ATTRIBUTE = "data-relative-last-step";
+const CONDITIONAL_ATTRIBUTE = "data-conditional";
+const CONDITIONAL_NEXT_ATTRIBUTE = "data-conditional-next";
+const NOT_AUTO_CONTINUE_ATTRIBUTE = "data-not-auto-continue";
+const MARK_CLICK_ELEMENT_ATTRIBUTE = "data-click-element";
+const ELEMENT_GOT_CHECKED_ATTRIBUTE = "data-element-checked";
+const CLICK_ELEMENT_ID_ATTRIBUTE = "data-click-element-id";
+const REMOVE_OTHER_STEPS_ATTRIBUTE = "data-remove-other-steps";
+const AUTO_FOCUS_ATTRIBUTE = "data-autofocus";
+const KEYBOARD_EVENTS_ON_STEP_ATTRIBUTE = "data-keyboard-events";
+const ESC_EVENT_ATTRIBUTE = "data-esc-event";
+const ENTER_EVENT_ATTRIBUTE = "data-enter-event";
+const LEFT_EVENT_ATTRIBUTE = "data-left-event";
+const LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE = "data-left-key-event-infintiy-allowed";
+const RIGHT_EVENT_ATTRIBUTE = "data-right-event";
+const DEV_MODE_ATTRIBUTE = "data-dev-mode";
+const SWIPE_ALLOWED_ATTRIBUTE = "data-swipe-allowed";
+const QUIZ_PATH_ATTRIBUTE = "data-quiz-path";
+const REDIRECT_URL_ATTRIBUTE = "data-redirect-url";
+const AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE = "data-auto-delete-conditionally-invisible-elements";
+const AUTO_DETECT_NEXT_STEP_ATTRIBUTE = "data-auto-detect-next-step";
+const CSS_SHOW_ATTRIBUTE = "data-css-show";
+const CSS_HIDE_ATTRIBUTE = "data-css-hide";
+const CSS_ACTIVE_ATTRIBUTE = "data-css-active";
+const CSS_INACTIVE_ATTRIBUTE = "data-css-inactive";
+const CSS_BACK_FORTH_ACTIVE_ATTRIBUTE = "data-back-forth-css-active";
+const CSS_BACK_FORTH_INACTIVE_ATTRIBUTE = "data-back-forth-css-inactive";
+const SET_CSS_INACTIVE_ATTRIBUTE = "data-set-css-inactive";
+const CSS_SELECT_ATTRIBUTE = "data-css-select";
+const CSS_DESELECT_ATTRIBUTE = "data-css-deselect";
+const ANIMATION_MS_TIME_ATTRIBUTE = "data-animation-ms-time";
+const EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE = "data-equal-height-transition-speed-multiplier";
+const ERROR_COLOR_ATTRIBUTE = "data-error-color";
+const CSS_ERROR_STATUS_ATTRIBUTE = "data-css-error-status";
+const CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE = "data-css-error-status-resolved";
+const SLIDE_DIRECTION_ATTRIBUTE = "data-slide-direction";
+const CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE = "data-custom-next-slide-in";
+const CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE = "data-custom-next-slide-out";
+const CUSTOM_PREV_SLIDE_IN_ATTRIBUTE = "data-custom-prev-slide-in";
+const CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE = "data-custom-prev-slide-out";
+const CUSTOM_X_MULTIPLIER_ATTRIBUTE = "data-custom-x-percentage-multiplier";
+const CUSTOM_Y_MULTIPLIER_ATTRIBUTE = "data-custom-y-percentage-multiplier";
+const AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE = "data-auto-resize-time-multiplier-1";
+const AUTO_RESIZE_TIME_MULTIPLIER_2_ATTRIBUTE = "data-auto-resize-time-multiplier-2";
+const AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE = "data-success-auto-resize-time-multiplier-1";
+const AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE = "data-success-auto-resize-time-multiplier-2";
+const MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE = "data-max-swipe-screen-size";
+const MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE = "data-min-swipe-screen-size";
+const SWIPE_TYPE_ANIMATION_ATTRIBUTE = "data-swipe-type-animation";
+const SUBMIT_MS_TIME_1_ATTRIBUTE = "data-submit-ms-time-1";
+const SUBMIT_MS_TIME_2_ATTRIBUTE = "data-submit-ms-time-2";
+const SUBMIT_SHOW_ATTRIBUTE = "data-submit-show";
+const SUBMIT_HIDE_ATTRIBUTE = "data-submit-hide";
+const REDIRECT_MS_TIME_ATTRIBUTE = "data-redirect-ms-time";
+const PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE = "data-progress-bar-ms-time";
+const PROGRESS_BAR_AXIS_ATTRIBUTE = "data-progress-bar-axis";
+const ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE = "data-anchor-min-screen-size";
+const ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE = "data-anchor-max-screen-size";
+const ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE = "data-anchor-animation-ms-time";
+const ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE = "data-anchor-y-offset-selector";
+const ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE = "data-anchor-related-element-to-scroll-selector";
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
@@ -3181,6 +3169,8 @@ var _createElementsJs = require("./helper/createElements.js");
 var _createElementsJsDefault = parcelHelpers.interopDefault(_createElementsJs);
 var _populateStylesObjectJs = require("./helper/populateStylesObject.js");
 var _populateStylesObjectJsDefault = parcelHelpers.interopDefault(_populateStylesObjectJs);
+var _calculateStepHeightsJs = require("./helper/calculateStepHeights.js");
+var _calculateStepHeightsJsDefault = parcelHelpers.interopDefault(_calculateStepHeightsJs);
 const state = {
     data: {}
 };
@@ -3198,7 +3188,7 @@ const createState = function($formBlock, index) {
             }
         ],
         // Styles
-        styles: (0, _populateStylesObjectJsDefault.default)($formBlock),
+        // styles: populateStylesObject($formBlock),
         // Environment variables
         keyEventsAllowed: true,
         devMode: (0, _helper.returnDevModeIndex)($formBlock),
@@ -3210,15 +3200,20 @@ const createState = function($formBlock, index) {
             }
         }
     };
-    // console.log(
-    //   'Implement idea that the closest section get set to overflow hidden automatically, if form block is not set to overflow hidden or the attribute allows / not disallows it.'
-    // );
-    // Implement an easy to use xano mode
+    // Values
+    const stateData = state.data[`form${index}`];
+    // Add styles
+    stateData.styles = (0, _populateStylesObjectJsDefault.default)(stateData.elements);
+    // Add step heihgts
+    (0, _calculateStepHeightsJsDefault.default)(stateData);
     // Return
-    return state.data[`form${index}`];
-};
+    return stateData;
+}; // console.log(
+ //   done. 'Implement idea that the closest section get set to overflow hidden automatically, if form block is not set to overflow hidden or the attribute allows / not disallows it.'
+ // );
+ // Implement an easy to use xano mode
 
-},{"./config.js":"k5Hzs","./helper":"lVRAz","./helper/createElements.js":"6bWx7","./helper/populateStylesObject.js":"aSMyv","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lVRAz":[function(require,module,exports) {
+},{"./config.js":"k5Hzs","./helper":"lVRAz","./helper/createElements.js":"6bWx7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./helper/populateStylesObject.js":"aSMyv","./helper/calculateStepHeights.js":"iTKuL"}],"lVRAz":[function(require,module,exports) {
 // + Imports +
 // Base
 // Custom
@@ -3351,33 +3346,49 @@ var _configJs = require("../config.js");
 var _helperJs = require("../helper.js");
 // + Exports +
 // - - Populate styles object - -
-exports.default = function($element) {
+exports.default = function(stateDataElements) {
+    // Elements
+    const $formBlock = stateDataElements.$formBlock, $firstStep = stateDataElements.$steps.eq(0), $progressBar = stateDataElements.$progressBar;
+    // Values
+    firstStepDisplayCss = $firstStep.css("display");
     // Initial varaible
     const styles = {
-        animationMsTime: parseFloat($element.attr(_configJs.ANIMATION_MS_TIME_ATTRIBUTE) || _configJs.ANIMATION_MS_TIME_DEFAULT),
-        equalHeightTransitionSpeedMultiplier: parseFloat($element.attr(_configJs.EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE) || _configJs.EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_DEFAULT),
-        cssShow: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_SHOW_ATTRIBUTE, _configJs.CSS_SHOW_DEFAULT),
-        cssHide: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_HIDE_ATTRIBUTE, _configJs.CSS_HIDE_DEFAULT),
-        cssActive: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_ACTIVE_ATTRIBUTE, _configJs.CSS_ACTIVE_DEFAULT),
-        cssInactive: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_INACTIVE_ATTRIBUTE, _configJs.CSS_INACTIVE_DEFAULT),
-        cssBackForthActive: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_BACK_FORTH_ACTIVE_ATTRIBUTE, _configJs.CSS_BACK_FORTH_ACTIVE_DEFAULT),
-        cssBackForthInactive: (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_BACK_FORTH_INACTIVE_ATTRIBUTE, _configJs.CSS_BACK_FORTH_INACTIVE_DEFAULT),
-        errorColor: $element.attr(_configJs.ERROR_COLOR_ATTRIBUTE) || _configJs.ERROR_COLOR_DEFAULT,
-        slideDirection: $element.attr(_configJs.SLIDE_DIRECTION_ATTRIBUTE) || _configJs.SLIDE_DIRECTION_DEFAULT,
-        customNextSlideIn: (0, _helperJs.getJsonAttrVals)($element, _configJs.CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE, _configJs.CUSTOM_NEXT_SLIDE_IN_DEFAULT),
-        customNextSlideOut: (0, _helperJs.getJsonAttrVals)($element, _configJs.CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE, _configJs.CUSTOM_NEXT_SLIDE_OUT_DEFAULT),
-        customPrevSlideIn: (0, _helperJs.getJsonAttrVals)($element, _configJs.CUSTOM_PREV_SLIDE_IN_ATTRIBUTE, _configJs.CUSTOM_PREV_SLIDE_IN_DEFAULT),
-        customPrevSlideOut: (0, _helperJs.getJsonAttrVals)($element, _configJs.CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE, _configJs.CUSTOM_PREV_SLIDE_OUT_DEFAULT),
-        customXMultiplier: parseFloat($element.attr(_configJs.CUSTOM_X_MULTIPLIER_ATTRIBUTE) || _configJs.CUSTOM_X_MULTIPLIER_DEFAULT),
-        customYMultiplier: parseFloat($element.attr(_configJs.CUSTOM_Y_MULTIPLIER_ATTRIBUTE) || _configJs.CUSTOM_Y_MULTIPLIER_DEFAULT),
-        autoResizeTimeMultiplier1: parseFloat($element.attr(_configJs.AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE) || _configJs.AUTO_RESIZE_TIME_MULTIPLIER_1_DEFAULT),
-        autoResizeTimeMultiplier2: parseFloat($element.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) || _configJs.AUTO_RESIZE_TIME_MULTIPLIER_2_DEFAULT),
-        autoResizeSuccessTimeMultiplier1: parseFloat($element.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE) || _configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_DEFAULT),
-        autoResizeSuccessTimeMultiplier2: parseFloat($element.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) || _configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_DEFAULT),
-        maxSwipeScreenSize: parseInt($element.attr(_configJs.MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE) || _configJs.MAX_SWIPE_SCREEN_SIZE_DEFAULT),
-        minSwipeScreenSize: parseInt($element.attr(_configJs.MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE) || _configJs.MIN_SWIPE_SCREEN_SIZE_DEFAULT),
-        leftRightKeyEventInfinityAllowed: $element.attr(_configJs.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE) || _configJs.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT,
-        redirectMsTime: parseFloat($element.attr(_configJs.REDIRECT_MS_TIME_ATTRIBUTE) || _configJs.REDIRECT_MS_TIME_DEFAULT)
+        // Webflow designer based style
+        firstStepDisplayCss: firstStepDisplayCss,
+        // Attribute based style
+        animationMsTime: parseFloat($formBlock.attr(_configJs.ANIMATION_MS_TIME_ATTRIBUTE) || _configJs.ANIMATION_MS_TIME_DEFAULT),
+        equalHeightTransitionSpeedMultiplier: parseFloat($formBlock.attr(_configJs.EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE) || _configJs.EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_DEFAULT),
+        cssShow: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_SHOW_ATTRIBUTE, {
+            ..._configJs.CSS_SHOW_DEFAULT,
+            display: firstStepDisplayCss
+        }),
+        cssHide: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_HIDE_ATTRIBUTE, _configJs.CSS_HIDE_DEFAULT),
+        cssActive: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_ACTIVE_ATTRIBUTE, _configJs.CSS_ACTIVE_DEFAULT),
+        cssInactive: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_INACTIVE_ATTRIBUTE, _configJs.CSS_INACTIVE_DEFAULT),
+        cssBackForthActive: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_BACK_FORTH_ACTIVE_ATTRIBUTE, _configJs.CSS_BACK_FORTH_ACTIVE_DEFAULT),
+        cssBackForthInactive: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_BACK_FORTH_INACTIVE_ATTRIBUTE, _configJs.CSS_BACK_FORTH_INACTIVE_DEFAULT),
+        errorColor: $formBlock.attr(_configJs.ERROR_COLOR_ATTRIBUTE) || _configJs.ERROR_COLOR_DEFAULT,
+        slideDirection: $formBlock.attr(_configJs.SLIDE_DIRECTION_ATTRIBUTE) || _configJs.SLIDE_DIRECTION_DEFAULT,
+        customNextSlideIn: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE, {
+            ..._configJs.CUSTOM_NEXT_SLIDE_IN_DEFAULT,
+            display: firstStepDisplayCss
+        }),
+        customNextSlideOut: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE, _configJs.CUSTOM_NEXT_SLIDE_OUT_DEFAULT),
+        customPrevSlideIn: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CUSTOM_PREV_SLIDE_IN_ATTRIBUTE, {
+            ..._configJs.CUSTOM_PREV_SLIDE_IN_DEFAULT,
+            display: firstStepDisplayCss
+        }),
+        customPrevSlideOut: (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE, _configJs.CUSTOM_PREV_SLIDE_OUT_DEFAULT),
+        customXMultiplier: parseFloat($formBlock.attr(_configJs.CUSTOM_X_MULTIPLIER_ATTRIBUTE) || _configJs.CUSTOM_X_MULTIPLIER_DEFAULT),
+        customYMultiplier: parseFloat($formBlock.attr(_configJs.CUSTOM_Y_MULTIPLIER_ATTRIBUTE) || _configJs.CUSTOM_Y_MULTIPLIER_DEFAULT),
+        autoResizeTimeMultiplier1: parseFloat($formBlock.attr(_configJs.AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE) || _configJs.AUTO_RESIZE_TIME_MULTIPLIER_1_DEFAULT),
+        autoResizeTimeMultiplier2: parseFloat($formBlock.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) || _configJs.AUTO_RESIZE_TIME_MULTIPLIER_2_DEFAULT),
+        autoResizeSuccessTimeMultiplier1: parseFloat($formBlock.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE) || _configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_DEFAULT),
+        autoResizeSuccessTimeMultiplier2: parseFloat($formBlock.attr(_configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) || _configJs.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_DEFAULT),
+        maxSwipeScreenSize: parseInt($formBlock.attr(_configJs.MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE) || _configJs.MAX_SWIPE_SCREEN_SIZE_DEFAULT),
+        minSwipeScreenSize: parseInt($formBlock.attr(_configJs.MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE) || _configJs.MIN_SWIPE_SCREEN_SIZE_DEFAULT),
+        leftRightKeyEventInfinityAllowed: $formBlock.attr(_configJs.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE) || _configJs.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT,
+        redirectMsTime: parseFloat($formBlock.attr(_configJs.REDIRECT_MS_TIME_ATTRIBUTE) || _configJs.REDIRECT_MS_TIME_DEFAULT)
     };
     // Iterate over created object
     const cssShow = styles["cssShow"], cssHide = styles["cssHide"], cssBackForthActive = styles["cssBackForthActive"], cssBackForthInactive = styles["cssBackForthInactive"], cssActive = styles["cssActive"], cssInactive = styles["cssInactive"], customNextSlideIn = styles["customNextSlideIn"], customNextSlideOut = styles["customNextSlideOut"], customPrevSlideIn = styles["customPrevSlideIn"], customPrevSlideOut = styles["customPrevSlideOut"];
@@ -3395,41 +3406,81 @@ exports.default = function($element) {
     if (customPrevSlideIn["duration"] == undefined) customPrevSlideIn["duration"] = styles["animationSTime"];
     if (customPrevSlideOut["duration"] == undefined) customPrevSlideOut["duration"] = styles["animationSTime"];
     // Define submission time
-    styles["submitMsTime1"] = parseFloat($element.attr(_configJs.SUBMIT_MS_TIME_1_ATTRIBUTE)) || styles["animationMsTime"];
-    styles["submitMsTime2"] = parseFloat($element.attr(_configJs.SUBMIT_MS_TIME_2_ATTRIBUTE)) || styles["animationMsTime"];
+    styles["submitMsTime1"] = parseFloat($formBlock.attr(_configJs.SUBMIT_MS_TIME_1_ATTRIBUTE)) || styles["animationMsTime"];
+    styles["submitMsTime2"] = parseFloat($formBlock.attr(_configJs.SUBMIT_MS_TIME_2_ATTRIBUTE)) || styles["animationMsTime"];
     // Define submit animation type
-    styles["submitHide"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.SUBMIT_HIDE_ATTRIBUTE, cssHide);
-    styles["submitShow"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.SUBMIT_SHOW_ATTRIBUTE, {
+    styles["submitHide"] = (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.SUBMIT_HIDE_ATTRIBUTE, cssHide);
+    styles["submitShow"] = (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.SUBMIT_SHOW_ATTRIBUTE, {
         ...cssShow,
         duration: styles["animationSTime"] * 1.5
     });
     if (styles["submitHide"]["duration"] == undefined) styles["submitHide"]["duration"] = styles["submitMsTime1"] / 1000;
     if (styles["submitShow"]["duration"] == undefined) styles["submitShow"]["duration"] = styles["submitMsTime2"] / 1000;
     // Set css inactive
-    styles["setCssInactive"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.SET_CSS_INACTIVE_ATTRIBUTE, cssInactive);
+    styles["setCssInactive"] = (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.SET_CSS_INACTIVE_ATTRIBUTE, cssInactive);
     delete styles["setCssInactive"].duration;
     // Select / Deselect
-    styles["cssSelect"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_SELECT_ATTRIBUTE, cssActive);
-    styles["cssDeselect"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_DESELECT_ATTRIBUTE, cssInactive);
+    styles["cssSelect"] = (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_SELECT_ATTRIBUTE, cssActive);
+    styles["cssDeselect"] = (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_DESELECT_ATTRIBUTE, cssInactive);
     // Error status CSS cssErrorStatusResolved
-    styles["cssErrorStatus"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_ERROR_STATUS_ATTRIBUTE, {
+    styles["cssErrorStatus"] = (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_ERROR_STATUS_ATTRIBUTE, {
         duration: styles["animationSTime"]
     });
-    styles["cssErrorStatusResolved"] = (0, _helperJs.getJsonAttrVals)($element, _configJs.CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE, {
+    styles["cssErrorStatusResolved"] = (0, _helperJs.getJsonAttrVals)($formBlock, _configJs.CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE, {
         duration: styles["animationSTime"]
     });
     if (styles["cssErrorStatus"]["borderColor"] == undefined) styles["cssErrorStatus"]["borderColor"] = styles["errorColor"];
     if (styles["cssErrorStatusResolved"]["borderColor"] == undefined) styles["cssErrorStatusResolved"]["borderColor"] = "";
     // Progress bar
-    styles["progressBarAnimationSTime"] = parseFloat($element.attr(_configJs.PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE) || styles["animationMsTime"]) / 1000;
-    styles["progressBarAxis"] = $element.attr(_configJs.PROGRESS_BAR_AXIS_ATTRIBUTE) || _configJs.PROGRESS_BAR_AXIS_DEFAULT;
+    styles["progressBarAnimationSTime"] = parseFloat($progressBar.attr(_configJs.PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE) || styles["animationMsTime"]) / 1000;
+    styles["progressBarAxis"] = $progressBar.attr(_configJs.PROGRESS_BAR_AXIS_ATTRIBUTE) || _configJs.PROGRESS_BAR_AXIS_DEFAULT;
     // Anchor functionality
-    styles["anchorAnimationSTime"] = parseFloat($element.attr(_configJs.ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE) || styles["animationMsTime"]) / 1000;
+    styles["anchorAnimationSTime"] = parseFloat($formBlock.attr(_configJs.ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE) || styles["animationMsTime"]) / 1000;
     // Return
     return styles;
 };
 
-},{"../config.js":"k5Hzs","../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"igI8F":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../helper.js":"lVRAz"}],"iTKuL":[function(require,module,exports) {
+// + Imports +
+// + Exports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+exports.default = function(stateData) {
+    // Define
+    const calculateStepHeights = function() {
+        // Values
+        const arr = [], { elements  } = stateData, displayCss = stateData.styles.firstStepDisplayCss;
+        // Loop
+        elements.$steps.each(function() {
+            // Values
+            let stepHeight = 0;
+            // Elements
+            const $step = $(this);
+            // Show
+            $step.css("display", displayCss);
+            // Childrenloop
+            $step.children().each(function() {
+                // Elements
+                const $child = $(this);
+                // Itterate
+                stepHeight += $child.outerHeight(true);
+            });
+            // Hide
+            $step.hide();
+            // Populate array
+            arr.push(stepHeight);
+        });
+        // console.log(arr);
+        // Reset & Return
+        stateData.stepHeights = arr;
+    };
+    // Initialize
+    calculateStepHeights();
+    // Event listener
+    $(window).resize(calculateStepHeights);
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"igI8F":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -3444,6 +3495,12 @@ var _progressBarViewJs = require("./progressBarView.js");
 var _progressBarViewJsDefault = parcelHelpers.interopDefault(_progressBarViewJs);
 var _anchorViewJs = require("./anchorView.js");
 var _anchorViewJsDefault = parcelHelpers.interopDefault(_anchorViewJs);
+var _removeOtherStepsJs = require("../helper/removeOtherSteps.js");
+var _removeOtherStepsJsDefault = parcelHelpers.interopDefault(_removeOtherStepsJs);
+var _initQuizModeJs = require("../helper/initQuizMode.js");
+var _initQuizModeJsDefault = parcelHelpers.interopDefault(_initQuizModeJs);
+var _performVisualSubmitJs = require("../helper/performVisualSubmit.js");
+var _performVisualSubmitJsDefault = parcelHelpers.interopDefault(_performVisualSubmitJs);
 // + Classes +
 class StepView {
     addHandlers(stateData) {
@@ -3515,7 +3572,7 @@ class StepView {
         // Activate back button
         gsap.to(stateData2.elements.backButtons, stateData2.styles["cssBackForthActive"]);
         // Submit if last step
-        if (stateData2.stepLogic[stepIndex].isLast) submitForm();
+        if (stateData2.stepLogic[stepIndex].isLast) stateData2.handlers.submit();
         else {
             // Variables
             const $currentStep = stateData2.stepLogic[stepIndex].$, $nextStep = stateData2.stepLogic[nextStepId].$;
@@ -3566,30 +3623,30 @@ class StepView {
     #submitForm(stateData4) {
         // - Requirement logic -
         // Variables
-        const currentStepId = stateData4.clickRecord[clickRecord.length - 1].step, object = stateData4.stepLogic[currentStepId], $currentStep = object.$;
+        const currentStepId = stateData4.clickRecord[stateData4.clickRecord.length - 1].step, object = stateData4.stepLogic[currentStepId], $currentStep = object.$;
         // Request
         if (!(0, _stepRequirementsPassedJsDefault.default)(stateData4.elements.$formBlock, $currentStep)) return false; // Break
         // Turn off keyboard form navigation
         stateData4.keyEventsAllowed = false;
         // Remove all steps that are not part of the click record before submitting
-        removeOtherSteps(stepLogicObject, clickRecord, $formBlock);
+        (0, _removeOtherStepsJsDefault.default)(stateData4.stepLogic, stateData4.clickRecord, stateData4.elements.$formBlock);
         // Initialize quiz mode
-        initQuizMode($formBlock, clickRecord);
+        (0, _initQuizModeJsDefault.default)(stateData4);
         // Update progress bar
-        updateProgressBar(true);
+        stateData4.handlers.updateProgressBar(true);
         // Hide back & next buttons
         gsap.to([
-            backButtons,
-            nextButtons
-        ], stylesObject[formBlockIndex]["cssHide"]);
+            stateData4.elements.backButtons,
+            stateData4.elements.nextButtons
+        ], stateData4.styles["cssHide"]);
         // Submit
-        performVisualSubmit($formBlock, $form, devMode);
+        (0, _performVisualSubmitJsDefault.default)(stateData4);
     }
 }
 // + Exports +
 exports.default = new StepView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs","../helper/stepRequirementsPassed.js":"cEGt1","../helper/animateStepTransition.js":"5hBGu","../helper/selectButton.js":"fm3Yt","./progressBarView.js":"avjhP","./anchorView.js":"2Yxx6"}],"cEGt1":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs","../helper/stepRequirementsPassed.js":"cEGt1","../helper/animateStepTransition.js":"5hBGu","../helper/selectButton.js":"fm3Yt","./progressBarView.js":"avjhP","./anchorView.js":"2Yxx6","../helper/removeOtherSteps.js":"9oE35","../helper/initQuizMode.js":"iQdcs","../helper/performVisualSubmit.js":"abMJh"}],"cEGt1":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -3688,7 +3745,7 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
     }
 };
 
-},{"../config.js":"k5Hzs","./errorStatus.js":"d6G26","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"d6G26":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./errorStatus.js":"d6G26"}],"d6G26":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -3715,17 +3772,30 @@ var _configJs = require("../config.js");
 let timeLineStorage = false;
 // Function
 exports.default = function(stateData, $currentStep, $nextStep) {
-    // Turn off animations on extreme dev mode
+    // Guard; Turn off animations on extreme dev mode
     if (stateData.devMode >= 2) {
         console.log(`Dev mode ${devMode}: Block the transition animation...`);
         return;
     }
-    // - Local variables -
-    const $form = stateData.elements.$form, $otherElements = $form.find(`[${_configJs.STEP_INDEX_ATTRIBUTE}]`).not($currentStep).not($nextStep), styles = stateData.styles, cssShow = styles["cssShow"], cssHide = styles["cssHide"], cssHideQuick = {
+    // Elements
+    const $form = stateData.elements.$form, $otherElements = $form.find(`[${_configJs.STEP_INDEX_ATTRIBUTE}]`).not($currentStep).not($nextStep);
+    // Step index
+    const currentStepIndex = parseInt($currentStep.attr(_configJs.STEP_INDEX_ATTRIBUTE)), nextStepIndex = parseInt($nextStep.attr(_configJs.STEP_INDEX_ATTRIBUTE));
+    // - Styles -
+    // General
+    const styles = stateData.styles, cssShow = styles["cssShow"], cssHide = styles["cssHide"], cssHideQuick = {
         ...cssHide,
         duration: 0
-    }, tl = new gsap.timeline(), resizeHeight1 = $currentStep.outerHeight(true), resizeHeight2 = $nextStep.outerHeight(true), isEqualHeight = resizeHeight1 == resizeHeight2, speedMultiplier = isEqualHeight ? styles["equalHeightTransitionSpeedMultiplier"] : 1, speedMultiplierString = `<+=${speedMultiplier * 100}%`, isReverse = parseInt($currentStep.attr(_configJs.STEP_INDEX_ATTRIBUTE)) > parseInt($nextStep.attr(_configJs.STEP_INDEX_ATTRIBUTE)), autoResizeTime1 = cssShow["duration"], autoResizeTime2 = cssHide["duration"], autoResizeTimeMultiplier1 = styles["autoResizeTimeMultiplier1"], autoResizeTimeMultiplier2 = styles["autoResizeTimeMultiplier2"];
-    // Not constant
+    };
+    // Height
+    const { stepHeights  } = stateData, resizeHeight1 = stepHeights[currentStepIndex], resizeHeight2 = stepHeights[nextStepIndex], isEqualHeight = resizeHeight1 == resizeHeight2;
+    // Auto resize values
+    const autoResizeTime1 = cssShow["duration"], autoResizeTime2 = cssHide["duration"], autoResizeTimeMultiplier1 = styles["autoResizeTimeMultiplier1"], autoResizeTimeMultiplier2 = styles["autoResizeTimeMultiplier2"];
+    // Other
+    const speedMultiplier = isEqualHeight ? styles["equalHeightTransitionSpeedMultiplier"] : 1, speedMultiplierString = `<+=${speedMultiplier * 100}%`, isReverse = parseInt($currentStep.attr(_configJs.STEP_INDEX_ATTRIBUTE)) > parseInt($nextStep.attr(_configJs.STEP_INDEX_ATTRIBUTE));
+    // GSAP
+    const tl = new gsap.timeline();
+    // Variables
     let slideDirection = ($currentStep.attr(_configJs.SLIDE_DIRECTION_ATTRIBUTE) || styles["slideDirection"]).toLowerCase();
     // Step specific animation in reverse
     if (isReverse) slideDirection = ($nextStep.attr(_configJs.SLIDE_DIRECTION_ATTRIBUTE) || slideDirection).toLowerCase();
@@ -3947,7 +4017,7 @@ exports.default = function(stateData, x, $step) {
     gsap.to($button[0], cssSelect);
 };
 
-},{"../config.js":"k5Hzs","../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"avjhP":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../helper.js":"lVRAz"}],"avjhP":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4072,7 +4142,7 @@ class AnchorView {
             // If within specified scren size
             if (width <= stateData.anchorData.anchorMaxScreenSize && width >= stateData.anchorData.anchorMinScreenSize) gsap.to(stateData.elements.anchorScrollTarget, {
                 scrollTo: {
-                    y: `#anchor-element-${formBlockIndex}`,
+                    y: `#anchor-element-${stateData.formBlockIndex}`,
                     offsetY: height
                 },
                 duration: stateData.anchorData.anchorAnimationTime
@@ -4103,7 +4173,131 @@ class AnchorView {
 // + Exports +
 exports.default = new AnchorView();
 
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iWahp":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9oE35":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+// + Exports +
+// - - Remove other steps - -
+exports.default = function(stepObject, clickRecord, $element) {
+    // Local variables
+    let isAllowed = $element.attr(_configJs.REMOVE_OTHER_STEPS_ATTRIBUTE) || "true";
+    // removeArray = [];
+    if (isAllowed == "true") stepObject.forEach((step)=>{
+        let stepInRecord = false, stepIndex = step.step;
+        clickRecord.forEach((record)=>{
+            if (stepIndex == record.step) stepInRecord = true;
+        });
+        if (step.isLast) stepInRecord = true;
+        if (!stepInRecord) step.$.remove();
+    });
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs"}],"iQdcs":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+// + Exports +
+// - - Initialize Quizmode - -
+exports.default = function(stateData) {
+    // Values
+    const $formBlock = stateData.elements.$formBlock, { styles  } = stateData;
+    // Local elements
+    let success = $formBlock[0].querySelector(_configJs.SUCCESS_SELECTOR), results = success.querySelectorAll(_configJs.QUIZ_RESULT_SELECTOR);
+    // Styles
+    let redirectMsTime = styles["redirectMsTime"];
+    // Run only if active
+    if (results.length > 0) {
+        console.log(results);
+        // Vars & elements
+        let defaultResult = results[0], defaultUrl = defaultResult.getAttribute(_configJs.REDIRECT_URL_ATTRIBUTE);
+        // Url redirect logic
+        if (defaultUrl != undefined) {
+            setTimeout(()=>{
+                // Updated values
+                defaultUrl = defaultResult.getAttribute(_configJs.REDIRECT_URL_ATTRIBUTE);
+                // Action
+                location.assign(defaultUrl);
+            }, redirectMsTime);
+            return;
+        }
+        /*
+        // Elements & vars
+        let $defaultResult = $success.find(`[${ quizPathAttribute } = "default"]`).add( $results ).eq(0),
+            defaultUrl = $defaultResult.attr('redirectUrlAttribute')
+
+        console.log($success, $defaultResult, defaultUrl)
+
+        // Url redirect logic
+        if ( defaultUrl != undefined )
+        {
+            setTimeout(() => 
+            {
+                // Updated values
+                defaultUrl = $defaultResult.attr('redirectUrlAttribute')
+
+                // Action
+                location.assign(defaultUrl)
+            }, redirectMsTime)
+            
+            return
+        } */ // Local variables
+        let hasNested, isUrl, hasUrlTimeElement;
+        // $success.find(`[${ quizPathAttribute } = "default"]`)
+        // Continues logic. TODO:
+        console.log("Todo: Set up quiz mode funcitonality. Url functionality, nested forms, etc."); // Control quizmode functionality.
+    }
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs"}],"abMJh":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+var _model = require("../model");
+// + Exports +
+// - - Visual appealing submit - -
+exports.default = function(stateData) {
+    // Values
+    const { elements  } = stateData, { devMode  } = stateData, { styles  } = stateData, $formBlock = elements.$formBlock, $form = elements.$form;
+    // Local variables
+    const $success = $formBlock.find(_configJs.SUCCESS_SELECTOR), time1 = styles["submitMsTime1"] / 1000, time2 = styles["submitMsTime2"] / 1000, submitHide = styles["submitHide"], submitHideQuick = {
+        ...submitHide,
+        duration: 0
+    }, submitShow = styles["submitShow"], resizeHeight1 = $form.outerHeight(true), resizeHeight2 = $success.outerHeight(true), multiplier1 = styles["autoResizeSuccessTimeMultiplier1"], multiplier2 = styles["autoResizeSuccessTimeMultiplier2"], submitTimeout = (submitHide.duration + submitShow.duration) * 1000, tl = new gsap.timeline(), resizeTl = new gsap.timeline();
+    // Dev mode logic
+    if (devMode < 0.5) // If dev mode is half or higher, do not:
+    setTimeout(function() {
+        $form.submit();
+    }, submitTimeout);
+    else console.log(`Dev mode ${devMode}: Perform fake submit...`);
+    // - GSAP animations -
+    // Animate submission transition
+    tl.set($success[0], submitHideQuick);
+    tl.to($form[0], submitHide);
+    tl.to($success[0], submitShow);
+    // Change frame height smoothly
+    if (resizeHeight2 >= resizeHeight1) resizeTl.to($formBlock[0], {
+        height: resizeHeight2,
+        duration: time1 * multiplier1
+    });
+    else {
+        resizeTl.set($formBlock[0], {
+            height: resizeHeight1
+        });
+        resizeTl.to($formBlock[0], {
+            height: resizeHeight2,
+            duration: time2 * multiplier2
+        }).delay(time1);
+    }
+    resizeTl.set($formBlock[0], {
+        height: "auto"
+    });
+};
+
+},{"../model":"Y4A21","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs"}],"iWahp":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4316,7 +4510,7 @@ class AutoFocusAndKeyboardEventsView {
 // + Exports +
 exports.default = new AutoFocusAndKeyboardEventsView();
 
-},{"../config.js":"k5Hzs","../helper/selectButton.js":"fm3Yt","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8cT3D":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../helper/selectButton.js":"fm3Yt"}],"8cT3D":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4325,15 +4519,80 @@ var _configJs = require("../config.js");
 // - - Handle mobile swipe gestures - -
 class ManipulateSiteCssView {
     init(stateData) {
-        console.log("Hola!");
-        const isFormBlockSetToOverFlowHidden = this.#isFormBlockSetToOverFlowHidden(stateData.elements.$formBlock);
+        this.#handleOverflowStyle(stateData);
+        this.#handlePositionStyle(stateData);
+        this.#removeVisualDividers(stateData);
+        this.#handleResize(stateData);
     }
-    #isFormBlockSetToOverFlowHidden($formBlock) {}
+    // Handle screen resize
+    #handleResize(stateData) {
+        // Logic guard
+        if (stateData.devMode >= 2) {
+            console.log(`Dev mode ${devMode}: Step heihgts not calculated ...`);
+            return;
+        }
+        // If dev mode is 200% or higher, do not:
+        // Values
+        const { elements  } = stateData, { styles  } = stateData;
+        // Define
+        const changeDom = function() {
+            // Values
+            const { stepHeights  } = stateData, { clickRecord  } = stateData, currentStepId = clickRecord[clickRecord.length - 1].step;
+            // Hide
+            elements.$steps.hide();
+            // Resize action
+            elements.$form.css({
+                height: stepHeights[currentStepId]
+            });
+            // Show
+            elements.$steps.eq(currentStepId).css("display", styles.firstStepDisplayCss);
+        };
+        // Initialize
+        changeDom();
+        // Event listener
+        $(window).resize(changeDom);
+    }
+    // Delete visual dividers
+    #removeVisualDividers(stateData1) {
+        // Values
+        const { devMode: devMode1  } = stateData1, { elements  } = stateData1;
+        // Logic guard
+        if (devMode1 >= 2) {
+            console.log(`Dev mode ${devMode1}: Visual dividers not removed ...`);
+            return;
+        }
+        // If dev mode is 200% or higher, do not:
+        elements.$form.find(_configJs.DIVIDER_SELCTOR).remove();
+    }
+    #handlePositionStyle(stateData2) {
+        // Values
+        const { elements  } = stateData2;
+        // Action
+        elements.$form.css({
+            position: "relative"
+        });
+        elements.$steps.css({
+            position: "absolute",
+            top: "0%",
+            right: "0%",
+            bottom: "0%",
+            left: "0%"
+        });
+    }
+    #handleOverflowStyle(stateData3) {
+        // Elements
+        const $formBlock = stateData3.elements.$formBlock, $closestSection = $formBlock.closest("section");
+        // Values
+        const formBlockOverflowCss = $formBlock.css("overflow");
+        // Logic
+        if ($closestSection.length === 1 && formBlockOverflowCss === "visible") $closestSection.css("overflow", "hidden");
+        else if (formBlockOverflowCss === "visible") $formBlock.css("overflow", "hidden");
+    }
 }
 // + Exports +
 exports.default = new ManipulateSiteCssView();
 
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iyspg":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs"}],"iyspg":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4422,6 +4681,7 @@ exports.default = function($steps) {
             })();
         });
     });
+    console.log(stepsObject);
     return stepsObject;
 };
 

@@ -10,39 +10,58 @@ let timeLineStorage = false;
 
 // Function
 export default function (stateData, $currentStep, $nextStep) {
-  // Turn off animations on extreme dev mode
+  // Guard; Turn off animations on extreme dev mode
   if (stateData.devMode >= 2) {
     console.log(`Dev mode ${devMode}: Block the transition animation...`);
     return;
   }
 
-  // - Local variables -
+  // Elements
   const $form = stateData.elements.$form,
     $otherElements = $form
       .find(`[${config.STEP_INDEX_ATTRIBUTE}]`)
       .not($currentStep)
-      .not($nextStep),
-    styles = stateData.styles,
+      .not($nextStep);
+
+  // Step index
+  const currentStepIndex = parseInt(
+      $currentStep.attr(config.STEP_INDEX_ATTRIBUTE)
+    ),
+    nextStepIndex = parseInt($nextStep.attr(config.STEP_INDEX_ATTRIBUTE));
+
+  // - Styles -
+
+  // General
+  const styles = stateData.styles,
     cssShow = styles['cssShow'],
     cssHide = styles['cssHide'],
-    cssHideQuick = { ...cssHide, duration: 0 },
-    tl = new gsap.timeline(),
-    resizeHeight1 = $currentStep.outerHeight(true),
-    resizeHeight2 = $nextStep.outerHeight(true),
-    isEqualHeight = resizeHeight1 == resizeHeight2,
-    speedMultiplier = isEqualHeight
+    cssHideQuick = { ...cssHide, duration: 0 };
+
+  // Height
+  const { stepHeights } = stateData,
+    resizeHeight1 = stepHeights[currentStepIndex],
+    resizeHeight2 = stepHeights[nextStepIndex],
+    isEqualHeight = resizeHeight1 == resizeHeight2;
+
+  // Auto resize values
+  const autoResizeTime1 = cssShow['duration'],
+    autoResizeTime2 = cssHide['duration'],
+    autoResizeTimeMultiplier1 = styles['autoResizeTimeMultiplier1'],
+    autoResizeTimeMultiplier2 = styles['autoResizeTimeMultiplier2'];
+
+  // Other
+  const speedMultiplier = isEqualHeight
       ? styles['equalHeightTransitionSpeedMultiplier']
       : 1,
     speedMultiplierString = `<+=${speedMultiplier * 100}%`,
     isReverse =
       parseInt($currentStep.attr(config.STEP_INDEX_ATTRIBUTE)) >
-      parseInt($nextStep.attr(config.STEP_INDEX_ATTRIBUTE)),
-    autoResizeTime1 = cssShow['duration'],
-    autoResizeTime2 = cssHide['duration'],
-    autoResizeTimeMultiplier1 = styles['autoResizeTimeMultiplier1'],
-    autoResizeTimeMultiplier2 = styles['autoResizeTimeMultiplier2'];
+      parseInt($nextStep.attr(config.STEP_INDEX_ATTRIBUTE));
 
-  // Not constant
+  // GSAP
+  const tl = new gsap.timeline();
+
+  // Variables
   let slideDirection = (
     $currentStep.attr(config.SLIDE_DIRECTION_ATTRIBUTE) ||
     styles['slideDirection']

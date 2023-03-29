@@ -73,5 +73,7 @@ export default function ($steps) {
     });
   });
 
+  console.log(stepsObject);
+
   return stepsObject;
 }

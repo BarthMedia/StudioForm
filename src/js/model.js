@@ -7,6 +7,7 @@ import * as config from './config.js';
 import { returnDevModeIndex } from './helper';
 import createElements from './helper/createElements.js';
 import populateStylesObject from './helper/populateStylesObject.js';
+import calculateStepHeights from './helper/calculateStepHeights.js';
 
 // + Objects +
 
@@ -31,7 +32,7 @@ export const createState = function ($formBlock, index) {
     clickRecord: [{ step: 0 }],
 
     // Styles
-    styles: populateStylesObject($formBlock),
+    // styles: populateStylesObject($formBlock),
 
     // Environment variables
     keyEventsAllowed: true,
@@ -52,12 +53,21 @@ export const createState = function ($formBlock, index) {
     },
   };
 
-  // console.log(
-  //   'Implement idea that the closest section get set to overflow hidden automatically, if form block is not set to overflow hidden or the attribute allows / not disallows it.'
-  // );
+  // Values
+  const stateData = state.data[`form${index}`];
 
-  // Implement an easy to use xano mode
+  // Add styles
+  stateData.styles = populateStylesObject(stateData.elements);
+
+  // Add step heihgts
+  calculateStepHeights(stateData);
 
   // Return
-  return state.data[`form${index}`];
+  return stateData;
 };
+
+// console.log(
+//   done. 'Implement idea that the closest section get set to overflow hidden automatically, if form block is not set to overflow hidden or the attribute allows / not disallows it.'
+// );
+
+// Implement an easy to use xano mode

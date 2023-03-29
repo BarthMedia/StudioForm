@@ -19,7 +19,7 @@ class AnchorView {
       ) {
         gsap.to(stateData.elements.anchorScrollTarget, {
           scrollTo: {
-            y: `#anchor-element-${formBlockIndex}`,
+            y: `#anchor-element-${stateData.formBlockIndex}`,
             offsetY: height,
           },
           duration: stateData.anchorData.anchorAnimationTime,

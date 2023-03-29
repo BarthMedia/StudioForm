@@ -5,6 +5,9 @@ import animateStepTransition from '../helper/animateStepTransition.js';
 import selectButton from '../helper/selectButton.js';
 import progressBarView from './progressBarView.js';
 import anchorView from './anchorView.js';
+import removeOtherSteps from '../helper/removeOtherSteps.js';
+import initQuizMode from '../helper/initQuizMode.js';
+import performVisualSubmit from '../helper/performVisualSubmit.js';
 
 // + Classes +
 class StepView {
@@ -128,7 +131,7 @@ class StepView {
 
     // Submit if last step
     if (stateData.stepLogic[stepIndex].isLast) {
-      submitForm();
+      stateData.handlers.submit();
     } else {
       // Variables
       const $currentStep = stateData.stepLogic[stepIndex].$,
@@ -222,7 +225,8 @@ class StepView {
     // - Requirement logic -
 
     // Variables
-    const currentStepId = stateData.clickRecord[clickRecord.length - 1].step, // Get current click record entry
+    const currentStepId =
+        stateData.clickRecord[stateData.clickRecord.length - 1].step, // Get current click record entry
       object = stateData.stepLogic[currentStepId],
       $currentStep = object.$;
 
@@ -235,22 +239,26 @@ class StepView {
     stateData.keyEventsAllowed = false;
 
     // Remove all steps that are not part of the click record before submitting
-    removeOtherSteps(stepLogicObject, clickRecord, $formBlock);
+    removeOtherSteps(
+      stateData.stepLogic,
+      stateData.clickRecord,
+      stateData.elements.$formBlock
+    );
 
     // Initialize quiz mode
-    initQuizMode($formBlock, clickRecord);
+    initQuizMode(stateData);
 
     // Update progress bar
-    updateProgressBar(true);
+    stateData.handlers.updateProgressBar(true);
 
     // Hide back & next buttons
     gsap.to(
-      [backButtons, nextButtons],
-      stylesObject[formBlockIndex]['cssHide']
+      [stateData.elements.backButtons, stateData.elements.nextButtons],
+      stateData.styles['cssHide']
     );
 
     // Submit
-    performVisualSubmit($formBlock, $form, devMode);
+    performVisualSubmit(stateData);
   }
 }
 

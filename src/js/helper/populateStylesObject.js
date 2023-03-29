@@ -5,110 +5,122 @@ import { getJsonAttrVals } from '../helper.js';
 // + Exports +
 
 // - - Populate styles object - -
-export default function ($element) {
+export default function (stateDataElements) {
+  // Elements
+  const $formBlock = stateDataElements.$formBlock,
+    $firstStep = stateDataElements.$steps.eq(0),
+    $progressBar = stateDataElements.$progressBar;
+
+  // Values
+  firstStepDisplayCss = $firstStep.css('display');
+
   // Initial varaible
   const styles = {
+    // Webflow designer based style
+    firstStepDisplayCss: firstStepDisplayCss,
+
+    // Attribute based style
     animationMsTime: parseFloat(
-      $element.attr(config.ANIMATION_MS_TIME_ATTRIBUTE) ||
+      $formBlock.attr(config.ANIMATION_MS_TIME_ATTRIBUTE) ||
         config.ANIMATION_MS_TIME_DEFAULT
     ),
     equalHeightTransitionSpeedMultiplier: parseFloat(
-      $element.attr(
+      $formBlock.attr(
         config.EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_ATTRIBUTE
       ) || config.EQUAL_HEIGHT_TRANSITION_SPEED_MULTIPLIER_DEFAULT
     ),
-    cssShow: getJsonAttrVals(
-      $element,
-      config.CSS_SHOW_ATTRIBUTE,
-      config.CSS_SHOW_DEFAULT
-    ),
+    cssShow: getJsonAttrVals($formBlock, config.CSS_SHOW_ATTRIBUTE, {
+      ...config.CSS_SHOW_DEFAULT,
+      display: firstStepDisplayCss,
+    }),
     cssHide: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CSS_HIDE_ATTRIBUTE,
       config.CSS_HIDE_DEFAULT
     ),
     cssActive: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CSS_ACTIVE_ATTRIBUTE,
       config.CSS_ACTIVE_DEFAULT
     ),
     cssInactive: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CSS_INACTIVE_ATTRIBUTE,
       config.CSS_INACTIVE_DEFAULT
     ),
     cssBackForthActive: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CSS_BACK_FORTH_ACTIVE_ATTRIBUTE,
       config.CSS_BACK_FORTH_ACTIVE_DEFAULT
     ),
     cssBackForthInactive: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CSS_BACK_FORTH_INACTIVE_ATTRIBUTE,
       config.CSS_BACK_FORTH_INACTIVE_DEFAULT
     ),
     errorColor:
-      $element.attr(config.ERROR_COLOR_ATTRIBUTE) || config.ERROR_COLOR_DEFAULT,
+      $formBlock.attr(config.ERROR_COLOR_ATTRIBUTE) ||
+      config.ERROR_COLOR_DEFAULT,
     slideDirection:
-      $element.attr(config.SLIDE_DIRECTION_ATTRIBUTE) ||
+      $formBlock.attr(config.SLIDE_DIRECTION_ATTRIBUTE) ||
       config.SLIDE_DIRECTION_DEFAULT,
     customNextSlideIn: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CUSTOM_NEXT_SLIDE_IN_ATTRIBUTE,
-      config.CUSTOM_NEXT_SLIDE_IN_DEFAULT
+      { ...config.CUSTOM_NEXT_SLIDE_IN_DEFAULT, display: firstStepDisplayCss }
     ),
     customNextSlideOut: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CUSTOM_NEXT_SLIDE_OUT_ATTRIBUTE,
       config.CUSTOM_NEXT_SLIDE_OUT_DEFAULT
     ),
     customPrevSlideIn: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CUSTOM_PREV_SLIDE_IN_ATTRIBUTE,
-      config.CUSTOM_PREV_SLIDE_IN_DEFAULT
+      { ...config.CUSTOM_PREV_SLIDE_IN_DEFAULT, display: firstStepDisplayCss }
     ),
     customPrevSlideOut: getJsonAttrVals(
-      $element,
+      $formBlock,
       config.CUSTOM_PREV_SLIDE_OUT_ATTRIBUTE,
       config.CUSTOM_PREV_SLIDE_OUT_DEFAULT
     ),
     customXMultiplier: parseFloat(
-      $element.attr(config.CUSTOM_X_MULTIPLIER_ATTRIBUTE) ||
+      $formBlock.attr(config.CUSTOM_X_MULTIPLIER_ATTRIBUTE) ||
         config.CUSTOM_X_MULTIPLIER_DEFAULT
     ),
     customYMultiplier: parseFloat(
-      $element.attr(config.CUSTOM_Y_MULTIPLIER_ATTRIBUTE) ||
+      $formBlock.attr(config.CUSTOM_Y_MULTIPLIER_ATTRIBUTE) ||
         config.CUSTOM_Y_MULTIPLIER_DEFAULT
     ),
     autoResizeTimeMultiplier1: parseFloat(
-      $element.attr(config.AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE) ||
+      $formBlock.attr(config.AUTO_RESIZE_TIME_MULTIPLIER_1_ATTRIBUTE) ||
         config.AUTO_RESIZE_TIME_MULTIPLIER_1_DEFAULT
     ),
     autoResizeTimeMultiplier2: parseFloat(
-      $element.attr(config.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) ||
+      $formBlock.attr(config.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) ||
         config.AUTO_RESIZE_TIME_MULTIPLIER_2_DEFAULT
     ),
     autoResizeSuccessTimeMultiplier1: parseFloat(
-      $element.attr(config.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE) ||
+      $formBlock.attr(config.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_ATTRIBUTE) ||
         config.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_1_DEFAULT
     ),
     autoResizeSuccessTimeMultiplier2: parseFloat(
-      $element.attr(config.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) ||
+      $formBlock.attr(config.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_ATTRIBUTE) ||
         config.AUTO_RESIZE_SUCCESS_TIME_MULTIPLIER_2_DEFAULT
     ),
     maxSwipeScreenSize: parseInt(
-      $element.attr(config.MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE) ||
+      $formBlock.attr(config.MAX_SWIPE_SCREEN_SIZE_ATTRIBUTE) ||
         config.MAX_SWIPE_SCREEN_SIZE_DEFAULT
     ),
     minSwipeScreenSize: parseInt(
-      $element.attr(config.MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE) ||
+      $formBlock.attr(config.MIN_SWIPE_SCREEN_SIZE_ATTRIBUTE) ||
         config.MIN_SWIPE_SCREEN_SIZE_DEFAULT
     ),
     leftRightKeyEventInfinityAllowed:
-      $element.attr(config.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE) ||
+      $formBlock.attr(config.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_ATTRIBUTE) ||
       config.LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT,
     redirectMsTime: parseFloat(
-      $element.attr(config.REDIRECT_MS_TIME_ATTRIBUTE) ||
+      $formBlock.attr(config.REDIRECT_MS_TIME_ATTRIBUTE) ||
         config.REDIRECT_MS_TIME_DEFAULT
     ),
   };
@@ -162,20 +174,20 @@ export default function ($element) {
 
   // Define submission time
   styles['submitMsTime1'] =
-    parseFloat($element.attr(config.SUBMIT_MS_TIME_1_ATTRIBUTE)) ||
+    parseFloat($formBlock.attr(config.SUBMIT_MS_TIME_1_ATTRIBUTE)) ||
     styles['animationMsTime'];
   styles['submitMsTime2'] =
-    parseFloat($element.attr(config.SUBMIT_MS_TIME_2_ATTRIBUTE)) ||
+    parseFloat($formBlock.attr(config.SUBMIT_MS_TIME_2_ATTRIBUTE)) ||
     styles['animationMsTime'];
 
   // Define submit animation type
   styles['submitHide'] = getJsonAttrVals(
-    $element,
+    $formBlock,
     config.SUBMIT_HIDE_ATTRIBUTE,
     cssHide
   );
   styles['submitShow'] = getJsonAttrVals(
-    $element,
+    $formBlock,
     config.SUBMIT_SHOW_ATTRIBUTE,
     {
       ...cssShow,
@@ -192,7 +204,7 @@ export default function ($element) {
 
   // Set css inactive
   styles['setCssInactive'] = getJsonAttrVals(
-    $element,
+    $formBlock,
     config.SET_CSS_INACTIVE_ATTRIBUTE,
     cssInactive
   );
@@ -200,24 +212,24 @@ export default function ($element) {
 
   // Select / Deselect
   styles['cssSelect'] = getJsonAttrVals(
-    $element,
+    $formBlock,
     config.CSS_SELECT_ATTRIBUTE,
     cssActive
   );
   styles['cssDeselect'] = getJsonAttrVals(
-    $element,
+    $formBlock,
     config.CSS_DESELECT_ATTRIBUTE,
     cssInactive
   );
 
   // Error status CSS cssErrorStatusResolved
   styles['cssErrorStatus'] = getJsonAttrVals(
-    $element,
+    $formBlock,
     config.CSS_ERROR_STATUS_ATTRIBUTE,
     { duration: styles['animationSTime'] }
   );
   styles['cssErrorStatusResolved'] = getJsonAttrVals(
-    $element,
+    $formBlock,
     config.CSS_ERROR_STATUS_RESOLVED_ATTRIBUTE,
     { duration: styles['animationSTime'] }
   );
@@ -232,17 +244,17 @@ export default function ($element) {
   // Progress bar
   styles['progressBarAnimationSTime'] =
     parseFloat(
-      $element.attr(config.PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE) ||
+      $progressBar.attr(config.PROGRESS_BAR_ANIMATION_MS_TIME_ATTRIBUTE) ||
         styles['animationMsTime']
     ) / 1000;
   styles['progressBarAxis'] =
-    $element.attr(config.PROGRESS_BAR_AXIS_ATTRIBUTE) ||
+    $progressBar.attr(config.PROGRESS_BAR_AXIS_ATTRIBUTE) ||
     config.PROGRESS_BAR_AXIS_DEFAULT;
 
   // Anchor functionality
   styles['anchorAnimationSTime'] =
     parseFloat(
-      $element.attr(config.ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE) ||
+      $formBlock.attr(config.ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE) ||
         styles['animationMsTime']
     ) / 1000;
 

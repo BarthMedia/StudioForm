@@ -22,7 +22,7 @@ class WebflowView {
   }
 
   // Manipulate base css; e.g. Overflow hidden & position absolute & relative
-  manipulateSiteCss(stateData) {
+  initSiteCssManipulation(stateData) {
     manipulateSiteCssView.init(stateData);
   }
 
@@ -50,18 +50,6 @@ class WebflowView {
   // Initialize Hammer.js
   initSwipeGestures(stateData) {
     swipeGestureView.init(stateData);
-  }
-
-  // Delete visual dividers
-  removeVisualDividers(devMode, elements) {
-    if (devMode < 2) {
-      // If dev mode is 200% or higher, do not:
-      elements.$form.find(config.DIVIDER_SELCTOR).remove();
-      elements.$steps.hide();
-      elements.$steps.eq(0).show();
-    } else {
-      console.log(`Dev mode ${devMode}: Visual dividers not removed...`);
-    }
   }
 }
 
