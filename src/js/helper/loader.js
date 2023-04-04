@@ -3,6 +3,7 @@ import {
   TYPEOF_GSAP_DEPENDENCY,
   TYPEOF_GSAP_SCROLL_TO_DEPENDENCY,
   TYPEOF_HAMMER_JS_DEPENDENCY,
+  TYPEOF_XANO_SDK_DEPENDENCY,
 } from '../config';
 
 // + Load helper +
@@ -45,6 +46,17 @@ export default function (handler) {
     'undefined' == TYPEOF_HAMMER_JS_DEPENDENCY
       ? $.loadScript(
           'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js',
+          function () {
+            load4thScript();
+          }
+        )
+      : load4thScript();
+  }
+
+  function load4thScript() {
+    'undefined' == TYPEOF_XANO_SDK_DEPENDENCY
+      ? $.loadScript(
+          'https://cdn.jsdelivr.net/npm/@xano/js-sdk@latest/dist/xano.min.js',
           function () {
             handler();
           }

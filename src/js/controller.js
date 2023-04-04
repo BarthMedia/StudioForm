@@ -46,6 +46,9 @@ const controlMain = function () {
 
     // Dev mode log
     handlers.devModeLog(stateData);
+
+    // Init Xano Mode
+    model.initXanoMode(stateData);
   });
 };
 

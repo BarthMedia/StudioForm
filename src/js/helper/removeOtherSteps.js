@@ -12,7 +12,7 @@ export default function (stepObject, clickRecord, $element) {
   if (isAllowed == 'true') {
     stepObject.forEach(step => {
       let stepInRecord = false,
-        stepIndex = step.step;
+        stepIndex = step.index;
 
       clickRecord.forEach(record => {
         if (stepIndex == record.step) {

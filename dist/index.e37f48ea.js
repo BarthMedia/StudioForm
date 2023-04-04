@@ -596,6 +596,8 @@ const controlMain = function() {
         (0, _viewJsDefault.default).initSwipeGestures(stateData);
         // Dev mode log
         handlers.devModeLog(stateData);
+        // Init Xano Mode
+        _modelJs.initXanoMode(stateData);
     });
 };
 // + Initialize +
@@ -2677,6 +2679,7 @@ parcelHelpers.export(exports, "DEV_MODE_OBJECT", ()=>DEV_MODE_OBJECT);
 parcelHelpers.export(exports, "TYPEOF_GSAP_DEPENDENCY", ()=>TYPEOF_GSAP_DEPENDENCY);
 parcelHelpers.export(exports, "TYPEOF_GSAP_SCROLL_TO_DEPENDENCY", ()=>TYPEOF_GSAP_SCROLL_TO_DEPENDENCY);
 parcelHelpers.export(exports, "TYPEOF_HAMMER_JS_DEPENDENCY", ()=>TYPEOF_HAMMER_JS_DEPENDENCY);
+parcelHelpers.export(exports, "TYPEOF_XANO_SDK_DEPENDENCY", ()=>TYPEOF_XANO_SDK_DEPENDENCY);
 parcelHelpers.export(exports, "FORM_BLOCK_SELECTOR", ()=>FORM_BLOCK_SELECTOR);
 parcelHelpers.export(exports, "FORM_SELECTOR", ()=>FORM_SELECTOR);
 parcelHelpers.export(exports, "STEP_SELECTOR", ()=>STEP_SELECTOR);
@@ -2698,7 +2701,7 @@ parcelHelpers.export(exports, "STEP_INDEX_ATTRIBUTE", ()=>STEP_INDEX_ATTRIBUTE);
 parcelHelpers.export(exports, "STEP_TYPE_ATTRIBUTE", ()=>STEP_TYPE_ATTRIBUTE);
 parcelHelpers.export(exports, "STEP_REQUIRED_ATTRIBUTE", ()=>STEP_REQUIRED_ATTRIBUTE);
 parcelHelpers.export(exports, "STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE", ()=>STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE);
-parcelHelpers.export(exports, "RELATIVE_LAST_STEP_ATTRIBUTE", ()=>RELATIVE_LAST_STEP_ATTRIBUTE);
+parcelHelpers.export(exports, "LAST_STEP_ATTRIBUTE", ()=>LAST_STEP_ATTRIBUTE);
 parcelHelpers.export(exports, "CONDITIONAL_ATTRIBUTE", ()=>CONDITIONAL_ATTRIBUTE);
 parcelHelpers.export(exports, "CONDITIONAL_NEXT_ATTRIBUTE", ()=>CONDITIONAL_NEXT_ATTRIBUTE);
 parcelHelpers.export(exports, "NOT_AUTO_CONTINUE_ATTRIBUTE", ()=>NOT_AUTO_CONTINUE_ATTRIBUTE);
@@ -2719,6 +2722,7 @@ parcelHelpers.export(exports, "QUIZ_PATH_ATTRIBUTE", ()=>QUIZ_PATH_ATTRIBUTE);
 parcelHelpers.export(exports, "REDIRECT_URL_ATTRIBUTE", ()=>REDIRECT_URL_ATTRIBUTE);
 parcelHelpers.export(exports, "AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE", ()=>AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE);
 parcelHelpers.export(exports, "AUTO_DETECT_NEXT_STEP_ATTRIBUTE", ()=>AUTO_DETECT_NEXT_STEP_ATTRIBUTE);
+parcelHelpers.export(exports, "XANO_MODE_ATTRIBUTE", ()=>XANO_MODE_ATTRIBUTE);
 parcelHelpers.export(exports, "CSS_SHOW_ATTRIBUTE", ()=>CSS_SHOW_ATTRIBUTE);
 parcelHelpers.export(exports, "CSS_HIDE_ATTRIBUTE", ()=>CSS_HIDE_ATTRIBUTE);
 parcelHelpers.export(exports, "CSS_ACTIVE_ATTRIBUTE", ()=>CSS_ACTIVE_ATTRIBUTE);
@@ -2773,12 +2777,14 @@ const CSS_HIDE_DEFAULT = {
     display: "none"
 };
 const CSS_ACTIVE_DEFAULT = {
+    borderColor: "#175ADA",
     opacity: 1,
-    duration: 0.1
+    duration: 0.5
 };
 const CSS_INACTIVE_DEFAULT = {
-    opacity: 0.5,
-    duration: 0.1
+    borderColor: "",
+    opacity: 0.35,
+    duration: 0.5
 };
 const CSS_BACK_FORTH_ACTIVE_DEFAULT = {
     opacity: 1
@@ -2847,6 +2853,7 @@ const DEV_MODE_OBJECT = [
 const TYPEOF_GSAP_DEPENDENCY = typeof gsap;
 const TYPEOF_GSAP_SCROLL_TO_DEPENDENCY = typeof $("body").attr("data-gsap-scroll-already-installed");
 const TYPEOF_HAMMER_JS_DEPENDENCY = typeof Hammer;
+const TYPEOF_XANO_SDK_DEPENDENCY = typeof XanoClient;
 const FORM_BLOCK_SELECTOR = '[studio-form = "Form Block"]';
 const FORM_SELECTOR = '[studio-form = "Form"]';
 const STEP_SELECTOR = '[studio-form = "Form Step"]';
@@ -2868,7 +2875,7 @@ const STEP_INDEX_ATTRIBUTE = "data-step-index";
 const STEP_TYPE_ATTRIBUTE = "data-step-type";
 const STEP_REQUIRED_ATTRIBUTE = "data-required";
 const STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE = "data-custom-requirements-passed";
-const RELATIVE_LAST_STEP_ATTRIBUTE = "data-relative-last-step";
+const LAST_STEP_ATTRIBUTE = "data-last-step";
 const CONDITIONAL_ATTRIBUTE = "data-conditional";
 const CONDITIONAL_NEXT_ATTRIBUTE = "data-conditional-next";
 const NOT_AUTO_CONTINUE_ATTRIBUTE = "data-not-auto-continue";
@@ -2889,6 +2896,7 @@ const QUIZ_PATH_ATTRIBUTE = "data-quiz-path";
 const REDIRECT_URL_ATTRIBUTE = "data-redirect-url";
 const AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE = "data-auto-delete-conditionally-invisible-elements";
 const AUTO_DETECT_NEXT_STEP_ATTRIBUTE = "data-auto-detect-next-step";
+const XANO_MODE_ATTRIBUTE = "data-xano-mode";
 const CSS_SHOW_ATTRIBUTE = "data-css-show";
 const CSS_HIDE_ATTRIBUTE = "data-css-hide";
 const CSS_ACTIVE_ATTRIBUTE = "data-css-active";
@@ -3162,6 +3170,7 @@ exports.default = function($elements, styleObjectIndex, $parent) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state);
+parcelHelpers.export(exports, "initXanoMode", ()=>initXanoMode);
 parcelHelpers.export(exports, "createState", ()=>createState);
 var _configJs = require("./config.js");
 var _helper = require("./helper");
@@ -3171,8 +3180,12 @@ var _populateStylesObjectJs = require("./helper/populateStylesObject.js");
 var _populateStylesObjectJsDefault = parcelHelpers.interopDefault(_populateStylesObjectJs);
 var _calculateStepHeightsJs = require("./helper/calculateStepHeights.js");
 var _calculateStepHeightsJsDefault = parcelHelpers.interopDefault(_calculateStepHeightsJs);
+var _xanoModeJs = require("./helper/xanoMode.js");
 const state = {
     data: {}
+};
+const initXanoMode = function(stateData) {
+    _xanoModeJs.init(stateData);
 };
 const createState = function($formBlock, index) {
     // Add
@@ -3196,7 +3209,10 @@ const createState = function($formBlock, index) {
         // Handlers
         handlers: {
             devModeLog: function(stateData) {
-                if (stateData.devMode) console.log(`Dev Mode ${stateData.devMode}:\nstate -> data -> form${stateData.formBlockIndex}:\n`, stateData);
+                // Guard
+                if (!stateData.devMode && !stateData.xanoMode) return;
+                // Log
+                console.log(`Dev Mode ${stateData.devMode}:\nstate -> data -> form${stateData.formBlockIndex}:\n`, stateData);
             }
         }
     };
@@ -3206,6 +3222,8 @@ const createState = function($formBlock, index) {
     stateData.styles = (0, _populateStylesObjectJsDefault.default)(stateData.elements);
     // Add step heihgts
     (0, _calculateStepHeightsJsDefault.default)(stateData);
+    // Is xano mode
+    stateData.xanoMode = _xanoModeJs.isXanoMode(stateData.elements);
     // Return
     return stateData;
 }; // console.log(
@@ -3213,7 +3231,7 @@ const createState = function($formBlock, index) {
  // );
  // Implement an easy to use xano mode
 
-},{"./config.js":"k5Hzs","./helper":"lVRAz","./helper/createElements.js":"6bWx7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./helper/populateStylesObject.js":"aSMyv","./helper/calculateStepHeights.js":"iTKuL"}],"lVRAz":[function(require,module,exports) {
+},{"./config.js":"k5Hzs","./helper":"lVRAz","./helper/createElements.js":"6bWx7","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./helper/populateStylesObject.js":"aSMyv","./helper/calculateStepHeights.js":"iTKuL","./helper/xanoMode.js":"gtzbf"}],"lVRAz":[function(require,module,exports) {
 // + Imports +
 // Base
 // Custom
@@ -3480,7 +3498,78 @@ exports.default = function(stateData) {
     $(window).resize(calculateStepHeights);
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"igI8F":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gtzbf":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "init", ()=>init);
+parcelHelpers.export(exports, "isXanoMode", ()=>isXanoMode);
+var _configJs = require("../config.js");
+var _helperJs = require("../helper.js");
+const init = function(stateData) {
+    // Guard
+    if (!stateData.xanoMode) return;
+    // Elements
+    const form = stateData.elements.$form;
+    // Values
+    const actionUrl = new URL(form.attr("action")), apiGroupBaseUrl = `${actionUrl.protocol}//${actionUrl.hostname}/${actionUrl.pathname.split("/")[1]}`, urlEndpoint = `/${actionUrl.pathname.split("/")[2]}`;
+    // Xano
+    const xano = new XanoClient({
+        apiGroupBaseUrl: apiGroupBaseUrl
+    });
+    // Submit event listener
+    form.submit(function(e) {
+        e.preventDefault();
+        // Elements & data
+        const $form = $(this); // The submitted form
+        const $submit = $("[type=submit]", $form); // Submit button of form
+        const buttonText = $submit.val(); // Original button text
+        const buttonWaitingText = $submit.attr("data-wait"); // Waiting button text value
+        const formRedirect = $form.attr("data-redirect"); // Form redirect location
+        const formData = getFormData($form); // Form data
+        // Set waiting text
+        if (buttonWaitingText) $submit.val(buttonWaitingText);
+        // Assume form method is post
+        xano.post(urlEndpoint, formData).then((response)=>{
+            if (stateData.devMode >= 0) console.log(response);
+            // If form redirect setting set, then use this and prevent any other actions
+            if (formRedirect) {
+                window.location = formRedirect;
+                return;
+            }
+            // Reset text
+            $submit.val(buttonText);
+        }), (error)=>{
+            $form.siblings(".w-form-done").hide() // Hide success
+            .siblings(".w-form-fail").show(); // show failure;
+            // Reset text
+            $submit.val(buttonText);
+        };
+    });
+};
+const isXanoMode = function(elements) {
+    // Elements
+    const form = elements.$form, formBlock = elements.$formBlock;
+    // Check attribute
+    if ([
+        "true",
+        "True"
+    ].includes(formBlock.attr(_configJs.XANO_MODE_ATTRIBUTE))) return true;
+    // Values
+    const actionUrl = new URL(form.attr("action"));
+    return actionUrl.hostname.includes("xano.io");
+};
+// + Helper +
+function getFormData($form) {
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+    $.map(unindexed_array, function(n, i) {
+        indexed_array[n["name"]] = n["value"];
+    });
+    return indexed_array;
+}
+
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../helper.js":"lVRAz"}],"igI8F":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4166,8 +4255,8 @@ class AnchorView {
         };
         stateData.elements.$anchorYOffset = $anchorYOffset;
         stateData.elements.anchorScrollTarget = anchorScrollTarget;
-        // Function
-        this.functionality(stateData);
+    // Function
+    // this.functionality(stateData);
     }
 }
 // + Exports +
@@ -4185,7 +4274,7 @@ exports.default = function(stepObject, clickRecord, $element) {
     let isAllowed = $element.attr(_configJs.REMOVE_OTHER_STEPS_ATTRIBUTE) || "true";
     // removeArray = [];
     if (isAllowed == "true") stepObject.forEach((step)=>{
-        let stepInRecord = false, stepIndex = step.step;
+        let stepInRecord = false, stepIndex = step.index;
         clickRecord.forEach((record)=>{
             if (stepIndex == record.step) stepInRecord = true;
         });
@@ -4620,6 +4709,11 @@ exports.default = function(handler) {
     }
     function load3rdScript() {
         "undefined" == (0, _config.TYPEOF_HAMMER_JS_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js", function() {
+            load4thScript();
+        }) : load4thScript();
+    }
+    function load4thScript() {
+        "undefined" == (0, _config.TYPEOF_XANO_SDK_DEPENDENCY) ? $.loadScript("https://cdn.jsdelivr.net/npm/@xano/js-sdk@latest/dist/xano.min.js", function() {
             handler();
         }) : handler();
     }
@@ -4634,24 +4728,24 @@ var _config = require("../config");
 // - - Create next steps object - -
 exports.default = function($steps) {
     // Local variables
-    let stepsObject = [];
+    const stepsObject = [];
     // Initialize stepsObject
     $steps.each(function(stepIndex) {
         // Local elements
-        let $step = $(this), $buttons = $step.find(`[${_config.CLICK_ELEMENT_ID_ATTRIBUTE}]`), buttonsObject = [];
+        const $step = $(this), $buttons = $step.find(`[${_config.CLICK_ELEMENT_ID_ATTRIBUTE}]`), buttonsObject = [];
         $buttons.each(function() {
             // Element
-            let $button = $(this);
+            const $button = $(this);
             // Populate buttons object
             buttonsObject.push({
-                id: $button.attr(_config.CLICK_ELEMENT_ID_ATTRIBUTE),
+                id: parseInt($button.attr(_config.CLICK_ELEMENT_ID_ATTRIBUTE)),
                 conditional: $button.attr(_config.CONDITIONAL_ATTRIBUTE)
             });
         });
         // Populate steps object
         stepsObject.push({
             $: $step,
-            step: stepIndex,
+            index: stepIndex,
             swipeAllowed: $step.attr(_config.SWIPE_ALLOWED_ATTRIBUTE) || "true",
             conditional: $step.attr(_config.CONDITIONAL_ATTRIBUTE),
             conditionalNext: $step.attr(_config.CONDITIONAL_NEXT_ATTRIBUTE),
@@ -4659,29 +4753,32 @@ exports.default = function($steps) {
         });
     });
     // Add logic to stepsObject
-    let stepsCount = stepsObject.length;
+    const stepsCount = stepsObject.length;
     stepsObject.forEach((step)=>{
         // Local val
-        let stepIndex = step.step, relativeLast = step.$.attr(_config.RELATIVE_LAST_STEP_ATTRIBUTE);
+        const stepIndex = step.index, relativeLast = step.$.attr(_config.LAST_STEP_ATTRIBUTE);
         // Conditional last logic
-        step.isLast = stepIndex == stepsCount - 1 ? true : false;
-        if (relativeLast == "true") step.isLast = true;
+        step.isLast = stepIndex === stepsCount - 1 ? true : false;
+        if (relativeLast === "true") step.isLast = true;
+        // Set last step attribute
+        if (step.isLast) step.$.attr(_config.LAST_STEP_ATTRIBUTE, "true");
         // Next id logic
         step.buttons.forEach((button)=>{
-            if (button.conditional != undefined) button.nextStepId = (()=>{
+            // If a conditional is set, set the the button next step id to it
+            if (button.conditional !== undefined) button.nextStepId = (()=>{
                 for (step of stepsObject){
-                    if (step.conditional == button.conditional) return step.step;
+                    if (step.conditional === button.conditional) return step.index;
                 }
             })();
-            else if (step.conditionalNext != undefined) button.nextStepId = stepIndex + 1;
+            else if (stepsObject[!step.isLast ? stepIndex + 1 : stepIndex].conditionalNext !== undefined) button.nextStepId = stepIndex + 1;
             else button.nextStepId = (()=>{
                 for (step of stepsObject){
-                    if (step.step > stepIndex && step.conditional == undefined) return step.step;
+                    if (step.index > stepIndex && step.conditional === undefined && step.conditionalNext === undefined) return step.index;
                 }
             })();
         });
     });
-    console.log(stepsObject);
+    // console.log(stepsObject);
     return stepsObject;
 };
 

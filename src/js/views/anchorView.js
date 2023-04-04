@@ -73,7 +73,7 @@ class AnchorView {
     stateData.elements.anchorScrollTarget = anchorScrollTarget;
 
     // Function
-    this.functionality(stateData);
+    // this.functionality(stateData);
   }
 }
 

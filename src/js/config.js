@@ -11,8 +11,16 @@ export const AUTO_DETECT_NEXT_STEP_DEFAULT = 'true';
 // Style defaults
 export const CSS_SHOW_DEFAULT = { opacity: 1 /*, display: 'flex'*/ };
 export const CSS_HIDE_DEFAULT = { opacity: 0, display: 'none' };
-export const CSS_ACTIVE_DEFAULT = { opacity: 1, duration: 0.1 };
-export const CSS_INACTIVE_DEFAULT = { opacity: 0.5, duration: 0.1 };
+export const CSS_ACTIVE_DEFAULT = {
+  borderColor: '#175ADA',
+  opacity: 1,
+  duration: 0.5,
+};
+export const CSS_INACTIVE_DEFAULT = {
+  borderColor: '',
+  opacity: 0.35,
+  duration: 0.5,
+};
 export const CSS_BACK_FORTH_ACTIVE_DEFAULT = { opacity: 1 };
 export const CSS_BACK_FORTH_INACTIVE_DEFAULT = { opacity: 0.5 };
 export const ANIMATION_MS_TIME_DEFAULT = 500;
@@ -62,6 +70,7 @@ export const TYPEOF_GSAP_SCROLL_TO_DEPENDENCY = typeof $('body').attr(
   'data-gsap-scroll-already-installed'
 );
 export const TYPEOF_HAMMER_JS_DEPENDENCY = typeof Hammer;
+export const TYPEOF_XANO_SDK_DEPENDENCY = typeof XanoClient;
 
 // Custom selectors
 export const FORM_BLOCK_SELECTOR = '[studio-form = "Form Block"]';
@@ -90,7 +99,7 @@ export const STEP_TYPE_ATTRIBUTE = 'data-step-type';
 export const STEP_REQUIRED_ATTRIBUTE = 'data-required';
 export const STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE =
   'data-custom-requirements-passed';
-export const RELATIVE_LAST_STEP_ATTRIBUTE = 'data-relative-last-step';
+export const LAST_STEP_ATTRIBUTE = 'data-last-step';
 export const CONDITIONAL_ATTRIBUTE = 'data-conditional';
 export const CONDITIONAL_NEXT_ATTRIBUTE = 'data-conditional-next';
 export const NOT_AUTO_CONTINUE_ATTRIBUTE = 'data-not-auto-continue';
@@ -113,6 +122,7 @@ export const REDIRECT_URL_ATTRIBUTE = 'data-redirect-url';
 export const AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE =
   'data-auto-delete-conditionally-invisible-elements';
 export const AUTO_DETECT_NEXT_STEP_ATTRIBUTE = 'data-auto-detect-next-step';
+export const XANO_MODE_ATTRIBUTE = 'data-xano-mode';
 
 // Style attributes
 export const CSS_SHOW_ATTRIBUTE = 'data-css-show';

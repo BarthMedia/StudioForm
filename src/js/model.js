@@ -8,6 +8,7 @@ import { returnDevModeIndex } from './helper';
 import createElements from './helper/createElements.js';
 import populateStylesObject from './helper/populateStylesObject.js';
 import calculateStepHeights from './helper/calculateStepHeights.js';
+import * as xanoMode from './helper/xanoMode.js';
 
 // + Objects +
 
@@ -17,6 +18,11 @@ export const state = {
 };
 
 // + Functions +
+
+// Initialize mode
+export const initXanoMode = function (stateData) {
+  xanoMode.init(stateData);
+};
 
 // Create state
 export const createState = function ($formBlock, index) {
@@ -44,11 +50,14 @@ export const createState = function ($formBlock, index) {
     // Handlers
     handlers: {
       devModeLog: function (stateData) {
-        if (stateData.devMode)
-          console.log(
-            `Dev Mode ${stateData.devMode}:\nstate -> data -> form${stateData.formBlockIndex}:\n`,
-            stateData
-          );
+        // Guard
+        if (!stateData.devMode && !stateData.xanoMode) return;
+
+        // Log
+        console.log(
+          `Dev Mode ${stateData.devMode}:\nstate -> data -> form${stateData.formBlockIndex}:\n`,
+          stateData
+        );
       },
     },
   };
@@ -61,6 +70,9 @@ export const createState = function ($formBlock, index) {
 
   // Add step heihgts
   calculateStepHeights(stateData);
+
+  // Is xano mode
+  stateData.xanoMode = xanoMode.isXanoMode(stateData.elements);
 
   // Return
   return stateData;
