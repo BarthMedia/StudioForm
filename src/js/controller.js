@@ -1,5 +1,26 @@
 // + Imports +
 
+// Ideas !
+
+// Add a anchor up to error notice function
+
+// Add define Key-Rotation .js - when not declared otherwise functionality
+
+// When standard checkbox is used make checkbox text red.
+// When custom checkbox is used turn checkbox border red by default
+
+// Build a feature that automatically renders the Xano response in the success message
+
+// If there is an additional info field below a checkbox step, the step is validated if the textarea has content inside of it
+
+// Keyboard actions have to actually click the options.
+// Not just animate them!
+
+// While focus or hover on input fields.
+// Make sure arrow functions don't work
+
+// Build native FinSweet RangeSlider integration
+
 // Base
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';

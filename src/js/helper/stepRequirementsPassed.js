@@ -1,13 +1,14 @@
 // + Imports +
 import * as config from '../config.js';
 import errorStatus from './errorStatus.js';
+// import scrollToError from './scrollToElement.js';
 
 // + Exports +
 
 // - - check step requirments - -
 export default function ($formBlock, $currentStep, mode = '100%') {
   // Variables
-  let stepStype = $currentStep.attr(config.STEP_TYPE_ATTRIBUTE),
+  const stepStype = $currentStep.attr(config.STEP_TYPE_ATTRIBUTE),
     isRequired =
       ($currentStep.attr(config.STEP_REQUIRED_ATTRIBUTE) || 'true') == 'true';
   styleIndex = parseInt($formBlock.attr(config.FORM_BLOCK_INDEX_ATTRIBUTE));
@@ -17,12 +18,17 @@ export default function ($formBlock, $currentStep, mode = '100%') {
     return true;
   }
 
-  // Logic
-  if (stepStype == 'empty') {
+  // - - - Logic - - -
+
+  // Empty
+  if (['empty', 'fs range slider'].includes(stepStype)) {
     return true;
-  } else if (stepStype == 'checkbox') {
+  }
+
+  // Checkbox
+  if (stepStype == 'checkbox') {
     // Elements
-    let $checkboxes = $currentStep.find(config.CHECKBOX_SELECTOR);
+    const $checkboxes = $currentStep.find(config.CHECKBOX_SELECTOR);
 
     // Values
     let checkedBoxExists = false;
@@ -56,14 +62,23 @@ export default function ($formBlock, $currentStep, mode = '100%') {
       // Return
       return false;
     }
-  } else if (stepStype == 'radio') {
+  }
+
+  // Radio
+  if (stepStype == 'radio') {
     // Elements
-    let $radios = $currentStep.find(config.RADIO_SELECTOR),
+    const $radios = $currentStep.find(config.RADIO_SELECTOR),
       $checked = $currentStep.find(`[${config.ELEMENT_GOT_CHECKED_ATTRIBUTE}]`),
-      $buttons = $currentStep.find(`[${config.CLICK_ELEMENT_ID_ATTRIBUTE}]`);
+      $buttons = $currentStep.find(`[${config.CLICK_ELEMENT_ID_ATTRIBUTE}]`),
+      $continueButtons = $currentStep.find(
+        `[${config.STEP_TYPE_ATTRIBUTE} = 'radio']`
+      );
 
     // If buttons equal radios return true
-    if ($buttons.hasClass(config.RADIO_SELECTOR.substring(1))) {
+    if (
+      $buttons.hasClass(config.RADIO_SELECTOR.substring(1)) &&
+      $continueButtons.length < 1
+    ) {
       return true;
     }
 
@@ -91,9 +106,12 @@ export default function ($formBlock, $currentStep, mode = '100%') {
       // Return
       return true;
     }
-  } else if (stepStype == 'custom') {
+  }
+
+  // Custom
+  if (stepStype == 'custom') {
     // Values
-    let requirementsPassed =
+    const requirementsPassed =
       $currentStep.attr(config.STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE) ||
       'false';
 
@@ -104,13 +122,15 @@ export default function ($formBlock, $currentStep, mode = '100%') {
     else {
       return true;
     }
-  } // Other input types
-  else {
+  }
+
+  // Other input types
+  if (true) {
     // Values
     let returnTrue = true;
 
     // Elements
-    let $inputs = $currentStep.find('input, select');
+    const $inputs = $currentStep.find('input, select');
 
     // Reset
     if (mode == '100%') errorStatus('remove', $inputs, styleIndex);
@@ -118,14 +138,17 @@ export default function ($formBlock, $currentStep, mode = '100%') {
     // Loop
     $inputs.each(function () {
       // Element
-      let $input = $(this);
+      const $input = $(this);
 
       // Logic
       if ($input.prop('required')) {
         if ($input.val() == '') {
+          // Scroll to error
+          if (returnTrue) errorStatus('scroll', $input, styleIndex);
+          else errorStatus('add', $input, styleIndex);
+
           // Throw error
           returnTrue = false;
-          if (mode == '100%') errorStatus('add', $input, styleIndex);
         }
       }
     });

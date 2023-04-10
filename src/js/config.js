@@ -43,6 +43,7 @@ export const REDIRECT_MS_TIME_DEFAULT = 1;
 export const PROGRESS_BAR_AXIS_DEFAULT = 'x';
 export const ANCHOR_MIN_SCREEN_SIZE_DEFAULT = 0;
 export const ANCHOR_MAX_SCREEN_SIZE_DEFAULT = 10000;
+export const ERROR_ANCHOR_OFFSET_DEFAULT = 32;
 
 // Development mode object
 export const DEV_MODE_OBJECT = [
@@ -92,14 +93,25 @@ export const W_BUTTON_SELECTOR = '.w-button';
 export const SUCCESS_SELECTOR = '.w-form-done';
 export const CONDITION_INVISIBLE_SELECTOR = '.w-condition-invisible';
 
-// Functional attributes
-export const FORM_BLOCK_INDEX_ATTRIBUTE = 'data-form-block-index';
-export const STEP_INDEX_ATTRIBUTE = 'data-step-index';
+// - Functional attributes -
+
+// FinSweet attributes
+export const FS_RANGE_SLIDER_ELEMENTS_SELECTOR = '[fs-rangeslider-element]';
+
+// Step attributes
 export const STEP_TYPE_ATTRIBUTE = 'data-step-type';
+export const STEP_INDEX_ATTRIBUTE = 'data-step-index';
 export const STEP_REQUIRED_ATTRIBUTE = 'data-required';
 export const STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE =
   'data-custom-requirements-passed';
 export const LAST_STEP_ATTRIBUTE = 'data-last-step';
+
+// Functional id values (for anchoring)
+// export const SHORT_TERM_ANCHOR_ELEMENT_ATTRIBUTE =
+//   'data-short-term-anchor-element';
+
+// Other function attributes
+export const FORM_BLOCK_INDEX_ATTRIBUTE = 'data-form-block-index';
 export const CONDITIONAL_ATTRIBUTE = 'data-conditional';
 export const CONDITIONAL_NEXT_ATTRIBUTE = 'data-conditional-next';
 export const NOT_AUTO_CONTINUE_ATTRIBUTE = 'data-not-auto-continue';
@@ -173,7 +185,8 @@ export const ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE = 'data-anchor-min-screen-size';
 export const ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE = 'data-anchor-max-screen-size';
 export const ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE =
   'data-anchor-animation-ms-time';
-export const ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE =
+export const ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE =
   'data-anchor-y-offset-selector';
 export const ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE =
   'data-anchor-related-element-to-scroll-selector';
+export const ERROR_ANCHOR_OFFSET_ATTRIBUTE = 'data-error-anchor-offset';

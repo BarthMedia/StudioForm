@@ -42,7 +42,7 @@ class AnchorView {
       ),
       anchorAnimationTime = stateData.styles['anchorAnimationSTime'],
       anchorYOffsetSelector = stateData.elements.$anchor.attr(
-        config.ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE
+        config.ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE
       );
 
     // Elements

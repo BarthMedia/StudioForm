@@ -16,6 +16,12 @@ export default function (stateDataElements) {
 
   // Initial varaible
   const styles = {
+    // Error anchor offset
+    errorAnchorOffset: parseFloat(
+      $formBlock.attr(config.ERROR_ANCHOR_OFFSET_ATTRIBUTE) ||
+        config.ERROR_ANCHOR_OFFSET_DEFAULT
+    ),
+
     // Webflow designer based style
     firstStepDisplayCss: firstStepDisplayCss,
 

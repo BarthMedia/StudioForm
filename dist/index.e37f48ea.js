@@ -558,6 +558,18 @@ function hmrAccept(bundle, id) {
 
 },{}],"aenu9":[function(require,module,exports) {
 // + Imports +
+// Ideas !
+// Add a anchor up to error notice function
+// Add define Key-Rotation .js - when not declared otherwise functionality
+// When standard checkbox is used make checkbox text red.
+// When custom checkbox is used turn checkbox border red by default
+// Build a feature that automatically renders the Xano response in the success message
+// If there is an additional info field below a checkbox step, the step is validated if the textarea has content inside of it
+// Keyboard actions have to actually click the options.
+// Not just animate them!
+// While focus or hover on input fields.
+// Make sure arrow functions don't work
+// Build native FinSweet RangeSlider integration
 // Base
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _esRegexpFlagsJs = require("core-js/modules/es.regexp.flags.js");
@@ -2675,6 +2687,7 @@ parcelHelpers.export(exports, "REDIRECT_MS_TIME_DEFAULT", ()=>REDIRECT_MS_TIME_D
 parcelHelpers.export(exports, "PROGRESS_BAR_AXIS_DEFAULT", ()=>PROGRESS_BAR_AXIS_DEFAULT);
 parcelHelpers.export(exports, "ANCHOR_MIN_SCREEN_SIZE_DEFAULT", ()=>ANCHOR_MIN_SCREEN_SIZE_DEFAULT);
 parcelHelpers.export(exports, "ANCHOR_MAX_SCREEN_SIZE_DEFAULT", ()=>ANCHOR_MAX_SCREEN_SIZE_DEFAULT);
+parcelHelpers.export(exports, "ERROR_ANCHOR_OFFSET_DEFAULT", ()=>ERROR_ANCHOR_OFFSET_DEFAULT);
 parcelHelpers.export(exports, "DEV_MODE_OBJECT", ()=>DEV_MODE_OBJECT);
 parcelHelpers.export(exports, "TYPEOF_GSAP_DEPENDENCY", ()=>TYPEOF_GSAP_DEPENDENCY);
 parcelHelpers.export(exports, "TYPEOF_GSAP_SCROLL_TO_DEPENDENCY", ()=>TYPEOF_GSAP_SCROLL_TO_DEPENDENCY);
@@ -2696,12 +2709,13 @@ parcelHelpers.export(exports, "CHECKBOX_SELECTOR", ()=>CHECKBOX_SELECTOR);
 parcelHelpers.export(exports, "W_BUTTON_SELECTOR", ()=>W_BUTTON_SELECTOR);
 parcelHelpers.export(exports, "SUCCESS_SELECTOR", ()=>SUCCESS_SELECTOR);
 parcelHelpers.export(exports, "CONDITION_INVISIBLE_SELECTOR", ()=>CONDITION_INVISIBLE_SELECTOR);
-parcelHelpers.export(exports, "FORM_BLOCK_INDEX_ATTRIBUTE", ()=>FORM_BLOCK_INDEX_ATTRIBUTE);
-parcelHelpers.export(exports, "STEP_INDEX_ATTRIBUTE", ()=>STEP_INDEX_ATTRIBUTE);
+parcelHelpers.export(exports, "FS_RANGE_SLIDER_ELEMENTS_SELECTOR", ()=>FS_RANGE_SLIDER_ELEMENTS_SELECTOR);
 parcelHelpers.export(exports, "STEP_TYPE_ATTRIBUTE", ()=>STEP_TYPE_ATTRIBUTE);
+parcelHelpers.export(exports, "STEP_INDEX_ATTRIBUTE", ()=>STEP_INDEX_ATTRIBUTE);
 parcelHelpers.export(exports, "STEP_REQUIRED_ATTRIBUTE", ()=>STEP_REQUIRED_ATTRIBUTE);
 parcelHelpers.export(exports, "STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE", ()=>STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE);
 parcelHelpers.export(exports, "LAST_STEP_ATTRIBUTE", ()=>LAST_STEP_ATTRIBUTE);
+parcelHelpers.export(exports, "FORM_BLOCK_INDEX_ATTRIBUTE", ()=>FORM_BLOCK_INDEX_ATTRIBUTE);
 parcelHelpers.export(exports, "CONDITIONAL_ATTRIBUTE", ()=>CONDITIONAL_ATTRIBUTE);
 parcelHelpers.export(exports, "CONDITIONAL_NEXT_ATTRIBUTE", ()=>CONDITIONAL_NEXT_ATTRIBUTE);
 parcelHelpers.export(exports, "NOT_AUTO_CONTINUE_ATTRIBUTE", ()=>NOT_AUTO_CONTINUE_ATTRIBUTE);
@@ -2761,8 +2775,9 @@ parcelHelpers.export(exports, "PROGRESS_BAR_AXIS_ATTRIBUTE", ()=>PROGRESS_BAR_AX
 parcelHelpers.export(exports, "ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE", ()=>ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE);
 parcelHelpers.export(exports, "ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE", ()=>ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE);
 parcelHelpers.export(exports, "ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE", ()=>ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE);
-parcelHelpers.export(exports, "ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE", ()=>ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE);
+parcelHelpers.export(exports, "ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE", ()=>ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE);
 parcelHelpers.export(exports, "ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE", ()=>ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE);
+parcelHelpers.export(exports, "ERROR_ANCHOR_OFFSET_ATTRIBUTE", ()=>ERROR_ANCHOR_OFFSET_ATTRIBUTE);
 const ESC_EVENT_DEFAULT = "escape, esc, arrowup, up";
 const ENTER_EVENT_DEFAULT = "enter, arrowdown, down";
 const LEFT_EVENT_DEFAULT = "arrowleft, left";
@@ -2820,6 +2835,7 @@ const REDIRECT_MS_TIME_DEFAULT = 1;
 const PROGRESS_BAR_AXIS_DEFAULT = "x";
 const ANCHOR_MIN_SCREEN_SIZE_DEFAULT = 0;
 const ANCHOR_MAX_SCREEN_SIZE_DEFAULT = 10000;
+const ERROR_ANCHOR_OFFSET_DEFAULT = 32;
 const DEV_MODE_OBJECT = [
     {
         names: [
@@ -2870,12 +2886,13 @@ const CHECKBOX_SELECTOR = ".w-checkbox";
 const W_BUTTON_SELECTOR = ".w-button";
 const SUCCESS_SELECTOR = ".w-form-done";
 const CONDITION_INVISIBLE_SELECTOR = ".w-condition-invisible";
-const FORM_BLOCK_INDEX_ATTRIBUTE = "data-form-block-index";
-const STEP_INDEX_ATTRIBUTE = "data-step-index";
+const FS_RANGE_SLIDER_ELEMENTS_SELECTOR = "[fs-rangeslider-element]";
 const STEP_TYPE_ATTRIBUTE = "data-step-type";
+const STEP_INDEX_ATTRIBUTE = "data-step-index";
 const STEP_REQUIRED_ATTRIBUTE = "data-required";
 const STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE = "data-custom-requirements-passed";
 const LAST_STEP_ATTRIBUTE = "data-last-step";
+const FORM_BLOCK_INDEX_ATTRIBUTE = "data-form-block-index";
 const CONDITIONAL_ATTRIBUTE = "data-conditional";
 const CONDITIONAL_NEXT_ATTRIBUTE = "data-conditional-next";
 const NOT_AUTO_CONTINUE_ATTRIBUTE = "data-not-auto-continue";
@@ -2935,8 +2952,9 @@ const PROGRESS_BAR_AXIS_ATTRIBUTE = "data-progress-bar-axis";
 const ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE = "data-anchor-min-screen-size";
 const ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE = "data-anchor-max-screen-size";
 const ANCHOR_ANIMATION_MS_TIME_ATTRIBUTE = "data-anchor-animation-ms-time";
-const ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE = "data-anchor-y-offset-selector";
+const ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE = "data-anchor-y-offset-selector";
 const ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE = "data-anchor-related-element-to-scroll-selector";
+const ERROR_ANCHOR_OFFSET_ATTRIBUTE = "data-error-anchor-offset";
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
@@ -3074,19 +3092,33 @@ var _initActiveInactiveClickStateJsDefault = parcelHelpers.interopDefault(_initA
 // - - Define step type - -
 exports.default = function($step, stepIndex, $formBlock) {
     // Local elements
-    let $radios = $step.find(_configJs.RADIO_SELECTOR), $checkboxes = $step.find(_configJs.CHECKBOX_SELECTOR), $buttons = $step.find(`a, ${_configJs.CONTINUE_BUTTON_SELECTOR}, ${_configJs.W_BUTTON_SELECTOR}`).not(_configJs.NOT_A_BUTTON_SELECTOR).not(_configJs.BACKWARDS_BUTTON_SELECTOR), $inputs = $step.find("input"), formBlockIndex = parseInt($formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE));
+    const $radios = $step.find(_configJs.RADIO_SELECTOR), $checkboxes = $step.find(_configJs.CHECKBOX_SELECTOR), $buttons = $step.find(`a, ${_configJs.CONTINUE_BUTTON_SELECTOR}, ${_configJs.W_BUTTON_SELECTOR}`).not(_configJs.NOT_A_BUTTON_SELECTOR).not(_configJs.BACKWARDS_BUTTON_SELECTOR), $inputs = $step.find("input[type=text], input[type=email], input[type=tel], textarea"), formBlockIndex = parseInt($formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE)), $finSweetRangeSliders = $step.find(_configJs.FS_RANGE_SLIDER_ELEMENTS_SELECTOR);
     // Set step index
     $step.attr(_configJs.STEP_INDEX_ATTRIBUTE, stepIndex);
+    // Check for FS range sliders
+    if ($finSweetRangeSliders.length > 0) {
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "fs range slider");
+        // Add no swipe gesture attribute unless said otherwise
+        if ($step.attr(_configJs.SWIPE_ALLOWED_ATTRIBUTE) == undefined) $step.attr(_configJs.SWIPE_ALLOWED_ATTRIBUTE, "false");
+        // console.log($step);
+        return $buttons;
+    }
     // Check for radio
     if ($radios.length > 0) {
         if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
         (0, _initActiveInactiveClickStateJsDefault.default)($radios, formBlockIndex, $step);
         // Make sure to remove accidental radio requires
         $radios.find("input").removeAttr("required");
-        return $step.attr(_configJs.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined ? $buttons : $radios;
+        if ($step.attr(_configJs.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined) // If not auto continue true
+        return $buttons;
+        else {
+            // Set buttons to trigger requirements checking
+            $buttons.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
+            return $radios.add($buttons);
+        }
     }
     // Check for checkbox
-    if ($checkboxes.length > 0) {
+    if ($checkboxes.length > 0 && $inputs.length < 2) {
         if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "checkbox");
         (0, _initActiveInactiveClickStateJsDefault.default)($checkboxes, formBlockIndex, $step);
         // Make sure to remove accidental checkbox requires (for full checkbox steps only)
@@ -3371,6 +3403,8 @@ exports.default = function(stateDataElements) {
     firstStepDisplayCss = $firstStep.css("display");
     // Initial varaible
     const styles = {
+        // Error anchor offset
+        errorAnchorOffset: parseFloat($formBlock.attr(_configJs.ERROR_ANCHOR_OFFSET_ATTRIBUTE) || _configJs.ERROR_ANCHOR_OFFSET_DEFAULT),
         // Webflow designer based style
         firstStepDisplayCss: firstStepDisplayCss,
         // Attribute based style
@@ -3742,19 +3776,25 @@ parcelHelpers.defineInteropFlag(exports);
 var _configJs = require("../config.js");
 var _errorStatusJs = require("./errorStatus.js");
 var _errorStatusJsDefault = parcelHelpers.interopDefault(_errorStatusJs);
+// import scrollToError from './scrollToElement.js';
 // + Exports +
 // - - check step requirments - -
 exports.default = function($formBlock, $currentStep, mode = "100%") {
     // Variables
-    let stepStype = $currentStep.attr(_configJs.STEP_TYPE_ATTRIBUTE), isRequired = ($currentStep.attr(_configJs.STEP_REQUIRED_ATTRIBUTE) || "true") == "true";
+    const stepStype = $currentStep.attr(_configJs.STEP_TYPE_ATTRIBUTE), isRequired = ($currentStep.attr(_configJs.STEP_REQUIRED_ATTRIBUTE) || "true") == "true";
     styleIndex = parseInt($formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE));
     // Required logic
     if (!isRequired) return true;
-    // Logic
-    if (stepStype == "empty") return true;
-    else if (stepStype == "checkbox") {
+    // - - - Logic - - -
+    // Empty
+    if ([
+        "empty",
+        "fs range slider"
+    ].includes(stepStype)) return true;
+    // Checkbox
+    if (stepStype == "checkbox") {
         // Elements
-        let $checkboxes = $currentStep.find(_configJs.CHECKBOX_SELECTOR);
+        const $checkboxes = $currentStep.find(_configJs.CHECKBOX_SELECTOR);
         // Values
         let checkedBoxExists = false;
         // Logic loop
@@ -3778,11 +3818,13 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
             // Return
             return false;
         }
-    } else if (stepStype == "radio") {
+    }
+    // Radio
+    if (stepStype == "radio") {
         // Elements
-        let $radios = $currentStep.find(_configJs.RADIO_SELECTOR), $checked = $currentStep.find(`[${_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE}]`), $buttons = $currentStep.find(`[${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE}]`);
+        const $radios = $currentStep.find(_configJs.RADIO_SELECTOR), $checked = $currentStep.find(`[${_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE}]`), $buttons = $currentStep.find(`[${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE}]`), $continueButtons = $currentStep.find(`[${_configJs.STEP_TYPE_ATTRIBUTE} = 'radio']`);
         // If buttons equal radios return true
-        if ($buttons.hasClass(_configJs.RADIO_SELECTOR.substring(1))) return true;
+        if ($buttons.hasClass(_configJs.RADIO_SELECTOR.substring(1)) && $continueButtons.length < 1) return true;
         // Logic
         if ($checked.length == 0) {
             // Throw error
@@ -3800,29 +3842,34 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
             return false;
         } else // Return
         return true;
-    } else if (stepStype == "custom") {
+    }
+    // Custom
+    if (stepStype == "custom") {
         // Values
-        let requirementsPassed = $currentStep.attr(_configJs.STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE) || "false";
+        const requirementsPassed = $currentStep.attr(_configJs.STEP_CUSTOM_REQUIREMENTS_PASSED_ATTRIBUTE) || "false";
         // Logic
         if (requirementsPassed == "false") return false;
         else return true;
-    } else {
+    }
+    {
         // Values
         let returnTrue = true;
         // Elements
-        let $inputs = $currentStep.find("input, select");
+        const $inputs = $currentStep.find("input, select");
         // Reset
         if (mode == "100%") (0, _errorStatusJsDefault.default)("remove", $inputs, styleIndex);
         // Loop
         $inputs.each(function() {
             // Element
-            let $input = $(this);
+            const $input = $(this);
             // Logic
             if ($input.prop("required")) {
                 if ($input.val() == "") {
+                    // Scroll to error
+                    if (returnTrue) (0, _errorStatusJsDefault.default)("scroll", $input, styleIndex);
+                    else (0, _errorStatusJsDefault.default)("add", $input, styleIndex);
                     // Throw error
                     returnTrue = false;
-                    if (mode == "100%") (0, _errorStatusJsDefault.default)("add", $input, styleIndex);
                 }
             }
         });
@@ -3839,15 +3886,27 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _modelJs = require("../model.js");
+// import * as config from '../config.js';
 var _helperJs = require("../helper.js");
 // + Exports +
 // - - Add error status - -
 exports.default = function(mode = "add", $elements, styleIndex) {
     // Variables
-    let styles = _modelJs.state.data[`form${styleIndex}`].styles, cssErrorStatus = styles["cssErrorStatus"], cssErrorStatusResolved = styles["cssErrorStatusResolved"], elements = (0, _helperJs.jQueryToJs)($elements);
+    const stateData = _modelJs.state.data[`form${styleIndex}`], styles = stateData.styles, cssErrorStatus = styles["cssErrorStatus"], cssErrorStatusResolved = styles["cssErrorStatusResolved"], elements = (0, _helperJs.jQueryToJs)($elements);
     // Action
-    if (mode == "add") gsap.to(elements, cssErrorStatus);
-    else gsap.to(elements, cssErrorStatusResolved);
+    if (mode == "add") // General error animation
+    gsap.to(elements, cssErrorStatus);
+    else if (mode == "scroll") {
+        // Anchor logic
+        gsap.to(stateData.elements.anchorScrollTarget, {
+            scrollTo: {
+                y: elements[0].offsetTop - styles.errorAnchorOffset
+            },
+            duration: stateData.anchorData.anchorAnimationTime
+        });
+        // General error animation
+        gsap.to(elements, cssErrorStatus);
+    } else gsap.to(elements, cssErrorStatusResolved);
 };
 
 },{"../model.js":"Y4A21","../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"5hBGu":[function(require,module,exports) {
@@ -4240,7 +4299,7 @@ class AnchorView {
     }
     init(stateData) {
         // Values
-        let anchorMinScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MIN_SCREEN_SIZE_DEFAULT), anchorMaxScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MAX_SCREEN_SIZE_DEFAULT), anchorAnimationTime = stateData.styles["anchorAnimationSTime"], anchorYOffsetSelector = stateData.elements.$anchor.attr(_configJs.ANCHOR_Y_OFF_SETSELECTOR_ATTRIBUTE);
+        let anchorMinScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MIN_SCREEN_SIZE_DEFAULT), anchorMaxScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MAX_SCREEN_SIZE_DEFAULT), anchorAnimationTime = stateData.styles["anchorAnimationSTime"], anchorYOffsetSelector = stateData.elements.$anchor.attr(_configJs.ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE);
         // Elements
         const $anchorYOffset = $(anchorYOffsetSelector);
         let anchorScrollTarget = document.querySelectorAll(stateData.elements.$anchor.attr(_configJs.ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE));
