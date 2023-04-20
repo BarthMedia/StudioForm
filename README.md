@@ -1,3 +1,13 @@
+# Studio Form
+#### Video Demo: https://www.loom.com/share/eecffd5ccda1494ea9af66d58ad56e06
+#### Description:
+CS50x Desscription: <br>
+Studio Form originally goes back to a client project I did in November. Note here that I work as a freelance technical web developer in the no-code/low-code universe of webflow.com. <br>
+My client wanted to create a fully customized, multi-step form with some conditional complexity. To make it short - the existing solutions on the market were not sufficient <br>.
+With quite a lot of effort, I developed this framework that allows anyone - even absolute no-coders - to relatively easily create these complex, beautifully animated forms with conditional logic, error checking and a myriad of other useful features.
+
+<br>
+
 # Webflow's most advanced multi-step form script
 
 
