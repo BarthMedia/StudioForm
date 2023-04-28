@@ -1,6 +1,7 @@
 // + Imports +
-import * as config from '../config.js';
-import initActiveInactiveClickState from './initActiveInactiveClickState.js';
+import * as config from '../../../config.js';
+import * as model from '../../../model.js';
+import initActiveInactiveClickState from '../visuals/initActiveInactiveClickState.js';
 
 // + Exports +
 
@@ -10,9 +11,7 @@ export default function ($step, stepIndex, $formBlock) {
   const $radios = $step.find(config.RADIO_SELECTOR),
     $checkboxes = $step.find(config.CHECKBOX_SELECTOR),
     $buttons = $step
-      .find(
-        `a, ${config.CONTINUE_BUTTON_SELECTOR}, ${config.W_BUTTON_SELECTOR}`
-      )
+      .find(`${config.CONTINUE_BUTTON_SELECTOR}, ${config.W_BUTTON_SELECTOR}`)
       .not(config.NOT_A_BUTTON_SELECTOR)
       .not(config.BACKWARDS_BUTTON_SELECTOR),
     $inputs = $step.find(
@@ -25,12 +24,16 @@ export default function ($step, stepIndex, $formBlock) {
       config.FS_RANGE_SLIDER_ELEMENTS_SELECTOR
     );
 
+  // Values
+  const stateData = model.state.data[`form${formBlockIndex}`],
+    sliderMode = stateData.sliderMode;
+
   // Set step index
   $step.attr(config.STEP_INDEX_ATTRIBUTE, stepIndex);
 
   // Check for FS range sliders
   if ($finSweetRangeSliders.length > 0) {
-    if ($step.attr(config.STEP_TYPE_ATTRIBUTE) == undefined) {
+    if ($step.attr(config.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) {
       $step.attr(config.STEP_TYPE_ATTRIBUTE, 'fs range slider');
     }
 
@@ -46,7 +49,7 @@ export default function ($step, stepIndex, $formBlock) {
 
   // Check for radio
   if ($radios.length > 0) {
-    if ($step.attr(config.STEP_TYPE_ATTRIBUTE) == undefined) {
+    if ($step.attr(config.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) {
       $step.attr(config.STEP_TYPE_ATTRIBUTE, 'radio');
     }
     initActiveInactiveClickState($radios, formBlockIndex, $step);
@@ -66,7 +69,7 @@ export default function ($step, stepIndex, $formBlock) {
 
   // Check for checkbox
   if ($checkboxes.length > 0 && $inputs.length < 2) {
-    if ($step.attr(config.STEP_TYPE_ATTRIBUTE) == undefined) {
+    if ($step.attr(config.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) {
       $step.attr(config.STEP_TYPE_ATTRIBUTE, 'checkbox');
     }
     initActiveInactiveClickState($checkboxes, formBlockIndex, $step);
@@ -81,7 +84,7 @@ export default function ($step, stepIndex, $formBlock) {
 
   // Check for checkbox
   if ($inputs.length > 0) {
-    if ($step.attr(config.STEP_TYPE_ATTRIBUTE) == undefined) {
+    if ($step.attr(config.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) {
       $step.attr(config.STEP_TYPE_ATTRIBUTE, 'other input');
     }
     initActiveInactiveClickState($checkboxes, formBlockIndex, $step);

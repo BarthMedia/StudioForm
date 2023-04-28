@@ -28,9 +28,9 @@ import 'regenerator-runtime/runtime';
 // Custom
 import view from './views/view.js';
 import * as model from './model.js';
-import loader from './helper/loader.js';
+import loader from './utils/controller/loader.js';
 import { FORM_BLOCK_SELECTOR } from './config.js';
-import creatNextStepObject from './helper/creatNextStepObject.js';
+import creatNextStepObject from './utils/model/creatNextStepObject.js';
 
 // + Functions +
 
@@ -64,6 +64,8 @@ const controlMain = function () {
 
     // Initialize swipe gestures
     view.initSwipeGestures(stateData);
+
+    // stateData.devMode = 0.5;
 
     // Dev mode log
     handlers.devModeLog(stateData);

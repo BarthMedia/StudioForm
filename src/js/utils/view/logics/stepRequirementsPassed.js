@@ -1,6 +1,6 @@
 // + Imports +
-import * as config from '../config.js';
-import errorStatus from './errorStatus.js';
+import * as config from '../../../config.js';
+import errorStatus from '../visuals/errorStatus.js';
 // import scrollToError from './scrollToElement.js';
 
 // + Exports +

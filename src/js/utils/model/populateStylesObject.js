@@ -1,6 +1,6 @@
 // + Imports +
-import * as config from '../config.js';
-import { getJsonAttrVals } from '../helper.js';
+import * as config from '../../config.js';
+import { getJsonAttrVals } from '../../helper.js';
 
 // + Exports +
 

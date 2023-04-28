@@ -1,7 +1,7 @@
 // + Imports +
-import * as config from '../config.js';
+import * as config from '../../../config.js';
 
-import { state } from '../model';
+import { state } from '../../../model.js';
 
 // + Exports +
 

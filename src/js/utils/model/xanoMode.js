@@ -1,6 +1,6 @@
 // + Imports +
-import * as config from '../config.js';
-import { jQueryToJs } from '../helper.js';
+import * as config from '../../config.js';
+import { jQueryToJs } from '../../helper.js';
 
 // + Export functions +
 export const init = function (stateData) {
@@ -125,7 +125,11 @@ export const isXanoMode = function (elements) {
     return true;
 
   // Values
-  const actionUrl = new URL(form.attr('action'));
+  try {
+    const actionUrl = new URL(form.attr('action'));
+  } catch {
+    return false;
+  }
 
   return actionUrl.hostname.includes('xano.io');
 };

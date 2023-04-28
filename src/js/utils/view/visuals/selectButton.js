@@ -1,7 +1,7 @@
 // + Imports +
-import * as config from '../config.js';
-import { jQueryToJs } from '../helper.js';
-import { markClickElement } from '../helper.js';
+import * as config from '../../../config.js';
+import { jQueryToJs } from '../../../helper.js';
+import { markClickElement } from '../../../helper.js';
 
 // + Exports +
 
@@ -16,8 +16,14 @@ export default function (stateData, x, $step) {
 
   // Elements
   let $buttons = $step.find(`[${config.CLICK_ELEMENT_ID_ATTRIBUTE}]`),
-    buttons = jQueryToJs($buttons),
+    buttons = jQueryToJs(
+      $buttons,
+      '[not-findable = "selectButtons.js -> $buttons"]'
+    ),
     $button = $step.find(`[${config.CLICK_ELEMENT_ID_ATTRIBUTE} = ${x}]`);
+
+  // Guard
+  if ($buttons.length < 1) return;
 
   // Actions
   markClickElement($buttons, $button);

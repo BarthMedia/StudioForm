@@ -3,9 +3,9 @@
 // Base
 
 // Custom
-import * as config from '../config.js';
+import * as config from '../../config.js';
 import autoDeleteConditionallyInvisibleElements from './autoDeleteConditionallyInvisibleElements.js';
-import { jQueryToJs, returnChildElements } from '../helper.js';
+import { jQueryToJs, returnChildElements } from '../../helper.js';
 
 // + Exports +
 export default function ($this, formBlockIndex) {
@@ -14,6 +14,9 @@ export default function ($this, formBlockIndex) {
 
   // Values
   const elements = {};
+
+  // Test if slider mode
+  // const isSliderMode = !$this.hasClass(config.W_FORM_BLOCK_CLASS);
 
   // Elements
   elements.$formBlock = $this;
@@ -39,12 +42,21 @@ export default function ($this, formBlockIndex) {
   elements.$nextButton = elements.$notForm.find(
     config.CONTINUE_BUTTON_SELECTOR
   );
-  elements.backButtons = jQueryToJs(elements.$backButton);
-  elements.nextButtons = jQueryToJs(elements.$nextButton);
+  elements.backButtons = jQueryToJs(
+    elements.$backButton,
+    '[not-findable = "Back Buttons"]'
+  );
+  elements.nextButtons = jQueryToJs(
+    elements.$nextButton,
+    '[not-findable = "Next Buttons"]'
+  );
   elements.$progressBar = elements.$formBlock.find(
     config.PROGRESS_BAR_SELECTOR
   );
-  elements.progressBars = jQueryToJs(elements.$progressBar);
+  elements.progressBars = jQueryToJs(
+    elements.$progressBar,
+    '[not-findable = "Progress Bars"]'
+  );
   elements.$anchor = elements.$formBlock
     .find(config.ANCHOR_ELEMENT_SELECTOR)
     .eq(0);

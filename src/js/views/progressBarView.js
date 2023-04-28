@@ -1,5 +1,5 @@
 // + Imports +
-import returnPathFloat from '../helper/returnPathFloat';
+import returnPathFloat from '../utils/view/logics/returnPathFloat';
 
 // + Classes +
 class ProgressBarView {

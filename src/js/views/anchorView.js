@@ -7,6 +7,7 @@ import * as config from '../config.js';
 class AnchorView {
   // Function
   functionality(stateData) {
+    // Gurad / Precondition
     if (stateData.elements.$anchor.length == 1) {
       // Values
       let width = $(window).outerWidth(true),
@@ -29,6 +30,9 @@ class AnchorView {
   }
 
   init(stateData) {
+    // Gurad / Precondition
+    if (stateData.elements.$anchor.length === 0) return;
+
     // Values
     let anchorMinScreenSize = parseInt(
         stateData.elements.$anchor.attr(

@@ -1,7 +1,7 @@
 // + Imports +
-import * as config from '../config.js';
-import { state } from '../model.js';
-import { jQueryToJs } from '../helper.js';
+import * as config from '../../../config.js';
+import { state } from '../../../model.js';
+import { jQueryToJs } from '../../../helper.js';
 
 // + Exports +
 
@@ -14,7 +14,10 @@ export default function ($elements, styleObjectIndex, $parent) {
     cssInactiveSet = styles['setCssInactive'],
     isRadio =
       $parent.attr(config.STEP_TYPE_ATTRIBUTE) == 'radio' ? true : false,
-    elements = jQueryToJs($elements);
+    elements = jQueryToJs(
+      $elements,
+      '[not-findable = "initActiveInactiveClickState.js -> $elements"]'
+    );
 
   // Functions
   gsap.set(elements, cssInactiveSet); // Init

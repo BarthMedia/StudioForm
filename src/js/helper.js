@@ -16,9 +16,9 @@ export function markClickElement($buttons, $button = false) {
 }
 
 // jQuery to native JS
-export function jQueryToJs($elements) {
+export function jQueryToJs($elements, errorMessage = '[not-findable]') {
   // Guard
-  if ($elements.length === 0) return '[not-findable]';
+  if ($elements.length === 0) return errorMessage;
 
   // Vars
   let nodeList = [];

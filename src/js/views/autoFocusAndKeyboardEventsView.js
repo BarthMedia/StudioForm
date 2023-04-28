@@ -1,6 +1,6 @@
 // + Imports +
 import * as config from '../config.js';
-import selectButton from '../helper/selectButton.js';
+import selectButton from '../utils/view/visuals/selectButton.js';
 
 // + Classes +
 

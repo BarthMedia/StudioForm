@@ -2,7 +2,7 @@
 import {
   AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE,
   CONDITION_INVISIBLE_SELECTOR,
-} from '../config';
+} from '../../config';
 
 // + Exports +
 

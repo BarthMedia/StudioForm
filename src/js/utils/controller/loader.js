@@ -4,7 +4,7 @@ import {
   TYPEOF_GSAP_SCROLL_TO_DEPENDENCY,
   TYPEOF_HAMMER_JS_DEPENDENCY,
   TYPEOF_XANO_SDK_DEPENDENCY,
-} from '../config';
+} from '../../config';
 
 // + Load helper +
 

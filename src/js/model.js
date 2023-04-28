@@ -5,10 +5,10 @@
 // Custom
 import * as config from './config.js';
 import { returnDevModeIndex } from './helper';
-import createElements from './helper/createElements.js';
-import populateStylesObject from './helper/populateStylesObject.js';
-import calculateStepHeights from './helper/calculateStepHeights.js';
-import * as xanoMode from './helper/xanoMode.js';
+import createElements from './utils/model/createElements.js';
+import populateStylesObject from './utils/model/populateStylesObject.js';
+import calculateStepHeights from './utils/model/calculateStepHeights.js';
+import * as xanoMode from './utils/model/xanoMode.js';
 
 // + Objects +
 
@@ -65,6 +65,8 @@ export const createState = function ($formBlock, index) {
   // Values
   const stateData = state.data[`form${index}`];
 
+  // console.log(stateData.elements);
+
   // Add styles
   stateData.styles = populateStylesObject(stateData.elements);
 
@@ -73,6 +75,9 @@ export const createState = function ($formBlock, index) {
 
   // Is xano mode
   stateData.xanoMode = xanoMode.isXanoMode(stateData.elements);
+
+  // Is slider mode
+  stateData.sliderMode = !$formBlock.hasClass(config.W_FORM_BLOCK_CLASS);
 
   // Return
   return stateData;

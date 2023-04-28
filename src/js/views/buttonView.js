@@ -1,6 +1,6 @@
 // + Imports +
 import * as config from '../config.js';
-import defineStepType from '../helper/defineStepType.js';
+import defineStepType from '../utils/view/logics/defineStepType.js';
 import { markClickElement } from '../helper';
 
 // + Classes +
@@ -8,7 +8,7 @@ class ButtonView {
   // Initialze buttons
   init(stateData) {
     // Initialize back & forth buttons
-    this.#initBackForthButtons(stateData.elements, stateData.styles);
+    this.#initBackForthButtons(stateData);
 
     // Initialize continue buttons
     this.#initContinueButtons(stateData.handlers, stateData.elements);
@@ -31,6 +31,7 @@ class ButtonView {
   #addBackwardButtonHandler(handlers, elements) {
     elements.$backwardsButtons.add(elements.$backButton).each(function () {
       $(this).click(() => {
+        // console.log('Ey, this works!');
         handlers.goToPreviousStep();
       });
     });
@@ -40,6 +41,7 @@ class ButtonView {
   #addNextButtonHandler(handlers, elements, autoDetectNextStep) {
     elements.$nextButton.each(function () {
       $(this).click(() => {
+        // console.log('Ey, this works!');
         handlers.findNextStep(false, autoDetectNextStep);
       });
     });
@@ -55,10 +57,15 @@ class ButtonView {
   }
 
   // Initialize back & forth buttons
-  #initBackForthButtons(elements, styles) {
+  #initBackForthButtons(stateData) {
     // Inactivate back and forth buttons
-    gsap.set([elements.backButtons, elements.nextButtons], {
-      ...styles.cssBackForthInactive,
+    const arr = stateData.sliderMode
+      ? [stateData.elements.backButtons]
+      : [stateData.elements.backButtons, stateData.elements.nextButtons];
+
+    // GSAP set
+    gsap.set(arr, {
+      ...stateData.styles.cssBackForthInactive,
       duration: 0,
     });
   }

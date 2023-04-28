@@ -1,7 +1,7 @@
 // + Imports +
-import * as model from '../model.js';
+import * as model from '../../../model.js';
 // import * as config from '../config.js';
-import { jQueryToJs } from '../helper.js';
+import { jQueryToJs } from '../../../helper.js';
 
 // + Exports +
 
@@ -12,7 +12,10 @@ export default function (mode = 'add', $elements, styleIndex) {
     styles = stateData.styles,
     cssErrorStatus = styles['cssErrorStatus'],
     cssErrorStatusResolved = styles['cssErrorStatusResolved'],
-    elements = jQueryToJs($elements);
+    elements = jQueryToJs(
+      $elements,
+      '[not-findable = "errorStatus.js -> $elements"]'
+    );
 
   // Action
   if (mode == 'add') {
@@ -22,12 +25,7 @@ export default function (mode = 'add', $elements, styleIndex) {
   // Scroll to
   else if (mode == 'scroll') {
     // Anchor logic
-    gsap.to(stateData.elements.anchorScrollTarget, {
-      scrollTo: {
-        y: elements[0].offsetTop - styles.errorAnchorOffset,
-      },
-      duration: stateData.anchorData.anchorAnimationTime,
-    });
+    stateData.handlers.anchorFunctionality();
 
     // General error animation
     gsap.to(elements, cssErrorStatus);

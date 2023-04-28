@@ -1,6 +1,6 @@
 // + Imports +
 import * as config from '../config.js';
-import defineSwipeType from '../helper/defineSwipeType.js';
+import defineSwipeType from '../utils/view/logics/defineSwipeType.js';
 
 // + Classes +
 

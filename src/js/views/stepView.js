@@ -1,13 +1,13 @@
 // + Imports +
 import * as config from '../config.js';
-import stepRequirementsPassed from '../helper/stepRequirementsPassed.js';
-import animateStepTransition from '../helper/animateStepTransition.js';
-import selectButton from '../helper/selectButton.js';
+import stepRequirementsPassed from '../utils/view/logics/stepRequirementsPassed.js';
+import animateStepTransition from '../utils/view/visuals/animateStepTransition.js';
+import selectButton from '../utils/view/visuals/selectButton.js';
 import progressBarView from './progressBarView.js';
 import anchorView from './anchorView.js';
-import removeOtherSteps from '../helper/removeOtherSteps.js';
-import initQuizMode from '../helper/initQuizMode.js';
-import performVisualSubmit from '../helper/performVisualSubmit.js';
+import removeOtherSteps from '../utils/view/logics/removeOtherSteps.js';
+import initQuizMode from '../utils/view/logics/initQuizMode.js';
+import performVisualSubmit from '../utils/view/visuals/performVisualSubmit.js';
 
 // + Classes +
 class StepView {
@@ -84,12 +84,32 @@ class StepView {
       // Update next button
       this.#updateNextButton(stateData, currentStepId);
     }
+
+    // If no button exists
+    const $currentStepButtons = $currentStep.find(
+      `[${config.CLICK_ELEMENT_ID_ATTRIBUTE}]`
+    );
+    if ($currentStepButtons.length === 0) {
+      if (stepRequirementsPassed(stateData.elements.$formBlock, $currentStep)) {
+        this.#goToNext(stateData, currentStepId, null);
+      }
+    }
   }
 
   // - Update next button -
   #updateNextButton(stateData, stepId) {
     // Security return check
     if (stateData.elements.$nextButton.length < 1) return;
+
+    // If slider mode && not last slide
+    if (stateData.sliderMode && !stateData.stepLogic[stepId].isLast) {
+      // Animate
+      gsap.to(
+        stateData.elements.nextButtons,
+        stateData.styles['cssBackForthActive']
+      );
+      return;
+    }
 
     // Elements
     const $step = stateData.elements.$form.find(
@@ -120,8 +140,17 @@ class StepView {
   // - Go to next step -
   #goToNext(stateData, stepIndex, buttonIndex) {
     // Variable
-    const nextStepId =
-      stateData.stepLogic[stepIndex].buttons[buttonIndex].nextStepId;
+    let nextStepId;
+
+    // If no buttons exist
+    if (buttonIndex === null) {
+      // if last
+      if (!stateData.stepLogic[stepIndex].isLast) nextStepId = stepIndex + 1;
+    } else {
+      // Variable
+      nextStepId =
+        stateData.stepLogic[stepIndex].buttons[buttonIndex].nextStepId;
+    }
 
     // Activate back button
     gsap.to(
@@ -229,6 +258,9 @@ class StepView {
         stateData.clickRecord[stateData.clickRecord.length - 1].step, // Get current click record entry
       object = stateData.stepLogic[currentStepId],
       $currentStep = object.$;
+
+    // Slider mode
+    if (stateData.sliderMode) return;
 
     // Request
     if (!stepRequirementsPassed(stateData.elements.$formBlock, $currentStep)) {

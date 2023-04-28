@@ -1,5 +1,5 @@
 // + Imports +
-import * as config from '../config.js';
+import * as config from '../../../config.js';
 
 // + Exports +
 
