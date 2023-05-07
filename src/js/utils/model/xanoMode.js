@@ -17,6 +17,8 @@ export const init = function (stateData) {
     }`,
     urlEndpoint = `/${actionUrl.pathname.split('/')[2]}`;
 
+  // console.log(actionUrl);
+
   // Xano
   const xano = new XanoClient({
     apiGroupBaseUrl: apiGroupBaseUrl,
@@ -40,9 +42,35 @@ export const init = function (stateData) {
       $submit.val(buttonWaitingText);
     }
 
+    // Append files if existend
+    $form.find('input[type="file"]').each(function () {
+      // Values & elements
+      const $fileInput = $(this),
+        filesList = $fileInput[0].files,
+        name = $fileInput.attr('name');
+
+      // Guard
+      if (filesList.length < 1) return true;
+
+      // Has multiple
+      if ($fileInput.is('[multiple]')) {
+        formData[name] = filesList;
+      } else {
+        formData[name] = filesList[0];
+      }
+    });
+
+    // formData.append('section', 'general');
+    // formData.append('action', 'previewImg');
+    // console.log(formData);
+
     // Assume form method is post
     xano.post(urlEndpoint, formData).then(response => {
-      if (stateData.devMode >= 0) console.log(response);
+      if (stateData.devMode > 0) console.log(response);
+
+      // Guard
+      if (response.status !== 200)
+        throw new Error(`Xano Status: ${response.status}`);
 
       // If form redirect setting set, then use this and prevent any other actions
       if (formRedirect) {
@@ -125,8 +153,9 @@ export const isXanoMode = function (elements) {
     return true;
 
   // Values
+  let actionUrl;
   try {
-    const actionUrl = new URL(form.attr('action'));
+    actionUrl = new URL(form.attr('action'));
   } catch {
     return false;
   }

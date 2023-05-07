@@ -8,15 +8,15 @@ import initActiveInactiveClickState from '../visuals/initActiveInactiveClickStat
 // - - Define step type - -
 export default function ($step, stepIndex, $formBlock) {
   // Local elements
-  const $radios = $step.find(config.RADIO_SELECTOR),
-    $checkboxes = $step.find(config.CHECKBOX_SELECTOR),
+  const $radios = $step.find(config.W_RADIO_SELECTOR),
+    $checkboxes = $step.find(config.W_CHECKBOX_SELECTOR),
     $buttons = $step
       .find(`${config.CONTINUE_BUTTON_SELECTOR}, ${config.W_BUTTON_SELECTOR}`)
       .not(config.NOT_A_BUTTON_SELECTOR)
       .not(config.BACKWARDS_BUTTON_SELECTOR),
-    $inputs = $step.find(
-      'input[type=text], input[type=email], input[type=tel], textarea'
-    ),
+    $inputs = $step
+      .find('input')
+      .not('input[type=radio], input[type=checkbox]'),
     formBlockIndex = parseInt(
       $formBlock.attr(config.FORM_BLOCK_INDEX_ATTRIBUTE)
     ),
@@ -55,10 +55,24 @@ export default function ($step, stepIndex, $formBlock) {
     initActiveInactiveClickState($radios, formBlockIndex, $step);
 
     // Make sure to remove accidental radio requires
-    $radios.find('input').removeAttr('required');
+    $radios.find('input').each(function () {
+      // Elements
+      const $input = $(this);
 
-    if ($step.attr(config.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined) {
+      if ($input.is('[required]')) {
+        $radios.attr('required', '');
+        $input.removeAttr('required');
+      }
+    });
+
+    if (
+      $inputs.length > 1 ||
+      $step.attr(config.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined
+    ) {
       // If not auto continue true
+      if ($step.attr(config.STEP_TYPE_ATTRIBUTE) === 'radio') {
+        $step.attr(config.STEP_TYPE_ATTRIBUTE, 'other input');
+      }
       return $buttons;
     } else {
       // Set buttons to trigger requirements checking

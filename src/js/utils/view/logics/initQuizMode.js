@@ -10,7 +10,7 @@ export default function (stateData) {
     { styles } = stateData;
 
   // Local elements
-  let success = $formBlock[0].querySelector(config.SUCCESS_SELECTOR),
+  let success = $formBlock[0].querySelector(config.W_SUCCESS_SELECTOR),
     results = success.querySelectorAll(config.QUIZ_RESULT_SELECTOR);
 
   // Styles

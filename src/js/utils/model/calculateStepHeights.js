@@ -27,7 +27,11 @@ export default function (stateData) {
       $step.css('display', displayCss);
 
       // + + + Method based calculation + + +
-      if (method !== 'step') {
+
+      if (method == 'vanilla js') {
+        const styles = getComputedStyle($step[0]);
+        stepHeight = parseFloat(styles.height);
+      } else if (method == 'step -> children') {
         // === 'step children'
         // Childrenloop
         $step.children().each(function () {
@@ -38,6 +42,7 @@ export default function (stateData) {
           stepHeight += $child.outerHeight(true);
         });
       } else {
+        //method == 'step'
         stepHeight = $step.outerHeight(true);
       }
 

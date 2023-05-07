@@ -1,7 +1,7 @@
 // + Imports +
 import {
   AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE,
-  CONDITION_INVISIBLE_SELECTOR,
+  W_CONDITION_INVISIBLE_SELECTOR,
 } from '../../config';
 
 // + Exports +
@@ -12,5 +12,5 @@ export default function ($formBlock) {
     $formBlock.attr(AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE) !=
     'false'
   )
-    $formBlock.find(CONDITION_INVISIBLE_SELECTOR).remove();
+    $formBlock.find(W_CONDITION_INVISIBLE_SELECTOR).remove();
 }

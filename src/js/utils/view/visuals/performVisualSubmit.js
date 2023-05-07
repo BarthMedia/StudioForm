@@ -15,7 +15,7 @@ export default function (stateData) {
     $form = elements.$form;
 
   // Local variables
-  const $success = $formBlock.find(config.SUCCESS_SELECTOR),
+  const $success = $formBlock.find(config.W_SUCCESS_SELECTOR),
     time1 = styles['submitMsTime1'] / 1000,
     time2 = styles['submitMsTime2'] / 1000,
     submitHide = styles['submitHide'],

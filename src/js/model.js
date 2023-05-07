@@ -51,7 +51,7 @@ export const createState = function ($formBlock, index) {
     handlers: {
       devModeLog: function (stateData) {
         // Guard
-        if (!stateData.devMode && !stateData.xanoMode) return;
+        if (!stateData.devMode /*&& !stateData.xanoMode*/) return;
 
         // Log
         console.log(

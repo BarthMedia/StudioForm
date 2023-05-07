@@ -28,7 +28,7 @@ export default function ($formBlock, $currentStep, mode = '100%') {
   // Checkbox
   if (stepStype == 'checkbox') {
     // Elements
-    const $checkboxes = $currentStep.find(config.CHECKBOX_SELECTOR);
+    const $checkboxes = $currentStep.find(config.W_CHECKBOX_SELECTOR);
 
     // Values
     let checkedBoxExists = false;
@@ -67,7 +67,7 @@ export default function ($formBlock, $currentStep, mode = '100%') {
   // Radio
   if (stepStype == 'radio') {
     // Elements
-    const $radios = $currentStep.find(config.RADIO_SELECTOR),
+    const $radios = $currentStep.find(config.W_RADIO_SELECTOR),
       $checked = $currentStep.find(`[${config.ELEMENT_GOT_CHECKED_ATTRIBUTE}]`),
       $buttons = $currentStep.find(`[${config.CLICK_ELEMENT_ID_ATTRIBUTE}]`),
       $continueButtons = $currentStep.find(
@@ -76,7 +76,7 @@ export default function ($formBlock, $currentStep, mode = '100%') {
 
     // If buttons equal radios return true
     if (
-      $buttons.hasClass(config.RADIO_SELECTOR.substring(1)) &&
+      $buttons.hasClass(config.W_RADIO_SELECTOR.substring(1)) &&
       $continueButtons.length < 1
     ) {
       return true;
@@ -130,10 +130,17 @@ export default function ($formBlock, $currentStep, mode = '100%') {
     let returnTrue = true;
 
     // Elements
-    const $inputs = $currentStep.find('input, select');
+    const $radios = $currentStep.find(`${config.W_RADIO_SELECTOR}`);
+    const $inputs = $currentStep.find(`input, select`).add($radios);
 
     // Reset
     if (mode == '100%') errorStatus('remove', $inputs, styleIndex);
+
+    // Radio extra -- no duplicate calls
+    const radioGroupArray = [];
+
+    // Radio error scroll behavior
+    // let radioError = false;
 
     // Loop
     $inputs.each(function () {
@@ -141,8 +148,75 @@ export default function ($formBlock, $currentStep, mode = '100%') {
       const $input = $(this);
 
       // Logic
-      if ($input.prop('required')) {
-        if ($input.val() == '') {
+      if ($input.is('[required]')) {
+        if ($input.is($radios)) {
+          // Elements & values
+          const radioInput = $input.find('input'),
+            radioGroupName = radioInput.attr('name');
+
+          // One time call per radio group name
+          if (!radioGroupArray.includes(radioGroupName)) {
+            // Guard
+            radioGroupArray.push(radioGroupName);
+
+            // Elements & values
+            const $groupRadioInputs = $currentStep.find(
+              `input[name="${radioGroupName}"]`
+            );
+            let $groupRadios = null;
+
+            // Loop & add
+            $groupRadioInputs.each(function () {
+              // Elements
+              const $input = $(this),
+                $label = $input.closest(config.W_RADIO_SELECTOR);
+
+              // Add
+              if ($groupRadios === null) {
+                $groupRadios = $label;
+              } else {
+                $groupRadios = $groupRadios.add($label);
+              }
+            });
+
+            // + + + Radio error logic + + +
+
+            // Elements
+            const isChecked = $groupRadios.is(
+              `[${config.ELEMENT_GOT_CHECKED_ATTRIBUTE}]`
+            );
+
+            // console.log(isChecked);
+
+            // Logic
+
+            if (!isChecked) {
+              // Throw error
+              if (mode == '100%') errorStatus('add', $groupRadios, styleIndex);
+
+              // Prevent double clicking
+              if (mode == '100%') $groupRadios.off('click.stepRequirements');
+
+              // Add clickevent
+              if (mode == '100%')
+                $groupRadios.on('click.stepRequirements', function () {
+                  // Remove error
+                  errorStatus('remove', $groupRadios, styleIndex);
+
+                  // Remove clickevent
+                  $groupRadios.off('click.stepRequirements');
+                });
+
+              // Throw error
+              if (returnTrue) errorStatus('scroll', $input, styleIndex);
+              returnTrue = false;
+            }
+
+            // console.log($groupRadios);
+          }
+        }
+
+        if ($input.val() === '' && !$input.is($radios)) {
           // Scroll to error
           if (returnTrue) errorStatus('scroll', $input, styleIndex);
           else errorStatus('add', $input, styleIndex);

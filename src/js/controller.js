@@ -47,6 +47,16 @@ const controlMain = function () {
 
     // - Functions -
 
+    // console.log(
+    //   'Write an Add-on script that changes the name / value of the choose file label.'
+    // );
+
+    // console.log(
+    //   'Build a feature that checks if at least on radio of a radio group is checked! Think about default style. Probably have it not be greyed out!'
+    // );
+
+    // console.log('Build on error scroll to feature ');
+
     // Manipulate base css
     view.initSiteCssManipulation(stateData);
 
@@ -65,7 +75,7 @@ const controlMain = function () {
     // Initialize swipe gestures
     view.initSwipeGestures(stateData);
 
-    // stateData.devMode = 0.5;
+    // stateData.devMode = 0;
 
     // Dev mode log
     handlers.devModeLog(stateData);

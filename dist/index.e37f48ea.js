@@ -594,6 +594,13 @@ const controlMain = function() {
         // Values
         const { elements  } = stateData, { handlers  } = stateData;
         // - Functions -
+        // console.log(
+        //   'Write an Add-on script that changes the name / value of the choose file label.'
+        // );
+        // console.log(
+        //   'Build a feature that checks if at least on radio of a radio group is checked! Think about default style. Probably have it not be greyed out!'
+        // );
+        // console.log('Build on error scroll to feature ');
         // Manipulate base css
         (0, _viewJsDefault.default).initSiteCssManipulation(stateData);
         // Initialize buttons
@@ -606,7 +613,7 @@ const controlMain = function() {
         (0, _viewJsDefault.default).initKeyboardEvents(stateData);
         // Initialize swipe gestures
         (0, _viewJsDefault.default).initSwipeGestures(stateData);
-        // stateData.devMode = 0.5;
+        // stateData.devMode = 0;
         // Dev mode log
         handlers.devModeLog(stateData);
         // Init Xano Mode
@@ -2706,11 +2713,11 @@ parcelHelpers.export(exports, "NOT_A_BUTTON_SELECTOR", ()=>NOT_A_BUTTON_SELECTOR
 parcelHelpers.export(exports, "QUIZ_RESULT_SELECTOR", ()=>QUIZ_RESULT_SELECTOR);
 parcelHelpers.export(exports, "PROGRESS_BAR_SELECTOR", ()=>PROGRESS_BAR_SELECTOR);
 parcelHelpers.export(exports, "ANCHOR_ELEMENT_SELECTOR", ()=>ANCHOR_ELEMENT_SELECTOR);
-parcelHelpers.export(exports, "RADIO_SELECTOR", ()=>RADIO_SELECTOR);
-parcelHelpers.export(exports, "CHECKBOX_SELECTOR", ()=>CHECKBOX_SELECTOR);
+parcelHelpers.export(exports, "W_RADIO_SELECTOR", ()=>W_RADIO_SELECTOR);
+parcelHelpers.export(exports, "W_CHECKBOX_SELECTOR", ()=>W_CHECKBOX_SELECTOR);
 parcelHelpers.export(exports, "W_BUTTON_SELECTOR", ()=>W_BUTTON_SELECTOR);
-parcelHelpers.export(exports, "SUCCESS_SELECTOR", ()=>SUCCESS_SELECTOR);
-parcelHelpers.export(exports, "CONDITION_INVISIBLE_SELECTOR", ()=>CONDITION_INVISIBLE_SELECTOR);
+parcelHelpers.export(exports, "W_SUCCESS_SELECTOR", ()=>W_SUCCESS_SELECTOR);
+parcelHelpers.export(exports, "W_CONDITION_INVISIBLE_SELECTOR", ()=>W_CONDITION_INVISIBLE_SELECTOR);
 parcelHelpers.export(exports, "W_FORM_BLOCK_CLASS", ()=>W_FORM_BLOCK_CLASS);
 parcelHelpers.export(exports, "FS_RANGE_SLIDER_ELEMENTS_SELECTOR", ()=>FS_RANGE_SLIDER_ELEMENTS_SELECTOR);
 parcelHelpers.export(exports, "STEP_TYPE_ATTRIBUTE", ()=>STEP_TYPE_ATTRIBUTE);
@@ -2796,14 +2803,8 @@ const CSS_HIDE_DEFAULT = {
     display: "none"
 };
 const CSS_ACTIVE_DEFAULT = {
-    borderColor: "#175ADA",
-    opacity: 1,
-    duration: 0.5
 };
 const CSS_INACTIVE_DEFAULT = {
-    borderColor: "",
-    opacity: 0.35,
-    duration: 0.5
 };
 const CSS_BACK_FORTH_ACTIVE_DEFAULT = {
     opacity: 1,
@@ -2841,7 +2842,7 @@ const REDIRECT_MS_TIME_DEFAULT = 1;
 const PROGRESS_BAR_AXIS_DEFAULT = "x";
 const ANCHOR_MIN_SCREEN_SIZE_DEFAULT = 0;
 const ANCHOR_MAX_SCREEN_SIZE_DEFAULT = 10000;
-const ERROR_ANCHOR_OFFSET_DEFAULT = 32; // Anchor to error feature not yet developed
+const ERROR_ANCHOR_OFFSET_DEFAULT = 96; // Anchor to error feature not yet developed
 const DEV_MODE_OBJECT = [
     {
         names: [
@@ -2887,11 +2888,11 @@ const NOT_A_BUTTON_SELECTOR = '[studio-form = "Not a Button"]';
 const QUIZ_RESULT_SELECTOR = '[studio-form = "Quiz Result"]';
 const PROGRESS_BAR_SELECTOR = '[studio-form = "Progress Bar"]';
 const ANCHOR_ELEMENT_SELECTOR = '[studio-form = "Anchor Element"]';
-const RADIO_SELECTOR = ".w-radio";
-const CHECKBOX_SELECTOR = ".w-checkbox";
+const W_RADIO_SELECTOR = ".w-radio";
+const W_CHECKBOX_SELECTOR = ".w-checkbox";
 const W_BUTTON_SELECTOR = ".w-button";
-const SUCCESS_SELECTOR = ".w-form-done";
-const CONDITION_INVISIBLE_SELECTOR = ".w-condition-invisible";
+const W_SUCCESS_SELECTOR = ".w-form-done";
+const W_CONDITION_INVISIBLE_SELECTOR = ".w-condition-invisible";
 const W_FORM_BLOCK_CLASS = "w-form";
 const FS_RANGE_SLIDER_ELEMENTS_SELECTOR = "[fs-rangeslider-element]";
 const STEP_TYPE_ATTRIBUTE = "data-step-type";
@@ -3185,7 +3186,7 @@ var _initActiveInactiveClickStateJsDefault = parcelHelpers.interopDefault(_initA
 // - - Define step type - -
 exports.default = function($step, stepIndex, $formBlock) {
     // Local elements
-    const $radios = $step.find(_configJs.RADIO_SELECTOR), $checkboxes = $step.find(_configJs.CHECKBOX_SELECTOR), $buttons = $step.find(`${_configJs.CONTINUE_BUTTON_SELECTOR}, ${_configJs.W_BUTTON_SELECTOR}`).not(_configJs.NOT_A_BUTTON_SELECTOR).not(_configJs.BACKWARDS_BUTTON_SELECTOR), $inputs = $step.find("input[type=text], input[type=email], input[type=tel], textarea"), formBlockIndex = parseInt($formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE)), $finSweetRangeSliders = $step.find(_configJs.FS_RANGE_SLIDER_ELEMENTS_SELECTOR);
+    const $radios = $step.find(_configJs.W_RADIO_SELECTOR), $checkboxes = $step.find(_configJs.W_CHECKBOX_SELECTOR), $buttons = $step.find(`${_configJs.CONTINUE_BUTTON_SELECTOR}, ${_configJs.W_BUTTON_SELECTOR}`).not(_configJs.NOT_A_BUTTON_SELECTOR).not(_configJs.BACKWARDS_BUTTON_SELECTOR), $inputs = $step.find("input").not("input[type=radio], input[type=checkbox]"), formBlockIndex = parseInt($formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE)), $finSweetRangeSliders = $step.find(_configJs.FS_RANGE_SLIDER_ELEMENTS_SELECTOR);
     // Values
     const stateData = _modelJs.state.data[`form${formBlockIndex}`], sliderMode = stateData.sliderMode;
     // Set step index
@@ -3203,10 +3204,19 @@ exports.default = function($step, stepIndex, $formBlock) {
         if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
         (0, _initActiveInactiveClickStateJsDefault.default)($radios, formBlockIndex, $step);
         // Make sure to remove accidental radio requires
-        $radios.find("input").removeAttr("required");
-        if ($step.attr(_configJs.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined) // If not auto continue true
-        return $buttons;
-        else {
+        $radios.find("input").each(function() {
+            // Elements
+            const $input = $(this);
+            if ($input.is("[required]")) {
+                $radios.attr("required", "");
+                $input.removeAttr("required");
+            }
+        });
+        if ($inputs.length > 1 || $step.attr(_configJs.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined) {
+            // If not auto continue true
+            if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) === "radio") $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "other input");
+            return $buttons;
+        } else {
             // Set buttons to trigger requirements checking
             $buttons.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
             return $radios.add($buttons);
@@ -3337,7 +3347,7 @@ const createState = function($formBlock, index) {
         handlers: {
             devModeLog: function(stateData) {
                 // Guard
-                if (!stateData.devMode && !stateData.xanoMode) return;
+                if (!stateData.devMode /*&& !stateData.xanoMode*/ ) return;
                 // Log
                 console.log(`Dev Mode ${stateData.devMode}:\nstate -> data -> form${stateData.formBlockIndex}:\n`, stateData);
             }
@@ -3407,7 +3417,7 @@ var _config = require("../../config");
 // + Exports +
 // - - Remove webflow invisible steps / items / elements - -
 exports.default = function($formBlock) {
-    if ($formBlock.attr((0, _config.AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE)) != "false") $formBlock.find((0, _config.CONDITION_INVISIBLE_SELECTOR)).remove();
+    if ($formBlock.attr((0, _config.AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE)) != "false") $formBlock.find((0, _config.W_CONDITION_INVISIBLE_SELECTOR)).remove();
 };
 
 },{"../../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iqRsg":[function(require,module,exports) {
@@ -3536,7 +3546,10 @@ exports.default = function(stateData) {
             // Show
             $step.css("display", displayCss);
             // + + + Method based calculation + + +
-            if (method !== "step") // === 'step children'
+            if (method == "vanilla js") {
+                const styles = getComputedStyle($step[0]);
+                stepHeight = parseFloat(styles.height);
+            } else if (method == "step -> children") // === 'step children'
             // Childrenloop
             $step.children().each(function() {
                 // Elements
@@ -3544,7 +3557,8 @@ exports.default = function(stateData) {
                 // Itterate
                 stepHeight += $child.outerHeight(true);
             });
-            else stepHeight = $step.outerHeight(true);
+            else //method == 'step'
+            stepHeight = $step.outerHeight(true);
             // Hide
             $step.hide();
             // Populate array
@@ -3574,7 +3588,8 @@ const init = function(stateData) {
     // Elements
     const form = stateData.elements.$form;
     // Values
-    const actionUrl1 = new URL(form.attr("action")), apiGroupBaseUrl = `${actionUrl1.protocol}//${actionUrl1.hostname}/${actionUrl1.pathname.split("/")[1]}`, urlEndpoint = `/${actionUrl1.pathname.split("/")[2]}`;
+    const actionUrl = new URL(form.attr("action")), apiGroupBaseUrl = `${actionUrl.protocol}//${actionUrl.hostname}/${actionUrl.pathname.split("/")[1]}`, urlEndpoint = `/${actionUrl.pathname.split("/")[2]}`;
+    // console.log(actionUrl);
     // Xano
     const xano = new XanoClient({
         apiGroupBaseUrl: apiGroupBaseUrl
@@ -3591,9 +3606,24 @@ const init = function(stateData) {
         const formData = getFormData($form); // Form data
         // Set waiting text
         if (buttonWaitingText) $submit.val(buttonWaitingText);
+        // Append files if existend
+        $form.find('input[type="file"]').each(function() {
+            // Values & elements
+            const $fileInput = $(this), filesList = $fileInput[0].files, name = $fileInput.attr("name");
+            // Guard
+            if (filesList.length < 1) return true;
+            // Has multiple
+            if ($fileInput.is("[multiple]")) formData[name] = filesList;
+            else formData[name] = filesList[0];
+        });
+        // formData.append('section', 'general');
+        // formData.append('action', 'previewImg');
+        // console.log(formData);
         // Assume form method is post
         xano.post(urlEndpoint, formData).then((response)=>{
-            if (stateData.devMode >= 0) console.log(response);
+            if (stateData.devMode > 0) console.log(response);
+            // Guard
+            if (response.status !== 200) throw new Error(`Xano Status: ${response.status}`);
             // If form redirect setting set, then use this and prevent any other actions
             if (formRedirect) {
                 window.location = formRedirect;
@@ -3618,8 +3648,9 @@ const isXanoMode = function(elements) {
         "True"
     ].includes(formBlock.attr(_configJs.XANO_MODE_ATTRIBUTE))) return true;
     // Values
+    let actionUrl;
     try {
-        const actionUrl1 = new URL(form.attr("action"));
+        actionUrl = new URL(form.attr("action"));
     } catch  {
         return false;
     }
@@ -4004,7 +4035,7 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
     // Checkbox
     if (stepStype == "checkbox") {
         // Elements
-        const $checkboxes = $currentStep.find(_configJs.CHECKBOX_SELECTOR);
+        const $checkboxes = $currentStep.find(_configJs.W_CHECKBOX_SELECTOR);
         // Values
         let checkedBoxExists = false;
         // Logic loop
@@ -4032,9 +4063,9 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
     // Radio
     if (stepStype == "radio") {
         // Elements
-        const $radios = $currentStep.find(_configJs.RADIO_SELECTOR), $checked = $currentStep.find(`[${_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE}]`), $buttons = $currentStep.find(`[${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE}]`), $continueButtons = $currentStep.find(`[${_configJs.STEP_TYPE_ATTRIBUTE} = 'radio']`);
+        const $radios = $currentStep.find(_configJs.W_RADIO_SELECTOR), $checked = $currentStep.find(`[${_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE}]`), $buttons = $currentStep.find(`[${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE}]`), $continueButtons = $currentStep.find(`[${_configJs.STEP_TYPE_ATTRIBUTE} = 'radio']`);
         // If buttons equal radios return true
-        if ($buttons.hasClass(_configJs.RADIO_SELECTOR.substring(1)) && $continueButtons.length < 1) return true;
+        if ($buttons.hasClass(_configJs.W_RADIO_SELECTOR.substring(1)) && $continueButtons.length < 1) return true;
         // Logic
         if ($checked.length == 0) {
             // Throw error
@@ -4065,16 +4096,63 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
         // Values
         let returnTrue = true;
         // Elements
-        const $inputs = $currentStep.find("input, select");
+        const $radios = $currentStep.find(`${_configJs.W_RADIO_SELECTOR}`);
+        const $inputs = $currentStep.find(`input, select`).add($radios);
         // Reset
         if (mode == "100%") (0, _errorStatusJsDefault.default)("remove", $inputs, styleIndex);
+        // Radio extra -- no duplicate calls
+        const radioGroupArray = [];
+        // Radio error scroll behavior
+        // let radioError = false;
         // Loop
         $inputs.each(function() {
             // Element
             const $input = $(this);
             // Logic
-            if ($input.prop("required")) {
-                if ($input.val() == "") {
+            if ($input.is("[required]")) {
+                if ($input.is($radios)) {
+                    // Elements & values
+                    const radioInput = $input.find("input"), radioGroupName = radioInput.attr("name");
+                    // One time call per radio group name
+                    if (!radioGroupArray.includes(radioGroupName)) {
+                        // Guard
+                        radioGroupArray.push(radioGroupName);
+                        // Elements & values
+                        const $groupRadioInputs = $currentStep.find(`input[name="${radioGroupName}"]`);
+                        let $groupRadios = null;
+                        // Loop & add
+                        $groupRadioInputs.each(function() {
+                            // Elements
+                            const $input = $(this), $label = $input.closest(_configJs.W_RADIO_SELECTOR);
+                            // Add
+                            if ($groupRadios === null) $groupRadios = $label;
+                            else $groupRadios = $groupRadios.add($label);
+                        });
+                        // + + + Radio error logic + + +
+                        // Elements
+                        const isChecked = $groupRadios.is(`[${_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE}]`);
+                        // console.log(isChecked);
+                        // Logic
+                        if (!isChecked) {
+                            // Throw error
+                            if (mode == "100%") (0, _errorStatusJsDefault.default)("add", $groupRadios, styleIndex);
+                            // Prevent double clicking
+                            if (mode == "100%") $groupRadios.off("click.stepRequirements");
+                            // Add clickevent
+                            if (mode == "100%") $groupRadios.on("click.stepRequirements", function() {
+                                // Remove error
+                                (0, _errorStatusJsDefault.default)("remove", $groupRadios, styleIndex);
+                                // Remove clickevent
+                                $groupRadios.off("click.stepRequirements");
+                            });
+                            // Throw error
+                            if (returnTrue) (0, _errorStatusJsDefault.default)("scroll", $input, styleIndex);
+                            returnTrue = false;
+                        }
+                    // console.log($groupRadios);
+                    }
+                }
+                if ($input.val() === "" && !$input.is($radios)) {
                     // Scroll to error
                     if (returnTrue) (0, _errorStatusJsDefault.default)("scroll", $input, styleIndex);
                     else (0, _errorStatusJsDefault.default)("add", $input, styleIndex);
@@ -4108,7 +4186,25 @@ exports.default = function(mode = "add", $elements, styleIndex) {
     gsap.to(elements, cssErrorStatus);
     else if (mode == "scroll") {
         // Anchor logic
-        stateData.handlers.anchorFunctionality();
+        // stateData.handlers.anchorFunctionality();
+        let duration;
+        try {
+            duration = stateData.anchorData.anchorAnimationTime;
+        } catch  {
+            duration = stateData.styles.animationSTime;
+        }
+        gsap.to(stateData.elements.anchorScrollTarget || window, {
+            scrollTo: {
+                y: elements[0],
+                offsetY: stateData.styles.errorAnchorOffset
+            },
+            duration: duration
+        });
+        // console.log(elements);
+        // console.log(
+        //   'The individual select items shall have event listeneres that make the error go away once value changed. Make the event listener go away as well'
+        // );
+        // console.log('I shall scroll!');
         // General error animation
         gsap.to(elements, cssErrorStatus);
     } else gsap.to(elements, cssErrorStatusResolved);
@@ -4404,7 +4500,7 @@ exports.default = function(stateData) {
     // Values
     const $formBlock = stateData.elements.$formBlock, { styles  } = stateData;
     // Local elements
-    let success = $formBlock[0].querySelector(_configJs.SUCCESS_SELECTOR), results = success.querySelectorAll(_configJs.QUIZ_RESULT_SELECTOR);
+    let success = $formBlock[0].querySelector(_configJs.W_SUCCESS_SELECTOR), results = success.querySelectorAll(_configJs.QUIZ_RESULT_SELECTOR);
     // Styles
     let redirectMsTime = styles["redirectMsTime"];
     // Run only if active
@@ -4462,7 +4558,7 @@ exports.default = function(stateData) {
     // Values
     const { elements  } = stateData, { devMode  } = stateData, { styles  } = stateData, $formBlock = elements.$formBlock, $form = elements.$form;
     // Local variables
-    const $success = $formBlock.find(_configJs.SUCCESS_SELECTOR), time1 = styles["submitMsTime1"] / 1000, time2 = styles["submitMsTime2"] / 1000, submitHide = styles["submitHide"], submitHideQuick = {
+    const $success = $formBlock.find(_configJs.W_SUCCESS_SELECTOR), time1 = styles["submitMsTime1"] / 1000, time2 = styles["submitMsTime2"] / 1000, submitHide = styles["submitHide"], submitHideQuick = {
         ...submitHide,
         duration: 0
     }, submitShow = styles["submitShow"], resizeHeight1 = $form.outerHeight(true), resizeHeight2 = $success.outerHeight(true), multiplier1 = styles["autoResizeSuccessTimeMultiplier1"], multiplier2 = styles["autoResizeSuccessTimeMultiplier2"], submitTimeout = (submitHide.duration + submitShow.duration) * 1000, tl = new gsap.timeline(), resizeTl = new gsap.timeline();

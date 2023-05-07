@@ -18,14 +18,14 @@ export const AUTO_DETECT_NEXT_STEP_DEFAULT = 'true';
 export const CSS_SHOW_DEFAULT = { opacity: 1 /*, display: 'flex'*/ };
 export const CSS_HIDE_DEFAULT = { opacity: 0, display: 'none' };
 export const CSS_ACTIVE_DEFAULT = {
-  borderColor: '#175ADA',
-  opacity: 1,
-  duration: 0.5,
+  // borderColor: '#175ADA',
+  // opacity: 1,
+  // duration: 0.5,
 };
 export const CSS_INACTIVE_DEFAULT = {
-  borderColor: '',
-  opacity: 0.35,
-  duration: 0.5,
+  // borderColor: '',
+  // opacity: 0.35,
+  // duration: 0.5,
 };
 export const CSS_BACK_FORTH_ACTIVE_DEFAULT = { opacity: 1, pointerEvents: '' };
 export const CSS_BACK_FORTH_INACTIVE_DEFAULT = {
@@ -68,7 +68,7 @@ export const PROGRESS_BAR_AXIS_DEFAULT = 'x';
 // Anchor
 export const ANCHOR_MIN_SCREEN_SIZE_DEFAULT = 0;
 export const ANCHOR_MAX_SCREEN_SIZE_DEFAULT = 10000;
-export const ERROR_ANCHOR_OFFSET_DEFAULT = 32; // Anchor to error feature not yet developed
+export const ERROR_ANCHOR_OFFSET_DEFAULT = 96; // Anchor to error feature not yet developed
 
 // Development mode object
 export const DEV_MODE_OBJECT = [
@@ -112,11 +112,11 @@ export const PROGRESS_BAR_SELECTOR = '[studio-form = "Progress Bar"]';
 export const ANCHOR_ELEMENT_SELECTOR = '[studio-form = "Anchor Element"]';
 
 // Webflow classes
-export const RADIO_SELECTOR = '.w-radio';
-export const CHECKBOX_SELECTOR = '.w-checkbox';
+export const W_RADIO_SELECTOR = '.w-radio';
+export const W_CHECKBOX_SELECTOR = '.w-checkbox';
 export const W_BUTTON_SELECTOR = '.w-button';
-export const SUCCESS_SELECTOR = '.w-form-done';
-export const CONDITION_INVISIBLE_SELECTOR = '.w-condition-invisible';
+export const W_SUCCESS_SELECTOR = '.w-form-done';
+export const W_CONDITION_INVISIBLE_SELECTOR = '.w-condition-invisible';
 export const W_FORM_BLOCK_CLASS = 'w-form';
 
 // + + + Functional attributes + + +

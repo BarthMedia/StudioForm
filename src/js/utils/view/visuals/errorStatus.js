@@ -25,7 +25,30 @@ export default function (mode = 'add', $elements, styleIndex) {
   // Scroll to
   else if (mode == 'scroll') {
     // Anchor logic
-    stateData.handlers.anchorFunctionality();
+    // stateData.handlers.anchorFunctionality();
+
+    let duration;
+    try {
+      duration = stateData.anchorData.anchorAnimationTime;
+    } catch {
+      duration = stateData.styles.animationSTime;
+    }
+
+    gsap.to(stateData.elements.anchorScrollTarget || window, {
+      scrollTo: {
+        y: elements[0],
+        offsetY: stateData.styles.errorAnchorOffset,
+      },
+      duration: duration,
+    });
+
+    // console.log(elements);
+
+    // console.log(
+    //   'The individual select items shall have event listeneres that make the error go away once value changed. Make the event listener go away as well'
+    // );
+
+    // console.log('I shall scroll!');
 
     // General error animation
     gsap.to(elements, cssErrorStatus);
