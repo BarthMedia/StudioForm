@@ -11,6 +11,7 @@ import stepView from './stepView.js';
 import swipeGestureView from './swipeGestureView.js';
 import autoFocusAndKeyboardEventsView from './autoFocusAndKeyboardEventsView.js';
 import manipulateSiteCssView from './manipulateSiteCssView.js';
+import fileLabelChange from './fileLabelChange.js';
 
 // + Classes +
 
@@ -50,6 +51,11 @@ class WebflowView {
   // Initialize Hammer.js
   initSwipeGestures(stateData) {
     swipeGestureView.init(stateData);
+  }
+
+  // Initialize file label change feature
+  initFileLabelChange(stateData) {
+    fileLabelChange.init(stateData);
   }
 }
 

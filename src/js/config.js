@@ -258,3 +258,6 @@ export const ERROR_ANCHOR_OFFSET_ATTRIBUTE = 'data-error-anchor-offset';
 // Height calculation
 export const STEP_HEIGHT_CALCULATION_METHOD_ATTRIBUTE =
   'data-step-height-calculation-method';
+
+// File label name change
+export const AUTO_CHANGE_FILE_LABEL_ATTRIBUTE = 'data-auto-change-file-label';

@@ -47,16 +47,6 @@ const controlMain = function () {
 
     // - Functions -
 
-    // console.log(
-    //   'Write an Add-on script that changes the name / value of the choose file label.'
-    // );
-
-    // console.log(
-    //   'Build a feature that checks if at least on radio of a radio group is checked! Think about default style. Probably have it not be greyed out!'
-    // );
-
-    // console.log('Build on error scroll to feature ');
-
     // Manipulate base css
     view.initSiteCssManipulation(stateData);
 
@@ -82,6 +72,9 @@ const controlMain = function () {
 
     // Init Xano Mode
     model.initXanoMode(stateData);
+
+    // Init file label change feature
+    view.initFileLabelChange(stateData);
   });
 };
 

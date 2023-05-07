@@ -594,13 +594,6 @@ const controlMain = function() {
         // Values
         const { elements  } = stateData, { handlers  } = stateData;
         // - Functions -
-        // console.log(
-        //   'Write an Add-on script that changes the name / value of the choose file label.'
-        // );
-        // console.log(
-        //   'Build a feature that checks if at least on radio of a radio group is checked! Think about default style. Probably have it not be greyed out!'
-        // );
-        // console.log('Build on error scroll to feature ');
         // Manipulate base css
         (0, _viewJsDefault.default).initSiteCssManipulation(stateData);
         // Initialize buttons
@@ -618,6 +611,8 @@ const controlMain = function() {
         handlers.devModeLog(stateData);
         // Init Xano Mode
         _modelJs.initXanoMode(stateData);
+        // Init file label change feature
+        (0, _viewJsDefault.default).initFileLabelChange(stateData);
     });
 };
 // + Initialize +
@@ -2621,6 +2616,8 @@ var _autoFocusAndKeyboardEventsViewJs = require("./autoFocusAndKeyboardEventsVie
 var _autoFocusAndKeyboardEventsViewJsDefault = parcelHelpers.interopDefault(_autoFocusAndKeyboardEventsViewJs);
 var _manipulateSiteCssViewJs = require("./manipulateSiteCssView.js");
 var _manipulateSiteCssViewJsDefault = parcelHelpers.interopDefault(_manipulateSiteCssViewJs);
+var _fileLabelChangeJs = require("./fileLabelChange.js");
+var _fileLabelChangeJsDefault = parcelHelpers.interopDefault(_fileLabelChangeJs);
 // + Classes +
 // Base form view
 class WebflowView {
@@ -2653,12 +2650,16 @@ class WebflowView {
     initSwipeGestures(stateData) {
         (0, _swipeGestureViewJsDefault.default).init(stateData);
     }
+    // Initialize file label change feature
+    initFileLabelChange(stateData) {
+        (0, _fileLabelChangeJsDefault.default).init(stateData);
+    }
 }
 // + Exports +
 // WebflowView object
 exports.default = new WebflowView();
 
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./buttonView.js":"6ARYD","./stepView.js":"igI8F","./swipeGestureView.js":"iWahp","./autoFocusAndKeyboardEventsView.js":"8Lg9B","./manipulateSiteCssView.js":"8cT3D"}],"k5Hzs":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./buttonView.js":"6ARYD","./stepView.js":"igI8F","./swipeGestureView.js":"iWahp","./autoFocusAndKeyboardEventsView.js":"8Lg9B","./manipulateSiteCssView.js":"8cT3D","./fileLabelChange.js":"8kzyx"}],"k5Hzs":[function(require,module,exports) {
 // + Global strings +
 // + + + Functional defaults + + +
 // Keyboard features
@@ -2789,6 +2790,7 @@ parcelHelpers.export(exports, "ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE", ()=>ANCHOR_Y
 parcelHelpers.export(exports, "ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE", ()=>ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE);
 parcelHelpers.export(exports, "ERROR_ANCHOR_OFFSET_ATTRIBUTE", ()=>ERROR_ANCHOR_OFFSET_ATTRIBUTE);
 parcelHelpers.export(exports, "STEP_HEIGHT_CALCULATION_METHOD_ATTRIBUTE", ()=>STEP_HEIGHT_CALCULATION_METHOD_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_CHANGE_FILE_LABEL_ATTRIBUTE", ()=>AUTO_CHANGE_FILE_LABEL_ATTRIBUTE);
 const ESC_EVENT_DEFAULT = "escape, esc, arrowup, up";
 const ENTER_EVENT_DEFAULT = "enter, arrowdown, down";
 const LEFT_EVENT_DEFAULT = "arrowleft, left";
@@ -2964,6 +2966,7 @@ const ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE = "data-anchor-y-offset-selector";
 const ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE = "data-anchor-related-element-to-scroll-selector";
 const ERROR_ANCHOR_OFFSET_ATTRIBUTE = "data-error-anchor-offset";
 const STEP_HEIGHT_CALCULATION_METHOD_ATTRIBUTE = "data-step-height-calculation-method";
+const AUTO_CHANGE_FILE_LABEL_ATTRIBUTE = "data-auto-change-file-label";
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
@@ -4887,7 +4890,42 @@ class ManipulateSiteCssView {
 // + Exports +
 exports.default = new ManipulateSiteCssView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs"}],"gh6di":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs"}],"8kzyx":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+// + Classes +
+// - Anchor funcitonality -
+class FileLabelView {
+    init(stateData) {
+        // Guard
+        if (stateData.elements.$formBlock.attr(_configJs.AUTO_CHANGE_FILE_LABEL_ATTRIBUTE) === "false") return;
+        // Elements
+        const $form = stateData.elements.$form, $fileInputs = $form.find('input[type="file"]');
+        // Loop
+        $fileInputs.each(function() {
+            // Elements
+            const $input = $(this), $parent = $input.parent(), $label = $parent.find("label");
+            // Guard
+            if ($label.length === 0) return true;
+            // Values
+            const labelText = $label.text();
+            // Event listener
+            $input.on("change", function() {
+                // Values
+                const arr = $input.val().split("\\");
+                let name = arr[arr.length - 1];
+                name = name !== "" ? name : labelText;
+                $label.text(name);
+            });
+        });
+    }
+}
+// + Exports +
+exports.default = new FileLabelView();
+
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gh6di":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
