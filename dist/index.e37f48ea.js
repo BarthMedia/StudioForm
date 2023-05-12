@@ -626,7 +626,7 @@ const init = function() {
 };
 init();
 
-},{"core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./views/view.js":"bWlJ9","./model.js":"Y4A21","./config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./utils/model/creatNextStepObject.js":"gh6di","./utils/controller/loader.js":"22ekA"}],"gSXXb":[function(require,module,exports) {
+},{"core-js/modules/es.regexp.flags.js":"gSXXb","core-js/modules/web.immediate.js":"49tUX","regenerator-runtime/runtime":"dXNgZ","./views/view.js":"bWlJ9","./model.js":"Y4A21","./utils/controller/loader.js":"22ekA","./config.js":"k5Hzs","./utils/model/creatNextStepObject.js":"gh6di","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gSXXb":[function(require,module,exports) {
 var global = require("c2ac71b1e9895a4c");
 var DESCRIPTORS = require("e1b20573b451ef90");
 var defineBuiltInAccessor = require("21be03f45557950c");
@@ -2664,7 +2664,7 @@ class WebflowView {
 // WebflowView object
 exports.default = new WebflowView();
 
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./buttonView.js":"6ARYD","./stepView.js":"igI8F","./swipeGestureView.js":"iWahp","./autoFocusAndKeyboardEventsView.js":"8Lg9B","./manipulateSiteCssView.js":"8cT3D","./fileLabelChange.js":"8kzyx"}],"k5Hzs":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","./buttonView.js":"6ARYD","./stepView.js":"igI8F","./swipeGestureView.js":"iWahp","./autoFocusAndKeyboardEventsView.js":"8Lg9B","./manipulateSiteCssView.js":"8cT3D","./fileLabelChange.js":"8kzyx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"k5Hzs":[function(require,module,exports) {
 // + Global strings +
 // + + + Functional defaults + + +
 // Keyboard features
@@ -3110,7 +3110,145 @@ class ButtonView {
 // + Exports +
 exports.default = new ButtonView();
 
-},{"../config.js":"k5Hzs","../helper":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../utils/view/logics/defineStepType.js":"8ePqv"}],"lVRAz":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","../utils/view/logics/defineStepType.js":"8ePqv","../helper":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8ePqv":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../../../config.js");
+var _modelJs = require("../../../model.js");
+var _initActiveInactiveClickStateJs = require("../visuals/initActiveInactiveClickState.js");
+var _initActiveInactiveClickStateJsDefault = parcelHelpers.interopDefault(_initActiveInactiveClickStateJs);
+// + Exports +
+// - - Define step type - -
+exports.default = function($step, stepIndex, $formBlock) {
+    // Local elements
+    const $radios = $step.find(_configJs.W_RADIO_SELECTOR), $checkboxes = $step.find(_configJs.W_CHECKBOX_SELECTOR), $buttons = $step.find(`${_configJs.CONTINUE_BUTTON_SELECTOR}, ${_configJs.W_BUTTON_SELECTOR}`).not(_configJs.NOT_A_BUTTON_SELECTOR).not(_configJs.BACKWARDS_BUTTON_SELECTOR), $inputs = $step.find("input").not("input[type=radio], input[type=checkbox]"), formBlockIndex = parseInt($formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE)), $finSweetRangeSliders = $step.find(_configJs.FS_RANGE_SLIDER_ELEMENTS_SELECTOR);
+    // Values
+    const stateData = _modelJs.state.data[`form${formBlockIndex}`], sliderMode = stateData.sliderMode;
+    // Set step index
+    $step.attr(_configJs.STEP_INDEX_ATTRIBUTE, stepIndex);
+    // Check for FS range sliders
+    if ($finSweetRangeSliders.length > 0) {
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "fs range slider");
+        // Add no swipe gesture attribute unless said otherwise
+        if ($step.attr(_configJs.SWIPE_ALLOWED_ATTRIBUTE) == undefined) $step.attr(_configJs.SWIPE_ALLOWED_ATTRIBUTE, "false");
+        // console.log($step);
+        return $buttons;
+    }
+    // Check for radio
+    if ($radios.length > 0) {
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
+        (0, _initActiveInactiveClickStateJsDefault.default)($radios, formBlockIndex, $step);
+        // Make sure to remove accidental radio requires
+        $radios.find("input").each(function() {
+            // Elements
+            const $input = $(this);
+            if ($input.is("[required]")) {
+                $radios.attr("required", "");
+                $input.removeAttr("required");
+            }
+        });
+        if ($inputs.length > 1 || $step.attr(_configJs.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined) {
+            // If not auto continue true
+            if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) === "radio") $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "other input");
+            return $buttons;
+        } else {
+            // Set buttons to trigger requirements checking
+            $buttons.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
+            return $radios.add($buttons);
+        }
+    }
+    // Check for checkbox
+    if ($checkboxes.length > 0 && $inputs.length < 2) {
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "checkbox");
+        (0, _initActiveInactiveClickStateJsDefault.default)($checkboxes, formBlockIndex, $step);
+        // Make sure to remove accidental checkbox requires (for full checkbox steps only)
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == "checkbox") $checkboxes.find("input").removeAttr("required");
+        return $buttons;
+    }
+    // Check for checkbox
+    if ($inputs.length > 0) {
+        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "other input");
+        (0, _initActiveInactiveClickStateJsDefault.default)($checkboxes, formBlockIndex, $step);
+        return $buttons;
+    }
+    // Else return empty
+    if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "empty");
+    return $buttons;
+};
+
+},{"../../../config.js":"k5Hzs","../../../model.js":"Y4A21","../visuals/initActiveInactiveClickState.js":"krlhx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Y4A21":[function(require,module,exports) {
+// + Imports +
+// Base
+// Custom
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "state", ()=>state);
+parcelHelpers.export(exports, "initXanoMode", ()=>initXanoMode);
+parcelHelpers.export(exports, "createState", ()=>createState);
+var _configJs = require("./config.js");
+var _helper = require("./helper");
+var _createElementsJs = require("./utils/model/createElements.js");
+var _createElementsJsDefault = parcelHelpers.interopDefault(_createElementsJs);
+var _populateStylesObjectJs = require("./utils/model/populateStylesObject.js");
+var _populateStylesObjectJsDefault = parcelHelpers.interopDefault(_populateStylesObjectJs);
+var _calculateStepHeightsJs = require("./utils/model/calculateStepHeights.js");
+var _calculateStepHeightsJsDefault = parcelHelpers.interopDefault(_calculateStepHeightsJs);
+var _xanoModeJs = require("./utils/model/xanoMode.js");
+const state = {
+    data: {}
+};
+const initXanoMode = function(stateData) {
+    _xanoModeJs.init(stateData);
+};
+const createState = function($formBlock, index) {
+    // Add
+    state.data[`form${index}`] = {
+        // Index
+        formBlockIndex: index,
+        // Create initial elements
+        elements: (0, _createElementsJsDefault.default)($formBlock, index),
+        // Initial click record object
+        clickRecord: [
+            {
+                step: 0
+            }
+        ],
+        // Styles
+        // styles: populateStylesObject($formBlock),
+        // Environment variables
+        keyEventsAllowed: true,
+        devMode: (0, _helper.returnDevModeIndex)($formBlock),
+        autoDetectNextStep: ($formBlock.attr(_configJs.AUTO_DETECT_NEXT_STEP_ATTRIBUTE) || _configJs.AUTO_DETECT_NEXT_STEP_DEFAULT) == "true",
+        // Handlers
+        handlers: {
+            devModeLog: function(stateData) {
+                // Guard
+                if (!stateData.devMode /*&& !stateData.xanoMode*/ ) return;
+                // Log
+                console.log(`Dev Mode ${stateData.devMode}:\nstate -> data -> form${stateData.formBlockIndex}:\n`, stateData);
+            }
+        }
+    };
+    // Values
+    const stateData = state.data[`form${index}`];
+    // console.log(stateData.elements);
+    // Add styles
+    stateData.styles = (0, _populateStylesObjectJsDefault.default)(stateData.elements);
+    // Add step heihgts
+    (0, _calculateStepHeightsJsDefault.default)(stateData);
+    // Is xano mode
+    stateData.xanoMode = _xanoModeJs.isXanoMode(stateData.elements);
+    // Is slider mode
+    stateData.sliderMode = !$formBlock.hasClass(_configJs.W_FORM_BLOCK_CLASS);
+    // Return
+    return stateData;
+}; // console.log(
+ //   done. 'Implement idea that the closest section get set to overflow hidden automatically, if form block is not set to overflow hidden or the attribute allows / not disallows it.'
+ // );
+ // Implement an easy to use xano mode
+
+},{"./config.js":"k5Hzs","./helper":"lVRAz","./utils/model/createElements.js":"dOWAR","./utils/model/populateStylesObject.js":"iqRsg","./utils/model/calculateStepHeights.js":"9TJez","./utils/model/xanoMode.js":"e1dij","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"lVRAz":[function(require,module,exports) {
 // + Imports +
 // Base
 // Custom
@@ -3188,204 +3326,7 @@ function trimBothStringSides(string) {
     return string.substring(1).slice(0, -1);
 }
 
-},{"./config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8ePqv":[function(require,module,exports) {
-// + Imports +
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _configJs = require("../../../config.js");
-var _modelJs = require("../../../model.js");
-var _initActiveInactiveClickStateJs = require("../visuals/initActiveInactiveClickState.js");
-var _initActiveInactiveClickStateJsDefault = parcelHelpers.interopDefault(_initActiveInactiveClickStateJs);
-// + Exports +
-// - - Define step type - -
-exports.default = function($step, stepIndex, $formBlock) {
-    // Local elements
-    const $radios = $step.find(_configJs.W_RADIO_SELECTOR), $checkboxes = $step.find(_configJs.W_CHECKBOX_SELECTOR), $buttons = $step.find(`${_configJs.CONTINUE_BUTTON_SELECTOR}, ${_configJs.W_BUTTON_SELECTOR}`).not(_configJs.NOT_A_BUTTON_SELECTOR).not(_configJs.BACKWARDS_BUTTON_SELECTOR), $inputs = $step.find("input").not("input[type=radio], input[type=checkbox]"), formBlockIndex = parseInt($formBlock.attr(_configJs.FORM_BLOCK_INDEX_ATTRIBUTE)), $finSweetRangeSliders = $step.find(_configJs.FS_RANGE_SLIDER_ELEMENTS_SELECTOR);
-    // Values
-    const stateData = _modelJs.state.data[`form${formBlockIndex}`], sliderMode = stateData.sliderMode;
-    // Set step index
-    $step.attr(_configJs.STEP_INDEX_ATTRIBUTE, stepIndex);
-    // Check for FS range sliders
-    if ($finSweetRangeSliders.length > 0) {
-        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "fs range slider");
-        // Add no swipe gesture attribute unless said otherwise
-        if ($step.attr(_configJs.SWIPE_ALLOWED_ATTRIBUTE) == undefined) $step.attr(_configJs.SWIPE_ALLOWED_ATTRIBUTE, "false");
-        // console.log($step);
-        return $buttons;
-    }
-    // Check for radio
-    if ($radios.length > 0) {
-        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
-        (0, _initActiveInactiveClickStateJsDefault.default)($radios, formBlockIndex, $step);
-        // Make sure to remove accidental radio requires
-        $radios.find("input").each(function() {
-            // Elements
-            const $input = $(this);
-            if ($input.is("[required]")) {
-                $radios.attr("required", "");
-                $input.removeAttr("required");
-            }
-        });
-        if ($inputs.length > 1 || $step.attr(_configJs.NOT_AUTO_CONTINUE_ATTRIBUTE) != undefined) {
-            // If not auto continue true
-            if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) === "radio") $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "other input");
-            return $buttons;
-        } else {
-            // Set buttons to trigger requirements checking
-            $buttons.attr(_configJs.STEP_TYPE_ATTRIBUTE, "radio");
-            return $radios.add($buttons);
-        }
-    }
-    // Check for checkbox
-    if ($checkboxes.length > 0 && $inputs.length < 2) {
-        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "checkbox");
-        (0, _initActiveInactiveClickStateJsDefault.default)($checkboxes, formBlockIndex, $step);
-        // Make sure to remove accidental checkbox requires (for full checkbox steps only)
-        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == "checkbox") $checkboxes.find("input").removeAttr("required");
-        return $buttons;
-    }
-    // Check for checkbox
-    if ($inputs.length > 0) {
-        if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined && !sliderMode) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "other input");
-        (0, _initActiveInactiveClickStateJsDefault.default)($checkboxes, formBlockIndex, $step);
-        return $buttons;
-    }
-    // Else return empty
-    if ($step.attr(_configJs.STEP_TYPE_ATTRIBUTE) == undefined) $step.attr(_configJs.STEP_TYPE_ATTRIBUTE, "empty");
-    return $buttons;
-};
-
-},{"../../../config.js":"k5Hzs","../visuals/initActiveInactiveClickState.js":"krlhx","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../../model.js":"Y4A21"}],"krlhx":[function(require,module,exports) {
-// + Imports +
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _configJs = require("../../../config.js");
-var _modelJs = require("../../../model.js");
-var _helperJs = require("../../../helper.js");
-// + Exports +
-// - - Initialize click state for input fields - -
-exports.default = function($elements, styleObjectIndex, $parent) {
-    // Local variables
-    const styles = (0, _modelJs.state).data[`form${styleObjectIndex}`].styles, cssActive = styles["cssActive"], cssInactive = styles["cssInactive"], cssInactiveSet = styles["setCssInactive"], isRadio = $parent.attr(_configJs.STEP_TYPE_ATTRIBUTE) == "radio" ? true : false, elements = (0, _helperJs.jQueryToJs)($elements, '[not-findable = "initActiveInactiveClickState.js -> $elements"]');
-    // Functions
-    gsap.set(elements, cssInactiveSet); // Init
-    if (isRadio) $elements.each(function() {
-        const $element = $(this);
-        $element.click(()=>{
-            // Animation
-            gsap.to(elements, cssInactive);
-            gsap.to($element[0], cssActive);
-            // Attributes
-            $elements.removeAttr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE);
-            $element.attr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE, true);
-        });
-    });
-    else $elements.each(function() {
-        const $element = $(this);
-        let firstClick = true, preventDoubleClick = false;
-        // Skip element if that is specified
-        if ($element.attr(_configJs.CSS_ACTIVE_ATTRIBUTE) == "none") return true;
-        // Click event
-        $element.click(()=>{
-            // Prevent double clicking
-            if (!preventDoubleClick) {
-                setTimeout(()=>{
-                    preventDoubleClick = false;
-                }, 10);
-                // Call checkbox click logic
-                if (firstClick) {
-                    // Animation
-                    gsap.to($element[0], cssActive);
-                    // Attributes
-                    $element.attr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE, true);
-                    // Logic
-                    firstClick = false; // Int 2nd click
-                } else {
-                    // Animation
-                    gsap.to($element[0], cssInactive);
-                    // Attributes
-                    $element.removeAttr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE);
-                    // Logic
-                    firstClick = true;
-                }
-            }
-            preventDoubleClick = true;
-        });
-    });
-};
-
-},{"../../../config.js":"k5Hzs","../../../model.js":"Y4A21","../../../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Y4A21":[function(require,module,exports) {
-// + Imports +
-// Base
-// Custom
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "state", ()=>state);
-parcelHelpers.export(exports, "initXanoMode", ()=>initXanoMode);
-parcelHelpers.export(exports, "createState", ()=>createState);
-var _configJs = require("./config.js");
-var _helper = require("./helper");
-var _createElementsJs = require("./utils/model/createElements.js");
-var _createElementsJsDefault = parcelHelpers.interopDefault(_createElementsJs);
-var _populateStylesObjectJs = require("./utils/model/populateStylesObject.js");
-var _populateStylesObjectJsDefault = parcelHelpers.interopDefault(_populateStylesObjectJs);
-var _calculateStepHeightsJs = require("./utils/model/calculateStepHeights.js");
-var _calculateStepHeightsJsDefault = parcelHelpers.interopDefault(_calculateStepHeightsJs);
-var _xanoModeJs = require("./utils/model/xanoMode.js");
-const state = {
-    data: {}
-};
-const initXanoMode = function(stateData) {
-    _xanoModeJs.init(stateData);
-};
-const createState = function($formBlock, index) {
-    // Add
-    state.data[`form${index}`] = {
-        // Index
-        formBlockIndex: index,
-        // Create initial elements
-        elements: (0, _createElementsJsDefault.default)($formBlock, index),
-        // Initial click record object
-        clickRecord: [
-            {
-                step: 0
-            }
-        ],
-        // Styles
-        // styles: populateStylesObject($formBlock),
-        // Environment variables
-        keyEventsAllowed: true,
-        devMode: (0, _helper.returnDevModeIndex)($formBlock),
-        autoDetectNextStep: ($formBlock.attr(_configJs.AUTO_DETECT_NEXT_STEP_ATTRIBUTE) || _configJs.AUTO_DETECT_NEXT_STEP_DEFAULT) == "true",
-        // Handlers
-        handlers: {
-            devModeLog: function(stateData) {
-                // Guard
-                if (!stateData.devMode /*&& !stateData.xanoMode*/ ) return;
-                // Log
-                console.log(`Dev Mode ${stateData.devMode}:\nstate -> data -> form${stateData.formBlockIndex}:\n`, stateData);
-            }
-        }
-    };
-    // Values
-    const stateData = state.data[`form${index}`];
-    // console.log(stateData.elements);
-    // Add styles
-    stateData.styles = (0, _populateStylesObjectJsDefault.default)(stateData.elements);
-    // Add step heihgts
-    (0, _calculateStepHeightsJsDefault.default)(stateData);
-    // Is xano mode
-    stateData.xanoMode = _xanoModeJs.isXanoMode(stateData.elements);
-    // Is slider mode
-    stateData.sliderMode = !$formBlock.hasClass(_configJs.W_FORM_BLOCK_CLASS);
-    // Return
-    return stateData;
-}; // console.log(
- //   done. 'Implement idea that the closest section get set to overflow hidden automatically, if form block is not set to overflow hidden or the attribute allows / not disallows it.'
- // );
- // Implement an easy to use xano mode
-
-},{"./config.js":"k5Hzs","./helper":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./utils/model/createElements.js":"dOWAR","./utils/model/populateStylesObject.js":"iqRsg","./utils/model/calculateStepHeights.js":"9TJez","./utils/model/xanoMode.js":"e1dij"}],"dOWAR":[function(require,module,exports) {
+},{"./config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dOWAR":[function(require,module,exports) {
 // + Imports +
 // Base
 // Custom
@@ -3545,71 +3486,99 @@ parcelHelpers.defineInteropFlag(exports);
 var _configJs = require("../../config.js");
 var _autoEagerLoadRichTextImagesJs = require("./autoEagerLoadRichTextImages.js");
 var _autoEagerLoadRichTextImagesJsDefault = parcelHelpers.interopDefault(_autoEagerLoadRichTextImagesJs);
+// + Helpers +
+// Define callable function
+const calculateStepHeights = function(stateData) {
+    // Values
+    const method = stateData.elements.$formBlock.attr(_configJs.STEP_HEIGHT_CALCULATION_METHOD_ATTRIBUTE) || "step -> children";
+    // Values
+    const arr = [], { elements  } = stateData, displayCss = stateData.styles.firstStepDisplayCss;
+    // Loop
+    elements.$steps.each(function(index) {
+        // Values
+        let stepHeight = 0;
+        // Elements
+        const $step = $(this);
+        // Show
+        $step.css("display", displayCss);
+        // + + + Method based calculation + + +
+        if (method == "vanilla js") {
+            const styles = getComputedStyle($step[0]);
+            stepHeight = parseFloat(styles.height);
+        } else if (method == "step -> children") // === 'step children'
+        // Childrenloop
+        $step.children().each(function() {
+            // Elements
+            const $child = $(this);
+            // Itterate
+            stepHeight += $child.outerHeight(true);
+        });
+        else //method == 'step'
+        stepHeight = $step.outerHeight(true);
+        // Hide
+        const stepId = stateData.clickRecord[stateData.clickRecord.length - 1].step;
+        if (index !== stepId) $step.hide();
+        // Populate array
+        arr.push(stepHeight);
+    });
+    // console.log(arr);
+    // Reset & Return
+    stateData.stepHeights = arr;
+};
 // + Exports +
 exports.default = function(stateData) {
     // Auto eager load rich text images
-    (0, _autoEagerLoadRichTextImagesJsDefault.default)(stateData);
-    // Values
-    const method = stateData.elements.$formBlock.attr(_configJs.STEP_HEIGHT_CALCULATION_METHOD_ATTRIBUTE) || "step -> children";
-    // Define callable function
-    const calculateStepHeights = function() {
-        // Values
-        const arr = [], { elements  } = stateData, displayCss = stateData.styles.firstStepDisplayCss;
-        // Loop
-        elements.$steps.each(function() {
-            // Values
-            let stepHeight = 0;
-            // Elements
-            const $step = $(this);
-            // Show
-            $step.css("display", displayCss);
-            // + + + Method based calculation + + +
-            if (method == "vanilla js") {
-                const styles = getComputedStyle($step[0]);
-                stepHeight = parseFloat(styles.height);
-            } else if (method == "step -> children") // === 'step children'
-            // Childrenloop
-            $step.children().each(function() {
-                // Elements
-                const $child = $(this);
-                // Itterate
-                stepHeight += $child.outerHeight(true);
-            });
-            else //method == 'step'
-            stepHeight = $step.outerHeight(true);
-            // Hide
-            $step.hide();
-            // Populate array
-            arr.push(stepHeight);
-        });
-        // console.log(arr);
-        // Reset & Return
-        stateData.stepHeights = arr;
-    };
+    (0, _autoEagerLoadRichTextImagesJsDefault.default)(stateData, calculateStepHeights);
     // Initialize
-    calculateStepHeights();
+    calculateStepHeights(stateData);
     // Event listener
-    $(window).resize(calculateStepHeights);
+    $(window).resize(()=>{
+        calculateStepHeights(stateData);
+    });
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../config.js":"k5Hzs","./autoEagerLoadRichTextImages.js":"ffoqF"}],"ffoqF":[function(require,module,exports) {
+},{"../../config.js":"k5Hzs","./autoEagerLoadRichTextImages.js":"ffoqF","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"ffoqF":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _configJs = require("../../config.js");
+// + Helpers +
+function addImagePromise(src) {
+    return new Promise((resolve, reject)=>{
+        let img = new Image();
+        img.onload = ()=>resolve(true);
+        img.onerror = reject;
+        img.src = src;
+    });
+}
 // + Exports +
-exports.default = function(stateData) {
+exports.default = function(stateData, callback) {
     // Add to userConfig later !
     const isEagerLoadMode = (stateData.elements.$formBlock.attr(_configJs.AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_ATTRIBUTE) || _configJs.AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_DEFAULT) === "true" ? true : false;
     // Guard
     if (!isEagerLoadMode) return;
     // Elements
     const richtexts = stateData.elements.$form[0].querySelectorAll(_configJs.W_RICH_TEXT_SELECTOR);
+    // Values
+    const l1 = richtexts.length - 1;
     // Loop
-    richtexts.forEach(function(richtext) {
+    richtexts.forEach((richtext, i1)=>{
+        // Elements
         const images = richtext.querySelectorAll("img");
-        images.forEach(function(image) {
+        // Values
+        const l2 = images.length - 1;
+        // Loop
+        images.forEach((image, i2)=>{
+            // DOM manipulation
             image.setAttribute("loading", "eager");
+            // Logic for last image
+            if (i1 >= l1 && i2 >= l2) // Perform async call back
+            addImagePromise(image.getAttribute("src")).then((res)=>{
+                // Guard
+                if (res !== true) return;
+                // Callback
+                callback(stateData);
+            });
         });
     });
 // Done
@@ -3708,7 +3677,66 @@ function getFormData($form) {
     return indexed_array;
 }
 
-},{"../../config.js":"k5Hzs","../../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"igI8F":[function(require,module,exports) {
+},{"../../config.js":"k5Hzs","../../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"krlhx":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../../../config.js");
+var _modelJs = require("../../../model.js");
+var _helperJs = require("../../../helper.js");
+// + Exports +
+// - - Initialize click state for input fields - -
+exports.default = function($elements, styleObjectIndex, $parent) {
+    // Local variables
+    const styles = (0, _modelJs.state).data[`form${styleObjectIndex}`].styles, cssActive = styles["cssActive"], cssInactive = styles["cssInactive"], cssInactiveSet = styles["setCssInactive"], isRadio = $parent.attr(_configJs.STEP_TYPE_ATTRIBUTE) == "radio" ? true : false, elements = (0, _helperJs.jQueryToJs)($elements, '[not-findable = "initActiveInactiveClickState.js -> $elements"]');
+    // Functions
+    gsap.set(elements, cssInactiveSet); // Init
+    if (isRadio) $elements.each(function() {
+        const $element = $(this);
+        $element.click(()=>{
+            // Animation
+            gsap.to(elements, cssInactive);
+            gsap.to($element[0], cssActive);
+            // Attributes
+            $elements.removeAttr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE);
+            $element.attr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE, true);
+        });
+    });
+    else $elements.each(function() {
+        const $element = $(this);
+        let firstClick = true, preventDoubleClick = false;
+        // Skip element if that is specified
+        if ($element.attr(_configJs.CSS_ACTIVE_ATTRIBUTE) == "none") return true;
+        // Click event
+        $element.click(()=>{
+            // Prevent double clicking
+            if (!preventDoubleClick) {
+                setTimeout(()=>{
+                    preventDoubleClick = false;
+                }, 10);
+                // Call checkbox click logic
+                if (firstClick) {
+                    // Animation
+                    gsap.to($element[0], cssActive);
+                    // Attributes
+                    $element.attr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE, true);
+                    // Logic
+                    firstClick = false; // Int 2nd click
+                } else {
+                    // Animation
+                    gsap.to($element[0], cssInactive);
+                    // Attributes
+                    $element.removeAttr(_configJs.ELEMENT_GOT_CHECKED_ATTRIBUTE);
+                    // Logic
+                    firstClick = true;
+                }
+            }
+            preventDoubleClick = true;
+        });
+    });
+};
+
+},{"../../../config.js":"k5Hzs","../../../model.js":"Y4A21","../../../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"igI8F":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -3896,166 +3924,7 @@ class StepView {
 // + Exports +
 exports.default = new StepView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs","./progressBarView.js":"avjhP","./anchorView.js":"2Yxx6","../utils/view/logics/stepRequirementsPassed.js":"3TZvZ","../utils/view/visuals/animateStepTransition.js":"2CMDR","../utils/view/visuals/selectButton.js":"fgxev","../utils/view/logics/removeOtherSteps.js":"Z7i9e","../utils/view/logics/initQuizMode.js":"dMf2e","../utils/view/visuals/performVisualSubmit.js":"fnC3X"}],"avjhP":[function(require,module,exports) {
-// + Imports +
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _returnPathFloat = require("../utils/view/logics/returnPathFloat");
-var _returnPathFloatDefault = parcelHelpers.interopDefault(_returnPathFloat);
-// + Classes +
-class ProgressBarView {
-    // Function
-    update(stateData, isSubmit) {
-        // Security return check
-        if (stateData.elements.$progressBar.length < 1) return;
-        // Values
-        const pbAnimationtime = stateData.styles["progressBarAnimationSTime"], pbAxis = stateData.styles["progressBarAxis"].toLowerCase();
-        // Values
-        const percentageFloat = isSubmit ? 100 : (0, _returnPathFloatDefault.default)("longest", stateData.clickRecord, stateData.stepLogic); // Return longest path
-        // Axis logic
-        if ([
-            "x",
-            "x, y",
-            "y, x"
-        ].includes(pbAxis)) // X axis animation
-        gsap.to(stateData.elements.progressBars, {
-            width: percentageFloat + "%",
-            duration: pbAnimationtime
-        });
-        if ([
-            "y",
-            "x, y",
-            "y, x"
-        ].includes(pbAxis)) // Y axis animation
-        gsap.to(stateData.elements.progressBars, {
-            height: percentageFloat + "%",
-            duration: pbAnimationtime
-        });
-    }
-}
-// + Exports +
-exports.default = new ProgressBarView();
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../utils/view/logics/returnPathFloat":"j9ge5"}],"j9ge5":[function(require,module,exports) {
-// + Imports +
-// + Exports +
-// - Return longest or shortest path -
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-exports.default = function(mode, clickRecord, stepLogic) {
-    // Values
-    const latestRecordId = clickRecord[clickRecord.length - 1].step, clickRecordLength = clickRecord.length;
-    let min = stepLogic.length, max = 0, count = 0, tmpCount = 0, treeArray = [];
-    // Loop function
-    function objectLoop(object) {
-        // Values
-        let array = returnNextStepIds(object);
-        // Math
-        count++;
-        tmpCount++;
-        // Handle multi steps logic
-        if (array.length > 1) {
-            // a tree split
-            treeArray.push(tmpCount);
-            tmpCount = 0;
-        }
-        // Update values
-        if (object.isLast) {
-            // Update values
-            max = Math.max(max, count);
-            min = Math.min(min, count);
-            count = 0;
-            // Add base value to tree
-            treeArray.forEach((n)=>{
-                count += n;
-            });
-            // Trim back a leaf
-            treeArray.pop();
-            // Security conditional
-            return;
-        }
-        // Action loop
-        array.forEach((id, index)=>{
-            // Iniciate loop
-            objectLoop(stepLogic[id]);
-        });
-    }
-    // Return buttons
-    function returnNextStepIds(object) {
-        // Value
-        let arr = [];
-        object.buttons.forEach((button)=>{
-            if (arr.indexOf(button.nextStepId) === -1) arr.push(button.nextStepId);
-        });
-        // Return
-        return arr;
-    }
-    // Intiliaze loop
-    objectLoop(stepLogic[latestRecordId]);
-    // Finetune math values
-    min += clickRecordLength;
-    max += clickRecordLength;
-    // Logic
-    if (mode == "shortest") {
-        let x = clickRecordLength / min;
-        return x * 100;
-    } else {
-        let x = clickRecordLength / max;
-        return x * 100;
-    }
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2Yxx6":[function(require,module,exports) {
-// + Imports +
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _configJs = require("../config.js");
-// + Classes +
-// - Anchor funcitonality -
-class AnchorView {
-    // Function
-    functionality(stateData) {
-        // Gurad / Precondition
-        if (stateData.elements.$anchor.length == 1) {
-            // Values
-            let width = $(window).outerWidth(true), height = stateData.elements.$anchorYOffset.outerHeight(true) || 0;
-            // If within specified scren size
-            if (width <= stateData.anchorData.anchorMaxScreenSize && width >= stateData.anchorData.anchorMinScreenSize) gsap.to(stateData.elements.anchorScrollTarget, {
-                scrollTo: {
-                    y: `#anchor-element-${stateData.formBlockIndex}`,
-                    offsetY: height
-                },
-                duration: stateData.anchorData.anchorAnimationTime
-            });
-        }
-    }
-    init(stateData) {
-        // Gurad / Precondition
-        if (stateData.elements.$anchor.length === 0) return;
-        // Values
-        let anchorMinScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MIN_SCREEN_SIZE_DEFAULT), anchorMaxScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MAX_SCREEN_SIZE_DEFAULT), anchorAnimationTime = stateData.styles["anchorAnimationSTime"], anchorYOffsetSelector = stateData.elements.$anchor.attr(_configJs.ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE);
-        // Elements
-        const $anchorYOffset = $(anchorYOffsetSelector);
-        let anchorScrollTarget = document.querySelectorAll(stateData.elements.$anchor.attr(_configJs.ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE));
-        anchorScrollTarget = anchorScrollTarget.length > 0 ? anchorScrollTarget : window; // Give webflower full customizability
-        // Dom preperation
-        stateData.elements.$anchor.attr("id", `anchor-element-${stateData.formBlockIndex}`);
-        // Enrich stateData
-        stateData.anchorData = {
-            anchorMinScreenSize: anchorMinScreenSize,
-            anchorMaxScreenSize: anchorMaxScreenSize,
-            anchorAnimationTime: anchorAnimationTime
-        };
-        stateData.elements.$anchorYOffset = $anchorYOffset;
-        stateData.elements.anchorScrollTarget = anchorScrollTarget;
-    // Function
-    // this.functionality(stateData);
-    }
-}
-// + Exports +
-exports.default = new AnchorView();
-
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3TZvZ":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","../utils/view/logics/stepRequirementsPassed.js":"3TZvZ","../utils/view/visuals/animateStepTransition.js":"2CMDR","../utils/view/visuals/selectButton.js":"fgxev","./progressBarView.js":"avjhP","./anchorView.js":"2Yxx6","../utils/view/logics/removeOtherSteps.js":"Z7i9e","../utils/view/logics/initQuizMode.js":"dMf2e","../utils/view/visuals/performVisualSubmit.js":"fnC3X","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"3TZvZ":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4513,7 +4382,166 @@ exports.default = function(stateData, x, $step) {
     gsap.to($button[0], cssSelect);
 };
 
-},{"../../../config.js":"k5Hzs","../../../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Z7i9e":[function(require,module,exports) {
+},{"../../../config.js":"k5Hzs","../../../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"avjhP":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _returnPathFloat = require("../utils/view/logics/returnPathFloat");
+var _returnPathFloatDefault = parcelHelpers.interopDefault(_returnPathFloat);
+// + Classes +
+class ProgressBarView {
+    // Function
+    update(stateData, isSubmit) {
+        // Security return check
+        if (stateData.elements.$progressBar.length < 1) return;
+        // Values
+        const pbAnimationtime = stateData.styles["progressBarAnimationSTime"], pbAxis = stateData.styles["progressBarAxis"].toLowerCase();
+        // Values
+        const percentageFloat = isSubmit ? 100 : (0, _returnPathFloatDefault.default)("longest", stateData.clickRecord, stateData.stepLogic); // Return longest path
+        // Axis logic
+        if ([
+            "x",
+            "x, y",
+            "y, x"
+        ].includes(pbAxis)) // X axis animation
+        gsap.to(stateData.elements.progressBars, {
+            width: percentageFloat + "%",
+            duration: pbAnimationtime
+        });
+        if ([
+            "y",
+            "x, y",
+            "y, x"
+        ].includes(pbAxis)) // Y axis animation
+        gsap.to(stateData.elements.progressBars, {
+            height: percentageFloat + "%",
+            duration: pbAnimationtime
+        });
+    }
+}
+// + Exports +
+exports.default = new ProgressBarView();
+
+},{"../utils/view/logics/returnPathFloat":"j9ge5","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"j9ge5":[function(require,module,exports) {
+// + Imports +
+// + Exports +
+// - Return longest or shortest path -
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+exports.default = function(mode, clickRecord, stepLogic) {
+    // Values
+    const latestRecordId = clickRecord[clickRecord.length - 1].step, clickRecordLength = clickRecord.length;
+    let min = stepLogic.length, max = 0, count = 0, tmpCount = 0, treeArray = [];
+    // Loop function
+    function objectLoop(object) {
+        // Values
+        let array = returnNextStepIds(object);
+        // Math
+        count++;
+        tmpCount++;
+        // Handle multi steps logic
+        if (array.length > 1) {
+            // a tree split
+            treeArray.push(tmpCount);
+            tmpCount = 0;
+        }
+        // Update values
+        if (object.isLast) {
+            // Update values
+            max = Math.max(max, count);
+            min = Math.min(min, count);
+            count = 0;
+            // Add base value to tree
+            treeArray.forEach((n)=>{
+                count += n;
+            });
+            // Trim back a leaf
+            treeArray.pop();
+            // Security conditional
+            return;
+        }
+        // Action loop
+        array.forEach((id, index)=>{
+            // Iniciate loop
+            objectLoop(stepLogic[id]);
+        });
+    }
+    // Return buttons
+    function returnNextStepIds(object) {
+        // Value
+        let arr = [];
+        object.buttons.forEach((button)=>{
+            if (arr.indexOf(button.nextStepId) === -1) arr.push(button.nextStepId);
+        });
+        // Return
+        return arr;
+    }
+    // Intiliaze loop
+    objectLoop(stepLogic[latestRecordId]);
+    // Finetune math values
+    min += clickRecordLength;
+    max += clickRecordLength;
+    // Logic
+    if (mode == "shortest") {
+        let x = clickRecordLength / min;
+        return x * 100;
+    } else {
+        let x = clickRecordLength / max;
+        return x * 100;
+    }
+};
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2Yxx6":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../config.js");
+// + Classes +
+// - Anchor funcitonality -
+class AnchorView {
+    // Function
+    functionality(stateData) {
+        // Gurad / Precondition
+        if (stateData.elements.$anchor.length == 1) {
+            // Values
+            let width = $(window).outerWidth(true), height = stateData.elements.$anchorYOffset.outerHeight(true) || 0;
+            // If within specified scren size
+            if (width <= stateData.anchorData.anchorMaxScreenSize && width >= stateData.anchorData.anchorMinScreenSize) gsap.to(stateData.elements.anchorScrollTarget, {
+                scrollTo: {
+                    y: `#anchor-element-${stateData.formBlockIndex}`,
+                    offsetY: height
+                },
+                duration: stateData.anchorData.anchorAnimationTime
+            });
+        }
+    }
+    init(stateData) {
+        // Gurad / Precondition
+        if (stateData.elements.$anchor.length === 0) return;
+        // Values
+        let anchorMinScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MIN_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MIN_SCREEN_SIZE_DEFAULT), anchorMaxScreenSize = parseInt(stateData.elements.$anchor.attr(_configJs.ANCHOR_MAX_SCREEN_SIZE_ATTRIBUTE) || _configJs.ANCHOR_MAX_SCREEN_SIZE_DEFAULT), anchorAnimationTime = stateData.styles["anchorAnimationSTime"], anchorYOffsetSelector = stateData.elements.$anchor.attr(_configJs.ANCHOR_Y_OFFSET_SELECTOR_ATTRIBUTE);
+        // Elements
+        const $anchorYOffset = $(anchorYOffsetSelector);
+        let anchorScrollTarget = document.querySelectorAll(stateData.elements.$anchor.attr(_configJs.ANCHOR_RELATED_ELEMENT_TO_SCROLL_SELECTOR_ATTRIBUTE));
+        anchorScrollTarget = anchorScrollTarget.length > 0 ? anchorScrollTarget : window; // Give webflower full customizability
+        // Dom preperation
+        stateData.elements.$anchor.attr("id", `anchor-element-${stateData.formBlockIndex}`);
+        // Enrich stateData
+        stateData.anchorData = {
+            anchorMinScreenSize: anchorMinScreenSize,
+            anchorMaxScreenSize: anchorMaxScreenSize,
+            anchorAnimationTime: anchorAnimationTime
+        };
+        stateData.elements.$anchorYOffset = $anchorYOffset;
+        stateData.elements.anchorScrollTarget = anchorScrollTarget;
+    // Function
+    // this.functionality(stateData);
+    }
+}
+// + Exports +
+exports.default = new AnchorView();
+
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"Z7i9e":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4768,7 +4796,7 @@ class SwipeGestureView {
 // + Exports +
 exports.default = new SwipeGestureView();
 
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../utils/view/logics/defineSwipeType.js":"f15MQ"}],"f15MQ":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","../utils/view/logics/defineSwipeType.js":"f15MQ","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"f15MQ":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4850,7 +4878,7 @@ class AutoFocusAndKeyboardEventsView {
 // + Exports +
 exports.default = new AutoFocusAndKeyboardEventsView();
 
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../utils/view/visuals/selectButton.js":"fgxev"}],"8cT3D":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","../utils/view/visuals/selectButton.js":"fgxev","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8cT3D":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4932,7 +4960,7 @@ class ManipulateSiteCssView {
 // + Exports +
 exports.default = new ManipulateSiteCssView();
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../config.js":"k5Hzs"}],"8kzyx":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"8kzyx":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -4967,7 +4995,45 @@ class FileLabelView {
 // + Exports +
 exports.default = new FileLabelView();
 
-},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gh6di":[function(require,module,exports) {
+},{"../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"22ekA":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _config = require("../../config");
+// + Load helper +
+// Allows for loading other scripts
+jQuery.loadScript = function(url, callback) {
+    jQuery.ajax({
+        url: url,
+        dataType: "script",
+        success: callback,
+        async: true
+    });
+};
+// + Exports +
+// Loader
+exports.default = function(handler) {
+    "undefined" == (0, _config.TYPEOF_GSAP_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js", function() {
+        load2ndScript();
+    }) : load2ndScript();
+    function load2ndScript() {
+        "undefined" == (0, _config.TYPEOF_GSAP_SCROLL_TO_DEPENDENCY) ? $.loadScript("https://cdn.jsdelivr.net/gh/BarthMedia/js@main/ScrollToPlugin.min.js", function() {
+            load3rdScript();
+        }) : load3rdScript();
+    }
+    function load3rdScript() {
+        "undefined" == (0, _config.TYPEOF_HAMMER_JS_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js", function() {
+            load4thScript();
+        }) : load4thScript();
+    }
+    function load4thScript() {
+        "undefined" == (0, _config.TYPEOF_XANO_SDK_DEPENDENCY) ? $.loadScript("https://cdn.jsdelivr.net/npm/@xano/js-sdk@latest/dist/xano.min.js", function() {
+            handler();
+        }) : handler();
+    }
+};
+
+},{"../../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gh6di":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -5030,44 +5096,6 @@ exports.default = function($steps) {
     return stepsObject;
 };
 
-},{"../../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"22ekA":[function(require,module,exports) {
-// + Imports +
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-var _config = require("../../config");
-// + Load helper +
-// Allows for loading other scripts
-jQuery.loadScript = function(url, callback) {
-    jQuery.ajax({
-        url: url,
-        dataType: "script",
-        success: callback,
-        async: true
-    });
-};
-// + Exports +
-// Loader
-exports.default = function(handler) {
-    "undefined" == (0, _config.TYPEOF_GSAP_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js", function() {
-        load2ndScript();
-    }) : load2ndScript();
-    function load2ndScript() {
-        "undefined" == (0, _config.TYPEOF_GSAP_SCROLL_TO_DEPENDENCY) ? $.loadScript("https://cdn.jsdelivr.net/gh/BarthMedia/js@main/ScrollToPlugin.min.js", function() {
-            load3rdScript();
-        }) : load3rdScript();
-    }
-    function load3rdScript() {
-        "undefined" == (0, _config.TYPEOF_HAMMER_JS_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js", function() {
-            load4thScript();
-        }) : load4thScript();
-    }
-    function load4thScript() {
-        "undefined" == (0, _config.TYPEOF_XANO_SDK_DEPENDENCY) ? $.loadScript("https://cdn.jsdelivr.net/npm/@xano/js-sdk@latest/dist/xano.min.js", function() {
-            handler();
-        }) : handler();
-    }
-};
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../config":"k5Hzs"}]},["d8XZh","aenu9"], "aenu9", "parcelRequire1c1c")
+},{"../../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["d8XZh","aenu9"], "aenu9", "parcelRequire1c1c")
 
 //# sourceMappingURL=index.e37f48ea.js.map
