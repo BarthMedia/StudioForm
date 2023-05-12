@@ -570,6 +570,11 @@ function hmrAccept(bundle, id) {
 // While focus or hover on input fields.
 // Make sure arrow functions don't work
 // Build native FinSweet RangeSlider integration
+// Frid 12. May 06:29 ideas
+// Maybe change styles to userConfig ?
+// Consider rebuilding everything in vanilla JS / maybe type script for that matter
+// Consider splitting config file into multipile files
+// Have userStyles & userConfig
 // Base
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 var _esRegexpFlagsJs = require("core-js/modules/es.regexp.flags.js");
@@ -2671,6 +2676,7 @@ parcelHelpers.export(exports, "LEFT_EVENT_DEFAULT", ()=>LEFT_EVENT_DEFAULT);
 parcelHelpers.export(exports, "RIGHT_EVENT_DEFAULT", ()=>RIGHT_EVENT_DEFAULT);
 parcelHelpers.export(exports, "LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT", ()=>LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT);
 parcelHelpers.export(exports, "AUTO_DETECT_NEXT_STEP_DEFAULT", ()=>AUTO_DETECT_NEXT_STEP_DEFAULT);
+parcelHelpers.export(exports, "AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_DEFAULT", ()=>AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_DEFAULT);
 parcelHelpers.export(exports, "CSS_SHOW_DEFAULT", ()=>CSS_SHOW_DEFAULT);
 parcelHelpers.export(exports, "CSS_HIDE_DEFAULT", ()=>CSS_HIDE_DEFAULT);
 parcelHelpers.export(exports, "CSS_ACTIVE_DEFAULT", ()=>CSS_ACTIVE_DEFAULT);
@@ -2719,6 +2725,7 @@ parcelHelpers.export(exports, "W_CHECKBOX_SELECTOR", ()=>W_CHECKBOX_SELECTOR);
 parcelHelpers.export(exports, "W_BUTTON_SELECTOR", ()=>W_BUTTON_SELECTOR);
 parcelHelpers.export(exports, "W_SUCCESS_SELECTOR", ()=>W_SUCCESS_SELECTOR);
 parcelHelpers.export(exports, "W_CONDITION_INVISIBLE_SELECTOR", ()=>W_CONDITION_INVISIBLE_SELECTOR);
+parcelHelpers.export(exports, "W_RICH_TEXT_SELECTOR", ()=>W_RICH_TEXT_SELECTOR);
 parcelHelpers.export(exports, "W_FORM_BLOCK_CLASS", ()=>W_FORM_BLOCK_CLASS);
 parcelHelpers.export(exports, "FS_RANGE_SLIDER_ELEMENTS_SELECTOR", ()=>FS_RANGE_SLIDER_ELEMENTS_SELECTOR);
 parcelHelpers.export(exports, "STEP_TYPE_ATTRIBUTE", ()=>STEP_TYPE_ATTRIBUTE);
@@ -2748,6 +2755,7 @@ parcelHelpers.export(exports, "REDIRECT_URL_ATTRIBUTE", ()=>REDIRECT_URL_ATTRIBU
 parcelHelpers.export(exports, "AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE", ()=>AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE);
 parcelHelpers.export(exports, "AUTO_DETECT_NEXT_STEP_ATTRIBUTE", ()=>AUTO_DETECT_NEXT_STEP_ATTRIBUTE);
 parcelHelpers.export(exports, "XANO_MODE_ATTRIBUTE", ()=>XANO_MODE_ATTRIBUTE);
+parcelHelpers.export(exports, "AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_ATTRIBUTE", ()=>AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_ATTRIBUTE);
 parcelHelpers.export(exports, "CSS_SHOW_ATTRIBUTE", ()=>CSS_SHOW_ATTRIBUTE);
 parcelHelpers.export(exports, "CSS_HIDE_ATTRIBUTE", ()=>CSS_HIDE_ATTRIBUTE);
 parcelHelpers.export(exports, "CSS_ACTIVE_ATTRIBUTE", ()=>CSS_ACTIVE_ATTRIBUTE);
@@ -2797,6 +2805,7 @@ const LEFT_EVENT_DEFAULT = "arrowleft, left";
 const RIGHT_EVENT_DEFAULT = "arrowright, right";
 const LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT = "true";
 const AUTO_DETECT_NEXT_STEP_DEFAULT = "true";
+const AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_DEFAULT = "true";
 const CSS_SHOW_DEFAULT = {
     opacity: 1 /*, display: 'flex'*/ 
 };
@@ -2895,6 +2904,7 @@ const W_CHECKBOX_SELECTOR = ".w-checkbox";
 const W_BUTTON_SELECTOR = ".w-button";
 const W_SUCCESS_SELECTOR = ".w-form-done";
 const W_CONDITION_INVISIBLE_SELECTOR = ".w-condition-invisible";
+const W_RICH_TEXT_SELECTOR = ".w-richtext";
 const W_FORM_BLOCK_CLASS = "w-form";
 const FS_RANGE_SLIDER_ELEMENTS_SELECTOR = "[fs-rangeslider-element]";
 const STEP_TYPE_ATTRIBUTE = "data-step-type";
@@ -2924,6 +2934,7 @@ const REDIRECT_URL_ATTRIBUTE = "data-redirect-url";
 const AUTO_DELETE_CONDITIONALLY_INVISIBLE_ITEMS_ATTRIBUTE = "data-auto-delete-conditionally-invisible-elements";
 const AUTO_DETECT_NEXT_STEP_ATTRIBUTE = "data-auto-detect-next-step";
 const XANO_MODE_ATTRIBUTE = "data-xano-mode";
+const AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_ATTRIBUTE = "data-eager-load-rich-text-images";
 const CSS_SHOW_ATTRIBUTE = "data-css-show";
 const CSS_HIDE_ATTRIBUTE = "data-css-hide";
 const CSS_ACTIVE_ATTRIBUTE = "data-css-active";
@@ -3532,11 +3543,15 @@ exports.default = function(stateDataElements) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _configJs = require("../../config.js");
+var _autoEagerLoadRichTextImagesJs = require("./autoEagerLoadRichTextImages.js");
+var _autoEagerLoadRichTextImagesJsDefault = parcelHelpers.interopDefault(_autoEagerLoadRichTextImagesJs);
 // + Exports +
 exports.default = function(stateData) {
+    // Auto eager load rich text images
+    (0, _autoEagerLoadRichTextImagesJsDefault.default)(stateData);
     // Values
     const method = stateData.elements.$formBlock.attr(_configJs.STEP_HEIGHT_CALCULATION_METHOD_ATTRIBUTE) || "step -> children";
-    // Define
+    // Define callable function
     const calculateStepHeights = function() {
         // Values
         const arr = [], { elements  } = stateData, displayCss = stateData.styles.firstStepDisplayCss;
@@ -3577,7 +3592,31 @@ exports.default = function(stateData) {
     $(window).resize(calculateStepHeights);
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../config.js":"k5Hzs"}],"e1dij":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../config.js":"k5Hzs","./autoEagerLoadRichTextImages.js":"ffoqF"}],"ffoqF":[function(require,module,exports) {
+// + Imports +
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _configJs = require("../../config.js");
+// + Exports +
+exports.default = function(stateData) {
+    // Add to userConfig later !
+    const isEagerLoadMode = (stateData.elements.$formBlock.attr(_configJs.AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_ATTRIBUTE) || _configJs.AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_DEFAULT) === "true" ? true : false;
+    // Guard
+    if (!isEagerLoadMode) return;
+    // Elements
+    const richtexts = stateData.elements.$form[0].querySelectorAll(_configJs.W_RICH_TEXT_SELECTOR);
+    // Loop
+    richtexts.forEach(function(richtext) {
+        const images = richtext.querySelectorAll("img");
+        images.forEach(function(image) {
+            image.setAttribute("loading", "eager");
+        });
+    });
+// Done
+} // Auto eager load rich text images
+;
+
+},{"../../config.js":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"e1dij":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -3756,6 +3795,9 @@ class StepView {
         if (stateData1.sliderMode && !stateData1.stepLogic[stepId].isLast) {
             // Animate
             gsap.to(stateData1.elements.nextButtons, stateData1.styles["cssBackForthActive"]);
+            return;
+        } else if (stateData1.sliderMode) {
+            gsap.to(stateData1.elements.nextButtons, stateData1.styles["cssBackForthInactive"]);
             return;
         }
         // Elements

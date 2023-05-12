@@ -21,6 +21,12 @@
 
 // Build native FinSweet RangeSlider integration
 
+// Frid 12. May 06:29 ideas
+// Maybe change styles to userConfig ?
+// Consider rebuilding everything in vanilla JS / maybe type script for that matter
+// Consider splitting config file into multipile files
+// Have userStyles & userConfig
+
 // Base
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';

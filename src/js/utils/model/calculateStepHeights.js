@@ -1,14 +1,19 @@
 // + Imports +
 import * as config from '../../config.js';
+import autoEagerLoadRichTextImages from './autoEagerLoadRichTextImages.js';
 
 // + Exports +
 export default function (stateData) {
+  // Auto eager load rich text images
+  autoEagerLoadRichTextImages(stateData);
+
   // Values
   const method =
     stateData.elements.$formBlock.attr(
       config.STEP_HEIGHT_CALCULATION_METHOD_ATTRIBUTE
     ) || 'step -> children';
-  // Define
+
+  // Define callable function
   const calculateStepHeights = function () {
     // Values
     const arr = [],

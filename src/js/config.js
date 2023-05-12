@@ -12,6 +12,9 @@ export const LEFT_RIGHT_KEY_EVENT_INFINITY_ALLOWED_DEFAULT = 'true';
 // Next button(s) & Keyboard
 export const AUTO_DETECT_NEXT_STEP_DEFAULT = 'true';
 
+// Auto eager load rich text images
+export const AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_DEFAULT = 'true';
+
 // + + + Style defaults + + +
 
 // CSS
@@ -117,6 +120,7 @@ export const W_CHECKBOX_SELECTOR = '.w-checkbox';
 export const W_BUTTON_SELECTOR = '.w-button';
 export const W_SUCCESS_SELECTOR = '.w-form-done';
 export const W_CONDITION_INVISIBLE_SELECTOR = '.w-condition-invisible';
+export const W_RICH_TEXT_SELECTOR = '.w-richtext';
 export const W_FORM_BLOCK_CLASS = 'w-form';
 
 // + + + Functional attributes + + +
@@ -181,6 +185,10 @@ export const AUTO_DETECT_NEXT_STEP_ATTRIBUTE = 'data-auto-detect-next-step';
 
 // Xano
 export const XANO_MODE_ATTRIBUTE = 'data-xano-mode';
+
+// Auto eager load richtext images
+export const AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_ATTRIBUTE =
+  'data-eager-load-rich-text-images';
 
 // + + + Style attributes + + +
 

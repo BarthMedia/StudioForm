@@ -109,6 +109,12 @@ class StepView {
         stateData.styles['cssBackForthActive']
       );
       return;
+    } else if (stateData.sliderMode) {
+      gsap.to(
+        stateData.elements.nextButtons,
+        stateData.styles['cssBackForthInactive']
+      );
+      return;
     }
 
     // Elements
