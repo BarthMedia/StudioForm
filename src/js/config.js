@@ -98,6 +98,7 @@ export const TYPEOF_GSAP_DEPENDENCY = typeof gsap;
 export const TYPEOF_GSAP_SCROLL_TO_DEPENDENCY = typeof $('body').attr(
   'data-gsap-scroll-already-installed'
 );
+export const TYPEOF_GSAP_FLIP_DEPENDENCY = typeof Flip;
 export const TYPEOF_HAMMER_JS_DEPENDENCY = typeof Hammer;
 export const TYPEOF_XANO_SDK_DEPENDENCY = typeof XanoClient;
 

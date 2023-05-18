@@ -599,6 +599,7 @@ const controlMain = function() {
         // Values
         const { elements  } = stateData, { handlers  } = stateData;
         // - Functions -
+        console.log("Implement the idea of appliying .is-selected classes to every element within a selection -- and GSAP Flip that selection.");
         // Manipulate base css
         (0, _viewJsDefault.default).initSiteCssManipulation(stateData);
         // Initialize buttons
@@ -2707,6 +2708,7 @@ parcelHelpers.export(exports, "ERROR_ANCHOR_OFFSET_DEFAULT", ()=>ERROR_ANCHOR_OF
 parcelHelpers.export(exports, "DEV_MODE_OBJECT", ()=>DEV_MODE_OBJECT);
 parcelHelpers.export(exports, "TYPEOF_GSAP_DEPENDENCY", ()=>TYPEOF_GSAP_DEPENDENCY);
 parcelHelpers.export(exports, "TYPEOF_GSAP_SCROLL_TO_DEPENDENCY", ()=>TYPEOF_GSAP_SCROLL_TO_DEPENDENCY);
+parcelHelpers.export(exports, "TYPEOF_GSAP_FLIP_DEPENDENCY", ()=>TYPEOF_GSAP_FLIP_DEPENDENCY);
 parcelHelpers.export(exports, "TYPEOF_HAMMER_JS_DEPENDENCY", ()=>TYPEOF_HAMMER_JS_DEPENDENCY);
 parcelHelpers.export(exports, "TYPEOF_XANO_SDK_DEPENDENCY", ()=>TYPEOF_XANO_SDK_DEPENDENCY);
 parcelHelpers.export(exports, "FORM_BLOCK_SELECTOR", ()=>FORM_BLOCK_SELECTOR);
@@ -2886,6 +2888,7 @@ const DEV_MODE_OBJECT = [
 ];
 const TYPEOF_GSAP_DEPENDENCY = typeof gsap;
 const TYPEOF_GSAP_SCROLL_TO_DEPENDENCY = typeof $("body").attr("data-gsap-scroll-already-installed");
+const TYPEOF_GSAP_FLIP_DEPENDENCY = typeof Flip;
 const TYPEOF_HAMMER_JS_DEPENDENCY = typeof Hammer;
 const TYPEOF_XANO_SDK_DEPENDENCY = typeof XanoClient;
 const FORM_BLOCK_SELECTOR = '[studio-form = "Form Block"]';
@@ -3255,6 +3258,8 @@ const createState = function($formBlock, index) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // + Functions +
+// External script loader
+parcelHelpers.export(exports, "scriptLoader", ()=>scriptLoader);
 // Mark click element
 parcelHelpers.export(exports, "markClickElement", ()=>markClickElement);
 // jQuery to native JS
@@ -3267,6 +3272,17 @@ parcelHelpers.export(exports, "returnDevModeIndex", ()=>returnDevModeIndex);
 // - Get attribute values -
 parcelHelpers.export(exports, "getJsonAttrVals", ()=>getJsonAttrVals);
 var _configJs = require("./config.js");
+function scriptLoader(externalScript = "foo.js", callback) {
+    const scriptPromise = new Promise((resolve, reject)=>{
+        const script = document.createElement("script");
+        document.head.appendChild(script);
+        script.onload = resolve;
+        script.onerror = reject;
+        script.async = true;
+        script.src = externalScript;
+    });
+    scriptPromise.then(callback);
+}
 function markClickElement($buttons, $button = false) {
     $buttons.attr(_configJs.MARK_CLICK_ELEMENT_ATTRIBUTE, false);
     if ($button) $button.attr(_configJs.MARK_CLICK_ELEMENT_ATTRIBUTE, true);
@@ -3593,62 +3609,72 @@ parcelHelpers.export(exports, "init", ()=>init);
 parcelHelpers.export(exports, "isXanoMode", ()=>isXanoMode);
 var _configJs = require("../../config.js");
 var _helperJs = require("../../helper.js");
+// + Helper +
+function loadXanoSdk(handler) {
+    (0, _helperJs.scriptLoader)("https://cdn.jsdelivr.net/npm/@xano/js-sdk@latest/dist/xano.min.js", handler);
+}
 const init = function(stateData) {
     // Guard
     if (!stateData.xanoMode) return;
-    // Elements
-    const form = stateData.elements.$form;
-    // Values
-    const actionUrl = new URL(form.attr("action")), apiGroupBaseUrl = `${actionUrl.protocol}//${actionUrl.hostname}/${actionUrl.pathname.split("/")[1]}`, urlEndpoint = `/${actionUrl.pathname.split("/")[2]}`;
-    // console.log(actionUrl);
-    // Xano
-    const xano = new XanoClient({
-        apiGroupBaseUrl: apiGroupBaseUrl
-    });
-    // Submit event listener
-    form.submit(function(e) {
-        e.preventDefault();
-        // Elements & data
-        const $form = $(this); // The submitted form
-        const $submit = $("[type=submit]", $form); // Submit button of form
-        const buttonText = $submit.val(); // Original button text
-        const buttonWaitingText = $submit.attr("data-wait"); // Waiting button text value
-        const formRedirect = $form.attr("data-redirect"); // Form redirect location
-        const formData = getFormData($form); // Form data
-        // Set waiting text
-        if (buttonWaitingText) $submit.val(buttonWaitingText);
-        // Append files if existend
-        $form.find('input[type="file"]').each(function() {
-            // Values & elements
-            const $fileInput = $(this), filesList = $fileInput[0].files, name = $fileInput.attr("name");
-            // Guard
-            if (filesList.length < 1) return true;
-            // Has multiple
-            if ($fileInput.is("[multiple]")) formData[name] = filesList;
-            else formData[name] = filesList[0];
+    // Load
+    if ((0, _configJs.TYPEOF_XANO_SDK_DEPENDENCY) === "undefined") loadXanoSdk(_);
+    else _();
+    // Callable function
+    function _() {
+        // Elements
+        const form = stateData.elements.$form;
+        // Values
+        const actionUrl = new URL(form.attr("action")), apiGroupBaseUrl = `${actionUrl.protocol}//${actionUrl.hostname}/${actionUrl.pathname.split("/")[1]}`, urlEndpoint = `/${actionUrl.pathname.split("/")[2]}`;
+        // console.log(actionUrl);
+        // Xano
+        const xano = new XanoClient({
+            apiGroupBaseUrl: apiGroupBaseUrl
         });
-        // formData.append('section', 'general');
-        // formData.append('action', 'previewImg');
-        // console.log(formData);
-        // Assume form method is post
-        xano.post(urlEndpoint, formData).then((response)=>{
-            if (stateData.devMode > 0) console.log(response);
-            // Guard
-            if (response.status !== 200) throw new Error(`Xano Status: ${response.status}`);
-            // If form redirect setting set, then use this and prevent any other actions
-            if (formRedirect) {
-                window.location = formRedirect;
-                return;
-            }
-            // Reset text
-            $submit.val(buttonText);
-        }), (error)=>{
-            $form.siblings(".w-form-done").hide() // Hide success
-            .siblings(".w-form-fail").show(); // show failure;
-            // Reset text
-            $submit.val(buttonText);
-        };
-    });
+        // Submit event listener
+        form.submit(function(e) {
+            e.preventDefault();
+            // Elements & data
+            const $form = $(this); // The submitted form
+            const $submit = $("[type=submit]", $form); // Submit button of form
+            const buttonText = $submit.val(); // Original button text
+            const buttonWaitingText = $submit.attr("data-wait"); // Waiting button text value
+            const formRedirect = $form.attr("data-redirect"); // Form redirect location
+            const formData = getFormData($form); // Form data
+            // Set waiting text
+            if (buttonWaitingText) $submit.val(buttonWaitingText);
+            // Append files if existend
+            $form.find('input[type="file"]').each(function() {
+                // Values & elements
+                const $fileInput = $(this), filesList = $fileInput[0].files, name = $fileInput.attr("name");
+                // Guard
+                if (filesList.length < 1) return true;
+                // Has multiple
+                if ($fileInput.is("[multiple]")) formData[name] = filesList;
+                else formData[name] = filesList[0];
+            });
+            // formData.append('section', 'general');
+            // formData.append('action', 'previewImg');
+            // console.log(formData);
+            // Assume form method is post
+            xano.post(urlEndpoint, formData).then((response)=>{
+                if (stateData.devMode > 0) console.log(response);
+                // Guard
+                if (response.status !== 200) throw new Error(`Xano Status: ${response.status}`);
+                // If form redirect setting set, then use this and prevent any other actions
+                if (formRedirect) {
+                    window.location = formRedirect;
+                    return;
+                }
+                // Reset text
+                $submit.val(buttonText);
+            }), (error)=>{
+                $form.siblings(".w-form-done").hide() // Hide success
+                .siblings(".w-form-fail").show(); // show failure;
+                // Reset text
+                $submit.val(buttonText);
+            };
+        });
+    }
 };
 const isXanoMode = function(elements) {
     // Elements
@@ -3961,6 +3987,7 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
         else {
             // Throw error
             if (mode == "100%") (0, _errorStatusJsDefault.default)("add", $checkboxes, styleIndex);
+            if (mode == "100%") (0, _errorStatusJsDefault.default)("scroll", $checkboxes, styleIndex);
             // Prevent double clicking
             if (mode == "100%") $checkboxes.off("click.stepRequirements");
             // Add clickevent
@@ -3984,6 +4011,7 @@ exports.default = function($formBlock, $currentStep, mode = "100%") {
         if ($checked.length == 0) {
             // Throw error
             if (mode == "100%") (0, _errorStatusJsDefault.default)("add", $radios, styleIndex);
+            if (mode == "100%") (0, _errorStatusJsDefault.default)("scroll", $radios, styleIndex);
             // Prevent double clicking
             if (mode == "100%") $radios.off("click.stepRequirements");
             // Add clickevent
@@ -4373,13 +4401,51 @@ exports.default = function(stateData, x, $step) {
     const styles = stateData.styles, cssDeselect = styles["cssDeselect"], cssSelect = styles["cssSelect"];
     //   console.log(cssDeselect, styles);
     // Elements
-    let $buttons = $step.find(`[${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE}]`), buttons = (0, _helperJs.jQueryToJs)($buttons, '[not-findable = "selectButtons.js -> $buttons"]'), $button = $step.find(`[${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE} = ${x}]`);
+    const $notSelectedButtons = $step.find(`[${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE}]:not([${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE} = ${x}])`), notSelectedButtons = (0, _helperJs.jQueryToJs)($notSelectedButtons, '[not-findable = "selectButton.js -> $notSelectedButtons"]'), $selectedButton = $step.find(`[${_configJs.CLICK_ELEMENT_ID_ATTRIBUTE} = ${x}]`), selectedButton = $selectedButton[0];
+    console.log("Working?, This script exists for auto selecting radio buttons ... come back later and finish. SelectButton.js ; Remember to rebuild all of this in vanilla JS!");
     // Guard
-    if ($buttons.length < 1) return;
+    if ($notSelectedButtons.length < 1) return;
     // Actions
-    (0, _helperJs.markClickElement)($buttons, $button);
-    gsap.to(buttons, cssDeselect);
-    gsap.to($button[0], cssSelect);
+    (0, _helperJs.markClickElement)($notSelectedButtons, $selectedButton);
+    gsap.to(notSelectedButtons, cssDeselect);
+    gsap.to(selectedButton, cssSelect);
+    // * * * GSAP Flip action * * *
+    const deselectTime = cssDeselect.duration, selectTime = cssSelect.duration;
+    // Deselect
+    const notSelectedNodes = [];
+    notSelectedButtons.forEach((notSelectedButton)=>{
+        notSelectedNodes.push(notSelectedButton);
+        notSelectedButton.querySelectorAll("*:not(.hide)").forEach((node)=>notSelectedNodes.push(node));
+    });
+    // Loop
+    notSelectedNodes.forEach((node)=>{
+        // Save
+        const state = Flip.getState(node);
+        // Flip
+        node.classList.remove("is-selected");
+        Flip.from(state, {
+            duration: deselectTime
+        });
+    });
+    // Select
+    const selectedNodes = [
+        selectedButton
+    ];
+    selectedButton.querySelectorAll("*:not(.hide)").forEach((node)=>selectedNodes.push(node));
+    // Loop
+    selectedNodes.forEach((node)=>{
+        // Save
+        const state = Flip.getState(node);
+        // Flip
+        node.classList.add("is-selected");
+        Flip.from(state, {
+            duration: selectTime
+        });
+    });
+    console.log("Think about building own GSAP Flip version. As current state of GSAP Flip seems unsufficient!");
+// Log
+// console.log(notSelectedNodes, selectedNodes);
+// console.log('(de)select time', deselectTime, selectTime);
 };
 
 },{"../../../config.js":"k5Hzs","../../../helper.js":"lVRAz","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"avjhP":[function(require,module,exports) {
@@ -5000,40 +5066,29 @@ exports.default = new FileLabelView();
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _config = require("../../config");
-// + Load helper +
-// Allows for loading other scripts
-jQuery.loadScript = function(url, callback) {
-    jQuery.ajax({
-        url: url,
-        dataType: "script",
-        success: callback,
-        async: true
-    });
-};
+var _helper = require("../../helper"); // + Load helper +
 // + Exports +
 // Loader
 exports.default = function(handler) {
-    "undefined" == (0, _config.TYPEOF_GSAP_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js", function() {
-        load2ndScript();
-    }) : load2ndScript();
+    "undefined" == (0, _config.TYPEOF_GSAP_DEPENDENCY) ? (0, _helper.scriptLoader)("https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js", load2ndScript) : load2ndScript();
     function load2ndScript() {
-        "undefined" == (0, _config.TYPEOF_GSAP_SCROLL_TO_DEPENDENCY) ? $.loadScript("https://cdn.jsdelivr.net/gh/BarthMedia/js@main/ScrollToPlugin.min.js", function() {
-            load3rdScript();
-        }) : load3rdScript();
+        "undefined" == (0, _config.TYPEOF_GSAP_SCROLL_TO_DEPENDENCY) ? (0, _helper.scriptLoader)("https://cdn.jsdelivr.net/gh/BarthMedia/js@main/ScrollToPlugin.min.js", load3rdScript) : load3rdScript();
     }
     function load3rdScript() {
-        "undefined" == (0, _config.TYPEOF_HAMMER_JS_DEPENDENCY) ? $.loadScript("https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js", function() {
-            load4thScript();
-        }) : load4thScript();
+        "undefined" == (0, _config.TYPEOF_GSAP_FLIP_DEPENDENCY) ? (0, _helper.scriptLoader)("https://cdn.jsdelivr.net/gh/BarthMedia/js@main/Flip.min.js", register) : load4thScript();
+    }
+    function register() {
+        // - Register -
+        gsap.registerPlugin(Flip);
+        // Fire callback
+        load4thScript();
     }
     function load4thScript() {
-        "undefined" == (0, _config.TYPEOF_XANO_SDK_DEPENDENCY) ? $.loadScript("https://cdn.jsdelivr.net/npm/@xano/js-sdk@latest/dist/xano.min.js", function() {
-            handler();
-        }) : handler();
+        "undefined" == (0, _config.TYPEOF_HAMMER_JS_DEPENDENCY) ? (0, _helper.scriptLoader)("https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js", handler) : handler();
     }
 };
 
-},{"../../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gh6di":[function(require,module,exports) {
+},{"../../config":"k5Hzs","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../../helper":"lVRAz"}],"gh6di":[function(require,module,exports) {
 // + Imports +
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);

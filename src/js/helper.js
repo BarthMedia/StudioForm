@@ -7,6 +7,20 @@ import * as config from './config.js';
 
 // + Functions +
 
+// External script loader
+export function scriptLoader(externalScript = 'foo.js', callback) {
+  const scriptPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    document.head.appendChild(script);
+    script.onload = resolve;
+    script.onerror = reject;
+    script.async = true;
+    script.src = externalScript;
+  });
+
+  scriptPromise.then(callback);
+}
+
 // Mark click element
 export function markClickElement($buttons, $button = false) {
   $buttons.attr(config.MARK_CLICK_ELEMENT_ATTRIBUTE, false);

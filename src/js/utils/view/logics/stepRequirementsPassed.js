@@ -45,6 +45,7 @@ export default function ($formBlock, $currentStep, mode = '100%') {
     } else {
       // Throw error
       if (mode == '100%') errorStatus('add', $checkboxes, styleIndex);
+      if (mode == '100%') errorStatus('scroll', $checkboxes, styleIndex);
 
       // Prevent double clicking
       if (mode == '100%') $checkboxes.off('click.stepRequirements');
@@ -86,6 +87,7 @@ export default function ($formBlock, $currentStep, mode = '100%') {
     if ($checked.length == 0) {
       // Throw error
       if (mode == '100%') errorStatus('add', $radios, styleIndex);
+      if (mode == '100%') errorStatus('scroll', $radios, styleIndex);
 
       // Prevent double clicking
       if (mode == '100%') $radios.off('click.stepRequirements');

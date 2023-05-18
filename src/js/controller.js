@@ -53,6 +53,10 @@ const controlMain = function () {
 
     // - Functions -
 
+    console.log(
+      'Implement the idea of appliying .is-selected classes to every element within a selection -- and GSAP Flip that selection.'
+    );
+
     // Manipulate base css
     view.initSiteCssManipulation(stateData);
 

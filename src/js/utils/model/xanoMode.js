@@ -1,97 +1,114 @@
 // + Imports +
 import * as config from '../../config.js';
 import { jQueryToJs } from '../../helper.js';
+import { scriptLoader } from '../../helper.js';
+import { TYPEOF_XANO_SDK_DEPENDENCY } from '../../config.js';
+
+// + Helper +
+function loadXanoSdk(handler) {
+  scriptLoader(
+    'https://cdn.jsdelivr.net/npm/@xano/js-sdk@latest/dist/xano.min.js',
+    handler
+  );
+}
 
 // + Export functions +
 export const init = function (stateData) {
   // Guard
   if (!stateData.xanoMode) return;
 
-  // Elements
-  const form = stateData.elements.$form;
+  // Load
+  if (TYPEOF_XANO_SDK_DEPENDENCY === 'undefined') loadXanoSdk(_);
+  else _();
 
-  // Values
-  const actionUrl = new URL(form.attr('action')),
-    apiGroupBaseUrl = `${actionUrl.protocol}//${actionUrl.hostname}/${
-      actionUrl.pathname.split('/')[1]
-    }`,
-    urlEndpoint = `/${actionUrl.pathname.split('/')[2]}`;
+  // Callable function
+  function _() {
+    // Elements
+    const form = stateData.elements.$form;
 
-  // console.log(actionUrl);
+    // Values
+    const actionUrl = new URL(form.attr('action')),
+      apiGroupBaseUrl = `${actionUrl.protocol}//${actionUrl.hostname}/${
+        actionUrl.pathname.split('/')[1]
+      }`,
+      urlEndpoint = `/${actionUrl.pathname.split('/')[2]}`;
 
-  // Xano
-  const xano = new XanoClient({
-    apiGroupBaseUrl: apiGroupBaseUrl,
-  });
+    // console.log(actionUrl);
 
-  // Submit event listener
-  form.submit(function (e) {
-    e.preventDefault();
-
-    // Elements & data
-    const $form = $(this); // The submitted form
-    const $submit = $('[type=submit]', $form); // Submit button of form
-    const buttonText = $submit.val(); // Original button text
-    const buttonWaitingText = $submit.attr('data-wait'); // Waiting button text value
-    const formRedirect = $form.attr('data-redirect'); // Form redirect location
-
-    const formData = getFormData($form); // Form data
-
-    // Set waiting text
-    if (buttonWaitingText) {
-      $submit.val(buttonWaitingText);
-    }
-
-    // Append files if existend
-    $form.find('input[type="file"]').each(function () {
-      // Values & elements
-      const $fileInput = $(this),
-        filesList = $fileInput[0].files,
-        name = $fileInput.attr('name');
-
-      // Guard
-      if (filesList.length < 1) return true;
-
-      // Has multiple
-      if ($fileInput.is('[multiple]')) {
-        formData[name] = filesList;
-      } else {
-        formData[name] = filesList[0];
-      }
+    // Xano
+    const xano = new XanoClient({
+      apiGroupBaseUrl: apiGroupBaseUrl,
     });
 
-    // formData.append('section', 'general');
-    // formData.append('action', 'previewImg');
-    // console.log(formData);
+    // Submit event listener
+    form.submit(function (e) {
+      e.preventDefault();
 
-    // Assume form method is post
-    xano.post(urlEndpoint, formData).then(response => {
-      if (stateData.devMode > 0) console.log(response);
+      // Elements & data
+      const $form = $(this); // The submitted form
+      const $submit = $('[type=submit]', $form); // Submit button of form
+      const buttonText = $submit.val(); // Original button text
+      const buttonWaitingText = $submit.attr('data-wait'); // Waiting button text value
+      const formRedirect = $form.attr('data-redirect'); // Form redirect location
 
-      // Guard
-      if (response.status !== 200)
-        throw new Error(`Xano Status: ${response.status}`);
+      const formData = getFormData($form); // Form data
 
-      // If form redirect setting set, then use this and prevent any other actions
-      if (formRedirect) {
-        window.location = formRedirect;
-        return;
+      // Set waiting text
+      if (buttonWaitingText) {
+        $submit.val(buttonWaitingText);
       }
 
-      // Reset text
-      $submit.val(buttonText);
-    }),
-      error => {
-        $form
-          .siblings('.w-form-done')
-          .hide() // Hide success
-          .siblings('.w-form-fail')
-          .show(); // show failure;
+      // Append files if existend
+      $form.find('input[type="file"]').each(function () {
+        // Values & elements
+        const $fileInput = $(this),
+          filesList = $fileInput[0].files,
+          name = $fileInput.attr('name');
+
+        // Guard
+        if (filesList.length < 1) return true;
+
+        // Has multiple
+        if ($fileInput.is('[multiple]')) {
+          formData[name] = filesList;
+        } else {
+          formData[name] = filesList[0];
+        }
+      });
+
+      // formData.append('section', 'general');
+      // formData.append('action', 'previewImg');
+      // console.log(formData);
+
+      // Assume form method is post
+      xano.post(urlEndpoint, formData).then(response => {
+        if (stateData.devMode > 0) console.log(response);
+
+        // Guard
+        if (response.status !== 200)
+          throw new Error(`Xano Status: ${response.status}`);
+
+        // If form redirect setting set, then use this and prevent any other actions
+        if (formRedirect) {
+          window.location = formRedirect;
+          return;
+        }
 
         // Reset text
         $submit.val(buttonText);
-      };
-  });
+      }),
+        error => {
+          $form
+            .siblings('.w-form-done')
+            .hide() // Hide success
+            .siblings('.w-form-fail')
+            .show(); // show failure;
+
+          // Reset text
+          $submit.val(buttonText);
+        };
+    });
+  }
 };
 
 //
