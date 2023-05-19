@@ -3,3 +3,4 @@ node_modules
 .DS_Store
 legacy_studioForm.js
 notes.js
+dist
