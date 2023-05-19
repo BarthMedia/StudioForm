@@ -27,12 +27,16 @@
 // Consider splitting config file into multipile files
 // Have userStyles & userConfig
 
+// 19.05.2023
+// Implement click based keyboard actions. Not function based
+// Generally work with a more click based architecture. As much as possible
+
 // Base
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
 // Custom
-import view from './views/view.js';
+import view from './views/mainView.js';
 import * as model from './model.js';
 import loader from './utils/controller/loader.js';
 import { FORM_BLOCK_SELECTOR } from './config.js';
@@ -53,9 +57,11 @@ const controlMain = function () {
 
     // - Functions -
 
-    console.log(
-      'Implement the idea of appliying .is-selected classes to every element within a selection -- and GSAP Flip that selection.'
-    );
+    // console.log(
+    //   'Implement the idea of appliying .is-selected classes to every element within a selection -- and GSAP Flip that selection.'
+    // );
+
+    // DEFINITELY BUILD PROPER INPUT TYPE VALIDATION AND AUTO-FILL ALONG THE WAY
 
     // Manipulate base css
     view.initSiteCssManipulation(stateData);
@@ -85,6 +91,9 @@ const controlMain = function () {
 
     // Init file label change feature
     view.initFileLabelChange(stateData);
+
+    // Init url query mode
+    view.initUrlQueryMode(stateData);
   });
 };
 

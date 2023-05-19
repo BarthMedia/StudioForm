@@ -39,48 +39,48 @@ export default function (stateData, x, $step) {
   gsap.to(notSelectedButtons, cssDeselect);
   gsap.to(selectedButton, cssSelect);
 
-  // * * * GSAP Flip action * * *
-  const deselectTime = cssDeselect.duration,
-    selectTime = cssSelect.duration;
+  // // * * * GSAP Flip action * * *
+  // const deselectTime = cssDeselect.duration,
+  //   selectTime = cssSelect.duration;
 
-  // Deselect
-  const notSelectedNodes = [];
-  notSelectedButtons.forEach(notSelectedButton => {
-    notSelectedNodes.push(notSelectedButton);
-    notSelectedButton
-      .querySelectorAll('*:not(.hide)')
-      .forEach(node => notSelectedNodes.push(node));
-  });
+  // // Deselect
+  // const notSelectedNodes = [];
+  // notSelectedButtons.forEach(notSelectedButton => {
+  //   notSelectedNodes.push(notSelectedButton);
+  //   notSelectedButton
+  //     .querySelectorAll('*:not(.hide)')
+  //     .forEach(node => notSelectedNodes.push(node));
+  // });
 
-  // Loop
-  notSelectedNodes.forEach(node => {
-    // Save
-    const state = Flip.getState(node);
+  // // Loop
+  // notSelectedNodes.forEach(node => {
+  //   // Save
+  //   const state = Flip.getState(node);
 
-    // Flip
-    node.classList.remove('is-selected');
-    Flip.from(state, { duration: deselectTime });
-  });
+  //   // Flip
+  //   node.classList.remove('is-selected');
+  //   Flip.from(state, { duration: deselectTime });
+  // });
 
-  // Select
-  const selectedNodes = [selectedButton];
-  selectedButton
-    .querySelectorAll('*:not(.hide)')
-    .forEach(node => selectedNodes.push(node));
+  // // Select
+  // const selectedNodes = [selectedButton];
+  // selectedButton
+  //   .querySelectorAll('*:not(.hide)')
+  //   .forEach(node => selectedNodes.push(node));
 
-  // Loop
-  selectedNodes.forEach(node => {
-    // Save
-    const state = Flip.getState(node);
+  // // Loop
+  // selectedNodes.forEach(node => {
+  //   // Save
+  //   const state = Flip.getState(node);
 
-    // Flip
-    node.classList.add('is-selected');
-    Flip.from(state, { duration: selectTime });
-  });
+  //   // Flip
+  //   node.classList.add('is-selected');
+  //   Flip.from(state, { duration: selectTime });
+  // });
 
-  console.log(
-    'Think about building own GSAP Flip version. As current state of GSAP Flip seems unsufficient!'
-  );
+  // console.log(
+  //   'Think about building own GSAP Flip version. As current state of GSAP Flip seems unsufficient!'
+  // );
 
   // Log
   // console.log(notSelectedNodes, selectedNodes);

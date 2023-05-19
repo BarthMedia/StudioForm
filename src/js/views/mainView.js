@@ -12,6 +12,7 @@ import swipeGestureView from './swipeGestureView.js';
 import autoFocusAndKeyboardEventsView from './autoFocusAndKeyboardEventsView.js';
 import manipulateSiteCssView from './manipulateSiteCssView.js';
 import fileLabelChange from './fileLabelChange.js';
+import urlQueryView from './urlQueryView.js';
 
 // + Classes +
 
@@ -56,6 +57,11 @@ class WebflowView {
   // Initialize file label change feature
   initFileLabelChange(stateData) {
     fileLabelChange.init(stateData);
+  }
+
+  // Url query mode
+  initUrlQueryMode(stateData) {
+    urlQueryView.init(stateData);
   }
 }
 

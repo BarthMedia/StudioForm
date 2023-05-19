@@ -21,14 +21,14 @@ export const AUTO_EAGER_LOAD_RICH_TEXT_IMAGES_DEFAULT = 'true';
 export const CSS_SHOW_DEFAULT = { opacity: 1 /*, display: 'flex'*/ };
 export const CSS_HIDE_DEFAULT = { opacity: 0, display: 'none' };
 export const CSS_ACTIVE_DEFAULT = {
-  // borderColor: '#175ADA',
-  // opacity: 1,
-  // duration: 0.5,
+  borderColor: '#175ADA',
+  opacity: 1,
+  duration: 0.6,
 };
 export const CSS_INACTIVE_DEFAULT = {
-  // borderColor: '',
-  // opacity: 0.35,
-  // duration: 0.5,
+  borderColor: '',
+  opacity: 0.75,
+  duration: 0.35,
 };
 export const CSS_BACK_FORTH_ACTIVE_DEFAULT = { opacity: 1, pointerEvents: '' };
 export const CSS_BACK_FORTH_INACTIVE_DEFAULT = {
