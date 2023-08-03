@@ -7,15 +7,43 @@ import { jQueryToJs } from '../../../helper.js';
 
 // - - Add error status - -
 export default function (mode = 'add', $elements, styleIndex) {
+  // // ZHAW file upload adjustment
+  // $elements.each(function (index) {
+  //   if ($(this).eq(0).attr('type') === 'file') {
+  //     const label = document.querySelector(
+  //       `[for="${$(this).eq(0).attr('id')}"]`
+  //     );
+
+  //     // mode = 'add';
+
+  //     // Overwrite
+  //     $elements[index] = label;
+  //   }
+  // });
+
   // Variables
   const stateData = model.state.data[`form${styleIndex}`],
     styles = stateData.styles,
     cssErrorStatus = styles['cssErrorStatus'],
-    cssErrorStatusResolved = styles['cssErrorStatusResolved'],
-    elements = jQueryToJs(
-      $elements,
-      '[not-findable = "errorStatus.js -> $elements"]'
-    );
+    cssErrorStatusResolved = styles['cssErrorStatusResolved'];
+  let elements = jQueryToJs(
+    $elements,
+    '[not-findable = "errorStatus.js -> $elements"]'
+  );
+
+  // ZHAW file upload adjustment
+  elements.forEach(function (element, index) {
+    if (element.getAttribute('type') === 'file') {
+      const label = document.querySelector(
+        `[for="${element.getAttribute('id')}"]`
+      );
+
+      // mode = 'add';
+
+      // Overwrite
+      elements[index] = label;
+    }
+  });
 
   // Action
   if (mode == 'add') {
@@ -34,13 +62,32 @@ export default function (mode = 'add', $elements, styleIndex) {
       duration = stateData.styles.animationSTime;
     }
 
-    gsap.to(stateData.elements.anchorScrollTarget || window, {
-      scrollTo: {
-        y: elements[0],
-        offsetY: stateData.styles.errorAnchorOffset,
-      },
-      duration: duration,
+    // ZHAW file upload adjustment
+    // let elements0 = elements[0];
+    // if ($elements.eq(0).attr('type') === 'file') {
+    //   elements0 =
+    //     document.querySelector(`[for="${$elements.eq(0).attr('id')}"]`) ||
+    //     elements0;
+    // }
+
+    // console.log(elements0);
+
+    const y =
+      window.pageYOffset +
+      elements[0].getBoundingClientRect().top -
+      stateData.styles.errorAnchorOffset -
+      32;
+    window.scrollTo({
+      top: y,
+      behavior: 'smooth',
     });
+    // gsap.to(stateData.elements.anchorScrollTarget || window, {
+    //   scrollTo: {
+    //     y: elements[0],
+    //     offsetY: stateData.styles.errorAnchorOffset,
+    //   },
+    //   duration: duration,
+    // });
 
     // console.log(elements);
 

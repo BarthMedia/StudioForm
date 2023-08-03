@@ -22,8 +22,14 @@ class FileLabelView {
     $fileInputs.each(function () {
       // Elements
       const $input = $(this),
-        $parent = $input.parent(),
-        $label = $parent.find('label');
+        $parent = $input.parent().parent(), // ZHAW Adjustment
+        $label = $parent.find('label'),
+        $fakeLabel = $parent.find('[studio-form="File Upload Fake Label"]'),
+        $emptyIcon = $parent.find('[studio-form="Upload Icon Empty"]'),
+        $processingIcon = $parent.find(
+          '[studio-form="Upload Icon Processing"]'
+        ),
+        $successIcon = $parent.find('[studio-form="Upload Icon Succesful"]');
 
       // Guard
       if ($label.length === 0) return true;
@@ -36,10 +42,32 @@ class FileLabelView {
         // Values
         const arr = $input.val().split('\\');
         let name = arr[arr.length - 1];
+        let isEmpty = name === '' ? true : false;
 
+        // Icon changes
+        $emptyIcon.add($successIcon).hide();
+        $processingIcon.show();
+
+        setTimeout(() => {
+          $processingIcon.hide();
+          isEmpty ? $emptyIcon.show() : $successIcon.show();
+        }, 650);
+
+        // Text changes
         name = name !== '' ? name : labelText;
 
+        // ZHAW long text adjustment
+        if (!isEmpty & (name.length >= 42)) {
+          // Values
+          const firstN = name.slice(0, 17);
+          const lastN = name.slice(-20);
+
+          // Update
+          name = firstN + ' ... ' + lastN;
+        }
+
         $label.text(name);
+        $fakeLabel.text(name);
       });
     });
   }

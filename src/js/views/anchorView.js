@@ -8,30 +8,38 @@ class AnchorView {
   // Function
   functionality(stateData) {
     // Gurad / Precondition
-    if (stateData.elements.$anchor.length == 1) {
-      // Values
-      let width = $(window).outerWidth(true),
-        height = stateData.elements.$anchorYOffset.outerHeight(true) || 0;
+    if (stateData.elements.$anchor.length < 1) return;
 
-      // If within specified scren size
-      if (
-        width <= stateData.anchorData.anchorMaxScreenSize &&
-        width >= stateData.anchorData.anchorMinScreenSize
-      ) {
-        gsap.to(stateData.elements.anchorScrollTarget, {
-          scrollTo: {
-            y: `#anchor-element-${stateData.formBlockIndex}`,
-            offsetY: height,
-          },
-          duration: stateData.anchorData.anchorAnimationTime,
-        });
-      }
+    // console.log(stateData.elements.$anchor);
+
+    // Values
+    let width = $(window).outerWidth(true),
+      height = stateData.elements.$anchorYOffset.outerHeight(true) || 0;
+
+    // If within specified scren size
+    if (
+      width <= stateData.anchorData.anchorMaxScreenSize &&
+      width >= stateData.anchorData.anchorMinScreenSize
+    ) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+      // gsap.to(stateData.elements.anchorScrollTarget, {
+      //   scrollTo: {
+      //     y: `#anchor-element-${stateData.formBlockIndex}`,
+      //     offsetY: height,
+      //   },
+      //   duration: stateData.anchorData.anchorAnimationTime,
+      // });
     }
   }
 
   init(stateData) {
     // Gurad / Precondition
-    if (stateData.elements.$anchor.length === 0) return;
+    if (stateData.elements.$anchor.length === 0)
+      stateData.elements.$anchor =
+        stateData.elements.$formBlock.closest('section');
 
     // Values
     let anchorMinScreenSize = parseInt(

@@ -7,6 +7,9 @@ import { state } from '../../../model.js';
 
 // - - Visual appealing submit - -
 export default function (stateData) {
+  // Hide elements
+  $('[studio-form="Hide on Submit"]').hide();
+
   // Values
   const { elements } = stateData,
     { devMode } = stateData,

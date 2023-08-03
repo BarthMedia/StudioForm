@@ -130,7 +130,10 @@ class StepView {
         stateData.elements.nextButtons,
         stateData.styles['cssBackForthActive']
       );
-    } else if (stateData.sliderMode) {
+    } else if (
+      stateData.sliderMode ||
+      stateData.backwardsForwardsNavigationMode
+    ) {
       gsap.to(
         stateData.elements.nextButtons,
         stateData.styles['cssBackForthInactive']
