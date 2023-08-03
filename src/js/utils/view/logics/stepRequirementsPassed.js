@@ -133,7 +133,7 @@ export default function ($formBlock, $currentStep, mode = '100%') {
 
     // Elements
     const $radios = $currentStep.find(`${config.W_RADIO_SELECTOR}`);
-    const $inputs = $currentStep.find(`input, select`).add($radios);
+    const $inputs = $currentStep.find(`input, select, textarea`).add($radios);
 
     // Reset
     if (mode == '100%') errorStatus('remove', $inputs, styleIndex);
@@ -143,6 +143,8 @@ export default function ($formBlock, $currentStep, mode = '100%') {
 
     // Radio error scroll behavior
     // let radioError = false;
+
+    // console.log($inputs);
 
     // Loop
     $inputs.each(function () {
@@ -218,6 +220,20 @@ export default function ($formBlock, $currentStep, mode = '100%') {
           }
         }
 
+        // ZHAW adjustments
+        if ($input.attr('type') === 'checkbox') {
+          // Guard
+          if ($input.val() !== 'on') {
+            // Scroll to error
+            if (returnTrue) errorStatus('scroll', $input, styleIndex);
+            else errorStatus('add', $input, styleIndex);
+
+            // Throw error
+            returnTrue = false;
+          }
+        }
+
+        // Standard logic
         if ($input.val() === '' && !$input.is($radios)) {
           // Scroll to error
           if (returnTrue) errorStatus('scroll', $input, styleIndex);

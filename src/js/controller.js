@@ -58,6 +58,24 @@ const controlMain = function () {
     const { elements } = stateData,
       { handlers } = stateData;
 
+    // Zhaw adjustments !!!
+    $('input[type="checkbox"]').val('off');
+    $('input[type="checkbox"]').click(function () {
+      // Elements
+      const $checkbox = $(this);
+
+      // Variables
+      if ($checkbox.attr('data-is-clicked') === 'true') {
+        // Toggle set
+        $checkbox.attr('data-is-clicked', 'false');
+        $checkbox.val('off');
+      } else {
+        // Toggle set
+        $checkbox.attr('data-is-clicked', 'true');
+        $checkbox.val('on');
+      }
+    });
+
     // - Functions -
 
     // console.log(

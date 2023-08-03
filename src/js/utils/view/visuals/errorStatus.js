@@ -45,6 +45,19 @@ export default function (mode = 'add', $elements, styleIndex) {
     }
   });
 
+  // ZHAW Checkbox adjustment w-checkbox form-checkbox
+  elements.forEach(function (element, index) {
+    if (element.getAttribute('type') === 'checkbox') {
+      const fakeCheckbox =
+        element.parentElement.querySelector(`.w-checkbox-input`);
+
+      // mode = 'add';
+
+      // Overwrite
+      elements[index] = fakeCheckbox;
+    }
+  });
+
   // Action
   if (mode == 'add') {
     // General error animation
