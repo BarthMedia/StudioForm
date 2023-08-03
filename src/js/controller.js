@@ -46,6 +46,9 @@ import creatNextStepObject from './utils/model/creatNextStepObject.js';
 
 // Main
 const controlMain = function () {
+  // Add studio form state to window
+  window.StudioForm = model.state;
+
   // Multi instance loop
   $(FORM_BLOCK_SELECTOR).each(function (index) {
     // Create state

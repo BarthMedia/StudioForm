@@ -59,9 +59,10 @@ class ButtonView {
   // Initialize back & forth buttons
   #initBackForthButtons(stateData) {
     // Inactivate back and forth buttons
-    const arr = stateData.sliderMode
-      ? [stateData.elements.backButtons]
-      : [stateData.elements.backButtons, stateData.elements.nextButtons];
+    const arr =
+      stateData.sliderMode || stateData.backwardsForwardsNavigationMode
+        ? [stateData.elements.backButtons]
+        : [stateData.elements.backButtons, stateData.elements.nextButtons];
 
     // GSAP set
     gsap.set(arr, {

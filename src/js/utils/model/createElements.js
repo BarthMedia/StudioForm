@@ -60,6 +60,10 @@ export default function ($this, formBlockIndex) {
   elements.$anchor = elements.$formBlock
     .find(config.ANCHOR_ELEMENT_SELECTOR)
     .eq(0);
+  // ZHAW
+  elements.$currentSlideIndex = elements.$formBlock.find(
+    '[studio-form="Current Slide"]'
+  );
 
   // Save form block index in the DOM
   elements.$formBlock.attr(config.FORM_BLOCK_INDEX_ATTRIBUTE, formBlockIndex);

@@ -98,6 +98,9 @@ class StepView {
 
   // - Update next button -
   #updateNextButton(stateData, stepId) {
+    // Update ZHAW current slide index
+    stateData.elements.$currentSlideIndex.text(stateData.clickRecord.length);
+
     // Security return check
     if (stateData.elements.$nextButton.length < 1) return;
 
@@ -117,6 +120,23 @@ class StepView {
       return;
     }
 
+    // If ZHAW && not last slide
+    if (
+      stateData.backwardsForwardsNavigationMode &&
+      !stateData.stepLogic[stepId].isLast
+    ) {
+      // Animate
+      gsap.to(
+        stateData.elements.nextButtons,
+        stateData.styles['cssBackForthActive']
+      );
+    } else if (stateData.sliderMode) {
+      gsap.to(
+        stateData.elements.nextButtons,
+        stateData.styles['cssBackForthInactive']
+      );
+    }
+
     // Elements
     const $step = stateData.elements.$form.find(
         `[${config.STEP_INDEX_ATTRIBUTE} = "${stepId}"]`
@@ -125,21 +145,24 @@ class StepView {
         `[${config.MARK_CLICK_ELEMENT_ATTRIBUTE} = "true"]`
       );
 
-    // Action logic
-    if (
-      $clickedButton.length > 0 &&
-      stepRequirementsPassed(stateData.elements.$formBlock, $step)
-    ) {
-      // If a clicked button exists
-      gsap.to(
-        stateData.elements.nextButtons,
-        stateData.styles['cssBackForthActive']
-      );
-    } else {
-      gsap.to(
-        stateData.elements.nextButtons,
-        stateData.styles['cssBackForthInactive']
-      );
+    // Not ZHAW backwardsForwardsNavigationMode
+    if (!stateData.backwardsForwardsNavigationMode) {
+      // Action logic
+      if (
+        $clickedButton.length > 0 &&
+        stepRequirementsPassed(stateData.elements.$formBlock, $step)
+      ) {
+        // If a clicked button exists
+        gsap.to(
+          stateData.elements.nextButtons,
+          stateData.styles['cssBackForthActive']
+        );
+      } else {
+        gsap.to(
+          stateData.elements.nextButtons,
+          stateData.styles['cssBackForthInactive']
+        );
+      }
     }
   }
 

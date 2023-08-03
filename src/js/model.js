@@ -34,6 +34,12 @@ export const createState = function ($formBlock, index) {
     // Create initial elements
     elements: createElements($formBlock, index),
 
+    // Special ZHAW navigation mode
+    backwardsForwardsNavigationMode:
+      $formBlock.attr('data-outside-button-navigator-mode') === 'true'
+        ? true
+        : false,
+
     // Initial click record object
     clickRecord: [{ step: 0 }],
 
