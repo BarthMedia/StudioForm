@@ -1,26 +1,53 @@
-import model from './model';
+// Imports
+import * as model from './model';
+import view from './view';
+import * as helper from './helper/helper';
 
-const user = {
-  name: 'Uftan',
-  peter: 'PETER',
-};
+// + Declare +
+declare var ls: any;
+declare var gsap: any;
+declare global {
+  interface Window {
+    StudioForm: any;
+  }
+}
 
-user.peter = 'Not PETER';
+// Main
+function main() {
+  // Define
+  const sdk: any[] = [];
 
-// Studio form will be something like
-window.studioForm = ['form1', 'form2', 'formN'];
+  // Elements loop
+  document
+    .querySelectorAll('[studio-form="wrapper"]')
+    .forEach((wrapper, index) => {
+      // Init
+      model.init(wrapper as HTMLElement, index);
+      view(model.state[index]);
 
-// Step calculation has to happen either on step or on children
-// By default the value that is higher will be taken
+      // Grant simple or advanced sdk access
+      model.state[index].modes.simpleSdk
+        ? sdk.push(model.state[index].sdk)
+        : sdk.push(model.state[index]);
+    });
 
-// By default figure out if there is a sticky nav
-// As the default anchor. Use the form block top.
+  // Add state to window
+  window.StudioForm = sdk;
+}
 
-// Absodamnlutely build a form memory mode!
+// Loader
+'undefined' === typeof gsap
+  ? helper.scriptLoader(
+      'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js',
+      load2ndScript
+    )
+  : load2ndScript();
 
-// Remove Xano SDK out of code -- slows down execution drastically!
-
-('');
-const peter = 'peter';
-
-console.log('Hello world. I love you TS!', model, user);
+function load2ndScript() {
+  'undefined' === typeof ls
+    ? helper.scriptLoader(
+        'https://cdn.jsdelivr.net/npm/localstorage-slim',
+        main
+      )
+    : main();
+}

@@ -1,0 +1,45 @@
+// Imports
+import * as helper from '../helper';
+
+// Export
+export default function (state: any) {
+  // Guard
+  if (!helper.isElement(state.elements.wrapper))
+    throw new Error(
+      `StudioForm[${state.sdk.i}] -> modes.ts -> default: state.elements.wrapper is not an element`
+    );
+
+  // Define
+  state.modes = {};
+  const obj = state.modes;
+  const el: HTMLElement = state.elements.wrapper;
+
+  // * Modes *
+
+  // Remove visual dividers
+  obj.simpleSdk = (el.getAttribute('data-simple-sdk') || 'true') === 'true';
+
+  // Remove visual dividers
+  obj.removeVisualDividers =
+    (el.getAttribute('data-remove-visual-diviers') ||
+      el.getAttribute('data-remove-diviers') ||
+      'true') === 'true';
+
+  // Remove conditionally invisible slides
+  obj.removeConditionallyInvisibeSlides =
+    (el.getAttribute('data-remove-conditionally-invisible-slides') ||
+      'true') === 'true';
+
+  // Slider mode
+  obj.isWfForm = el.classList.contains('w-form');
+
+  // Remove conditionally invisible slides
+  obj.removeRequiredAttributeFromCheckboxAndRadioOnlys =
+    (el.getAttribute(
+      'data-remove-required-attribute-from-checkbox-and-radio-onlys'
+    ) || 'true') === 'true';
+
+  // Swap submit buttons
+  obj.swapSubmitButtons =
+    (el.getAttribute('data-swap-submit-buttons') || 'true') === 'true';
+}
