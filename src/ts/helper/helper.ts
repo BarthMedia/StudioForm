@@ -8,6 +8,45 @@ import * as config from '../config';
 
 // + Functions +
 
+// Add events infrastructure
+export function addEventsInfrastrucutre(state: any, name: string) {
+  // Values
+  const initEvents = state.sdk.events;
+  const eventFunctionArrays = state.view.eventsFunctionArrays;
+
+  // Create neccessary model.state.view.eventsFunctionArrays infrastructure
+  eventFunctionArrays[`on${name}`] = [];
+  eventFunctionArrays[`after${name}`] = [];
+
+  // Add sdk events
+  initEvents[`on${name}`] = function (...callbacks: any[]) {
+    pushFunctionsOnly(callbacks, eventFunctionArrays[`on${name}`]);
+  };
+  initEvents[`after${name}`] = function (...callbacks: any[]) {
+    pushFunctionsOnly(callbacks, eventFunctionArrays[`after${name}`]);
+  };
+}
+
+// Trigger all functions
+export function triggerAllFunctions(arr: any[]) {
+  arr.forEach(item => item());
+}
+
+// Push function only to array
+export function pushFunctionsOnly(args: any | any[], arr: any[]) {
+  // Logic
+  if (args['forEach']) {
+    args.forEach((arg: any) => f(arg));
+  } else {
+    f(args);
+  }
+
+  // Define
+  function f(val: any) {
+    if (typeof val === 'function') arr.push(val);
+  }
+}
+
 // Allows for loading other scripts
 export function scriptLoader(externalScript = 'foo.js', callback: () => void) {
   const scriptPromise = new Promise((resolve, reject) => {

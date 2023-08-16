@@ -49,7 +49,43 @@ export default function (index: number) {
   slideLogic.forEach((slide: any) => {
     // No btns case
     if (slide.btns.length < 1) {
-      console.log('Programm no buttons logic case');
+      // Set btns to false
+      slide.btns = false;
+
+      // Calculate slide.next
+      let next: false | number = false;
+
+      // Else return the next step that is unconditional & not conditional next
+      next = (() => {
+        for (let i = 0, n = slideLogic.length; i < n; i++) {
+          const _tmpSlide = slideLogic[i];
+          if (
+            _tmpSlide.i > slide.i &&
+            _tmpSlide.conditional === '' &&
+            _tmpSlide.conditionalNext === false
+          ) {
+            return _tmpSlide.i;
+          }
+        }
+      })();
+
+      // If conditional next is set, return next step index
+      if (slide.i < slideLogic.length - 1)
+        if (slideLogic[slide.i + 1]?.conditionalNext === true) {
+          // Set button goal
+          next = slide.i + 1;
+        }
+
+      // Is last step logic
+      if (slide.i >= slideLogic.length - 1) {
+        next = false;
+      }
+
+      // Add new property to slide
+      slide.next = next;
+
+      // Skip code below
+      return;
     }
 
     // Find next slide
@@ -87,9 +123,15 @@ export default function (index: number) {
           // Values
           let index = tmpSlide.i;
 
+          // Guard for eventual jump back case
+          if (index <= slide.i) btn.conditionalPrev = true;
+
           // Set
           btn.next = index;
         } else {
+          console.warn(
+            `StudioForm[${state.sdk.i}] -> slideLogic.ts -> default -> slideLogic.forEach() callback -> slide.btns.every() callback: The partner slide for btns[${btn.i}].conditional === '${btn.conditional}' (in state.elements.slides[${slide.i}]) has not been found.`
+          );
           btn.next = false;
         }
 
@@ -107,15 +149,15 @@ export default function (index: number) {
       }
 
       // Else return the next step that is unconditional & not conditional next
-
       btn.next = (() => {
-        for (step of stepsObject) {
+        for (let i = 0, n = slideLogic.length; i < n; i++) {
+          const _tmpSlide = slideLogic[i];
           if (
-            step.index > stepIndex &&
-            step.conditional === undefined &&
-            step.conditionalNext === undefined
+            _tmpSlide.i > slide.i &&
+            _tmpSlide.conditional === '' &&
+            _tmpSlide.conditionalNext === false
           ) {
-            return step.index;
+            return _tmpSlide.i;
           }
         }
       })();
@@ -126,20 +168,18 @@ export default function (index: number) {
   });
 
   // Add to state
-  state.model.slideLogic = slideLogic;
+  state.sdk.slideLogic = slideLogic;
 
   // Log
-  slideLogic.forEach(slide => {
-    // Log
-    console.log(slide.i);
+  // slideLogic.forEach(slide => {
+  //   // Log
+  //   console.log(slide.i);
 
-    // Loop
-    slide.btns.forEach(btn => console.log(btn));
+  //   // Loop
+  //   if (slide.btns) slide.btns.forEach(btn => console.log(btn));
+  //   else console.log('_null_case_ ', slide);
 
-    // Log
-    console.log('---');
-  });
-
-  // Log
-  console.log('hello, ', slideLogic);
+  //   // Log
+  //   console.log('---');
+  // });
 }

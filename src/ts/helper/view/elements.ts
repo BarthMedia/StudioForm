@@ -66,11 +66,22 @@ export default function (state: any) {
 
   // * Add-on's *
 
-  // Progress bar
-  obj.progressBars = el.querySelectorAll('[studio-form="progress-bar"]');
+  // Progress
+  obj.progress = {};
+  obj.progress.bars = el.querySelectorAll('[studio-form="progress-bar"]');
+  obj.progress.currentSlides = el.querySelectorAll(
+    '[studio-form="current-slide"]'
+  );
+  obj.progress.minMaxSlides = el.querySelectorAll(
+    '[studio-form="min-max-slides"]'
+  );
+  obj.progress.minSlides = el.querySelectorAll('[studio-form="min-slides"]');
+  obj.progress.maxSlides = el.querySelectorAll('[studio-form="max-slides"]');
 
   // Backwards & forwards buttons
-  obj.prevBtns = [];
+  obj.prevBtns = el.querySelectorAll(
+    '[studio-form="prev"], [studio-form="Backwards Button"]'
+  );
   obj.nextBtns = [];
   for (let i = 0, n = el.childNodes.length; i < n; i++) {
     // Elements
@@ -80,13 +91,11 @@ export default function (state: any) {
     if (child.isEqualNode(obj.mask)) continue;
 
     // Loop
-    ['prev', 'Backwards Button', 'next', 'Continue Button'].forEach(str => {
+    ['next', 'Continue Button'].forEach(str => {
       child
         .querySelectorAll(`[studio-form="${str}"]`)
         .forEach((btn: HTMLElement) => {
-          str === 'prev' || str === 'Backwards Button'
-            ? obj.prevBtns.push(btn)
-            : obj.nextBtns.push(btn);
+          obj.nextBtns.push(btn);
         });
     });
   }

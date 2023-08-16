@@ -4,9 +4,8 @@ import view from './view';
 import * as helper from './helper/helper';
 
 // + Declare +
-declare var ls: any;
-declare var gsap: any;
 declare global {
+  var gsap: any;
   interface Window {
     StudioForm: any;
   }
@@ -14,6 +13,14 @@ declare global {
 
 // Main
 function main() {
+  // Guard
+  if (typeof window.StudioForm !== 'undefined') {
+    console.warn(
+      'StudioForm -> controller.ts -> main: Studio Form is being loaded multiple times. However, the functionality should not be affected.'
+    );
+    return;
+  }
+
   // Define
   const sdk: any[] = [];
 
@@ -39,15 +46,6 @@ function main() {
 'undefined' === typeof gsap
   ? helper.scriptLoader(
       'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js',
-      load2ndScript
+      main
     )
-  : load2ndScript();
-
-function load2ndScript() {
-  'undefined' === typeof ls
-    ? helper.scriptLoader(
-        'https://cdn.jsdelivr.net/npm/localstorage-slim',
-        main
-      )
-    : main();
-}
+  : main();

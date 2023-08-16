@@ -42,4 +42,13 @@ export default function (state: any) {
   // Swap submit buttons
   obj.swapSubmitButtons =
     (el.getAttribute('data-swap-submit-buttons') || 'true') === 'true';
+
+  // Calculate progress
+  obj.calculateProgress =
+    (el.getAttribute('data-calculate-progress') || 'false') === 'true';
+
+  // Auto remove suggested button
+  obj.autoRemoveButtonSuggestion =
+    (el.getAttribute('data-auto-remove-button-suggestion') || 'true') ===
+    'true';
 }
