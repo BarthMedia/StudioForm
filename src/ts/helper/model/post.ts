@@ -86,24 +86,9 @@ export default async function (stateId: number) {
 
   // Await
   let res: any;
-  let resData: any = {
-    msg: `Unable to ${method.toLowerCase()} the data for StudioForm[${
-      state.sdk.i
-    }]`,
-  };
   try {
     // Call
     res = await helper.getJson(apiUrl, options);
-
-    // Logic
-    if (!res.ok) {
-      throw new Error(
-        `StudioForm[${state.sdk.i}] -> post.ts -> default -> await fetch(): 'Network response was not ok'`
-      );
-    }
-
-    // Res data
-    resData = await res.json();
   } catch (err) {
     console.error(
       `StudioForm[${state.sdk.i}] -> post.ts -> default -> await fetch(): `,
@@ -117,8 +102,7 @@ export default async function (stateId: number) {
   state.sdk.data.method = method;
   state.sdk.data.payload = payload;
   state.sdk.data.response = res;
-  state.sdk.data.responseData = resData;
 
   // Return
-  return resData;
+  return res;
 }
