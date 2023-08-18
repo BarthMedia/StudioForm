@@ -8,7 +8,7 @@ import suggestButton from './suggestButton';
 // Declare
 declare global {
   interface Options {
-    checkStepRequirements?: boolean;
+    doNotCheckSlideRequirements?: boolean;
     btn?: any;
     currentSlideId?: number;
     nextSlideId?: number;
@@ -36,9 +36,9 @@ export default function init(state: any) {
     helper.triggerAllFunctions(eventFunctionArrays.afterPrev);
     return res;
   };
-  state.sdk.submit = (options: Options = {}) => {
+  state.sdk.submit = async (options: Options = {}) => {
     helper.triggerAllFunctions(eventFunctionArrays.onSubmit);
-    const res = submit(state.sdk.i, options);
+    const res = await submit(state.sdk.i, options);
     helper.triggerAllFunctions(eventFunctionArrays.afterSubmit);
     return res;
   };

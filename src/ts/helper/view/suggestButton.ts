@@ -19,7 +19,7 @@ export default function init(state: any) {
     slideId: number,
     buttonId: number
   ) {
-    console.log('I suggest that you un-suggest!');
+    clear(slideId, buttonId);
   };
 
   // * Define functions *

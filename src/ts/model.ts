@@ -3,6 +3,8 @@ import * as helper from './helper/helper';
 import modes from './helper/model/modes';
 import slideLogic from './helper/model/slideLogic';
 import calculateProgress from './helper/model/calculateProgress';
+import requirements from './helper/model/requirements';
+import post from './helper/model/post';
 
 // Main object
 export const state: any[] = [];
@@ -50,10 +52,24 @@ export function init(wrapper: HTMLElement, index: number) {
     slideLogic(index);
   };
 
+  // Post data
+  obj.sdk.data = {};
+  obj.model.post = async function () {
+    return post(index);
+  };
+
   // Calculate progress
   obj.model.generateProgressData = function () {
     const data = calculateProgress(index);
     obj.sdk.pathProgressData = data;
+  };
+
+  // Check step requirements
+  obj.sdk.slideRequirements = function (
+    slideId: number,
+    options: Options = {}
+  ) {
+    return requirements(index, slideId, options);
   };
 
   // Push

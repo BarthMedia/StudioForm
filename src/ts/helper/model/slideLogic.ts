@@ -6,9 +6,9 @@ import slideButtons from './slideButtons';
 import swapSubmitButtons from '../view/swapSubmitButtons';
 
 // Export
-export default function (index: number) {
+export default function (stateId: number) {
   // Values
-  const state = model.state[index];
+  const state = model.state[stateId];
   const slideLogic: any[] = [];
 
   // Init loop
@@ -93,9 +93,13 @@ export default function (index: number) {
       // Set last step attribute - guard
       if (btn.next === false) return true;
 
+      // Set general attrbiute
+      btn.el.setAttribute('studio-form', 'next');
+
       // Is last step guard logic
       if (slide.i >= slideLogic.length - 1) {
         btn.next = false;
+        btn.el.setAttribute('studio-form', 'submit');
         return true;
       }
 
@@ -132,6 +136,7 @@ export default function (index: number) {
           console.warn(
             `StudioForm[${state.sdk.i}] -> slideLogic.ts -> default -> slideLogic.forEach() callback -> slide.btns.every() callback: The partner slide for btns[${btn.i}].conditional === '${btn.conditional}' (in state.elements.slides[${slide.i}]) has not been found.`
           );
+          btn.el.setAttribute('studio-form', 'submit');
           btn.next = false;
         }
 

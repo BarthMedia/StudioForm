@@ -102,4 +102,7 @@ export default function (state: any) {
 
   // Clear buttons
   obj.clearBtns = el.querySelectorAll('[studio-form="clear"]');
+
+  // Data fields
+  obj.responseData = el.querySelectorAll('[studio-form="response-data"]');
 }

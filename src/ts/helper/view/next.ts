@@ -10,6 +10,13 @@ export default function (index: number, options: Options) {
   const currentSlideId: number =
     state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
 
+  // Warn guard
+  if (state.sdk.isSubmitted === true) {
+    const msg = `StudioForm[${state.sdk.i}] -> next.ts -> default: Form already submitted!`;
+    console.warn(msg);
+    return msg;
+  }
+
   // Button click case
   if (options.btn) {
     next = options.btn.next;
@@ -76,15 +83,20 @@ export default function (index: number, options: Options) {
 
   // If next === false call submit event
   if (next === false) {
-    state.sdk.submit();
+    state.sdk.submit(options);
     return;
   }
 
-  // Jump back logic   currentSlideId
-  if (next < currentSlideId) {
-    // Values
-    const i = state.sdk.slideRecord.indexOf(next);
+  // Check step requirements
+  if (!state.sdk.slideRequirements(currentSlideId, options)) {
+    return;
+  }
 
+  // * Jump back logic *
+
+  // Values
+  const i = state.sdk.slideRecord.indexOf(next);
+  if (next < currentSlideId) {
     // Guard
     if (i < 0)
       throw new Error(
@@ -93,22 +105,15 @@ export default function (index: number, options: Options) {
 
     // Slice
     state.sdk.slideRecord = state.sdk.slideRecord.slice(0, i + 1);
+  } else if (next !== currentSlideId) {
+    // Don't push duplicates
+    if (i < 0) state.sdk.slideRecord.push(next);
   }
 
-  console.log(next);
-
-  // Test for requirements
-  if (options.checkStepRequirements !== false) {
-    console.log(
-      'I test for step requirments!  === "sf-required" ;;; On label/parent click --- remove everything'
-    );
-    console.log(
-      'or remove everything when someone tries step requirements again, Store currently active elements is SDK'
-    );
-  }
-
-  console.log(
-    "On requirements checking. If closest('label') overs a label take it. --- if mode is given. ... if not just add css class for children and fire sdk event"
-  );
-  console.log('on and after suggest button');
+  // Animate
+  state.view.animate({
+    ...options,
+    currentSlideId: currentSlideId,
+    nextSlideId: next,
+  });
 }
