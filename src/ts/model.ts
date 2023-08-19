@@ -29,6 +29,9 @@ export function init(wrapper: HTMLElement, index: number) {
   // Custom code
   obj.sdk.events = {};
 
+  // Animation data
+  obj.sdk.animationData = {};
+
   // 3rd party
   obj.sdk.register = {};
 

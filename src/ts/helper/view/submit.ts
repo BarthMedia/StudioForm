@@ -24,6 +24,9 @@ export default async function (index: number, options: Options) {
     return;
   }
 
+  // Hide error message
+  state.elements.errorMsg.style.display = '';
+
   // Update model
   state.sdk.isSubmitted = true;
 
@@ -35,58 +38,82 @@ export default async function (index: number, options: Options) {
       if ((btn.el.getAttribute('data-wait') || '') === '') return;
 
       // Set data default
-      btn.textDefault = btn.el.innerText;
+      if (!btn.textDefault) btn.textDefault = btn.el.innerText;
 
       // Overwrite text
       btn.el.innerHTML = btn.el.getAttribute('data-wait');
-
-      console.log(btn.textDefault, btn.el.getAttribute('data-wait'));
     });
 
-  // Await
+  // Await response & print to sdk & DOM
   const res: JSON = await state.model.post();
+  let resVal: string | undefined;
+  try {
+    resVal =
+      state.sdk.data.status === 'fail'
+        ? state.sdk.data.response.message
+        : JSON.stringify(res, null, 2);
+  } catch (err) {
+    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Unable to produce "resVal: string" value!`;
+    console.warn(msg, err);
+  }
 
-  // Print to form elements
-  state.elements.responseData.forEach((el: HTMLElement) => {
-    el.style.whiteSpace = 'pre-wrap';
-    el.innerHTML = JSON.stringify(res, null, 2);
+  // * Print to form elements *
+  if (typeof resVal === 'string')
+    // Loop
+    state.elements.responseData.forEach((el: HTMLElement) => {
+      el.style.whiteSpace = 'pre-wrap';
+      el.innerHTML = resVal!;
+    });
+
+  // * Form failed *
+  if (state.sdk.data.status !== 'done') {
+    // SDK Logic
+
+    // Reset buttons
+    if (currentButtons)
+      currentButtons.forEach((btn: any) => {
+        // Guard
+        if ((btn.el.getAttribute('data-wait') || '') === '') return;
+
+        // Overwrite text
+        btn.el.innerHTML = btn.textDefault;
+      });
+
+    // Show error message
+    state.elements.errorMsg.style.display = 'block';
+
+    // Allow for new submmission
+    state.sdk.isSubmitted = undefined;
+
+    // Skip code below
+
+    // Return
+    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Form submission not successful!`;
+    return msg;
+  }
+
+  // Add sf-hide to everything but the success, error & form
+  state.elements.wrapper.childNodes.forEach((node: HTMLElement) => {
+    // Guard
+    if (
+      node === state.elements.mask ||
+      node === state.elements.errorMsg ||
+      node === state.elements.successMsg
+    )
+      return;
+
+    // Add class
+    node.classList.add('sf-hide');
   });
 
-  console.log(res, ' <---- add responseData to sdk');
+  // Animate
+  state.view.animate({
+    ...options,
+    currentSlideId: currentSlideId,
+    isSubmit: true,
+  });
 
-  // If status !== 200 make revert to text Default and allow submissions again
-
-  // Fire post request
-  console.log(
-    '- state.model.post(stateId -- gather data from all steps without deleting any --- allows for resuablity)'
-  );
-
-  // Make other small form to studio form as well. StudioForm === Webflow Forms
-  // Ano one normal form -- learn to perfectly immitate
-
-  // Figure out webflow submit url maybe --- or don't -- probably data not exaccesable
-  // Oh boy. Yes indeed you can. With data-wf-site on the html tag
-
-  // Post
-  // https://webflow.com/api/v1/form/628dde3ef202a7571db2ff6e
-  // 628dde3ef202a7571db2ff6e
-
-  // Simply stringify the response and put it into the success / failure message
-  // And also the sdk
-
-  // Find all submit buttons
-  console.log('Find all submit buttons and apply data-wait if applicable');
-
-  // On the other request. Format DATA exactly the way webflow would do!
-  // Properly track what was clicked and what not
-
-  console.log(
-    "Add 'sf-hide' to all elements that are not the success message. Depending on the success of the response message - if error, remove all sf-hide classes and display the error message and make  submission possible again"
-  );
-  console.log('Await response before you submit. Make it webflow like');
-
-  // Log
-  console.log(
-    '// Activate Xano mode everytime an action url is set -- do not fire when xano is turned off via attributes'
-  );
+  // Default return
+  const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Form submission successful!`;
+  return msg;
 }

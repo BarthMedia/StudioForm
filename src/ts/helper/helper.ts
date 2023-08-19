@@ -117,12 +117,16 @@ export const timeout = function (s: number, mode = 'standard') {
 };
 
 // Return JSON
-export const getJson = async function (url: string, init: object = {}) {
+export const getJson = async function (
+  url: string,
+  init: object = {},
+  timeoutSec = config.TIMEOUT_SEC
+) {
   try {
     // Values
     const res: any = await Promise.race([
       fetch(url, init),
-      timeout(config.TIMEOUT_SEC),
+      timeout(timeoutSec),
     ]);
     const data = await res.json();
 

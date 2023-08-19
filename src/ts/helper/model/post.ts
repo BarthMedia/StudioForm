@@ -1,6 +1,7 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
 export default async function (stateId: number) {
@@ -86,14 +87,23 @@ export default async function (stateId: number) {
 
   // Await
   let res: any;
+  let status = 'done';
   try {
     // Call
-    res = await helper.getJson(apiUrl, options);
+    res = await helper.getJson(
+      apiUrl,
+      options,
+      parseInt(
+        state.elements.wrapper.getAttribute('data-form-submit-timeout-sec') ||
+          config.TIMEOUT_SEC.toString()
+      )
+    );
   } catch (err) {
     console.error(
       `StudioForm[${state.sdk.i}] -> post.ts -> default -> await fetch(): `,
       err
     );
+    status = 'fail';
     res = err;
   }
 
@@ -102,6 +112,7 @@ export default async function (stateId: number) {
   state.sdk.data.method = method;
   state.sdk.data.payload = payload;
   state.sdk.data.response = res;
+  state.sdk.data.status = status;
 
   // Return
   return res;
