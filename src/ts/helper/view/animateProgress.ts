@@ -37,13 +37,49 @@ export default function (stateId: number, options: Options) {
     const isY = direction.indexOf('y') > -1;
 
     // GSAP
-    gsap.to(el, {
+    const val = {
       duration: aData.timeBoth,
-      width: isX ? pData.longest.percentage + '%' : '',
-      height: isY ? pData.longest.percentage + '%' : '',
-    });
+      width: isX
+        ? (state.sdk.isSubmitted === true ? 100 : pData.longest.percentage) +
+          '%'
+        : '',
+      height: isY
+        ? (state.sdk.isSubmitted === true ? 100 : pData.longest.percentage) +
+          '%'
+        : '',
+    };
+    gsap.to(el, val);
   });
 
-  // Log
-  console.log('Hello ', pData);
+  // * Display slides info *
+
+  // Current
+  state.elements.progress.currentSlides.forEach((el: HTMLElement) => {
+    // Alter
+    el.innerHTML = pData.longest.walked;
+  });
+
+  // Min
+  state.elements.progress.minSlides.forEach((el: HTMLElement) => {
+    // Alter
+    el.innerHTML = pData.shortest.path;
+  });
+
+  // Max
+  state.elements.progress.maxSlides.forEach((el: HTMLElement) => {
+    // Alter
+    el.innerHTML = pData.longest.path;
+  });
+
+  // Min max
+  state.elements.progress.minMaxSlides.forEach((el: HTMLElement) => {
+    // Value
+    const str: string =
+      pData.longest.path > pData.shortest.path
+        ? pData.shortest.path + ' - ' + pData.longest.path
+        : pData.longest.path;
+
+    // Alter
+    el.innerHTML = str;
+  });
 }

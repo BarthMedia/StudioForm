@@ -14,8 +14,8 @@ declare global {
     nextSlideId?: number;
     isSubmit?: boolean;
     scrollToActive?: boolean;
-    element?: HTMLElement | string;
-    offset?: HTMLElement | string;
+    target?: HTMLElement | string;
+    offset?: HTMLElement | string | number;
     attributeReferenceElement?: HTMLElement;
     doNotWaitForAnimations?: boolean;
     forceDone?: boolean;
