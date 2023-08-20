@@ -3,11 +3,22 @@ import * as helper from '../helper';
 import * as model from '../../model';
 
 // Export
-export default async function (index: number, options: Options) {
+export default async function (stateId: number, options: Options) {
   // Values
-  const state = model.state[index];
+  const state = model.state[stateId];
   const currentSlideId: number =
     state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
+
+  // Guard 0 - Let animations finish
+  if (
+    state.modes.waitForAnimations === true &&
+    options.doNotWaitForAnimations !== true &&
+    state.view.gsapTimeline.isRunning === true
+  ) {
+    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: The animation is not yet finished!`;
+    console.warn(msg);
+    return msg;
+  }
 
   // Warn guard
   if (state.sdk.isSubmitted === true) {

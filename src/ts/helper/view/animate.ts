@@ -31,14 +31,24 @@ export default function (index: number, options: Options) {
     return;
   }
 
+  // Call progress animation
+  state.view.progress(options);
+
   // * Define *
 
   // Elements
-  const currentSlide = state.sdk.slideLogic[cId];
+  const currentSlide =
+    isSubmit !== true ? state.sdk.slideLogic[cId] : { el: state.elements.mask };
   const nextSlide =
     isSubmit !== true
       ? state.sdk.slideLogic[nId!]
       : { el: state.elements.successMsg };
+  const form: HTMLElement =
+    isSubmit !== true ? state.elements.mask : state.elements.wrapper;
+  const overflowElement: HTMLElement =
+    form.closest('[studio-form="overflow-wrapper"]') ||
+    form.closest('section') ||
+    state.elements.wrapper;
 
   // * Width & height *
 
@@ -60,11 +70,11 @@ export default function (index: number, options: Options) {
   const equalDimensions =
     currentWidth === nextWidth && currentHeight === nextHeight;
   let equalDimensionsMulitplier = parseFloat(
-    nextSlide.el.getAttribute('data-slide-equal-dimensions-multiplier') ||
+    currentSlide.el.getAttribute('data-slide-equal-dimensions-multiplier') ||
       state.elements.wrapper.getAttribute(
         'data-slide-equal-dimensions-multiplier'
       ) ||
-      config.DEFAULT_SLIDE_OPACITY.toString()
+      config.DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER.toString()
   );
   equalDimensionsMulitplier = isNaN(equalDimensionsMulitplier)
     ? 0
@@ -74,12 +84,18 @@ export default function (index: number, options: Options) {
   const isReverse = isSubmit !== true ? cId > nId! : false;
 
   // Opacity
-  let opacity = parseFloat(
+  let opacityCurrent = parseFloat(
+    currentSlide.el.getAttribute('data-slide-opacity') ||
+      state.elements.wrapper.getAttribute('data-slide-opacity') ||
+      config.DEFAULT_SLIDE_OPACITY.toString()
+  );
+  opacityCurrent = isNaN(opacityCurrent) ? 0 : opacityCurrent;
+  let opacityNext = parseFloat(
     nextSlide.el.getAttribute('data-slide-opacity') ||
       state.elements.wrapper.getAttribute('data-slide-opacity') ||
       config.DEFAULT_SLIDE_OPACITY.toString()
   );
-  opacity = isNaN(opacity) ? 0 : opacity;
+  opacityNext = isNaN(opacityNext) ? 0 : opacityNext;
 
   // Z-index
   let zIndex = parseFloat(
@@ -90,7 +106,7 @@ export default function (index: number, options: Options) {
 
   // Current
   let moveCurrentMultiplier = parseFloat(
-    nextSlide.el.getAttribute('data-slide-move-current') ||
+    currentSlide.el.getAttribute('data-slide-move-current') ||
       state.elements.wrapper.getAttribute('data-slide-move-current') ||
       config.DEFAULT_SLIDE_MOVE_CURRENT.toString()
   );
@@ -98,7 +114,7 @@ export default function (index: number, options: Options) {
     ? 1
     : moveCurrentMultiplier;
   let timeCurrent = parseFloat(
-    nextSlide.el.getAttribute('data-slide-time-sec-current') ||
+    currentSlide.el.getAttribute('data-slide-time-sec-current') ||
       state.elements.wrapper.getAttribute('data-slide-time-sec-current') ||
       config.DEFAULT_SLIDE_TIME_CURRENT.toString()
   );
@@ -106,13 +122,13 @@ export default function (index: number, options: Options) {
 
   // Next
   let moveNextMultiplier = parseFloat(
-    nextSlide.el.getAttribute('data-slide-move-next') ||
+    currentSlide.el.getAttribute('data-slide-move-next') ||
       state.elements.wrapper.getAttribute('data-slide-move-next') ||
       config.DEFAULT_SLIDE_MOVE_NEXT.toString()
   );
   moveNextMultiplier = isNaN(moveNextMultiplier) ? 1 : moveNextMultiplier;
   let timeNext = parseFloat(
-    nextSlide.el.getAttribute('data-slide-time-sec-next') ||
+    currentSlide.el.getAttribute('data-slide-time-sec-next') ||
       state.elements.wrapper.getAttribute('data-slide-time-sec-next') ||
       config.DEFAULT_SLIDE_TIME_NEXT.toString()
   );
@@ -120,12 +136,12 @@ export default function (index: number, options: Options) {
 
   // Direction math
   let direction: number = parseFloat(
-    nextSlide.el.getAttribute('data-slide-direction') ||
+    currentSlide.el.getAttribute('data-slide-direction') ||
       state.elements.wrapper.getAttribute('data-slide-direction')
   );
   direction = isNaN(direction) ? config.DEFAULT_SLIDE_DIRECTION : direction;
-  direction = Math.min(Math.max(direction, 0), 359.9999);
-  const angle = ((direction - 90) / 180) * Math.PI * (isReverse ? -1 : 1);
+  direction = Math.min(Math.max(direction, 0), 359.9999) * (isReverse ? -1 : 1);
+  const angle = ((direction - 90) * Math.PI) / 180;
 
   // Calculate x & y
   const xCurrent = currentWidth * moveCurrentMultiplier * Math.cos(angle) * -1;
@@ -136,9 +152,14 @@ export default function (index: number, options: Options) {
   // * Update animationData sdk *
   state.sdk.animationData = {
     ...state.sdk.animationData,
+    currentElement: currentSlide.el,
+    nextElement: nextSlide.el,
+    parentElement: form,
+    overflowElement: overflowElement,
     direction: direction,
     angle: angle,
-    opacity: opacity,
+    opacityNext: opacityNext,
+    opacityCurrent: opacityCurrent,
     zIndex: zIndex,
     xCurrent: xCurrent,
     yCurrent: yCurrent,
@@ -156,27 +177,160 @@ export default function (index: number, options: Options) {
     equalDimensionsMulitplier: equalDimensionsMulitplier,
   };
 
-  //
+  // * Main animation *
 
-  //
+  // Values
+  const tl = gsap.timeline();
+  const gsapObj = state.view.gsapTimeline;
 
-  //
+  // Clear existing timeline
+  if (gsapObj.isRunning) {
+    gsapObj.tl.progress();
+    gsapObj.tl.clear();
+  }
 
-  // Log
-  console.log('Make short term z-index attributable');
-  console.log(
-    'The next slide always shall have higher z-index, then the current -- will be removed at end'
+  // Values
+  gsapObj.tl = tl;
+  gsapObj.isRunning = true;
+
+  // * Initial set *
+
+  // Overflow
+  tl.set(overflowElement, {
+    overflow: 'hidden',
+  });
+
+  // Form
+  tl.set(form, {
+    width: currentWidth,
+    height: currentHeight,
+    position: 'relative',
+  });
+
+  // Current
+  tl.set(currentSlide.el, {
+    x: 0,
+    y: 0,
+    opacity: 1,
+    display: '',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+  });
+
+  // Next
+  tl.set(nextSlide.el, {
+    x: xNext,
+    y: yNext,
+    opacity: opacityNext,
+    zIndex: zIndex,
+    display: isSubmit !== true ? '' : 'block',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    right: 0,
+  });
+
+  // * Timeline animation *
+
+  // Current
+  tl.to(currentSlide.el, {
+    duration: timeCurrent,
+    x: xCurrent,
+    y: yCurrent,
+    opacity: opacityCurrent,
+  });
+
+  // Form - height / width adjustment
+  tl.to(
+    form,
+    {
+      duration: timeCurrent,
+      width: Math.max(currentWidth, nextWidth),
+      height: Math.max(currentHeight, nextHeight),
+    },
+    `<`
   );
 
-  //
-  console.log(
-    'On is submit! Display the element as block -- else remove display value'
-  );
-  console.log(
-    'Only do the hiding once the complete animation is done -- also reset x and y'
+  // Next
+  tl.to(
+    nextSlide.el,
+    {
+      duration: timeNext,
+      x: 0,
+      y: 0,
+      opacity: 1,
+    },
+    `<+=${
+      equalDimensions ? timeCurrent * equalDimensionsMulitplier : timeCurrent
+    }`
   );
 
-  console.log(direction);
-  // Fire animateProgress.ts
-  console.log('Fire progress animation');
+  // Form - height / width adjustment
+  tl.to(
+    form,
+    {
+      duration: timeNext,
+      width: nextWidth,
+      height: nextHeight,
+    },
+    `<`
+  );
+
+  // * Reset styles *
+
+  // Current
+  tl.set(currentSlide.el, {
+    x: '',
+    y: '',
+    opacity: '',
+    display: 'none',
+    position: '',
+    left: '',
+    top: '',
+    right: '',
+    bottom: '',
+  });
+
+  // Next
+  tl.set(nextSlide.el, {
+    x: '',
+    y: '',
+    opacity: '',
+    zIndex: '',
+    position: '',
+    left: '',
+    top: '',
+    right: '',
+    bottom: '',
+  });
+
+  // Form
+  tl.set(form, {
+    width: '',
+    height: '',
+    position: '',
+  });
+
+  // Remove all styling
+  // [currentSlide.el, nextSlide.el, form].forEach((el: HTMLElement) => {
+  //   el.style.removeProperty('translate');
+  //   el.style.removeProperty('rotate');
+  //   el.style.removeProperty('scale');
+  //   el.style.removeProperty('transfrom');
+  // });
+
+  // Overflow
+  tl.set(overflowElement, {
+    overflow: '',
+  });
+
+  // Animation done call
+  tl.call(() => {
+    gsapObj.isRunning = undefined;
+  });
+
+  // * Call anchor animation *
+  state.sdk.scrollTo({ ...options, attributeReferenceElement: nextSlide.el });
 }

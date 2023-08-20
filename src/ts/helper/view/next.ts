@@ -3,12 +3,23 @@ import * as helper from '../helper';
 import * as model from '../../model';
 
 // Export
-export default function (index: number, options: Options) {
+export default function (stateId: number, options: Options) {
   // Values
-  const state = model.state[index];
+  const state = model.state[stateId];
   let next: number | undefined | boolean;
   const currentSlideId: number =
     state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
+
+  // Guard 0 - Let animations finish
+  if (
+    state.modes.waitForAnimations === true &&
+    options.doNotWaitForAnimations !== true &&
+    state.view.gsapTimeline.isRunning === true
+  ) {
+    const msg = `StudioForm[${state.sdk.i}] -> next.ts -> default: The animation is not yet finished!`;
+    console.warn(msg);
+    return msg;
+  }
 
   // Warn guard
   if (state.sdk.isSubmitted === true) {
@@ -61,7 +72,8 @@ export default function (index: number, options: Options) {
       // If not found suggest the first button
       if (!suggestedBtnFound) {
         // Suggest btn[0]
-        state.sdk.suggestButton(currentSlideId, 0);
+        if (state.modes.autoSuggestButtons)
+          state.sdk.suggestButton(currentSlideId, 0);
 
         // Skip code below
         return {
@@ -110,10 +122,19 @@ export default function (index: number, options: Options) {
     if (i < 0) state.sdk.slideRecord.push(next);
   }
 
-  // Animate
+  // * Animate *
+
+  // Main
   state.view.animate({
     ...options,
     currentSlideId: currentSlideId,
     nextSlideId: next,
   });
+
+  // Prev buttons
+  if (next > currentSlideId)
+    state.elements.prevBtns.forEach((btn: HTMLElement) => {
+      // Style init
+      btn.classList.remove('sf-hide');
+    });
 }

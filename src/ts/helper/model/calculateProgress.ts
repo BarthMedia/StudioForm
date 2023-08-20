@@ -11,10 +11,6 @@ export default function (i: number) {
   // state.sdk.slideRecord = [0];
 
   // Guard
-  if (state.elements.progress.bars.length < 1 && !state.modes.calculateProgress)
-    return;
-
-  // Guard
   if (state.sdk.slideLogic.length < 1 || state.sdk.slideRecord.length < 1)
     throw new Error(
       `StudioForm[${state.sdk.i}] -> calculateProgress.ts -> default: state.sdk.slideLogic.length and/or state.sdk.slideRecord.length can't equal 0`

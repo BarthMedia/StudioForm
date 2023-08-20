@@ -22,7 +22,8 @@ export default async function (stateId: number) {
   // * Find all data and store in object for post request *
 
   // Define payload
-  const fields: any[] = [];
+  const fields: { key: string; value: string }[] = [];
+  const files: { key: string; value: File }[] = [];
   const payload = {
     name: form.getAttribute('data-name'),
     pageId: document.querySelector('html')?.getAttribute('data-wf-page'),
@@ -31,6 +32,8 @@ export default async function (stateId: number) {
     // test: false,
     // dolphin: false,
   };
+
+  // * Make async call *
 
   // Find all fields
   state.sdk.slideRecord.forEach((id: number) => {
@@ -42,23 +45,46 @@ export default async function (stateId: number) {
 
     // Loop
     inputs.forEach(input => {
-      fields.push({
-        key:
-          input.getAttribute('data-name') ||
-          input.getAttribute('name') ||
-          input.getAttribute('id') ||
-          input.getAttribute('class') ||
-          input.getAttribute('type') ||
-          input.tagName,
-        value: input.value,
-      });
+      // Values
+      const key =
+        input.getAttribute('data-name') ||
+        input.getAttribute('name') ||
+        input.getAttribute('id') ||
+        input.getAttribute('class') ||
+        input.getAttribute('type') ||
+        input.tagName;
+
+      // Logic
+      if (input.type !== 'file')
+        fields.push({
+          key: key,
+          value: input.value,
+        });
+      else {
+        if (input.files) {
+          for (let i = 0, n = input.files.length; i < n; i++) {
+            console.log('file: ', input.files[i]);
+            files.push({ key: `${key}][${i}`, value: input.files[i] });
+          }
+        }
+      }
     });
   });
 
   // Fields loop
+  const isFiles = files.length > 0;
   fields.forEach((field: { key: string; value: any }) => {
     payload[`fields[${field.key}]`] = field.value;
   });
+  files.forEach(file => {
+    payload[`files[${file.key}]`] = file.value;
+  });
+
+  // Iterate through the JSON object and add properties to formData
+  const formData = isFiles ? new FormData() : new URLSearchParams();
+  for (const key in payload) {
+    formData.append(key, payload[key]);
+  }
 
   // * If form has specified action attribute *
   if (form.getAttribute('action') || '' !== '') {
@@ -67,23 +93,16 @@ export default async function (stateId: number) {
     apiUrl = form.getAttribute('action') || '';
   }
 
-  // * Make async call *
-
-  // Iterate through the JSON object and add properties to formData
-  const formData = new URLSearchParams();
-  for (const key in payload) {
-    formData.append(key, payload[key]);
-  }
-
   // Create the options for the fetch request
-  const options = {
+  const options: any = {
     method: method,
     headers: {
       Accept: 'application/json, text/javascript, */*; q=0.01',
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
     },
-    body: formData.toString(),
+    body: isFiles ? formData : formData.toString(),
   };
+  if (isFiles) delete options.headers;
 
   // Await
   let res: any;
@@ -109,6 +128,7 @@ export default async function (stateId: number) {
 
   // Add to sdk
   state.sdk.data.endpoint = apiUrl;
+  state.sdk.data.options = options;
   state.sdk.data.method = method;
   state.sdk.data.payload = payload;
   state.sdk.data.response = res;

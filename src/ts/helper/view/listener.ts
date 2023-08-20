@@ -13,6 +13,11 @@ declare global {
     currentSlideId?: number;
     nextSlideId?: number;
     isSubmit?: boolean;
+    scrollToActive?: boolean;
+    element?: HTMLElement | string;
+    offset?: HTMLElement | string;
+    attributeReferenceElement?: HTMLElement;
+    doNotWaitForAnimations?: boolean;
   }
 }
 
@@ -65,10 +70,14 @@ export default function init(state: any) {
     })
   );
 
-  // Prev buttons
-  state.elements.prevBtns.forEach((btn: HTMLElement) =>
+  // * Prev buttons *
+  state.elements.prevBtns.forEach((btn: HTMLElement) => {
+    // Style init
+    btn.classList.add('sf-hide');
+
+    // SDK
     btn.addEventListener('click', () => {
       state.sdk.prev();
-    })
-  );
+    });
+  });
 }

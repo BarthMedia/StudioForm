@@ -51,4 +51,16 @@ export default function (state: any) {
   obj.autoRemoveButtonSuggestion =
     (el.getAttribute('data-auto-remove-button-suggestion') || 'true') ===
     'true';
+
+  // Auto  suggested buttons
+  obj.autoSuggestButtons =
+    (el.getAttribute('data-auto-suggest-buttons') || 'true') === 'true';
+
+  // Active scroll to
+  obj.scrollToActive =
+    (el.getAttribute('data-auto-scroll-to-active') || 'true') === 'true';
+
+  // Wait for animations to finish
+  obj.waitForAnimations =
+    (el.getAttribute('data-wait-for-animations') || 'true') === 'true';
 }
