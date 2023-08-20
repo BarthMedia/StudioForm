@@ -20,11 +20,30 @@ export default function (stateId: number, options: Options) {
 
   // Calculate progress
   state.model.generateProgressData();
-  const data = state.sdk.pathProgressData;
+  const pData = state.sdk.pathProgressData;
+  const aData = state.sdk.animationData;
 
   // Guard
-  if (data === undefined) return;
+  if (typeof pData !== 'object')
+    throw new Error(
+      `StudioForm[${state.sdk.i}] -> animateProgress.ts -> default: pathProgressData is not an object!`
+    );
+
+  // Animate progress bars
+  state.elements.progress.bars.forEach((el: HTMLElement) => {
+    // Values
+    const direction = el.getAttribute('data-axis') || 'x';
+    const isX = direction.indexOf('x') > -1;
+    const isY = direction.indexOf('y') > -1;
+
+    // GSAP
+    gsap.to(el, {
+      duration: aData.timeBoth,
+      width: isX ? pData.longest.percentage + '%' : '',
+      height: isY ? pData.longest.percentage + '%' : '',
+    });
+  });
 
   // Log
-  console.log('Hello ', data);
+  console.log('Hello ', pData);
 }

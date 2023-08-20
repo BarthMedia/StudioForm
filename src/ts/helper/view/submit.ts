@@ -77,7 +77,7 @@ export default async function (stateId: number, options: Options) {
     });
 
   // * Form failed *
-  if (state.sdk.data.status !== 'done') {
+  if (state.sdk.data.status !== 'done' && options.forceDone !== true) {
     // SDK Logic
 
     // Reset buttons
@@ -93,6 +93,16 @@ export default async function (stateId: number, options: Options) {
     // Show error message
     state.elements.errorMsg.style.display = 'block';
 
+    // On click event error message
+    if (state.modes.hideErrorMessageOnClick)
+      document.body.addEventListener(
+        'click',
+        function () {
+          state.elements.errorMsg.style.display = '';
+        },
+        { once: true }
+      );
+
     // Allow for new submmission
     state.sdk.isSubmitted = undefined;
 
@@ -102,6 +112,8 @@ export default async function (stateId: number, options: Options) {
     const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Form submission not successful!`;
     return msg;
   }
+
+  // * Form success *
 
   // Add sf-hide to everything but the success, error & form
   state.elements.wrapper.childNodes.forEach((node: HTMLElement) => {

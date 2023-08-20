@@ -31,9 +31,6 @@ export default function (index: number, options: Options) {
     return;
   }
 
-  // Call progress animation
-  state.view.progress(options);
-
   // * Define *
 
   // Elements
@@ -140,7 +137,8 @@ export default function (index: number, options: Options) {
       state.elements.wrapper.getAttribute('data-slide-direction')
   );
   direction = isNaN(direction) ? config.DEFAULT_SLIDE_DIRECTION : direction;
-  direction = Math.min(Math.max(direction, 0), 359.9999) * (isReverse ? -1 : 1);
+  direction =
+    Math.min(Math.max(direction, 0), 359.9999) - (isReverse ? -180 : 0);
   const angle = ((direction - 90) * Math.PI) / 180;
 
   // Calculate x & y
@@ -175,6 +173,9 @@ export default function (index: number, options: Options) {
     timeNext: timeCurrent,
     equalDimensions: equalDimensions,
     equalDimensionsMulitplier: equalDimensionsMulitplier,
+    timeBoth:
+      timeCurrent * (equalDimensions ? equalDimensionsMulitplier : 1) +
+      timeNext,
   };
 
   // * Main animation *
@@ -330,6 +331,11 @@ export default function (index: number, options: Options) {
   tl.call(() => {
     gsapObj.isRunning = undefined;
   });
+
+  // * Other animations *
+
+  // Call progress animation
+  state.view.progress(options);
 
   // * Call anchor animation *
   state.sdk.scrollTo({ ...options, attributeReferenceElement: nextSlide.el });

@@ -18,6 +18,7 @@ declare global {
     offset?: HTMLElement | string;
     attributeReferenceElement?: HTMLElement;
     doNotWaitForAnimations?: boolean;
+    forceDone?: boolean;
   }
 }
 

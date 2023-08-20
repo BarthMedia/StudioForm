@@ -63,4 +63,8 @@ export default function (state: any) {
   // Wait for animations to finish
   obj.waitForAnimations =
     (el.getAttribute('data-wait-for-animations') || 'true') === 'true';
+
+  // Hide error message on click
+  obj.hideErrorMessageOnClick =
+    (el.getAttribute('data-hide-error-message-on-click') || 'true') === 'true';
 }
