@@ -50,6 +50,14 @@ export default function init(state: any) {
     return res;
   };
 
+  // TODO !!!
+  console.log(
+    'create effective and accurate value listeneing of radios and checkboxes -- checked and pre selected states in mind'
+  );
+  console.log(
+    'On Radio & Checkbox steps at least one field has to be on / off and true / false!s'
+  );
+
   // Initialize suggest button
   suggestButton(state);
 

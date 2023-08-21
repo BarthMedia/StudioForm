@@ -67,4 +67,8 @@ export default function (state: any) {
   // Hide error message on click
   obj.hideErrorMessageOnClick =
     (el.getAttribute('data-hide-error-message-on-click') || 'true') === 'true';
+
+  // Scroll on requirements error
+  obj.scrollOnRequirementsError =
+    (el.getAttribute('data-scroll-on-requirements-error') || 'true') === 'true';
 }

@@ -5,6 +5,7 @@ import animate from './helper/view/animate';
 import * as helper from './helper/helper';
 import animateProgress from './helper/view/animateProgress';
 import anchor from './helper/view/anchor';
+import required from './helper/view/required';
 
 // Export
 export default function init(state: any) {
@@ -31,11 +32,19 @@ export default function init(state: any) {
   const eventFunctionArrays = state.view.eventsFunctionArrays;
   helper.addEventsInfrastrucutre(state, 'Animate');
 
-  // State
+  // State view
   state.view.animate = function (options: Options = {}) {
     helper.triggerAllFunctions(eventFunctionArrays.onAnimate);
     animate(state.sdk.i, options);
     helper.triggerAllFunctions(eventFunctionArrays.afterAnimate);
+  };
+
+  // Render error endpoint
+  helper.addEventsInfrastrucutre(state, 'RenderRequirements');
+  state.view.renderRequirements = function (data = []) {
+    helper.triggerAllFunctions(eventFunctionArrays.onRenderRequirements);
+    required(state.sdk.i, data);
+    helper.triggerAllFunctions(eventFunctionArrays.afterRenderRequirements);
   };
 
   // * Init initial style *
