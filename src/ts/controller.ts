@@ -46,6 +46,9 @@ function main() {
 'undefined' === typeof gsap
   ? helper.scriptLoader(
       'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js',
-      main
+      loaderLogic
     )
-  : main();
+  : loaderLogic();
+function loaderLogic() {
+  document.addEventListener('DOMContentLoaded', main);
+}
