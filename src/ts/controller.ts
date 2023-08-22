@@ -50,5 +50,12 @@ function main() {
     )
   : loaderLogic();
 function loaderLogic() {
-  document.addEventListener('DOMContentLoaded', main);
+  // Check if DOM is already loaded
+  if (document.readyState === 'loading') {
+    // If DOM is not loaded, add an event listener
+    document.addEventListener('DOMContentLoaded', main);
+  } else {
+    // If DOM is already loaded, immediately call the callback
+    main();
+  }
 }
