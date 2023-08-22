@@ -52,6 +52,7 @@ export default function (stateId: number, options: Options) {
     } else {
       // Values
       let suggestedBtnFound = false;
+      let suggestedBtnIndex: number;
 
       // Loop for suggested button
       currentSlide.btns.every((btn: any) => {
@@ -60,6 +61,7 @@ export default function (stateId: number, options: Options) {
           // Update
           next = btn.next;
           suggestedBtnFound = true;
+          suggestedBtnIndex = btn.i;
 
           // Break
           return false;
@@ -68,6 +70,24 @@ export default function (stateId: number, options: Options) {
         // Continue
         return true;
       });
+
+      // Return and click specific button
+      if (suggestedBtnFound) {
+        // Elements
+        const btnEL: HTMLElement = currentSlide.btns[suggestedBtnIndex!].el;
+
+        // Action
+        btnEL.click();
+
+        // Return
+        return {
+          msg: `StudioForm[${state.sdk.i}] -> state.sdk.slideLogic[${
+            currentSlide.i
+          }] -> .btns[${suggestedBtnIndex!}] was clicked!`,
+          slideId: currentSlide.i,
+          buttonId: suggestedBtnIndex!,
+        };
+      }
 
       // If not found suggest the first button
       if (!suggestedBtnFound) {

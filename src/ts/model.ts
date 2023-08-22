@@ -69,11 +69,17 @@ export function init(wrapper: HTMLElement, index: number) {
   };
 
   // Check step requirements
+  const eventFunctionArrays = obj.view.eventsFunctionArrays;
+  helper.addEventsInfrastrucutre(obj, 'CheckSlideRequirements');
+  obj.sdk.slideRequirementsData = {};
   obj.sdk.slideRequirements = function (
     slideId: number,
     options: Options = {}
   ) {
-    return requirements(index, slideId, options);
+    helper.triggerAllFunctions(eventFunctionArrays.onCheckSlideRequirements);
+    const res = requirements(index, slideId, options);
+    helper.triggerAllFunctions(eventFunctionArrays.afterCheckSlideRequirements);
+    return res;
   };
 
   // Push

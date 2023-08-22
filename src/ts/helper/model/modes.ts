@@ -32,6 +32,9 @@ export default function (state: any) {
 
   // Slider mode
   obj.isWfForm = el.classList.contains('w-form');
+  obj.isSlider =
+    !obj.isWfForm ||
+    (el.getAttribute('data-is-slider-mode') || 'false') === 'true';
 
   // Remove conditionally invisible slides
   obj.removeRequiredAttributeFromCheckboxAndRadioOnlys =

@@ -4,6 +4,7 @@ import next from './next';
 import prev from './prev';
 import submit from './submit';
 import suggestButton from './suggestButton';
+import radioCheckboxValueCorrector from './radioCheckboxValueCorrector';
 
 // Declare
 declare global {
@@ -19,6 +20,7 @@ declare global {
     attributeReferenceElement?: HTMLElement;
     doNotWaitForAnimations?: boolean;
     forceDone?: boolean;
+    doNotAnimate?: boolean;
   }
 }
 
@@ -50,13 +52,8 @@ export default function init(state: any) {
     return res;
   };
 
-  // TODO !!!
-  console.log(
-    'create effective and accurate value listeneing of radios and checkboxes -- checked and pre selected states in mind'
-  );
-  console.log(
-    'On Radio & Checkbox steps at least one field has to be on / off and true / false!s'
-  );
+  // Achieve correct values
+  radioCheckboxValueCorrector(state);
 
   // Initialize suggest button
   suggestButton(state);

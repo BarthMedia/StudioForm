@@ -9,6 +9,13 @@ export default async function (stateId: number, options: Options) {
   const currentSlideId: number =
     state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
 
+  // Slider mode guard
+  if (state.modes.isSlider === true) {
+    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Slider mode doesn't allow for submission!`;
+    console.warn(msg);
+    return msg;
+  }
+
   // Guard 0 - Let animations finish
   if (
     state.modes.waitForAnimations === true &&

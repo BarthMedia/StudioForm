@@ -13,7 +13,7 @@ import * as helper from '../helper';
 import * as model from '../../model';
 
 // Export
-export default function (stateId: number, data: any[]) {
+export default function (stateId: number, data: { el: HTMLElement }[]) {
   // Values
   const state = model.state[stateId];
 
@@ -28,7 +28,7 @@ export default function (stateId: number, data: any[]) {
   // Scroll to the first element
   if (state.modes.scrollOnRequirementsError)
     state.sdk.scrollTo({
-      target: data[0].el,
+      target: data[0].el.closest('label, [studio-form="label"]') || data[0].el,
       attributeReferenceElement:
         state.sdk.slideLogic[state.sdk.slideLogic.length - 1].el,
     });
@@ -38,7 +38,8 @@ export default function (stateId: number, data: any[]) {
     // Add class loop
     data.forEach((datum: { el: HTMLElement }) => {
       // Elements
-      const parent = datum.el.closest('label') || datum.el;
+      const parent =
+        datum.el.closest('label, [studio-form="label"]') || datum.el;
       const elements: any[] = [parent];
       const childNodes = parent.querySelectorAll('*');
       childNodes.forEach(node => elements.push(node));
@@ -56,7 +57,8 @@ export default function (stateId: number, data: any[]) {
         // Remove class loop
         data.forEach((datum: { el: HTMLElement }) => {
           // Elements
-          const parent = datum.el.closest('label') || datum.el;
+          const parent =
+            datum.el.closest('label, [studio-form="label"]') || datum.el;
           const elements: any[] = [parent];
           const childNodes = parent.querySelectorAll('*');
           childNodes.forEach(node => elements.push(node));

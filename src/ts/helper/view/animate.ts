@@ -11,6 +11,9 @@ export default function (index: number, options: Options) {
   const nId = options.nextSlideId;
   const isSubmit = options.isSubmit;
 
+  // Guard 0 - Do not animate mode
+  if (options.doNotAnimate) return;
+
   // Guard 1
   if (typeof cId !== 'number')
     throw new Error(

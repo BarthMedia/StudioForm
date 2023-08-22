@@ -54,6 +54,10 @@ export default async function (stateId: number) {
         input.getAttribute('type') ||
         input.tagName;
 
+      // Radio edgecase
+      if (input.type === 'radio' && !input.hasAttribute('data-selected'))
+        return;
+
       // Logic
       if (input.type !== 'file')
         fields.push({
@@ -63,7 +67,6 @@ export default async function (stateId: number) {
       else {
         if (input.files) {
           for (let i = 0, n = input.files.length; i < n; i++) {
-            console.log('file: ', input.files[i]);
             files.push({ key: `${key}][${i}`, value: input.files[i] });
           }
         }

@@ -32,7 +32,7 @@ export default function (type: string, slide: HTMLElement, state: any) {
   if (type === 'radio') {
     inputs.forEach((input, index) => {
       // Elments
-      const button = input.closest('label');
+      const button = input.closest('label, [studio-form="label"]');
 
       // Modify
       modifyObj(button, index);
