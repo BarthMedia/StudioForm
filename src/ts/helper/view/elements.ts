@@ -78,10 +78,18 @@ export default function (state: any) {
   obj.progress.minSlides = el.querySelectorAll('[studio-form="min-slides"]');
   obj.progress.maxSlides = el.querySelectorAll('[studio-form="max-slides"]');
 
-  // Backwards & forwards buttons
-  obj.prevBtns = el.querySelectorAll(
-    '[studio-form="prev"], [studio-form="Backwards Button"]'
-  );
+  // * Backwards & forwards buttons *
+
+  // Prev
+  obj.prevBtns = [];
+  el.querySelectorAll(
+    `[studio-form="prev"], [studio-form="Backwards Button"]`
+  ).forEach(el => obj.prevBtns.push(el));
+  document
+    .querySelectorAll(`[studio-form-${state.sdk.i}="prev"`)
+    .forEach(el => obj.prevBtns.push(el));
+
+  // Next
   obj.nextBtns = [];
   for (let i = 0, n = el.childNodes.length; i < n; i++) {
     // Elements
@@ -99,9 +107,18 @@ export default function (state: any) {
         });
     });
   }
+  document
+    .querySelectorAll(`[studio-form-${state.sdk.i}="next"`)
+    .forEach(el => obj.nextBtns.push(el));
 
   // Clear buttons
-  obj.clearBtns = el.querySelectorAll('[studio-form="clear"]');
+  obj.clearBtns = [];
+  el.querySelectorAll('[studio-form="clear"]').forEach(el =>
+    obj.clearBtns.push(el)
+  );
+  document
+    .querySelectorAll(`[studio-form-${state.sdk.i}="clear"`)
+    .forEach(el => obj.clearBtns.push(el));
 
   // Data fields
   obj.responseData = el.querySelectorAll('[studio-form="response-data"]');
