@@ -41,8 +41,10 @@ export default function (stateId: number, options: Options) {
     : state.elements.wrapper;
   let offset: any = helper.isElement(options.offset)
     ? options.target
-    : offsetSelector !== '' && typeof options.offset === 'string'
-    ? document.querySelector(offsetSelector)
+    : offsetSelector !== ''
+    ? document.querySelector(
+        typeof options.offset === 'string' ? options.offset : offsetSelector
+      )
     : null;
   offset =
     typeof options.offset === 'number'
