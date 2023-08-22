@@ -30,7 +30,14 @@ export default function (stateId: number, options: Options) {
     );
 
   // Animate progress bars
-  state.elements.progress.bars.forEach((el: HTMLElement) => {
+  let bars: any[] = [];
+  [
+    state.elements.progress.bars,
+    document.querySelectorAll(`[studio-form-${state.sdk.i}="progress-bar"`),
+  ].forEach((list: any[]) =>
+    list.forEach((item: HTMLElement) => bars.push(item))
+  );
+  bars.forEach((el: HTMLElement) => {
     // Values
     const direction = el.getAttribute('data-axis') || 'x';
     const isX = direction.indexOf('x') > -1;
