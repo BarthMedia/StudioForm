@@ -1,13 +1,3 @@
-// Add nice classes to elements
-
-// Only run if mode allows ?
-
-// Scroll to error elements if mode allows?
-// Use approriate reference element
-// Only ... need the last element of the slideRecord / slideRecord
-
-// Need state as always
-
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
@@ -25,13 +15,44 @@ export default function (stateId: number, data: { el: HTMLElement }[]) {
     return;
   }
 
-  // Scroll to the first element
-  if (state.modes.scrollOnRequirementsError)
+  // * Scroll to the first element and if not visible *
+
+  // Calculate
+  const target =
+    data[0].el.closest('label, [studio-form="label"]') || data[0].el;
+  const targetRect = target.getBoundingClientRect();
+  const viewportHeight =
+    window.innerHeight || document.documentElement.clientHeight;
+  const viewportWidth =
+    window.innerWidth || document.documentElement.clientWidth;
+  const isFullyVisible =
+    targetRect.top >= 0 &&
+    targetRect.bottom <= viewportHeight &&
+    targetRect.left >= 0 &&
+    targetRect.right <= viewportWidth;
+
+  // Logic
+  if (
+    (state.modes.scrollOnRequirementsError && !isFullyVisible) ||
+    state.modes.forceScrollOnRequirementsError
+  )
     state.sdk.scrollTo({
-      target: data[0].el.closest('label, [studio-form="label"]') || data[0].el,
+      target: target,
       attributeReferenceElement:
         state.sdk.slideLogic[state.sdk.slideLogic.length - 1].el,
+      callback: (success: boolean) => {
+        if (state.modes.nativeReportVadility && success)
+          state.elements.mask.reportValidity();
+      },
     });
+
+  // Declare native error
+  if (
+    state.modes.nativeReportVadility &&
+    isFullyVisible &&
+    !state.modes.forceScrollOnRequirementsError
+  )
+    state.elements.mask.reportValidity();
 
   // Delay
   setTimeout(() => {

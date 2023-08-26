@@ -21,6 +21,7 @@ declare global {
     doNotWaitForAnimations?: boolean;
     forceDone?: boolean;
     doNotAnimate?: boolean;
+    callback?: (success: boolean) => void;
   }
 }
 

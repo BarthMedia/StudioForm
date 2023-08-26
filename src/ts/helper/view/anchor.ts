@@ -61,6 +61,45 @@ export default function (stateId: number, options: Options) {
     behavior: 'smooth',
   });
 
+  // Event listener
+  let timeoutId: any; // To store the timeout ID
+
+  // Define
+  function scrollListener() {
+    // Check if scrolling has reached the target element
+    if (Math.round(window.scrollY) === Math.round(y)) {
+      // Remove the event listener to avoid unnecessary callbacks
+      window.removeEventListener('scroll', scrollListener);
+
+      // Clear the timeout to prevent the callback from firing due to timeout
+      clearTimeout(timeoutId);
+
+      // Call the provided callback function
+      if (typeof options.callback === 'function') {
+        options.callback(true);
+      }
+    }
+  }
+
+  // Listen for the 'scroll' event on the scrolling container (usually the window)
+  window.addEventListener('scroll', scrollListener);
+
+  // Set a timeout for the given duration
+  timeoutId = setTimeout(function () {
+    // Remove the event listener if the timeout expires
+    window.removeEventListener('scroll', scrollListener);
+
+    // Callback
+    if (typeof options.callback === 'function') {
+      options.callback(false);
+    }
+
+    // Warn
+    console.warn(
+      `StudioForm[${state.sdk.i}] -> anchor.ts -> default -> setTimeout() callback: Scrolling operation timed out.`
+    );
+  }, config.TIMEOUT_SEC * 1000);
+
   // Update animationData
   state.sdk.animationData.scrollToY = y;
   state.sdk.animationData.scrollToTarget = target;

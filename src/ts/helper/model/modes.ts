@@ -74,4 +74,13 @@ export default function (state: any) {
   // Scroll on requirements error
   obj.scrollOnRequirementsError =
     (el.getAttribute('data-scroll-on-requirements-error') || 'true') === 'true';
+
+  // Force scroll on requirements error
+  obj.forceScrollOnRequirementsError =
+    (el.getAttribute('data-force-scroll-on-requirements-error') || 'false') ===
+    'true';
+
+  // Report native vadility
+  obj.nativeReportVadility =
+    (el.getAttribute('data-native-report-vadility') || 'true') === 'true';
 }
