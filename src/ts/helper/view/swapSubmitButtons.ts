@@ -15,10 +15,21 @@ export default function (slide: HTMLElement, state: any) {
 
   // Loop
   submits.forEach(submit => {
+    // Step 2: Extract input element attributes
+    const attributes = submit.attributes;
+    const attributesObj = {};
+
+    for (const attr of attributes) {
+      attributesObj[attr.name] = attr.value;
+    }
+
     // Create
     const btn = document.createElement('a');
-    btn.setAttribute('class', submit.classList.value);
-    btn.setAttribute('data-wait', submit.getAttribute('data-wait') || '');
+    for (const attrName in attributesObj) {
+      btn.setAttribute(attrName, attributesObj[attrName]);
+    }
+    btn.removeAttribute('type');
+    btn.removeAttribute('value');
     btn.setAttribute('studio-form', 'submit');
     btn.innerHTML = submit.getAttribute('value') || '';
 
