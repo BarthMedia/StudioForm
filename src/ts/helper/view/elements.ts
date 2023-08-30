@@ -111,14 +111,14 @@ export default function (state: any) {
     .querySelectorAll(`[studio-form-${state.sdk.i}="next"`)
     .forEach(el => obj.nextBtns.push(el));
 
-  // Clear buttons
-  obj.clearBtns = [];
-  el.querySelectorAll('[studio-form="clear"]').forEach(el =>
-    obj.clearBtns.push(el)
-  );
-  document
-    .querySelectorAll(`[studio-form-${state.sdk.i}="clear"`)
-    .forEach(el => obj.clearBtns.push(el));
+  // Clear buttons --- Used within Form Memory extension.
+  // obj.clearBtns = [];
+  // el.querySelectorAll('[studio-form="clear"]').forEach(el =>
+  //   obj.clearBtns.push(el)
+  // );
+  // document
+  //   .querySelectorAll(`[studio-form-${state.sdk.i}="clear"`)
+  //   .forEach(el => obj.clearBtns.push(el));
 
   // Data fields
   obj.responseData = el.querySelectorAll('[studio-form="response-data"]');

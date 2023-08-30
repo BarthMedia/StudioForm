@@ -94,6 +94,13 @@ export default async function (stateId: number) {
     // Overwrite method & url
     method = (form.getAttribute('method') || '').toUpperCase();
     apiUrl = form.getAttribute('action') || '';
+
+    // If data-method attribute specified
+    const dataMethod: string =
+      form.getAttribute('data-method') ||
+      state.elements.wrapper.getAttribute('data-method') ||
+      '';
+    if (dataMethod !== '') method = dataMethod.toUpperCase();
   }
 
   // Create the options for the fetch request
