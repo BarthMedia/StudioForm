@@ -31,6 +31,18 @@ export default function (stateId: number, data: { el: HTMLElement }[]) {
     targetRect.left >= 0 &&
     targetRect.right <= viewportWidth;
 
+  // Define
+  function reportValidity() {
+    try {
+      const res = state.elements.mask.reportValidity();
+    } catch (err) {
+      console.warn(
+        `StudioForm[${state.sdk.i}] -> required.ts -> default: state.elements.mask.reportValidity() produces unexpected error!`,
+        err
+      );
+    }
+  }
+
   // Logic
   if (
     (state.modes.scrollOnRequirementsError && !isFullyVisible) ||
@@ -41,8 +53,7 @@ export default function (stateId: number, data: { el: HTMLElement }[]) {
       attributeReferenceElement:
         state.sdk.slideLogic[state.sdk.slideLogic.length - 1].el,
       callback: (success: boolean) => {
-        if (state.modes.nativeReportVadility && success)
-          state.elements.mask.reportValidity();
+        if (state.modes.nativeReportVadility && success) reportValidity();
       },
     });
 
@@ -52,7 +63,7 @@ export default function (stateId: number, data: { el: HTMLElement }[]) {
     isFullyVisible &&
     !state.modes.forceScrollOnRequirementsError
   )
-    state.elements.mask.reportValidity();
+    reportValidity();
 
   // Delay
   setTimeout(() => {

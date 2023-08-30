@@ -96,11 +96,13 @@ export default async function (stateId: number) {
     apiUrl = form.getAttribute('action') || '';
 
     // If data-method attribute specified
-    const dataMethod: string =
+    const dataMethod: string = (
       form.getAttribute('data-method') ||
       state.elements.wrapper.getAttribute('data-method') ||
-      '';
-    if (dataMethod !== '') method = dataMethod.toUpperCase();
+      ''
+    ).toUpperCase();
+    if (['GET', 'PUT', 'POST', 'PATCH', 'DELETE'].includes(dataMethod))
+      method = dataMethod;
   }
 
   // Create the options for the fetch request
