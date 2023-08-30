@@ -141,7 +141,7 @@ export default function (stateId: number, slideId: number, options: Options) {
 
     // * Other input types loop *
     currentSlide.el
-      .querySelectorAll('input, textarea, select')
+      .querySelectorAll('input, select, textarea')
       .forEach(
         (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
           // Don't test radios

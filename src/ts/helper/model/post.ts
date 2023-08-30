@@ -41,7 +41,9 @@ export default async function (stateId: number) {
     const slide = state.sdk.slideLogic[id];
 
     // Elements
-    const inputs: HTMLInputElement[] = slide.el.querySelectorAll('input');
+    const inputs: HTMLInputElement[] = slide.el.querySelectorAll(
+      'input, select, textarea'
+    );
 
     // Loop
     inputs.forEach(input => {
