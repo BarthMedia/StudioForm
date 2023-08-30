@@ -7,15 +7,30 @@ export default function (state: any) {
   const obj = state.elements;
   const el: HTMLElement = state.elements.wrapper;
 
+  // Define helper - returnSelector
+  function rs(isDomWide: boolean, ...strArr: string[]) {
+    // Create
+    let val = strArr
+      .map(str => {
+        const tmpVal = `[studio-form="${str}"]`;
+        return isDomWide
+          ? tmpVal + `,[studio-form-${state.sdk.i}="${str}"]`
+          : tmpVal;
+      })
+      .join(',');
+
+    // Return
+    return val;
+  }
+
   // * Add to elements *
 
   // Mask
-  obj.mask =
-    el.querySelector('[studio-form="mask"]') || el.querySelector('form');
+  obj.mask = el.querySelector(rs(false, 'mask')) || el.querySelector('form');
 
   // Dividers
   const dividers = obj.mask?.querySelectorAll(
-    '[studio-form="Visual Divider"], [studio-form="visual-divider"], [studio-form="divider"]'
+    rs(false, 'Visual Divider', 'visual-divider', 'divider')
   );
   if (state.modes.removeVisualDividers)
     dividers.forEach((divider: HTMLElement) => divider.remove());
@@ -28,7 +43,7 @@ export default function (state: any) {
   }
 
   // Slides
-  obj.slides = obj.mask?.querySelectorAll('[studio-form="slide"]');
+  obj.slides = obj.mask?.querySelectorAll(rs(false, 'slide'));
   if (obj.slides?.length === 0) obj.slides = obj.mask?.childNodes;
 
   // Success & error messages
@@ -68,26 +83,19 @@ export default function (state: any) {
 
   // Progress
   obj.progress = {};
-  obj.progress.bars = el.querySelectorAll('[studio-form="progress-bar"]');
-  obj.progress.currentSlides = el.querySelectorAll(
-    '[studio-form="current-slide"]'
-  );
-  obj.progress.minMaxSlides = el.querySelectorAll(
-    '[studio-form="min-max-slides"]'
-  );
-  obj.progress.minSlides = el.querySelectorAll('[studio-form="min-slides"]');
-  obj.progress.maxSlides = el.querySelectorAll('[studio-form="max-slides"]');
+  obj.progress.bars = el.querySelectorAll(rs(true, 'progress-bar'));
+  obj.progress.currentSlides = el.querySelectorAll(rs(true, 'current-slide'));
+  obj.progress.minMaxSlides = el.querySelectorAll(rs(true, 'min-max-slides'));
+  obj.progress.minSlides = el.querySelectorAll(rs(true, 'min-slides'));
+  obj.progress.maxSlides = el.querySelectorAll(rs(true, 'max-slides'));
 
   // * Backwards & forwards buttons *
 
   // Prev
   obj.prevBtns = [];
-  el.querySelectorAll(
-    `[studio-form="prev"], [studio-form="Backwards Button"]`
-  ).forEach(el => obj.prevBtns.push(el));
-  document
-    .querySelectorAll(`[studio-form-${state.sdk.i}="prev"`)
-    .forEach(el => obj.prevBtns.push(el));
+  el.querySelectorAll(rs(true, 'prev', 'Backwards Button')).forEach(el =>
+    obj.prevBtns.push(el)
+  );
 
   // Next
   obj.nextBtns = [];
@@ -111,15 +119,6 @@ export default function (state: any) {
     .querySelectorAll(`[studio-form-${state.sdk.i}="next"`)
     .forEach(el => obj.nextBtns.push(el));
 
-  // Clear buttons --- Used within Form Memory extension.
-  // obj.clearBtns = [];
-  // el.querySelectorAll('[studio-form="clear"]').forEach(el =>
-  //   obj.clearBtns.push(el)
-  // );
-  // document
-  //   .querySelectorAll(`[studio-form-${state.sdk.i}="clear"`)
-  //   .forEach(el => obj.clearBtns.push(el));
-
-  // Data fields
-  obj.responseData = el.querySelectorAll('[studio-form="response-data"]');
+  // Data response fields
+  obj.responseData = el.querySelectorAll(rs(true, 'response-data', 'response'));
 }
