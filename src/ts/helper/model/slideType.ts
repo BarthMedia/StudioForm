@@ -32,7 +32,7 @@ export default function (slide: HTMLElement, state: any) {
   if (isCheckboxOnly) type = 'checkbox';
   if (isRadioOnly) type = 'radio';
   if (isEmpty) type = 'empty';
-  const typeAttr = slide.getAttribute('data-step-type');
+  const typeAttr = slide.getAttribute('data-slide-type');
   if (typeAttr && typeAttr !== '') type = typeAttr;
 
   // Remove required attribute from checkboxes or radios
