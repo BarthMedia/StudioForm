@@ -3,7 +3,7 @@ import * as helper from '../helper';
 import * as model from '../../model';
 
 // Export
-export default function (stateId: number, data: { el: HTMLElement }[]) {
+export default function (stateId: number, data: { el: HTMLInputElement }[]) {
   // Values
   const state = model.state[stateId];
 
@@ -34,10 +34,10 @@ export default function (stateId: number, data: { el: HTMLElement }[]) {
   // Define
   function reportValidity() {
     try {
-      const res = state.elements.mask.reportValidity();
+      data[0].el.reportValidity();
     } catch (err) {
       console.warn(
-        `StudioForm[${state.sdk.i}] -> required.ts -> default: state.elements.mask.reportValidity() produces unexpected error!`,
+        `StudioForm[${state.sdk.i}] -> required.ts -> default: data[0].el.reportValidity() produces unexpected error!`,
         err
       );
     }

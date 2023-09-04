@@ -116,9 +116,7 @@ export default function (stateId: number, slideId: number, options: Options) {
     groups.forEach(str => {
       // Elements
       const radios: NodeListOf<HTMLInputElement> =
-        state.elements.mask.querySelectorAll(
-          `input[type="radio"][name="${str}"]`
-        );
+        currentSlide.el.querySelectorAll(`input[type="radio"][name="${str}"]`);
 
       // Values
       let selectedFound = false;
