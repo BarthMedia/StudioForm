@@ -7,6 +7,9 @@ export default function (state: any) {
   const obj = state.elements;
   const el: HTMLElement = state.elements.wrapper;
 
+  // Set data id
+  el.setAttribute('data-sf-id', state.sdk.i);
+
   // Define helper - returnSelector
   function rs(isDomWide: boolean, ...strArr: string[]) {
     // Create
@@ -14,7 +17,9 @@ export default function (state: any) {
       .map(str => {
         const tmpVal = `[studio-form="${str}"]`;
         return isDomWide
-          ? tmpVal + `,[studio-form-${state.sdk.i}="${str}"]`
+          ? `[data-sf-id="${state.sdk.i}"] ` +
+              tmpVal +
+              `,[studio-form-${state.sdk.i}="${str}"]`
           : tmpVal;
       })
       .join(',');
@@ -26,14 +31,17 @@ export default function (state: any) {
   // * Add to elements *
 
   // Mask
-  obj.mask = el.querySelector(rs(false, 'mask')) || el.querySelector('form');
+  obj.mask =
+    el.querySelector(rs(false, 'mask')) ||
+    el.querySelector('form') ||
+    el.querySelector('*');
 
   // Dividers
-  const dividers = obj.mask?.querySelectorAll(
-    rs(false, 'Visual Divider', 'visual-divider', 'divider')
+  const dividers: NodeListOf<HTMLElement> = document.querySelectorAll(
+    rs(true, 'Visual Divider', 'visual-divider', 'divider')
   );
   if (state.modes.removeVisualDividers)
-    dividers.forEach((divider: HTMLElement) => divider.remove());
+    dividers.forEach(divider => divider.remove());
 
   // Remove conditionally invisible slides
   if (state.modes.removeConditionallyInvisibeSlides) {
@@ -83,19 +91,23 @@ export default function (state: any) {
 
   // Progress
   obj.progress = {};
-  obj.progress.bars = el.querySelectorAll(rs(true, 'progress-bar'));
-  obj.progress.currentSlides = el.querySelectorAll(rs(true, 'current-slide'));
-  obj.progress.minMaxSlides = el.querySelectorAll(rs(true, 'min-max-slides'));
-  obj.progress.minSlides = el.querySelectorAll(rs(true, 'min-slides'));
-  obj.progress.maxSlides = el.querySelectorAll(rs(true, 'max-slides'));
+  obj.progress.bars = document.querySelectorAll(rs(true, 'progress-bar'));
+  obj.progress.currentSlides = document.querySelectorAll(
+    rs(true, 'current-slide')
+  );
+  obj.progress.minMaxSlides = document.querySelectorAll(
+    rs(true, 'min-max-slides')
+  );
+  obj.progress.minSlides = document.querySelectorAll(rs(true, 'min-slides'));
+  obj.progress.maxSlides = document.querySelectorAll(rs(true, 'max-slides'));
 
   // * Backwards & forwards buttons *
 
   // Prev
   obj.prevBtns = [];
-  el.querySelectorAll(rs(true, 'prev', 'Backwards Button')).forEach(el =>
-    obj.prevBtns.push(el)
-  );
+  document
+    .querySelectorAll(rs(true, 'prev', 'Backwards Button'))
+    .forEach(el => obj.prevBtns.push(el));
 
   // Next
   obj.nextBtns = [];

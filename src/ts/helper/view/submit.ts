@@ -136,6 +136,11 @@ export default async function (stateId: number, options: Options) {
     node.classList.add('sf-hide');
   });
 
+  // Add sf-hide to every indexed studio-form element
+  document
+    .querySelectorAll(`[studio-form-${state.sdk.i}]`)
+    .forEach(el => el.classList.add('sf-hide'));
+
   // Animate
   state.view.animate({
     ...options,
