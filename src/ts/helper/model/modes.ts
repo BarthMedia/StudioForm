@@ -82,5 +82,10 @@ export default function (state: any) {
 
   // Report native vadility
   obj.nativeReportVadility =
-    (el.getAttribute('data-native-report-vadility') || 'true') === 'true';
+    (el.getAttribute('data-native-report-validity') || 'true') === 'true';
+
+  // 100% progress only on submit
+  obj._100PercentProgressOnSubmitOnly =
+    (el.getAttribute('data-100-percent-progress-on-submit-only') || 'true') ===
+    'true';
 }

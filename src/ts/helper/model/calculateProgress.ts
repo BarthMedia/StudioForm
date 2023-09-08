@@ -134,12 +134,18 @@ export default function (i: number) {
   // Logic
   const returnVal = {
     shortest: {
-      percentage: (slideRecordLength / min) * 100,
+      percentage:
+        (slideRecordLength /
+          (min + state.modes._100PercentProgressOnSubmitOnly ? 1 : 0)) *
+        100,
       path: min,
       walked: slideRecordLength,
     },
     longest: {
-      percentage: (slideRecordLength / max) * 100,
+      percentage:
+        (slideRecordLength /
+          (max + state.modes._100PercentProgressOnSubmitOnly ? 1 : 0)) *
+        100,
       path: max,
       walked: slideRecordLength,
     },
