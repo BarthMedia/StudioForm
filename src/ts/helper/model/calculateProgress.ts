@@ -130,22 +130,17 @@ export default function (i: number) {
   // Finetune math values
   min += slideRecordLength - 1;
   max += slideRecordLength - 1;
+  const addition = state.modes._100PercentProgressOnSubmitOnly ? 1 : 0;
 
   // Logic
   const returnVal = {
     shortest: {
-      percentage:
-        (slideRecordLength /
-          (min + state.modes._100PercentProgressOnSubmitOnly ? 1 : 0)) *
-        100,
+      percentage: (slideRecordLength / (min + addition)) * 100,
       path: min,
       walked: slideRecordLength,
     },
     longest: {
-      percentage:
-        (slideRecordLength /
-          (max + state.modes._100PercentProgressOnSubmitOnly ? 1 : 0)) *
-        100,
+      percentage: (slideRecordLength / (max + addition)) * 100,
       path: max,
       walked: slideRecordLength,
     },
