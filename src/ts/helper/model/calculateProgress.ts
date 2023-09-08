@@ -128,8 +128,8 @@ export default function (i: number) {
   objectLoop(slideLogic[latestRecordId]);
 
   // Finetune math values
-  min += slideRecordLength;
-  max += slideRecordLength;
+  min += slideRecordLength - 1;
+  max += slideRecordLength - 1;
 
   // Logic
   const returnVal = {
