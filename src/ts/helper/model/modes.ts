@@ -65,7 +65,7 @@ export default function (state: any) {
 
   // Wait for animations to finish
   obj.waitForAnimations =
-    (el.getAttribute('data-wait-for-animations') || 'true') === 'true';
+    (el.getAttribute('data-wait-for-animations') || 'false') === 'true';
 
   // Hide error message on click
   obj.hideErrorMessageOnClick =
@@ -88,4 +88,8 @@ export default function (state: any) {
   obj._100PercentProgressOnSubmitOnly =
     (el.getAttribute('data-100-percent-progress-on-submit-only') || 'true') ===
     'true';
+
+  // Add field data params to redirect
+  obj.fieldParamsRedirect =
+    (el.getAttribute('data-field-params-redirect') || 'true') === 'true';
 }

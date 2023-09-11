@@ -45,6 +45,7 @@ export function init(wrapper: HTMLElement, index: number) {
   obj.view = {};
   obj.view.eventsFunctionArrays = {};
   obj.view.gsapTimeline = {};
+  obj.view.gsapProgressBarTimeline = {};
 
   // Model functions
   obj.model = {};

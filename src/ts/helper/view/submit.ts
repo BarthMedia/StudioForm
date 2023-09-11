@@ -148,6 +148,13 @@ export default async function (stateId: number, options: Options) {
     isSubmit: true,
   });
 
+  // Redirect
+  if (typeof state.sdk.data.redirect === 'string') {
+    setTimeout(() => {
+      location.href = state.sdk.data.redirect;
+    }, state.sdk.animationData.timeBoth * 1000 + 1);
+  }
+
   // Default return
   const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Form submission successful!`;
   return msg;

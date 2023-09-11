@@ -32,7 +32,7 @@ export default function (i: number) {
     treeArray: any[] = [];
 
   // Loop function
-  function objectLoop(object) {
+  function objectLoop(object: any) {
     // Values
     let array = returnNextSlideIds(object);
 
@@ -52,7 +52,7 @@ export default function (i: number) {
     if (object.btns !== false) {
       object.btns.every(btn => {
         // Guard
-        if (btn.next !== false) return true;
+        if (btn.next !== false && btn.next !== undefined) return true;
 
         // Update values
         max = Math.max(max, count);
@@ -73,7 +73,7 @@ export default function (i: number) {
       });
     } else {
       // Guard
-      if (object.next === false) {
+      if (object.next === false || object.next === undefined) {
         // Update values
         max = Math.max(max, count);
         min = Math.min(min, count);
@@ -97,6 +97,15 @@ export default function (i: number) {
 
     // Action loop
     array.forEach(id => {
+      // Undefined guard
+      if (id === undefined) {
+        console.warn(
+          `StudioForm[${state.sdk.i}] -> calculateProgress.ts -> defaul -> objectLoop -> array.forEach() callback: id === undefined`,
+          object
+        );
+        return;
+      }
+
       // False guard
       if (id === false) return;
 

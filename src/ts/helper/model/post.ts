@@ -140,6 +140,50 @@ export default async function (stateId: number) {
     res = err;
   }
 
+  // + Redirect url +
+  let redirect: undefined | string = undefined;
+  if (form.getAttribute('redirect') || '' !== '') {
+    try {
+      // Format attribute value
+      const attrVal = form.getAttribute('redirect') || '';
+      let attrPrefix = '';
+
+      // Check if the "redirect" attribute value contains a protocol (e.g., 'http' or 'https')
+      if (!/^(https?:\/\/)/i.test(attrVal)) {
+        // Domain or path --> url
+        attrPrefix =
+          location.protocol +
+          '//' +
+          (attrVal.startsWith('/') ? location.hostname : '');
+      }
+
+      // Values
+      let url = new URL(attrPrefix + attrVal);
+
+      // * Add params to url if wanted *
+      if (state.modes.fieldParamsRedirect) {
+        // Step 2: Create a new URLSearchParams object from the existing URL's search parameters
+        const existingSearchParams = url.searchParams;
+
+        // Step 3: Append the new key-value pairs from the JSON to the URLSearchParams object
+        for (const field of fields) {
+          existingSearchParams.append(field.key, field.value);
+        }
+
+        // Step 4: Update the URL's search with the modified URLSearchParams object
+        url.search = existingSearchParams.toString();
+      }
+
+      // Overwrite redirect
+      redirect = url.href;
+    } catch (err) {
+      console.error(
+        `StudioForm[${state.sdk.i}] -> post.ts -> default -> try { ... redirect url ... } catch: `,
+        err
+      );
+    }
+  }
+
   // Add to sdk
   state.sdk.data.endpoint = apiUrl;
   state.sdk.data.options = options;
@@ -147,6 +191,7 @@ export default async function (stateId: number) {
   state.sdk.data.payload = payload;
   state.sdk.data.response = res;
   state.sdk.data.status = status;
+  state.sdk.data.redirect = redirect;
 
   // Return
   return res;

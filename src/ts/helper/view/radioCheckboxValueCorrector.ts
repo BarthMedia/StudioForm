@@ -74,6 +74,19 @@ export default function (state: any) {
               .forEach(node => otherElements.push(node as HTMLElement));
           });
 
+          // * Warn *
+          if (
+            state.elements.mask.querySelectorAll(
+              `input[type="radio"][value="${input.value}"]`
+            ).length > 1
+          ) {
+            console.warn(
+              `StudioForm[${state.sdk.i}] -> radioCheckboxValueCorrector.ts: The radio input with the value "${input.value}" is not unique!`,
+              { selectElements: allElements },
+              { unselectElements: otherElements }
+            );
+          }
+
           // * Add *
 
           // Class

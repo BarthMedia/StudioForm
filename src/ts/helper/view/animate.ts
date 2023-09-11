@@ -189,7 +189,7 @@ export default function (index: number, options: Options) {
 
   // Clear existing timeline
   if (gsapObj.isRunning) {
-    gsapObj.tl.progress();
+    gsapObj.tl.progress(1);
     gsapObj.tl.clear();
   }
 

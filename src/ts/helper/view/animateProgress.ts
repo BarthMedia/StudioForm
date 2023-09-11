@@ -39,6 +39,19 @@ export default function (stateId: number, options: Options) {
   );
   bars.forEach((el: HTMLElement) => {
     // Values
+    const tl = gsap.timeline();
+    const gsapObj = state.view.gsapProgressBarTimeline;
+
+    // Clear existing timeline
+    if (gsapObj.isRunning) {
+      gsapObj.tl.clear();
+    }
+
+    // Values
+    gsapObj.tl = tl;
+    gsapObj.isRunning = true;
+
+    // Values
     const direction = el.getAttribute('data-axis') || 'x';
     const isX = direction.indexOf('x') > -1;
     const isY = direction.indexOf('y') > -1;
@@ -55,7 +68,10 @@ export default function (stateId: number, options: Options) {
           '%'
         : '',
     };
-    gsap.to(el, val);
+    tl.to(el, val);
+    tl.call(() => {
+      gsapObj.isRunning = undefined;
+    });
   });
 
   // * Display slides info *

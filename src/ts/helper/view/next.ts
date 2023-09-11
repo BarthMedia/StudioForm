@@ -107,6 +107,9 @@ export default function (stateId: number, options: Options) {
 
   // * Logic *
 
+  // Undefined edgecase
+  if (next === undefined) next = false;
+
   // Guard
   if (typeof next !== 'number' && next !== false)
     throw new Error(
