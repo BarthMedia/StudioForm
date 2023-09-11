@@ -102,6 +102,18 @@ export default function (stateId: number, slideId: number, options: Options) {
 
   // * * * Standard case * * *
   if (currentSlide.type === 'standard') {
+    // * Index every index correctly *
+    currentSlide.el
+      .querySelectorAll('input, select, textarea')
+      .forEach(
+        (
+          input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+          index: number
+        ) => {
+          input.setAttribute('data-sf-input-id', index.toString());
+        }
+      );
+
     // * Radio logic *
     const radios: NodeListOf<HTMLInputElement> =
       currentSlide.el.querySelectorAll('input[type="radio"]');
@@ -131,6 +143,7 @@ export default function (stateId: number, slideId: number, options: Options) {
         radios.forEach(radio =>
           targetInputs.push({
             el: radio,
+            i: parseInt(radio.getAttribute('data-sf-input-id') || ''),
             msg: 'nothing selected',
             regExp: undefined,
           })
@@ -151,7 +164,12 @@ export default function (stateId: number, slideId: number, options: Options) {
           // Is empty
           if (input.value === '') {
             // Push
-            targetInputs.push({ el: input, msg: 'empty', regExp: undefined });
+            targetInputs.push({
+              el: input,
+              i: parseInt(input.getAttribute('data-sf-input-id') || ''),
+              msg: 'empty',
+              regExp: undefined,
+            });
 
             // Skip code below
             return;
@@ -170,6 +188,7 @@ export default function (stateId: number, slideId: number, options: Options) {
                 // Push
                 targetInputs.push({
                   el: input,
+                  i: parseInt(input.getAttribute('data-sf-input-id') || ''),
                   msg: 'custom regular expression',
                   regExp: regExp,
                 });
@@ -196,7 +215,12 @@ export default function (stateId: number, slideId: number, options: Options) {
             // Logic
             if (!regExp.test(input.value)) {
               // Push
-              targetInputs.push({ el: input, msg: 'email', regExp: regExp });
+              targetInputs.push({
+                el: input,
+                i: parseInt(input.getAttribute('data-sf-input-id') || ''),
+                msg: 'email',
+                regExp: regExp,
+              });
 
               // Skip code below
               return;
@@ -213,6 +237,7 @@ export default function (stateId: number, slideId: number, options: Options) {
               // Push
               targetInputs.push({
                 el: input,
+                i: parseInt(input.getAttribute('data-sf-input-id') || ''),
                 msg: 'telephone',
                 regExp: regExp,
               });
@@ -230,7 +255,12 @@ export default function (stateId: number, slideId: number, options: Options) {
             // Logic
             if (!regExp.test(input.value)) {
               // Push
-              targetInputs.push({ el: input, msg: 'number', regExp: regExp });
+              targetInputs.push({
+                el: input,
+                i: parseInt(input.getAttribute('data-sf-input-id') || ''),
+                msg: 'number',
+                regExp: regExp,
+              });
 
               // Skip code below
               return;
@@ -238,6 +268,18 @@ export default function (stateId: number, slideId: number, options: Options) {
           }
 
           // Default - success
+        }
+      );
+
+    // Sort target input based on DOM index
+    targetInputs.sort((a, b) => a.i - b.i);
+
+    // * Remove input indexing *
+    currentSlide.el
+      .querySelectorAll('input, select, textarea')
+      .forEach(
+        (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
+          input.removeAttribute('data-sf-input-id');
         }
       );
 

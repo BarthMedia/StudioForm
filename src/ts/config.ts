@@ -11,4 +11,4 @@ export const DEFAULT_SLIDE_TIME_NEXT = 0.5;
 export const DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER = 0.5;
 
 // Anchor
-export const DEFAULT_OFFSET = 0;
+export const DEFAULT_OFFSET = 16;
