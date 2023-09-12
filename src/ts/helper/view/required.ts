@@ -104,4 +104,9 @@ export default function (stateId: number, data: { el: HTMLInputElement }[]) {
       { once: true }
     );
   }, 1);
+
+  // Trigger events
+  helper.triggerAllFunctions(
+    state.view.eventsFunctionArrays.afterRenderRequirements
+  );
 }

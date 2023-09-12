@@ -24,7 +24,7 @@ export default async function (stateId: number) {
   // Define payload
   const fields: { key: string; value: string }[] = [];
   const files: { key: string; value: File }[] = [];
-  const payload = {
+  let payload: any = {
     name: form.getAttribute('data-name'),
     pageId: document.querySelector('html')?.getAttribute('data-wf-page'),
     elementId: form.getAttribute('data-wf-element-id'),
@@ -76,13 +76,26 @@ export default async function (stateId: number) {
     });
   });
 
+  // * JotForm mode *
+  let jotFormMode = false;
+  if (
+    state.modes.isJotFrom ||
+    (form.getAttribute('action') || '').indexOf('jotform.com/submit') > -1
+  ) {
+    // Update
+    jotFormMode = true;
+    payload = {};
+  }
+
   // Fields loop
   const isFiles = files.length > 0;
   fields.forEach((field: { key: string; value: any }) => {
-    payload[`fields[${field.key}]`] = field.value;
+    if (!jotFormMode) payload[`fields[${field.key}]`] = field.value;
+    else payload[`${field.key}`] = field.value;
   });
   files.forEach(file => {
-    payload[`files[${file.key}]`] = file.value;
+    if (!jotFormMode) payload[`files[${file.key}]`] = file.value;
+    else payload[`${file.key}]`] = file.value;
   });
 
   // Iterate through the JSON object and add properties to formData
@@ -107,16 +120,54 @@ export default async function (stateId: number) {
       method = dataMethod;
   }
 
+  // Define headers
+  const headers = {
+    Accept:
+      form.getAttribute('data-headers-accept') ||
+      'application/json, text/javascript, */*; q=0.01',
+    'Content-Type':
+      form.getAttribute('data-headers-content-type') ||
+      'application/x-www-form-urlencoded; charset=UTF-8',
+  };
+
+  // Custom headers || If accept header or content type specified on form
+  const isCustomHeaders =
+    form.getAttribute('data-headers-accept') ||
+    form.getAttribute('data-headers-content-type')
+      ? true
+      : false;
+
   // Create the options for the fetch request
   const options: any = {
     method: method,
-    headers: {
-      Accept: 'application/json, text/javascript, */*; q=0.01',
-      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    },
+    headers: headers,
     body: isFiles ? formData : formData.toString(),
   };
-  if (isFiles) delete options.headers;
+  if (isFiles && !isCustomHeaders) delete options.headers;
+
+  // + GET Request +
+  if (method === 'GET') {
+    // Update options
+    if (!isCustomHeaders) delete options.headers;
+    delete options.body;
+
+    // + Update url +
+
+    // Step 1: Create url
+    const url = new URL(apiUrl);
+
+    // Step 2: Create a new URLSearchParams object from the existing URL's search parameters
+    const existingSearchParams = url.searchParams;
+
+    // Step 3: Append the new key-value pairs from the JSON to the URLSearchParams object
+    for (const field of fields) {
+      existingSearchParams.append(field.key, field.value);
+    }
+
+    // Step 4: Update the URL's search with the modified URLSearchParams object
+    url.search = existingSearchParams.toString();
+    apiUrl = url.href;
+  }
 
   // Await
   let res: any;

@@ -342,4 +342,7 @@ export default function (index: number, options: Options) {
 
   // * Call anchor animation *
   state.sdk.scrollTo({ ...options, attributeReferenceElement: nextSlide.el });
+
+  // Trigger the after trigger
+  helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterAnimate);
 }

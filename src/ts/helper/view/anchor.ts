@@ -9,7 +9,7 @@ export default function (stateId: number, options: Options) {
   const state = model.state[stateId];
 
   // Mode guard
-  if (options.scrollToActive !== true && !state.modes.scrollToActive) return;
+  if (options.scrollToTarget === false || !state.modes.scrollToTarget) return;
 
   // * Values *
 
@@ -96,7 +96,8 @@ export default function (stateId: number, options: Options) {
 
     // Warn
     console.warn(
-      `StudioForm[${state.sdk.i}] -> anchor.ts -> default -> setTimeout() callback: Scrolling operation timed out.`
+      `StudioForm[${state.sdk.i}] -> anchor.ts -> default -> setTimeout() callback: Scrolling operation timed out.`,
+      { y: y, target: target, offset: offset }
     );
   }, config.TIMEOUT_SEC * 1000);
 

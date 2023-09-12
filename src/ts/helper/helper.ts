@@ -128,7 +128,12 @@ export const getJson = async function (
       fetch(url, init),
       timeout(timeoutSec),
     ]);
-    const data = await res.json();
+    let data = { message: 'Unable to format response as JSON.' };
+    try {
+      data = await res.json();
+    } catch (err) {
+      console.warn(`helper.ts -> getJson: `, err);
+    }
 
     // Logic
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);

@@ -36,7 +36,6 @@ export default function init(state: any) {
   state.view.animate = function (options: Options = {}) {
     helper.triggerAllFunctions(eventFunctionArrays.onAnimate);
     animate(state.sdk.i, options);
-    helper.triggerAllFunctions(eventFunctionArrays.afterAnimate);
   };
 
   // Render error endpoint
@@ -44,7 +43,6 @@ export default function init(state: any) {
   state.view.renderRequirements = function (data = []) {
     helper.triggerAllFunctions(eventFunctionArrays.onRenderRequirements);
     required(state.sdk.i, data);
-    helper.triggerAllFunctions(eventFunctionArrays.afterRenderRequirements);
   };
 
   // * Init initial style *

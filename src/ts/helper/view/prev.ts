@@ -63,4 +63,7 @@ export default function (stateId: number, options: Options) {
       // Style init
       btn.classList.add('sf-hide');
     });
+
+  // Trigger events
+  helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterPrev);
 }

@@ -155,6 +155,9 @@ export default async function (stateId: number, options: Options) {
     }, state.sdk.animationData.timeBoth * 1000 + 1);
   }
 
+  // Trigger events
+  helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterSubmit);
+
   // Default return
   const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Form submission successful!`;
   return msg;

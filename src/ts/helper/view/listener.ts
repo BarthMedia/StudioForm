@@ -14,7 +14,7 @@ declare global {
     currentSlideId?: number;
     nextSlideId?: number;
     isSubmit?: boolean;
-    scrollToActive?: boolean;
+    scrollToTarget?: boolean;
     target?: HTMLElement | string;
     offset?: HTMLElement | string | number;
     attributeReferenceElement?: HTMLElement;
@@ -37,19 +37,16 @@ export default function init(state: any) {
   state.sdk.next = (options: Options = {}) => {
     helper.triggerAllFunctions(eventFunctionArrays.onNext);
     const res = next(state.sdk.i, options);
-    helper.triggerAllFunctions(eventFunctionArrays.afterNext);
     return res;
   };
   state.sdk.prev = (options: Options = {}) => {
     helper.triggerAllFunctions(eventFunctionArrays.onPrev);
     const res = prev(state.sdk.i, options);
-    helper.triggerAllFunctions(eventFunctionArrays.afterPrev);
     return res;
   };
   state.sdk.submit = async (options: Options = {}) => {
     helper.triggerAllFunctions(eventFunctionArrays.onSubmit);
     const res = await submit(state.sdk.i, options);
-    helper.triggerAllFunctions(eventFunctionArrays.afterSubmit);
     return res;
   };
 

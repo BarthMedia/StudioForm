@@ -55,10 +55,12 @@ export default function (state: any) {
         // Radio
         if (input.type === 'radio') {
           // Elements
-          const otherGroupRadios: NodeListOf<HTMLInputElement> =
-            state.elements.mask.querySelectorAll(
-              `input[type="radio"][name="${input.name}"]:not([value="${input.value}"])`
-            );
+          const otherGroupRadios: HTMLInputElement[] = [];
+          state.elements.mask
+            .querySelectorAll(`input[type="radio"][name="${input.name}"]`)
+            .forEach((_input: HTMLInputElement) => {
+              if (_input !== input) otherGroupRadios.push(_input);
+            });
           const otherElements: HTMLElement[] = [];
           otherGroupRadios.forEach(radio => {
             // Elements
@@ -77,13 +79,13 @@ export default function (state: any) {
           // * Warn *
           if (
             state.elements.mask.querySelectorAll(
-              `input[type="radio"][value="${input.value}"]`
+              `input[type="radio"][name="${input.name}"][value="${input.value}"]`
             ).length > 1
           ) {
             console.warn(
-              `StudioForm[${state.sdk.i}] -> radioCheckboxValueCorrector.ts: The radio input with the value "${input.value}" is not unique!`,
-              { selectElements: allElements },
-              { unselectElements: otherElements }
+              `StudioForm[${state.sdk.i}] -> radioCheckboxValueCorrector.ts: The radio input with the value "${input.value}" (Group: "${input.name}") is not unique!`,
+              { selectedElements: allElements },
+              { unselectedElements: otherElements }
             );
           }
 

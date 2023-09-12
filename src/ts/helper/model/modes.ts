@@ -16,30 +16,31 @@ export default function (state: any) {
 
   // * Modes *
 
-  // Remove visual dividers
-  obj.simpleSdk = (el.getAttribute('data-simple-sdk') || 'true') === 'true';
+  // Add simple sdk
+  obj.simpleSdk = (el.getAttribute('data-simplified-sdk') || 'true') === 'true';
 
   // Remove visual dividers
   obj.removeVisualDividers =
-    (el.getAttribute('data-remove-visual-diviers') ||
-      el.getAttribute('data-remove-diviers') ||
-      'true') === 'true';
+    (el.getAttribute('data-remove-dividers') || 'true') === 'true';
 
   // Remove conditionally invisible slides
   obj.removeConditionallyInvisibeSlides =
     (el.getAttribute('data-remove-conditionally-invisible-slides') ||
       'true') === 'true';
 
+  // JotForm mode
+  obj.isJotFrom = (el.getAttribute('data-jot-form-mode') || 'false') === 'true';
+
   // Slider mode
   obj.isWfForm = el.classList.contains('w-form');
   obj.isSlider =
     !obj.isWfForm ||
-    (el.getAttribute('data-is-slider-mode') || 'false') === 'true';
+    (el.getAttribute('data-slider-mode') || 'false') === 'true';
 
-  // Remove conditionally invisible slides
+  // Remove required from checkbox and radio only steps
   obj.removeRequiredAttributeFromCheckboxAndRadioOnlys =
     (el.getAttribute(
-      'data-remove-required-attribute-from-checkbox-and-radio-onlys'
+      'data-remove-required-from-checkbox-or-radio-only-steps'
     ) || 'true') === 'true';
 
   // Swap submit buttons
@@ -60,8 +61,8 @@ export default function (state: any) {
     (el.getAttribute('data-auto-suggest-buttons') || 'true') === 'true';
 
   // Active scroll to
-  obj.scrollToActive =
-    (el.getAttribute('data-auto-scroll-to-active') || 'true') === 'true';
+  obj.scrollToTarget =
+    (el.getAttribute('data-auto-scroll-to-target') || 'true') === 'true';
 
   // Wait for animations to finish
   obj.waitForAnimations =
