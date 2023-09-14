@@ -3,15 +3,6 @@ import * as helper from '../helper';
 import * as model from '../../model';
 import * as config from '../../config';
 
-// Helper
-function isElementTopVisible(element: HTMLElement) {
-  // Get the position of the element relative to the viewport
-  const elementRect = element.getBoundingClientRect();
-
-  // Check if the top of the element is visible in the viewport
-  return elementRect.top > 0 && elementRect.top < window.innerHeight;
-}
-
 // Export
 export default function (index: number, options: Options) {
   // Values
@@ -191,7 +182,11 @@ export default function (index: number, options: Options) {
   };
 
   // * Test if current slide top is visible
-  const currentSlideTopVisible = isElementTopVisible(currentSlide.el);
+  const currentSlideTopVisible = helper.isElementTopVisible(
+    currentSlide.el,
+    state,
+    { ...options, attributeReferenceElement: currentSlide.el }
+  );
 
   // * Main animation *
 

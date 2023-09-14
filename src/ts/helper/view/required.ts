@@ -18,18 +18,16 @@ export default function (stateId: number, data: { el: HTMLInputElement }[]) {
   // * Scroll to the first element and if not visible *
 
   // Calculate
-  const target =
+  const target: HTMLElement =
     data[0].el.closest('label, [studio-form="label"]') || data[0].el;
-  const targetRect = target.getBoundingClientRect();
-  const viewportHeight =
-    window.innerHeight || document.documentElement.clientHeight;
-  const viewportWidth =
-    window.innerWidth || document.documentElement.clientWidth;
-  const isFullyVisible =
-    targetRect.top >= 0 &&
-    targetRect.bottom <= viewportHeight &&
-    targetRect.left >= 0 &&
-    targetRect.right <= viewportWidth;
+  const isFullyVisible = helper.isElementTopVisible(
+    target,
+    state,
+    {
+      attributeReferenceElement: target,
+    },
+    true
+  );
 
   // Define
   function reportValidity() {

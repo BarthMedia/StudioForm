@@ -13,46 +13,12 @@ export default function (stateId: number, options: Options) {
 
   // * Values *
 
-  // Selector
-  const targetSelector =
-    typeof options.target === 'string'
-      ? options.target
-      : undefined ||
-        options.attributeReferenceElement?.getAttribute(
-          'data-scroll-to-target'
-        ) ||
-        state.elements.wrapper?.getAttribute('data-scroll-to-target') ||
-        '';
-  const offsetSelector =
-    typeof options.offset === 'string'
-      ? options.offset
-      : undefined ||
-        options.attributeReferenceElement?.getAttribute(
-          'data-scroll-to-offset'
-        ) ||
-        state.elements.wrapper?.getAttribute('data-scroll-to-offset') ||
-        '';
-
-  // Elements
-  const target: HTMLElement = helper.isElement(options.target)
-    ? options.target
-    : targetSelector !== ''
-    ? document.querySelector(targetSelector) || state.elements.wrapper
-    : state.elements.wrapper;
-  let offset: any = helper.isElement(options.offset)
-    ? options.target
-    : offsetSelector !== ''
-    ? document.querySelector(
-        typeof options.offset === 'string' ? options.offset : offsetSelector
-      )
-    : null;
-  offset =
-    typeof options.offset === 'number'
-      ? options.offset
-      : offset?.offsetHeight || config.DEFAULT_OFFSET;
+  // Return target element and offset number
+  const obj = helper.returnTargetAndOffset(state, options);
 
   // Math
-  let y: number = target.getBoundingClientRect().top + window.scrollY - offset;
+  let y: number =
+    obj.target.getBoundingClientRect().top + window.scrollY - obj.offset;
   y = Math.max(y, 0);
 
   // Animate
@@ -97,12 +63,12 @@ export default function (stateId: number, options: Options) {
     // Warn
     console.warn(
       `StudioForm[${state.sdk.i}] -> anchor.ts -> default -> setTimeout() callback: Scrolling operation timed out.`,
-      { y: y, target: target, offset: offset }
+      { y: y, target: obj.target, offset: obj.offset }
     );
   }, config.TIMEOUT_SEC * 1000);
 
   // Update animationData
   state.sdk.animationData.scrollToY = y;
-  state.sdk.animationData.scrollToTarget = target;
-  state.sdk.animationData.scrollToOffset = offset;
+  state.sdk.animationData.scrollToTarget = obj.target;
+  state.sdk.animationData.scrollToOffset = obj.offset;
 }

@@ -8,6 +8,73 @@ import * as config from '../config';
 
 // + Functions +
 
+// Check if element top is visible
+export function isElementTopVisible(
+  element: HTMLElement,
+  state: any,
+  options: Options,
+  isFullyVisibleMode = false
+) {
+  // Get the position of the element relative to the viewport
+  const elementRect = element.getBoundingClientRect();
+
+  // Get offset
+  const offset = returnTargetAndOffset(state, options).offset;
+
+  // Check if the top of the element is visible in the viewport
+  return (
+    elementRect.top - offset > 0 &&
+    elementRect.top < window.innerHeight &&
+    (!isFullyVisibleMode ? true : elementRect.bottom < window.innerHeight)
+  );
+}
+
+// Return target element and offset number
+export function returnTargetAndOffset(state: any, options: Options) {
+  // Selector
+  const targetSelector =
+    typeof options.target === 'string'
+      ? options.target
+      : undefined ||
+        options.attributeReferenceElement?.getAttribute(
+          'data-scroll-to-target'
+        ) ||
+        state.elements.wrapper?.getAttribute('data-scroll-to-target') ||
+        '';
+  const offsetSelector =
+    typeof options.offset === 'string'
+      ? options.offset
+      : undefined ||
+        options.attributeReferenceElement?.getAttribute(
+          'data-scroll-to-offset'
+        ) ||
+        state.elements.wrapper?.getAttribute('data-scroll-to-offset') ||
+        '';
+
+  // Elements
+  const target: HTMLElement = isElement(options.target)
+    ? options.target
+    : targetSelector !== ''
+    ? document.querySelector(targetSelector) || state.elements.wrapper
+    : state.elements.wrapper;
+  let offset: any = isElement(options.offset)
+    ? options.target
+    : offsetSelector !== ''
+    ? document.querySelector(
+        typeof options.offset === 'string' ? options.offset : offsetSelector
+      )
+    : null;
+  offset =
+    typeof options.offset === 'number'
+      ? options.offset
+      : offset?.offsetHeight || config.DEFAULT_OFFSET;
+
+  // Return
+  return { target: target, offset: offset as number };
+}
+
+// + + +
+
 // Add events infrastructure
 export function addEventsInfrastrucutre(state: any, name: string) {
   // Values
