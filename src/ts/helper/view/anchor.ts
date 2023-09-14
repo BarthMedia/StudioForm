@@ -27,7 +27,10 @@ export default function (stateId: number, options: Options) {
   // Define
   function scrollListener() {
     // Check if scrolling has reached the target element
-    if (Math.round(window.scrollY) === Math.round(y)) {
+    if (
+      Math.floor(window.scrollY) + 1 >= y &&
+      Math.ceil(window.scrollY) - 1 <= y
+    ) {
       // Remove the event listener to avoid unnecessary callbacks
       window.removeEventListener('scroll', scrollListener);
 
