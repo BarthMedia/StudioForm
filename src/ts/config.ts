@@ -12,3 +12,7 @@ export const DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER = 0.5;
 
 // Anchor
 export const DEFAULT_OFFSET = 16;
+
+// Button selector
+export const BUTTON_SELECTOR =
+  '[studio-form="submit"], [studio-form="next"], .w-button:not([studio-form="Not a Button"]):not([studio-form="no-button"]):not([studio-form="prev"])';
