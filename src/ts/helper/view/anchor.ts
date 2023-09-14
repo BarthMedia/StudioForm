@@ -21,12 +21,6 @@ export default function (stateId: number, options: Options) {
     obj.target.getBoundingClientRect().top + window.scrollY - obj.offset;
   y = Math.max(y, 0);
 
-  // Animate
-  window.scrollTo({
-    top: y,
-    behavior: 'smooth',
-  });
-
   // Event listener
   let timeoutId: any; // To store the timeout ID
 
@@ -66,6 +60,12 @@ export default function (stateId: number, options: Options) {
       { y: y, target: obj.target, offset: obj.offset }
     );
   }, config.TIMEOUT_SEC * 1000);
+
+  // Animate
+  window.scrollTo({
+    top: y,
+    behavior: 'smooth',
+  });
 
   // Update animationData
   state.sdk.animationData.scrollToY = y;
