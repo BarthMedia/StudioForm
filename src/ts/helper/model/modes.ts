@@ -93,4 +93,8 @@ export default function (state: any) {
   // Add field data params to redirect
   obj.fieldParamsRedirect =
     (el.getAttribute('data-field-params-redirect') || 'true') === 'true';
+
+  // Only scroll if top is not visible
+  obj.scrollIfTopNotVisible =
+    (el.getAttribute('data-scroll-if-top-not-visible') || 'true') === 'true';
 }

@@ -3,6 +3,15 @@ import * as helper from '../helper';
 import * as model from '../../model';
 import * as config from '../../config';
 
+// Helper
+function isElementTopVisible(element: HTMLElement) {
+  // Get the position of the element relative to the viewport
+  const elementRect = element.getBoundingClientRect();
+
+  // Check if the top of the element is visible in the viewport
+  return elementRect.top > 0 && elementRect.top < window.innerHeight;
+}
+
 // Export
 export default function (index: number, options: Options) {
   // Values
@@ -181,6 +190,9 @@ export default function (index: number, options: Options) {
       timeNext,
   };
 
+  // * Test if current slide top is visible
+  const currentSlideTopVisible = isElementTopVisible(currentSlide.el);
+
   // * Main animation *
 
   // Values
@@ -341,7 +353,18 @@ export default function (index: number, options: Options) {
   state.view.progress(options);
 
   // * Call anchor animation *
-  state.sdk.scrollTo({ ...options, attributeReferenceElement: nextSlide.el });
+  if (!state.modes.scrollIfTopNotVisible || !currentSlideTopVisible)
+    setTimeout(
+      () => {
+        state.sdk.scrollTo({
+          ...options,
+          attributeReferenceElement: nextSlide.el,
+        });
+      },
+      currentHeight < nextHeight
+        ? timeCurrent * 1000 + 1
+        : state.sdk.animationData.timeBoth * 1000 + 1
+    );
 
   // Trigger the after trigger
   helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterAnimate);

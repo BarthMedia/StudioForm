@@ -176,11 +176,16 @@ export default function (stateId: number, slideId: number, options: Options) {
           }
 
           // Regex test
-          if (input.getAttribute('data-reg-exp')) {
+          if (
+            input.getAttribute('data-regex') ||
+            input.getAttribute('data-reg-exp')
+          ) {
             try {
               // Values
               const regExp = new RegExp(
-                input.getAttribute('data-reg-exp') || ''
+                input.getAttribute('data-regex') ||
+                  input.getAttribute('data-reg-exp') ||
+                  ''
               );
 
               // Logic
