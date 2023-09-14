@@ -38,9 +38,9 @@ export default function (stateId: number, options: Options) {
       clearTimeout(timeoutId);
 
       // Call the provided callback function
-      if (typeof options.callback === 'function') {
-        options.callback(true);
-      }
+      setTimeout(() => {
+        if (typeof options.callback === 'function') options.callback(true);
+      }, 1);
     }
   }
 
