@@ -5,6 +5,7 @@ import prev from './prev';
 import submit from './submit';
 import suggestButton from './suggestButton';
 import radioCheckboxValueCorrector from './radioCheckboxValueCorrector';
+import fileUploadLabelChanger from './fileUploadLabelChanger';
 
 // Declare
 declare global {
@@ -27,6 +28,12 @@ declare global {
 
 // Export
 export default function init(state: any) {
+  // Achieve correct values
+  radioCheckboxValueCorrector(state);
+
+  // Achieve useful file upload behaviour
+  fileUploadLabelChanger(state);
+
   // Add events infrastrucutre
   const eventFunctionArrays = state.view.eventsFunctionArrays;
   helper.addEventsInfrastrucutre(state, 'Next');
@@ -49,9 +56,6 @@ export default function init(state: any) {
     const res = await submit(state.sdk.i, options);
     return res;
   };
-
-  // Achieve correct values
-  radioCheckboxValueCorrector(state);
 
   // Initialize suggest button
   suggestButton(state);

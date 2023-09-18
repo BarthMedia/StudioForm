@@ -1,6 +1,4 @@
 // Imports
-import * as helper from '../helper';
-import * as model from '../../model';
 
 // Export
 export default function (state: any) {

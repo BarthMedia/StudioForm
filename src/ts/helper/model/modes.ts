@@ -97,4 +97,8 @@ export default function (state: any) {
   // Only scroll if top is not visible
   obj.scrollIfTopNotVisible =
     (el.getAttribute('data-scroll-if-top-not-visible') || 'true') === 'true';
+
+  // Auto swap file upload label text
+  obj.autoSwapFileUploadLabelText =
+    (el.getAttribute('data-swap-file-upload-label-text') || 'true') === 'true';
 }
