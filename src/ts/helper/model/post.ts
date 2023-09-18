@@ -138,7 +138,7 @@ export default async function (stateId: number) {
       : false;
 
   // Create the options for the fetch request
-  const options: any = {
+  const options: { method: string; headers?: any; body: any } = {
     method: method,
     headers: headers,
     body: isFiles ? formData : formData.toString(),
@@ -167,6 +167,14 @@ export default async function (stateId: number) {
     // Step 4: Update the URL's search with the modified URLSearchParams object
     url.search = existingSearchParams.toString();
     apiUrl = url.href;
+  }
+
+  // Auth token
+  const authToken = form.getAttribute('data-auth-token') || '';
+  if (authToken !== '') {
+    options.headers = options.headers
+      ? { ...options.headers, Authorization: `Bearer ${authToken}` }
+      : { Authorization: `Bearer ${authToken}` };
   }
 
   // Await
