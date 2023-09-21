@@ -86,7 +86,6 @@ export default async function (stateId: number, options: Options) {
   }
 
   // * Print to form elements *
-  state.elements.responseData = [state.elements.successMsg];
   if (typeof resVal === 'string')
     // Loop
     state.elements.responseData.forEach((el: HTMLElement) => {
@@ -160,11 +159,11 @@ export default async function (stateId: number, options: Options) {
   });
 
   // Redirect
-  // if (typeof state.sdk.data.redirect === 'string') {
-  //   setTimeout(() => {
-  //     location.href = state.sdk.data.redirect;
-  //   }, state.sdk.animationData.timeBoth * 1000 + 1);
-  // }
+  if (typeof state.sdk.data.redirect === 'string') {
+    setTimeout(() => {
+      location.href = state.sdk.data.redirect;
+    }, state.sdk.animationData.timeBoth * 1000 + 1);
+  }
 
   // Trigger events
   helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterSubmit);
