@@ -66,16 +66,27 @@ export default async function (stateId: number, options: Options) {
   const res: JSON = await state.model.post();
   let resVal: string | undefined;
   try {
-    resVal =
-      state.sdk.data.status === 'fail'
-        ? state.sdk.data.response.message
-        : JSON.stringify(res, null, 2);
+    if (res instanceof Document) {
+      resVal = JSON.stringify(
+        {
+          message: `<b>StudioForm[0].events.afterSubmit(</b> ...yourCallBackFunctions <b>)</b> states:<br><b>StudioForm[${state.sdk.i}].data.response</b> is an instance of Document.`,
+        },
+        null,
+        2
+      );
+    } else {
+      resVal =
+        state.sdk.data.status === 'fail'
+          ? state.sdk.data.response.message
+          : JSON.stringify(res, null, 2);
+    }
   } catch (err) {
     const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Unable to produce "resVal: string" value!`;
     console.warn(msg, err);
   }
 
   // * Print to form elements *
+  state.elements.responseData = [state.elements.successMsg];
   if (typeof resVal === 'string')
     // Loop
     state.elements.responseData.forEach((el: HTMLElement) => {
@@ -149,11 +160,11 @@ export default async function (stateId: number, options: Options) {
   });
 
   // Redirect
-  if (typeof state.sdk.data.redirect === 'string') {
-    setTimeout(() => {
-      location.href = state.sdk.data.redirect;
-    }, state.sdk.animationData.timeBoth * 1000 + 1);
-  }
+  // if (typeof state.sdk.data.redirect === 'string') {
+  //   setTimeout(() => {
+  //     location.href = state.sdk.data.redirect;
+  //   }, state.sdk.animationData.timeBoth * 1000 + 1);
+  // }
 
   // Trigger events
   helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterSubmit);

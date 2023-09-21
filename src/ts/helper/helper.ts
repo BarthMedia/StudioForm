@@ -196,10 +196,27 @@ export const getJson = async function (
       timeout(timeoutSec),
     ]);
     let data = { message: 'Unable to format response as JSON.' };
-    try {
-      data = await res.json();
-    } catch (err) {
-      console.warn(`helper.ts -> getJson: `, err);
+
+    // Check if the Content-Type header is set to text/html
+    const contentType = res.headers.get('Content-Type');
+
+    // Expect HTML
+    if (contentType && contentType.includes('text/html')) {
+      // Await HTML string
+      data = await res.text();
+
+      // Create a new DOMParser
+      const parser = new DOMParser();
+
+      // Parse the text data as an HTML document
+      data = parser.parseFromString(data as any, 'text/html') as any;
+    } else {
+      // Expect JSON
+      try {
+        data = await res.json();
+      } catch (err) {
+        console.warn(`helper.ts -> getJson: `, err);
+      }
     }
 
     // Logic
