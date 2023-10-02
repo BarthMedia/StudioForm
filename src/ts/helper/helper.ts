@@ -27,7 +27,6 @@ function _sfHide(element: HTMLElement, mode: string) {
 // Add sf hide
 export const addSfHide = (element: HTMLElement) => {
   _sfHide(element, 'add');
-  console.log(element);
 };
 
 // Remove sf hide
