@@ -30,7 +30,7 @@ export default function (stateId: number, options: Options) {
     // Visual
     state.elements.prevBtns.forEach((btn: HTMLElement) => {
       // Style init
-      btn.classList.add('sf-hide');
+      helper.addSfHide(btn);
     });
 
     // Programmatically
@@ -61,7 +61,7 @@ export default function (stateId: number, options: Options) {
   if (index === 0)
     state.elements.prevBtns.forEach((btn: HTMLElement) => {
       // Style init
-      btn.classList.add('sf-hide');
+      helper.addSfHide(btn);
     });
 
   // Trigger events

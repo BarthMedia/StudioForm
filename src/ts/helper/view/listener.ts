@@ -81,7 +81,7 @@ export default function init(state: any) {
   // * Prev buttons *
   state.elements.prevBtns.forEach((btn: HTMLElement) => {
     // Style init
-    btn.classList.add('sf-hide');
+    helper.addSfHide(btn);
 
     // SDK
     btn.addEventListener('click', () => {

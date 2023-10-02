@@ -158,7 +158,7 @@ export default function (stateId: number, options: Options) {
   if (next > currentSlideId)
     state.elements.prevBtns.forEach((btn: HTMLElement) => {
       // Style init
-      btn.classList.remove('sf-hide');
+      helper.removeSfHide(btn);
     });
 
   // Trigger events

@@ -8,6 +8,33 @@ import * as config from '../config';
 
 // + Functions +
 
+// Get all sf-hide elements
+function _sfHide(element: HTMLElement, mode: string) {
+  // Parent
+  const parent: HTMLElement =
+    element.getAttribute('data-closest-sf-hide') === 'false'
+      ? element
+      : element.closest('[studio-form="sf-hide"]') || element;
+  const elements: (HTMLElement | Element)[] = [parent];
+
+  // Find child elements
+  parent.querySelectorAll('*').forEach(el => elements.push(el));
+
+  // Add / remove sf-hide
+  elements.forEach(el => el.classList?.[mode]('sf-hide'));
+}
+
+// Add sf hide
+export const addSfHide = (element: HTMLElement) => {
+  _sfHide(element, 'add');
+  console.log(element);
+};
+
+// Remove sf hide
+export const removeSfHide = (element: HTMLElement) => {
+  _sfHide(element, 'remove');
+};
+
 // Check if element top is visible
 export function isElementTopVisible(
   element: HTMLElement,
