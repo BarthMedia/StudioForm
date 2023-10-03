@@ -33,6 +33,17 @@ export default async function (stateId: number) {
     // dolphin: false,
   };
 
+  // * JotForm mode *
+  let jotFormMode = false;
+  if (
+    state.modes.isJotFrom ||
+    (form.getAttribute('action') || '').indexOf('jotform.com/submit') > -1
+  ) {
+    // Update
+    jotFormMode = true;
+    payload = [];
+  }
+
   // * Make async call *
 
   // Find all fields
@@ -61,48 +72,46 @@ export default async function (stateId: number) {
         return;
 
       // Logic
-      if (input.type !== 'file')
-        fields.push({
-          key: key,
-          value: input.value,
-        });
-      else {
+      if (input.type !== 'file') {
+        if (!jotFormMode || input.value !== '')
+          fields.push({
+            key: key,
+            value: input.value,
+          });
+      } else {
         if (input.files) {
           for (let i = 0, n = input.files.length; i < n; i++) {
-            files.push({ key: `${key}][${i}`, value: input.files[i] });
+            files.push({
+              key: `${key}${!jotFormMode ? '][' : ''}${!jotFormMode ? i : ''}`,
+              value: input.files[i],
+            });
           }
         }
       }
     });
   });
 
-  // * JotForm mode *
-  let jotFormMode = false;
-  if (
-    state.modes.isJotFrom ||
-    (form.getAttribute('action') || '').indexOf('jotform.com/submit') > -1
-  ) {
-    // Update
-    jotFormMode = true;
-    payload = {};
-  }
-
   // Fields loop
   const isFiles = files.length > 0;
   fields.forEach((field: { key: string; value: any }) => {
     if (!jotFormMode) payload[`fields[${field.key}]`] = field.value;
-    else payload[`${field.key}`] = field.value;
+    else payload.push(field);
   });
   files.forEach(file => {
     if (!jotFormMode) payload[`files[${file.key}]`] = file.value;
-    else payload[`${file.key}]`] = file.value;
+    else payload.push(file);
   });
 
   // Iterate through the JSON object and add properties to formData
   const formData = isFiles ? new FormData() : new URLSearchParams();
-  for (const key in payload) {
-    formData.append(key, payload[key]);
-  }
+  if (!jotFormMode)
+    for (const key in payload) {
+      formData.append(key, payload[key]);
+    }
+  else
+    payload.forEach((item: { key: string; value: any }) =>
+      formData.append(item.key, item.value)
+    );
 
   // * If form has specified action attribute *
   if (form.getAttribute('action') || '' !== '') {
