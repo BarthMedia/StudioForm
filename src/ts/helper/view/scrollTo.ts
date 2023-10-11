@@ -11,6 +11,12 @@ export default function (stateId: number, options: Options) {
   // Mode guard
   if (options.scrollToTarget === false || !state.modes.scrollToTarget) return;
 
+  // Elements
+  const scrollToElement: HTMLElement | null = state.elements.wrapper.closest(
+    ['window-scroll'].map(str => `[studio-form="${str}"]`).join(', ')
+  );
+  const scrollToContainer: HTMLElement | Window = scrollToElement || window;
+
   // * Values *
 
   // Return target element and offset number
@@ -18,7 +24,10 @@ export default function (stateId: number, options: Options) {
 
   // Math
   let y: number =
-    obj.target.getBoundingClientRect().top + window.scrollY - obj.offset;
+    obj.target.getBoundingClientRect().top -
+    (scrollToElement ? scrollToElement.getBoundingClientRect().top : 0) +
+    (scrollToElement ? scrollToElement.scrollTop : window.scrollY) -
+    obj.offset;
   y = Math.max(y, 0);
 
   // Event listener
@@ -26,13 +35,17 @@ export default function (stateId: number, options: Options) {
 
   // Define
   function scrollListener() {
+    // Logic
+    const bool = scrollToElement
+      ? Math.floor(scrollToElement.scrollTop) + 1 >= y &&
+        Math.ceil(scrollToElement.scrollTop) - 1 <= y
+      : Math.floor(window.scrollY) + 1 >= y &&
+        Math.ceil(window.scrollY) - 1 <= y;
+
     // Check if scrolling has reached the target element
-    if (
-      Math.floor(window.scrollY) + 1 >= y &&
-      Math.ceil(window.scrollY) - 1 <= y
-    ) {
+    if (bool) {
       // Remove the event listener to avoid unnecessary callbacks
-      window.removeEventListener('scroll', scrollListener);
+      scrollToContainer.removeEventListener('scroll', scrollListener);
 
       // Clear the timeout to prevent the callback from firing due to timeout
       clearTimeout(timeoutId);
@@ -44,13 +57,13 @@ export default function (stateId: number, options: Options) {
     }
   }
 
-  // Listen for the 'scroll' event on the scrolling container (usually the window)
-  window.addEventListener('scroll', scrollListener);
+  // Listen for the 'scroll' event on the scrolling container (usually the scrollToContainer)
+  scrollToContainer.addEventListener('scroll', scrollListener);
 
   // Set a timeout for the given duration
   timeoutId = setTimeout(function () {
     // Remove the event listener if the timeout expires
-    window.removeEventListener('scroll', scrollListener);
+    scrollToContainer.removeEventListener('scroll', scrollListener);
 
     // Callback
     if (typeof options.callback === 'function') {
@@ -65,7 +78,7 @@ export default function (stateId: number, options: Options) {
   }, config.TIMEOUT_SEC * 1000);
 
   // Animate
-  window.scrollTo({
+  scrollToContainer.scrollTo({
     top: y,
     behavior: 'smooth',
   });
@@ -74,4 +87,5 @@ export default function (stateId: number, options: Options) {
   state.sdk.animationData.scrollToY = y;
   state.sdk.animationData.scrollToTarget = obj.target;
   state.sdk.animationData.scrollToOffset = obj.offset;
+  state.sdk.animationData.scrollToContainer = scrollToContainer;
 }

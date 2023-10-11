@@ -46,7 +46,11 @@ export default function (index: number, options: Options) {
   const form: HTMLElement =
     isSubmit !== true ? state.elements.mask : state.elements.wrapper;
   const overflowElement: HTMLElement =
-    form.closest('[studio-form="overflow-wrapper"]') ||
+    form.closest(
+      ['overflow-wrapper', 'overflow', 'overflow-hidden']
+        .map(str => `[studio-form="${str}"]`)
+        .join(', ')
+    ) ||
     form.closest('section') ||
     state.elements.wrapper;
 
@@ -67,7 +71,7 @@ export default function (index: number, options: Options) {
   // * Values *
 
   // Is equalDimensions
-  const equalDimensions =
+  let equalDimensions =
     currentWidth === nextWidth && currentHeight === nextHeight;
   let equalDimensionsMulitplier = parseFloat(
     currentSlide.el.getAttribute('data-slide-equal-dimensions-multiplier') ||
@@ -135,20 +139,27 @@ export default function (index: number, options: Options) {
   timeNext = isNaN(timeNext) ? 1 : timeNext;
 
   // Direction math
-  let direction: number = parseFloat(
-    currentSlide.el.getAttribute('data-slide-direction') ||
-      state.elements.wrapper.getAttribute('data-slide-direction')
-  );
+  let direction: any =
+    nextSlide.el.getAttribute('data-slide-direction') ||
+    state.elements.wrapper.getAttribute('data-slide-direction');
+  const fadeOnly = direction === 'off' ? 0 : 1;
+
+  direction = parseFloat(direction);
   direction = isNaN(direction) ? config.DEFAULT_SLIDE_DIRECTION : direction;
   direction =
     Math.min(Math.max(direction, 0), 359.9999) - (isReverse ? -180 : 0);
   const angle = ((direction - 90) * Math.PI) / 180;
 
   // Calculate x & y
-  const xCurrent = currentWidth * moveCurrentMultiplier * Math.cos(angle) * -1;
-  const yCurrent = currentHeight * moveCurrentMultiplier * Math.sin(angle) * -1;
-  const xNext = nextWidth * moveNextMultiplier * Math.cos(angle);
-  const yNext = nextHeight * moveNextMultiplier * Math.sin(angle);
+  const xCurrent =
+    currentWidth * moveCurrentMultiplier * Math.cos(angle) * -1 * fadeOnly;
+  const yCurrent =
+    currentHeight * moveCurrentMultiplier * Math.sin(angle) * -1 * fadeOnly;
+  const xNext = nextWidth * moveNextMultiplier * Math.cos(angle) * fadeOnly;
+  const yNext = nextHeight * moveNextMultiplier * Math.sin(angle) * fadeOnly;
+
+  // Fade only logic
+  if (!fadeOnly) equalDimensions = false;
 
   // * Update animationData sdk *
   state.sdk.animationData = {
@@ -360,6 +371,10 @@ export default function (index: number, options: Options) {
         ? timeCurrent * 1000 + 1
         : state.sdk.animationData.timeBoth * 1000 + 1
     );
+
+  // Add / remove sf-active
+  state.addSfActive(nId);
+  state.removeSfActive(cId);
 
   // Trigger the after trigger
   helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterAnimate);

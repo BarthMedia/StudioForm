@@ -4,8 +4,9 @@ import listener from './helper/view/listener';
 import animate from './helper/view/animate';
 import * as helper from './helper/helper';
 import animateProgress from './helper/view/animateProgress';
-import anchor from './helper/view/anchor';
+import anchor from './helper/view/scrollTo';
 import required from './helper/view/required';
+import sfActive from './helper/view/sfActive';
 
 // Export
 export default function init(state: any) {
@@ -14,6 +15,9 @@ export default function init(state: any) {
 
   // Generate step logic
   state.model.generateSlideLogic();
+
+  // Init sf active functionality
+  sfActive(state);
 
   // Calculate initial progress
   state.view.progress = function (options: Options = {}) {
@@ -53,6 +57,6 @@ export default function init(state: any) {
   });
   state.sdk.slideLogic[0].el.style.display = '';
 
-  // Init event listeners
+  // * Init event listeners *
   listener(state);
 }

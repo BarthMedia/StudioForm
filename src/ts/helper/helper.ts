@@ -41,17 +41,28 @@ export function isElementTopVisible(
   options: Options,
   isFullyVisibleMode = false
 ) {
+  // Elements
+  const scrollToElement: HTMLElement | null = state.elements.wrapper.closest(
+    ['window-scroll'].map(str => `[studio-form="${str}"]`).join(', ')
+  );
+
   // Get the position of the element relative to the viewport
   const elementRect = element.getBoundingClientRect();
+  const containerRect = scrollToElement?.getBoundingClientRect();
 
   // Get offset
   const offset = returnTargetAndOffset(state, options).offset;
 
-  // Check if the top of the element is visible in the viewport
+  // Calculate the height of the scrollable container
+  const containerHeight = containerRect?.height || window.innerHeight;
+
+  // Check if the top of the element is visible in the viewport or the specified container
   return (
-    elementRect.top - offset > 0 &&
-    elementRect.top < window.innerHeight &&
-    (!isFullyVisibleMode ? true : elementRect.bottom < window.innerHeight)
+    elementRect.top - (containerRect?.top || 0) - offset >= -1 && // Allowance: -1
+    elementRect.top - (containerRect?.top || 0) < containerHeight &&
+    (!isFullyVisibleMode
+      ? true
+      : elementRect.bottom - (containerRect?.bottom || 0) < containerHeight)
   );
 }
 
