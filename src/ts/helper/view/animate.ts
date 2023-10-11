@@ -70,14 +70,16 @@ export default function (index: number, options: Options) {
 
   // * Values *
 
+  // Next or current slide var
+  const nextOrCurrentSlide = isSubmit ? nextSlide : currentSlide;
+
   // Is equalDimensions
+  const edmAttr = 'data-slide-equal-dimensions-multiplier';
   let equalDimensions =
     currentWidth === nextWidth && currentHeight === nextHeight;
   let equalDimensionsMulitplier = parseFloat(
-    currentSlide.el.getAttribute('data-slide-equal-dimensions-multiplier') ||
-      state.elements.wrapper.getAttribute(
-        'data-slide-equal-dimensions-multiplier'
-      ) ||
+    nextOrCurrentSlide.el.getAttribute(edmAttr) ||
+      state.elements.wrapper.getAttribute(edmAttr) ||
       config.DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER.toString()
   );
   equalDimensionsMulitplier = isNaN(equalDimensionsMulitplier)
@@ -88,59 +90,65 @@ export default function (index: number, options: Options) {
   const isReverse = isSubmit !== true ? cId > nId! : false;
 
   // Opacity
+  const soAttr = 'data-slide-opacity';
   let opacityCurrent = parseFloat(
-    currentSlide.el.getAttribute('data-slide-opacity') ||
-      state.elements.wrapper.getAttribute('data-slide-opacity') ||
+    nextOrCurrentSlide.el.getAttribute(soAttr) ||
+      state.elements.wrapper.getAttribute(soAttr) ||
       config.DEFAULT_SLIDE_OPACITY.toString()
   );
   opacityCurrent = isNaN(opacityCurrent) ? 0 : opacityCurrent;
   let opacityNext = parseFloat(
-    nextSlide.el.getAttribute('data-slide-opacity') ||
-      state.elements.wrapper.getAttribute('data-slide-opacity') ||
+    nextSlide.el.getAttribute(soAttr) ||
+      state.elements.wrapper.getAttribute(soAttr) ||
       config.DEFAULT_SLIDE_OPACITY.toString()
   );
   opacityNext = isNaN(opacityNext) ? 0 : opacityNext;
 
   // Z-index
+  const sziAttr = 'data-slide-z-index';
   let zIndex = parseFloat(
-    nextSlide.el.getAttribute('data-slide-z-index') ||
-      state.elements.wrapper.getAttribute('data-slide-z-index')
+    nextSlide.el.getAttribute(sziAttr) ||
+      state.elements.wrapper.getAttribute(sziAttr)
   );
   zIndex = isNaN(zIndex) ? 1 : zIndex;
 
   // Current
+  const smcAttr = 'data-slide-move-current';
   let moveCurrentMultiplier = parseFloat(
-    currentSlide.el.getAttribute('data-slide-move-current') ||
-      state.elements.wrapper.getAttribute('data-slide-move-current') ||
+    nextOrCurrentSlide.el.getAttribute(smcAttr) ||
+      state.elements.wrapper.getAttribute(smcAttr) ||
       config.DEFAULT_SLIDE_MOVE_CURRENT.toString()
   );
   moveCurrentMultiplier = isNaN(moveCurrentMultiplier)
     ? 1
     : moveCurrentMultiplier;
+  const stscAttr = 'data-slide-time-sec-current';
   let timeCurrent = parseFloat(
-    currentSlide.el.getAttribute('data-slide-time-sec-current') ||
-      state.elements.wrapper.getAttribute('data-slide-time-sec-current') ||
+    nextOrCurrentSlide.el.getAttribute(stscAttr) ||
+      state.elements.wrapper.getAttribute(stscAttr) ||
       config.DEFAULT_SLIDE_TIME_CURRENT.toString()
   );
   timeCurrent = isNaN(timeCurrent) ? 1 : timeCurrent;
 
   // Next
+  const smnAttr = 'data-slide-move-next';
   let moveNextMultiplier = parseFloat(
-    currentSlide.el.getAttribute('data-slide-move-next') ||
-      state.elements.wrapper.getAttribute('data-slide-move-next') ||
+    nextOrCurrentSlide.el.getAttribute(smnAttr) ||
+      state.elements.wrapper.getAttribute(smnAttr) ||
       config.DEFAULT_SLIDE_MOVE_NEXT.toString()
   );
   moveNextMultiplier = isNaN(moveNextMultiplier) ? 1 : moveNextMultiplier;
+  const stcnAttr = 'data-slide-time-sec-next';
   let timeNext = parseFloat(
-    currentSlide.el.getAttribute('data-slide-time-sec-next') ||
-      state.elements.wrapper.getAttribute('data-slide-time-sec-next') ||
+    nextOrCurrentSlide.el.getAttribute(stcnAttr) ||
+      state.elements.wrapper.getAttribute(stcnAttr) ||
       config.DEFAULT_SLIDE_TIME_NEXT.toString()
   );
   timeNext = isNaN(timeNext) ? 1 : timeNext;
 
   // Direction math
   let direction: any =
-    nextSlide.el.getAttribute('data-slide-direction') ||
+    nextOrCurrentSlide.el.getAttribute('data-slide-direction') ||
     state.elements.wrapper.getAttribute('data-slide-direction');
   const fadeOnly = direction === 'off' ? 0 : 1;
 
