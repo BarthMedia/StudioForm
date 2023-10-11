@@ -1,5 +1,6 @@
 // Imports
 import * as helper from '../helper';
+import * as config from '../../config';
 
 // Export
 export default function init(state: any) {
@@ -7,9 +8,11 @@ export default function init(state: any) {
   function toggle(id: number, mode: string) {
     // Elements
     const inner: NodeListOf<HTMLElement> =
-      state.elements.wrapper.querySelectorAll(`[studio-form="active-${id}"]`);
+      state.elements.wrapper.querySelectorAll(
+        `[${config.PRODUCT_NAME}="active-${id}"]`
+      );
     const outer: NodeListOf<HTMLElement> = document.querySelectorAll(
-      `[studio-form-${state.sdk.i}="active-${id}"]`
+      `[${config.PRODUCT_NAME}-${state.sdk.i}="active-${id}"]`
     );
     const elements: HTMLElement[] = [];
 

@@ -4,6 +4,7 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}post.ts -> default`;
 export default async function (stateId: number) {
   // Values
   const state = model.state[stateId];
@@ -15,9 +16,7 @@ export default async function (stateId: number) {
 
   // Guard
   if (!helper.isElement(form))
-    throw new Error(
-      `StudioForm[${state.sdk.i}] -> post.ts -> default: Couldn't find form!`
-    );
+    throw new Error(`${errPath(state)}: Couldn't find form!`);
 
   // * Find all data and store in object for post request *
 
@@ -53,7 +52,7 @@ export default async function (stateId: number) {
 
     // Elements
     const inputs: HTMLInputElement[] = slide.el.querySelectorAll(
-      'input, select, textarea'
+      config.INPUTS_SELECTOR
     );
 
     // Loop
@@ -200,10 +199,7 @@ export default async function (stateId: number) {
       )
     );
   } catch (err) {
-    console.error(
-      `StudioForm[${state.sdk.i}] -> post.ts -> default -> await fetch(): `,
-      err
-    );
+    console.error(`${errPath(state)} -> await fetch(): `, err);
     status = 'fail';
     res = err;
   }
@@ -246,7 +242,7 @@ export default async function (stateId: number) {
       redirect = url.href;
     } catch (err) {
       console.error(
-        `StudioForm[${state.sdk.i}] -> post.ts -> default -> try { ... redirect url ... } catch: `,
+        `${errPath(state)} -> try { ... redirect url ... } catch: `,
         err
       );
     }

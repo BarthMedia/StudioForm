@@ -1,8 +1,10 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}submit.ts -> default: `;
 export default async function (stateId: number, options: Options) {
   // Values
   const state = model.state[stateId];
@@ -11,7 +13,7 @@ export default async function (stateId: number, options: Options) {
 
   // Slider mode guard
   if (state.modes.isSlider === true) {
-    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Slider mode doesn't allow for submission!`;
+    const msg = `${errPath(state)}Slider mode doesn't allow for submission!`;
     console.warn(msg);
     return msg;
   }
@@ -22,14 +24,14 @@ export default async function (stateId: number, options: Options) {
     options.doNotWaitForAnimations !== true &&
     state.view.gsapTimeline.isRunning === true
   ) {
-    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: The animation is not yet finished!`;
+    const msg = `${errPath(state)}The animation is not yet finished!`;
     console.warn(msg);
     return msg;
   }
 
   // Warn guard
   if (state.sdk.isSubmitted === true) {
-    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Form already submitted!`;
+    const msg = `${errPath(state)}Form already submitted!`;
     console.warn(msg);
     return msg;
   }
@@ -49,17 +51,18 @@ export default async function (stateId: number, options: Options) {
   state.sdk.isSubmitted = true;
 
   // Set all submit buttons to data-wait
+  const waitAttr = 'data-wait';
   const currentButtons = state.sdk.slideLogic[currentSlideId].btns;
   if (currentButtons)
     currentButtons.forEach((btn: any) => {
       // Guard
-      if ((btn.el.getAttribute('data-wait') || '') === '') return;
+      if ((btn.el.getAttribute(waitAttr) || '') === '') return;
 
       // Set data default
       if (!btn.textDefault) btn.textDefault = btn.el.innerText;
 
       // Overwrite text
-      btn.el.innerHTML = btn.el.getAttribute('data-wait');
+      btn.el.innerHTML = btn.el.getAttribute(waitAttr);
     });
 
   // Await response & print to sdk & DOM
@@ -69,7 +72,7 @@ export default async function (stateId: number, options: Options) {
     if (res instanceof Document) {
       resVal = JSON.stringify(
         {
-          message: `<b>StudioForm[0].events.afterSubmit(</b> ...yourCallBackFunctions <b>)</b> states:<br><b>StudioForm[${state.sdk.i}].data.response</b> is an instance of Document.`,
+          message: `<b>${config.PRODUCT_NAME_CAMEL_CASE}[0].events.afterSubmit(</b> ...yourCallBackFunctions <b>)</b> states:<br><b>${config.PRODUCT_NAME_CAMEL_CASE}[${state.sdk.i}].data.response</b> is an instance of Document.`,
         },
         null,
         2
@@ -81,7 +84,7 @@ export default async function (stateId: number, options: Options) {
           : JSON.stringify(res, null, 2);
     }
   } catch (err) {
-    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Unable to produce "resVal: string" value!`;
+    const msg = `${errPath(state)}Unable to produce "resVal: string" value!`;
     console.warn(msg, err);
   }
 
@@ -101,7 +104,7 @@ export default async function (stateId: number, options: Options) {
     if (currentButtons)
       currentButtons.forEach((btn: any) => {
         // Guard
-        if ((btn.el.getAttribute('data-wait') || '') === '') return;
+        if ((btn.el.getAttribute(waitAttr) || '') === '') return;
 
         // Overwrite text
         btn.el.innerHTML = btn.textDefault;
@@ -126,7 +129,7 @@ export default async function (stateId: number, options: Options) {
     // Skip code below
 
     // Return
-    const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Form submission not successful!`;
+    const msg = `${errPath(state)}Form submission not successful!`;
     return msg;
   }
 
@@ -146,9 +149,9 @@ export default async function (stateId: number, options: Options) {
     helper.addSfHide(node);
   });
 
-  // Add sf-hide to every indexed studio-form element
+  // Add sf-hide to every indexed ${config.PRODUCT_NAME} element
   document
-    .querySelectorAll(`[studio-form-${state.sdk.i}]`)
+    .querySelectorAll(`[${config.PRODUCT_NAME}-${state.sdk.i}]`)
     .forEach(el => helper.addSfHide(el as HTMLElement));
 
   // Animate
@@ -169,6 +172,6 @@ export default async function (stateId: number, options: Options) {
   helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterSubmit);
 
   // Default return
-  const msg = `StudioForm[${state.sdk.i}] -> submit.ts -> default: Form submission successful!`;
+  const msg = `${errPath(state)}Form submission successful!`;
   return msg;
 }

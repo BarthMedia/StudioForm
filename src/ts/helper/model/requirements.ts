@@ -1,8 +1,11 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}requirements.ts -> default`;
+const sfidAttr = 'data-sf-input-id';
 export default function (stateId: number, slideId: number, options: Options) {
   // Positive guard
   if (options.doNotCheckSlideRequirements === true) return true;
@@ -18,46 +21,46 @@ export default function (stateId: number, slideId: number, options: Options) {
   // * * * Empty case * * *
   if (currentSlide.type === 'empty') return true;
 
-  // * * * Checkbox case * * *
-  if (currentSlide.type === 'checkbox') {
-    // Elements
-    const checkboxes: NodeListOf<HTMLInputElement> =
-      currentSlide.el.querySelectorAll('input[type="checkbox"]');
+  // // * * * Checkbox case * * * // Legacy
+  // if (currentSlide.type === 'checkbox') {
+  //   // Elements
+  //   const checkboxes: NodeListOf<HTMLInputElement> =
+  //     currentSlide.el.querySelectorAll('input[type="checkbox"]');
 
-    // Values
-    let selectedFound = false;
+  //   // Values
+  //   let selectedFound = false;
 
-    // Loop
-    checkboxes.forEach(checkbox => {
-      // Logic
-      if (checkbox.value === 'on') selectedFound = true;
-    });
+  //   // Loop
+  //   checkboxes.forEach(checkbox => {
+  //     // Logic
+  //     if (checkbox.value === 'on') selectedFound = true;
+  //   });
 
-    // SDK - Default
-    state.sdk.slideRequirementsData = targetInputs;
+  //   // SDK - Default
+  //   state.sdk.slideRequirementsData = targetInputs;
 
-    // Logic
-    if (selectedFound) return true;
-    else {
-      // Fill up targetInputs
-      checkboxes.forEach(checkbox =>
-        targetInputs.push({
-          el: checkbox,
-          msg: 'nothing checked',
-          regExp: undefined,
-        })
-      );
+  //   // Logic
+  //   if (selectedFound) return true;
+  //   else {
+  //     // Fill up targetInputs
+  //     checkboxes.forEach(checkbox =>
+  //       targetInputs.push({
+  //         el: checkbox,
+  //         msg: 'nothing checked',
+  //         regExp: undefined,
+  //       })
+  //     );
 
-      // SDK
-      state.sdk.slideRequirementsData = targetInputs;
+  //     // SDK
+  //     state.sdk.slideRequirementsData = targetInputs;
 
-      // Visual
-      state.view.renderRequirements(targetInputs);
+  //     // Visual
+  //     state.view.renderRequirements(targetInputs);
 
-      // Logic
-      return false;
-    }
-  }
+  //     // Logic
+  //     return false;
+  //   }
+  // }
 
   // * * * Radio case * * *
   if (currentSlide.type === 'radio') {
@@ -104,13 +107,13 @@ export default function (stateId: number, slideId: number, options: Options) {
   if (currentSlide.type === 'standard') {
     // * Index every index correctly *
     currentSlide.el
-      .querySelectorAll('input, select, textarea')
+      .querySelectorAll(config.INPUTS_SELECTOR)
       .forEach(
         (
           input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
           index: number
         ) => {
-          input.setAttribute('data-sf-input-id', index.toString());
+          input.setAttribute(sfidAttr, index.toString());
         }
       );
 
@@ -143,7 +146,7 @@ export default function (stateId: number, slideId: number, options: Options) {
         radios.forEach(radio =>
           targetInputs.push({
             el: radio,
-            i: parseInt(radio.getAttribute('data-sf-input-id') || ''),
+            i: parseInt(radio.getAttribute(sfidAttr) || ''),
             msg: 'nothing selected',
             regExp: undefined,
           })
@@ -152,7 +155,7 @@ export default function (stateId: number, slideId: number, options: Options) {
 
     // * Other input types loop *
     currentSlide.el
-      .querySelectorAll('input, select, textarea')
+      .querySelectorAll(config.INPUTS_SELECTOR)
       .forEach(
         (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
           // Don't test radios
@@ -166,7 +169,7 @@ export default function (stateId: number, slideId: number, options: Options) {
             // Push
             targetInputs.push({
               el: input,
-              i: parseInt(input.getAttribute('data-sf-input-id') || ''),
+              i: parseInt(input.getAttribute(sfidAttr) || ''),
               msg: 'empty',
               regExp: undefined,
             });
@@ -193,7 +196,7 @@ export default function (stateId: number, slideId: number, options: Options) {
                 // Push
                 targetInputs.push({
                   el: input,
-                  i: parseInt(input.getAttribute('data-sf-input-id') || ''),
+                  i: parseInt(input.getAttribute(sfidAttr) || ''),
                   msg: 'custom regular expression',
                   regExp: regExp,
                 });
@@ -206,7 +209,7 @@ export default function (stateId: number, slideId: number, options: Options) {
               }
             } catch (err) {
               console.warn(
-                `StudioForm[${state.sdk.i}] -> requirements.ts -> default -> forEach() callback: Unvalid regex test!`,
+                `${errPath(state)} -> forEach() callback: Unvalid regex test!`,
                 input
               );
             }
@@ -222,7 +225,7 @@ export default function (stateId: number, slideId: number, options: Options) {
               // Push
               targetInputs.push({
                 el: input,
-                i: parseInt(input.getAttribute('data-sf-input-id') || ''),
+                i: parseInt(input.getAttribute(sfidAttr) || ''),
                 msg: 'email',
                 regExp: regExp,
               });
@@ -242,7 +245,7 @@ export default function (stateId: number, slideId: number, options: Options) {
               // Push
               targetInputs.push({
                 el: input,
-                i: parseInt(input.getAttribute('data-sf-input-id') || ''),
+                i: parseInt(input.getAttribute(sfidAttr) || ''),
                 msg: 'telephone',
                 regExp: regExp,
               });
@@ -262,7 +265,7 @@ export default function (stateId: number, slideId: number, options: Options) {
               // Push
               targetInputs.push({
                 el: input,
-                i: parseInt(input.getAttribute('data-sf-input-id') || ''),
+                i: parseInt(input.getAttribute(sfidAttr) || ''),
                 msg: 'number',
                 regExp: regExp,
               });
@@ -281,10 +284,10 @@ export default function (stateId: number, slideId: number, options: Options) {
 
     // * Remove input indexing *
     currentSlide.el
-      .querySelectorAll('input, select, textarea')
+      .querySelectorAll(config.INPUTS_SELECTOR)
       .forEach(
         (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
-          input.removeAttribute('data-sf-input-id');
+          input.removeAttribute(sfidAttr);
         }
       );
 

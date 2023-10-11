@@ -1,8 +1,30 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
+
+// Helper
+function toggle(btn: HTMLElement, mode: string) {
+  // * Select all relevant elments *
+
+  // Elements
+  const parent =
+    btn.tagName === 'LABEL' || !btn.closest(config.LABEL_SELECTOR)
+      ? btn
+      : (btn.closest(config.LABEL_SELECTOR) as HTMLElement);
+  const elements = [parent];
+
+  // Push loop
+  parent.querySelectorAll('*').forEach(el => elements.push(el as HTMLElement));
+
+  // * Add class to button elements *
+  elements.forEach(el => el.classList[mode](sfgClass));
+}
 
 // Export
+const errPath = (s: any) =>
+  `${helper.errorName(s)}suggestButton.ts -> init -> `;
+const sfgClass = 'sf-suggested';
 export default function init(state: any) {
   // * Add events *
   const eventFunctionArrays = state.view.eventsFunctionArrays;
@@ -36,7 +58,7 @@ export default function init(state: any) {
     // Guard
     if (!slide || !btn)
       throw new Error(
-        `StudioForm[${state.sdk.i}] -> suggestButton.ts -> init -> suggest: Unable to find slide and/or button!`
+        `${errPath(state)}suggest: Unable to find slide and/or button!`
       );
 
     // Event listener
@@ -59,22 +81,23 @@ export default function init(state: any) {
 
     // * Select all relevant elments *
 
-    // Elements
-    const elements: HTMLElement[] = [];
-    const parent: HTMLElement =
-      btn.el.tagName === 'LABEL' ||
-      !btn.el.closest('label, [studio-form="label"]')
-        ? btn.el
-        : btn.el.closest('label, [studio-form="label"]');
+    toggle(btn.el, 'add');
 
-    // Push
-    elements.push(parent);
-
-    // Push loop
-    parent.querySelectorAll('*').forEach((el: any) => elements.push(el));
-
-    // * Add class to button elements *
-    elements.forEach(el => el.classList.add('sf-suggested'));
+    // * Scroll towards button *
+    if (
+      !helper.isElementTopVisible(
+        btn.el,
+        state,
+        {
+          attributeReferenceElement: slide.el,
+        },
+        true
+      )
+    )
+      state.sdk.scrollTo({
+        target: btn.el,
+        attributeReferenceElement: slide.el,
+      });
 
     // Trigger
     helper.triggerAllFunctions(eventFunctionArrays.afterButtonSuggestion);
@@ -92,7 +115,7 @@ export default function init(state: any) {
     // Guard
     if (!slide || !btn) {
       console.warn(
-        `StudioForm[${state.sdk.i}] -> suggestButton.ts -> init -> clear: Unable to find slide and/or button!`
+        `${errPath(state)}clear: Unable to find slide and/or button!`
       );
       return;
     }
@@ -102,22 +125,7 @@ export default function init(state: any) {
 
     // * Select all relevant elments *
 
-    // Elements
-    const elements: HTMLElement[] = [];
-    const parent: HTMLElement =
-      btn.el.tagName === 'LABEL' ||
-      !btn.el.closest('label, [studio-form="label"]')
-        ? btn.el
-        : btn.el.closest('label, [studio-form="label"]');
-
-    // Push
-    elements.push(parent);
-
-    // Push loop
-    parent.querySelectorAll('*').forEach((el: any) => elements.push(el));
-
-    // * Add class to button elements *
-    elements.forEach(el => el.classList.remove('sf-suggested'));
+    toggle(btn.el, 'remove');
 
     // Trigger
     helper.triggerAllFunctions(eventFunctionArrays.afterButtonSuggestionClear);

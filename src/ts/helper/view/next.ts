@@ -1,9 +1,15 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
+let double = false;
+const errPath = (s: any) => `${helper.errorName(s)} -> next.ts -> default`;
 export default function (stateId: number, options: Options) {
+  // Guard
+  if (double) return;
+
   // Values
   const state = model.state[stateId];
   let next: number | undefined | boolean;
@@ -16,14 +22,14 @@ export default function (stateId: number, options: Options) {
     options.doNotWaitForAnimations !== true &&
     state.view.gsapTimeline.isRunning === true
   ) {
-    const msg = `StudioForm[${state.sdk.i}] -> next.ts -> default: The animation is not yet finished!`;
+    const msg = `${errPath}: The animation is not yet finished!`;
     console.warn(msg);
     return msg;
   }
 
   // Warn guard
   if (state.sdk.isSubmitted === true) {
-    const msg = `StudioForm[${state.sdk.i}] -> next.ts -> default: Form already submitted!`;
+    const msg = `${errPath}: Form already submitted!`;
     console.warn(msg);
     return msg;
   }
@@ -40,9 +46,7 @@ export default function (stateId: number, options: Options) {
 
     // Guard
     if (!currentSlide)
-      throw new Error(
-        `StudioForm[${state.sdk.i}] -> next.ts -> default: Unable to find the current slide!`
-      );
+      throw new Error(`${errPath}: Unable to find the current slide!`);
 
     // No buttons case
     if (currentSlide.btns === false) {
@@ -52,7 +56,6 @@ export default function (stateId: number, options: Options) {
     } else {
       // Values
       let suggestedBtnFound = false;
-      let suggestedBtnIndex: number;
 
       // Loop for suggested button
       currentSlide.btns.every((btn: any) => {
@@ -61,7 +64,6 @@ export default function (stateId: number, options: Options) {
           // Update
           next = btn.next;
           suggestedBtnFound = true;
-          suggestedBtnIndex = btn.i;
 
           // Break
           return false;
@@ -71,33 +73,25 @@ export default function (stateId: number, options: Options) {
         return true;
       });
 
-      // Return and click specific button
-      if (suggestedBtnFound) {
-        // Elements
-        const btnEL: HTMLElement = currentSlide.btns[suggestedBtnIndex!].el;
-
-        // Action
-        btnEL.click();
-
-        // Return
-        return {
-          msg: `StudioForm[${state.sdk.i}] -> state.sdk.slideLogic[${
-            currentSlide.i
-          }] -> .btns[${suggestedBtnIndex!}] was clicked!`,
-          slideId: currentSlide.i,
-          buttonId: suggestedBtnIndex!,
-        };
-      }
-
       // If not found suggest the first button
       if (!suggestedBtnFound) {
+        // Elements
+        const btnEL: HTMLElement = currentSlide.btns[0].el;
+
+        // Mark a click action
+        double = true;
+        btnEL.click();
+        double = false;
+
         // Suggest btn[0]
         if (state.modes.autoSuggestButtons)
           state.sdk.suggestButton(currentSlideId, 0);
 
         // Skip code below
         return {
-          msg: `StudioForm[${state.sdk.i}] -> state.sdk.slideLogic[${currentSlide.i}] -> .btns[0] was suggested!`,
+          msg: `${errPath(state)} -> state.sdk.slideLogic[${
+            currentSlide.i
+          }] -> .btns[0] was suggested!`,
           slideId: currentSlide.i,
           buttonId: 0,
         };
@@ -112,9 +106,7 @@ export default function (stateId: number, options: Options) {
 
   // Guard
   if (typeof next !== 'number' && next !== false)
-    throw new Error(
-      `StudioForm[${state.sdk.i}] -> next.ts -> default: Unable to find a logical next slide!`
-    );
+    throw new Error(`${errPath(state)}: Unable to find a logical next slide!`);
 
   // If next === false call submit event
   if (next === false) {
@@ -135,7 +127,9 @@ export default function (stateId: number, options: Options) {
     // Guard
     if (i < 0)
       throw new Error(
-        `StudioForm[${state.sdk.i}] -> next.ts -> default -> if (next < currentSlideId) { ... }: Unable to find a logical next slide!`
+        `${errPath(
+          state
+        )} -> if (next < currentSlideId) { ... }: Unable to find a logical next slide!`
       );
 
     // Slice

@@ -2,21 +2,22 @@
 import * as model from './model';
 import view from './view';
 import * as helper from './helper/helper';
+import * as config from './config';
 
 // + Declare +
 declare global {
   var gsap: any;
   interface Window {
-    StudioForm: any;
+    [config.PRODUCT_NAME_CAMEL_CASE]: any;
   }
 }
 
 // Main
 function main() {
   // Guard
-  if (typeof window.StudioForm !== 'undefined') {
+  if (typeof window[config.PRODUCT_NAME_CAMEL_CASE] !== 'undefined') {
     console.warn(
-      'StudioForm -> controller.ts -> main: Studio Form is being loaded multiple times. However, the functionality should not be affected.'
+      `${config.PRODUCT_NAME_CAMEL_CASE} -> controller.ts -> main: Studio Form is being loaded multiple times. However, the functionality should not be affected.`
     );
     return;
   }
@@ -26,7 +27,7 @@ function main() {
 
   // Elements loop
   document
-    .querySelectorAll('[studio-form="wrapper"]')
+    .querySelectorAll(`[${config.PRODUCT_NAME}="wrapper"]`)
     .forEach((wrapper, index) => {
       // Init
       model.init(wrapper as HTMLElement, index);
@@ -39,7 +40,7 @@ function main() {
     });
 
   // Add state to window
-  window.StudioForm = sdk;
+  window[config.PRODUCT_NAME_CAMEL_CASE] = sdk;
 }
 
 // Loader

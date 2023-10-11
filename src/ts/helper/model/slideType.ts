@@ -6,7 +6,7 @@ import * as config from '../../config';
 // Export
 export default function (slide: HTMLElement, state: any) {
   // Elements
-  const inputs = slide.querySelectorAll('input, select, textarea');
+  const inputs = slide.querySelectorAll(config.INPUTS_SELECTOR);
   const buttons = slide.querySelectorAll(config.BUTTON_SELECTOR);
 
   // Values
@@ -28,16 +28,11 @@ export default function (slide: HTMLElement, state: any) {
 
   // Type
   let type = 'standard';
-  if (isCheckboxOnly) type = 'checkbox';
+  // if (isCheckboxOnly) type = 'checkbox'; // Legacy
   if (isRadioOnly) type = 'radio';
   if (isEmpty) type = 'empty';
   const typeAttr = slide.getAttribute('data-slide-type');
   if (typeAttr && typeAttr !== '') type = typeAttr;
-
-  // Remove required attribute from checkboxes or radios
-  if (state.modes.removeRequiredAttributeFromCheckboxAndRadioOnlys)
-    if (isRadioOnly || isCheckboxOnly)
-      inputs.forEach(input => input.removeAttribute('required'));
 
   // Return
   return type;

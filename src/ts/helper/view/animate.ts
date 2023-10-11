@@ -4,6 +4,7 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}animate.ts -> default: `;
 export default function (index: number, options: Options) {
   // Values
   const state = model.state[index];
@@ -16,20 +17,22 @@ export default function (index: number, options: Options) {
 
   // Guard 1
   if (typeof cId !== 'number')
-    throw new Error(
-      `StudioForm[${state.sdk.i}] -> animate.ts -> default: options.currentSlideId is not a number!`
-    );
+    throw new Error(`${errPath(state)}options.currentSlideId is not a number!`);
 
   // Guard 2
   if (typeof nId !== 'number' && isSubmit !== true)
     throw new Error(
-      `StudioForm[${state.sdk.i}] -> animate.ts -> default: options.nextSlideId or options.isSubmit are not defined!`
+      `${errPath(
+        state
+      )}options.nextSlideId or options.isSubmit are not defined!`
     );
 
   // Guard 3
   if (cId === nId) {
     console.warn(
-      `StudioForm[${state.sdk.i}] -> animate.ts -> default: options.currentSlideId (${cId}) and options.nextSlideId (${nId}) are equal!`
+      `${errPath(
+        state
+      )}options.currentSlideId (${cId}) and options.nextSlideId (${nId}) are equal!`
     );
     return;
   }
@@ -48,7 +51,7 @@ export default function (index: number, options: Options) {
   const overflowElement: HTMLElement =
     form.closest(
       ['overflow-wrapper', 'overflow', 'overflow-hidden']
-        .map(str => `[studio-form="${str}"]`)
+        .map(str => `[${config.PRODUCT_NAME}="${str}"]`)
         .join(', ')
     ) ||
     form.closest('section') ||
@@ -147,9 +150,10 @@ export default function (index: number, options: Options) {
   timeNext = isNaN(timeNext) ? 1 : timeNext;
 
   // Direction math
+  const sdAttr = 'data-slide-direction';
   let direction: any =
-    nextOrCurrentSlide.el.getAttribute('data-slide-direction') ||
-    state.elements.wrapper.getAttribute('data-slide-direction');
+    nextOrCurrentSlide.el.getAttribute(sdAttr) ||
+    state.elements.wrapper.getAttribute(sdAttr);
   const fadeOnly = direction === 'off' ? 0 : 1;
 
   direction = parseFloat(direction);

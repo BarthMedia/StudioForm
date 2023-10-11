@@ -4,6 +4,7 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}scrollTo.ts -> default`;
 export default function (stateId: number, options: Options) {
   // Values
   const state = model.state[stateId];
@@ -13,7 +14,7 @@ export default function (stateId: number, options: Options) {
 
   // Elements
   const scrollToElement: HTMLElement | null = state.elements.wrapper.closest(
-    ['window-scroll'].map(str => `[studio-form="${str}"]`).join(', ')
+    ['window-scroll'].map(str => `[${config.PRODUCT_NAME}="${str}"]`).join(', ')
   );
   const scrollToContainer: HTMLElement | Window = scrollToElement || window;
 
@@ -72,7 +73,9 @@ export default function (stateId: number, options: Options) {
 
     // Warn
     console.warn(
-      `StudioForm[${state.sdk.i}] -> anchor.ts -> default -> setTimeout() callback: Scrolling operation timed out.`,
+      `${errPath(
+        state
+      )} -> setTimeout() callback: Scrolling operation timed out.`,
       { y: y, target: obj.target, offset: obj.offset }
     );
   }, config.TIMEOUT_SEC * 1000);

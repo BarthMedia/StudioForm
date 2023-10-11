@@ -1,7 +1,11 @@
 // + Imports +
 import * as model from '../../model';
+import * as config from '../../config';
+import * as helper from '../helper';
 
 // + Exports +
+const errPath = (s: any) =>
+  `${helper.errorName(s)}calculateProgress.ts -> default`;
 export default function (i: number) {
   // Values
   const state = model.state[i];
@@ -13,7 +17,9 @@ export default function (i: number) {
   // Guard
   if (state.sdk.slideLogic.length < 1 || state.sdk.slideRecord.length < 1)
     throw new Error(
-      `StudioForm[${state.sdk.i}] -> calculateProgress.ts -> default: state.sdk.slideLogic.length and/or state.sdk.slideRecord.length can't equal 0`
+      `${errPath(
+        state
+      )}: state.sdk.slideLogic.length and/or state.sdk.slideRecord.length can't equal 0`
     );
 
   // Values
@@ -100,7 +106,9 @@ export default function (i: number) {
       // Undefined guard
       if (id === undefined) {
         console.warn(
-          `StudioForm[${state.sdk.i}] -> calculateProgress.ts -> defaul -> objectLoop -> array.forEach() callback: id === undefined`,
+          `${errPath(
+            state
+          )} -> objectLoop -> array.forEach() callback: id === undefined`,
           object
         );
         return;

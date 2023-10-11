@@ -8,20 +8,25 @@ import * as config from '../config';
 
 // + Functions +
 
-// Get all sf-hide elements
+// Return product name
+export const errorName = (s: any) =>
+  `${config.PRODUCT_NAME_CAMEL_CASE}[${s.sdk.i}] -> `;
+
+// Get all ${sfAttr} elements
+const sfAttr = 'sf-hide';
 function _sfHide(element: HTMLElement, mode: string) {
   // Parent
   const parent: HTMLElement =
-    element.getAttribute('data-closest-sf-hide') === 'false'
+    element.getAttribute(`data-closest-${sfAttr}`) === 'false'
       ? element
-      : element.closest('[studio-form="sf-hide"]') || element;
+      : element.closest(`[${config.PRODUCT_NAME}="${sfAttr}"]`) || element;
   const elements: (HTMLElement | Element)[] = [parent];
 
   // Find child elements
   parent.querySelectorAll('*').forEach(el => elements.push(el));
 
-  // Add / remove sf-hide
-  elements.forEach(el => el.classList?.[mode]('sf-hide'));
+  // Add / remove ${sfAttr}
+  elements.forEach(el => el.classList?.[mode](`${sfAttr}`));
 }
 
 // Add sf hide
@@ -43,7 +48,7 @@ export function isElementTopVisible(
 ) {
   // Elements
   const scrollToElement: HTMLElement | null = state.elements.wrapper.closest(
-    ['window-scroll'].map(str => `[studio-form="${str}"]`).join(', ')
+    ['window-scroll'].map(str => `[${config.PRODUCT_NAME}="${str}"]`).join(', ')
   );
 
   // Get the position of the element relative to the viewport
@@ -69,23 +74,21 @@ export function isElementTopVisible(
 // Return target element and offset number
 export function returnTargetAndOffset(state: any, options: Options) {
   // Selector
+  const sttAttr = 'data-scroll-to-target';
   const targetSelector =
     typeof options.target === 'string'
       ? options.target
       : undefined ||
-        options.attributeReferenceElement?.getAttribute(
-          'data-scroll-to-target'
-        ) ||
-        state.elements.wrapper?.getAttribute('data-scroll-to-target') ||
+        options.attributeReferenceElement?.getAttribute(sttAttr) ||
+        state.elements.wrapper?.getAttribute(sttAttr) ||
         '';
+  const stoAttr = 'data-scroll-to-offset';
   const offsetSelector =
     typeof options.offset === 'string'
       ? options.offset
       : undefined ||
-        options.attributeReferenceElement?.getAttribute(
-          'data-scroll-to-offset'
-        ) ||
-        state.elements.wrapper?.getAttribute('data-scroll-to-offset') ||
+        options.attributeReferenceElement?.getAttribute(stoAttr) ||
+        state.elements.wrapper?.getAttribute(stoAttr) ||
         '';
 
   // Elements

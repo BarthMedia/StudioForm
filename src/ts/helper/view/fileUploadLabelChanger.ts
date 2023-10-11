@@ -27,6 +27,11 @@ export default function (state: any) {
       const allElements = [label, input];
       label.childNodes.forEach(node => allElements.push(node as HTMLElement));
 
+      // Define
+      function f(mode: string) {
+        allElements.forEach(el => el?.classList?.[mode]('sf-uploaded'));
+      }
+
       // Event listener
       input.addEventListener('change', _ => {
         // Values
@@ -36,10 +41,10 @@ export default function (state: any) {
         // Logic swap
         if (selectedFile) {
           label.innerHTML = prefix + selectedFile.name;
-          allElements.forEach(el => el?.classList?.add('sf-uploaded'));
+          f('add');
         } else {
           label.innerHTML = originalText;
-          allElements.forEach(el => el?.classList?.remove('sf-uploaded'));
+          f('remove');
         }
       });
     });

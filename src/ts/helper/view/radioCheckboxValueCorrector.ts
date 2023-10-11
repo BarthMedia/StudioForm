@@ -1,6 +1,9 @@
 // Imports
+import * as config from '../../config';
 
 // Export
+const sfsAttr = 'data-selected';
+const sfsClass = 'sf-selected';
 export default function (state: any) {
   // Consider that checkbox and radio requirements should work different when they are required
   // When required, have the value euqal = '', else 'off' else 'on'
@@ -16,7 +19,7 @@ export default function (state: any) {
       if (input.type !== 'checkbox' && input.type !== 'radio') return;
 
       // Elements
-      const el = input.closest('label, [studio-form="label"]') || input;
+      const el = input.closest(config.LABEL_SELECTOR) || input;
       const allElements: any[] = [el];
       el.querySelectorAll('*').forEach(node => allElements.push(node));
 
@@ -29,7 +32,7 @@ export default function (state: any) {
         // Add 'sf-selected' class
         if (isOn)
           allElements.forEach((element: HTMLElement) =>
-            element.classList.add('sf-selected')
+            element.classList.add(sfsClass)
           );
         else {
           if (input.hasAttribute('required')) input.value = '';
@@ -62,8 +65,7 @@ export default function (state: any) {
           const otherElements: HTMLElement[] = [];
           otherGroupRadios.forEach(radio => {
             // Elements
-            const parent =
-              radio.closest('label, [studio-form="label"]') || input;
+            const parent = radio.closest(config.LABEL_SELECTOR) || input;
 
             // Push
             otherElements.push(parent as HTMLElement);
@@ -74,40 +76,25 @@ export default function (state: any) {
               .forEach(node => otherElements.push(node as HTMLElement));
           });
 
-          // * Warn *
-          if (
-            state.elements.mask.querySelectorAll(
-              `input[type="radio"][name="${input.name}"][value="${input.value}"]`
-            ).length > 1
-          ) {
-            console.warn(
-              `StudioForm[${state.sdk.i}] -> radioCheckboxValueCorrector.ts: The radio input with the value "${input.value}" (Group: "${input.name}") is not unique!`,
-              { selectedElements: allElements },
-              { unselectedElements: otherElements }
-            );
-          }
-
           // * Add *
 
           // Class
           allElements.forEach((element: HTMLElement) =>
-            element.classList.add('sf-selected')
+            element.classList.add(sfsClass)
           );
 
           // Attribute
-          input.setAttribute('data-selected', '');
+          input.setAttribute(sfsAttr, '');
 
           // * Remove *
 
           // Class
           otherElements.forEach((element: HTMLElement) =>
-            element.classList.remove('sf-selected')
+            element.classList.remove(sfsClass)
           );
 
           // Attribute
-          otherGroupRadios.forEach(radio =>
-            radio.removeAttribute('data-selected')
-          );
+          otherGroupRadios.forEach(radio => radio.removeAttribute(sfsAttr));
         }
 
         // Checkbox
@@ -116,7 +103,7 @@ export default function (state: any) {
           if (isOn) {
             // Remove it
             allElements.forEach((element: HTMLElement) =>
-              element.classList.remove('sf-selected')
+              element.classList.remove(sfsClass)
             );
 
             // Logic
@@ -126,7 +113,7 @@ export default function (state: any) {
           } else {
             // Add it
             allElements.forEach((element: HTMLElement) =>
-              element.classList.add('sf-selected')
+              element.classList.add(sfsClass)
             );
 
             // Logic

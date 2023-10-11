@@ -6,6 +6,7 @@ import submit from './submit';
 import suggestButton from './suggestButton';
 import radioCheckboxValueCorrector from './radioCheckboxValueCorrector';
 import fileUploadLabelChanger from './fileUploadLabelChanger';
+import groupCheckox from './groupCheckox';
 
 // Declare
 declare global {
@@ -30,6 +31,9 @@ declare global {
 export default function init(state: any) {
   // Achieve correct values
   radioCheckboxValueCorrector(state);
+
+  // Allow for native chechbox groups
+  groupCheckox(state);
 
   // Achieve useful file upload behaviour
   fileUploadLabelChanger(state);

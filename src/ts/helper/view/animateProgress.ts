@@ -1,8 +1,11 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
+const errPath = (s: any) =>
+  `${helper.errorName(s)}animateProgress.ts -> default: `;
 export default function (stateId: number, options: Options) {
   // Values
   const state = model.state[stateId];
@@ -25,15 +28,15 @@ export default function (stateId: number, options: Options) {
 
   // Guard
   if (typeof pData !== 'object')
-    throw new Error(
-      `StudioForm[${state.sdk.i}] -> animateProgress.ts -> default: pathProgressData is not an object!`
-    );
+    throw new Error(`${errPath(state)}pathProgressData is not an object!`);
 
   // Animate progress bars
   let bars: any[] = [];
   [
     state.elements.progress.bars,
-    document.querySelectorAll(`[studio-form-${state.sdk.i}="progress-bar"`),
+    document.querySelectorAll(
+      `[${config.PRODUCT_NAME}-${state.sdk.i}="progress-bar"`
+    ),
   ].forEach((list: any[]) =>
     list.forEach((item: HTMLElement) => bars.push(item))
   );

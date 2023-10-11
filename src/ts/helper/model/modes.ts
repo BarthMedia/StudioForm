@@ -1,12 +1,14 @@
 // Imports
 import * as helper from '../helper';
+import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}modes.ts -> default: `;
 export default function (state: any) {
   // Guard
   if (!helper.isElement(state.elements.wrapper))
     throw new Error(
-      `StudioForm[${state.sdk.i}] -> modes.ts -> default: state.elements.wrapper is not an element`
+      `${errPath(state)}state.elements.wrapper is not an element`
     );
 
   // Define
@@ -37,11 +39,9 @@ export default function (state: any) {
     !obj.isWfForm ||
     (el.getAttribute('data-slider-mode') || 'false') === 'true';
 
-  // Remove required from checkbox and radio only steps
-  obj.removeRequiredAttributeFromCheckboxAndRadioOnlys =
-    (el.getAttribute(
-      'data-remove-required-from-checkbox-or-radio-only-steps'
-    ) || 'true') === 'true';
+  // Add temporary required
+  obj.temporaryRequired =
+    (el.getAttribute('data-temporary-required') || 'true') === 'true';
 
   // Swap submit buttons
   obj.swapSubmitButtons =

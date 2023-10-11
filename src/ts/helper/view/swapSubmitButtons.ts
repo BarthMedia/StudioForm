@@ -1,6 +1,7 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
 export default function (slide: HTMLElement, state: any) {
@@ -30,7 +31,7 @@ export default function (slide: HTMLElement, state: any) {
     }
     btn.removeAttribute('type');
     btn.removeAttribute('value');
-    btn.setAttribute('studio-form', 'submit');
+    btn.setAttribute(config.PRODUCT_NAME, 'submit');
     btn.innerHTML = submit.getAttribute('value') || '';
 
     // Swap

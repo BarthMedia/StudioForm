@@ -1,30 +1,61 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}required.ts -> default: `;
 export default function (stateId: number, data: { el: HTMLInputElement }[]) {
   // Values
   const state = model.state[stateId];
+  const sdk = state.sdk;
+  const record = sdk.slideRecord;
+  const slideEl = sdk.slideLogic[record[record.length - 1]].el;
 
   // Guard
   if (data.length < 1) {
-    console.warn(
-      `StudioForm[${state.sdk.i}] -> required.ts -> default: The supplied data is empty!`
-    );
+    console.warn(`${errPath(state)}The supplied data is empty!`);
     return;
+  }
+
+  // * Temporary required swap *
+  let requiredSwapReset = () => {};
+  if (state.modes.temporaryRequired && !data[0].el.hasAttribute('required')) {
+    // Timeout clear
+    if (state.requiredSwapResetTimeout) {
+      clearTimeout(state.requiredSwapResetTimeout);
+      state.requiredSwapResetTimeoutFunction();
+    }
+
+    // Define
+    function f(mode: string) {
+      // Values
+      const args = ['required'];
+      if (mode === 'set') args.push('');
+
+      // Fire
+      data[0].el[mode + 'Attribute'](...args);
+    }
+
+    // Init
+    f('set');
+
+    // Overwrite
+    requiredSwapReset = () => {
+      f('remove');
+    };
   }
 
   // * Scroll to the first element and if not visible *
 
   // Calculate
   const target: HTMLElement =
-    data[0].el.closest('label, [studio-form="label"]') || data[0].el;
+    data[0].el.closest(config.LABEL_SELECTOR) || data[0].el;
   const isFullyVisible = helper.isElementTopVisible(
     target,
     state,
     {
-      attributeReferenceElement: target,
+      attributeReferenceElement: slideEl,
     },
     true
   );
@@ -33,9 +64,16 @@ export default function (stateId: number, data: { el: HTMLInputElement }[]) {
   function reportValidity() {
     try {
       data[0].el.reportValidity();
+      state.requiredSwapResetTimeoutFunction = requiredSwapReset;
+      state.requiredSwapResetTimeout = setTimeout(
+        requiredSwapReset,
+        config.TIMEOUT_SEC * 1000
+      );
     } catch (err) {
       console.warn(
-        `StudioForm[${state.sdk.i}] -> required.ts -> default: data[0].el.reportValidity() produces unexpected error!`,
+        `${errPath(
+          state
+        )}data[0].el.reportValidity() produces unexpected error!`,
         err
       );
     }
@@ -48,8 +86,7 @@ export default function (stateId: number, data: { el: HTMLInputElement }[]) {
   )
     state.sdk.scrollTo({
       target: target,
-      attributeReferenceElement:
-        state.sdk.slideLogic[state.sdk.slideLogic.length - 1].el,
+      attributeReferenceElement: slideEl,
       callback: (success: boolean) => {
         if (state.modes.nativeReportVadility && success) reportValidity();
       },
@@ -68,8 +105,7 @@ export default function (stateId: number, data: { el: HTMLInputElement }[]) {
     // Add class loop
     data.forEach((datum: { el: HTMLElement }) => {
       // Elements
-      const parent =
-        datum.el.closest('label, [studio-form="label"]') || datum.el;
+      const parent = datum.el.closest(config.LABEL_SELECTOR) || datum.el;
       const elements: any[] = [parent];
       const childNodes = parent.querySelectorAll('*');
       childNodes.forEach(node => elements.push(node));
@@ -87,8 +123,7 @@ export default function (stateId: number, data: { el: HTMLInputElement }[]) {
         // Remove class loop
         data.forEach((datum: { el: HTMLElement }) => {
           // Elements
-          const parent =
-            datum.el.closest('label, [studio-form="label"]') || datum.el;
+          const parent = datum.el.closest(config.LABEL_SELECTOR) || datum.el;
           const elements: any[] = [parent];
           const childNodes = parent.querySelectorAll('*');
           childNodes.forEach(node => elements.push(node));

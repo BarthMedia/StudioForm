@@ -1,8 +1,10 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}prev.ts -> default: `;
 export default function (stateId: number, options: Options) {
   // Values
   const state = model.state[stateId];
@@ -13,14 +15,14 @@ export default function (stateId: number, options: Options) {
     options.doNotWaitForAnimations !== true &&
     state.view.gsapTimeline.isRunning === true
   ) {
-    const msg = `StudioForm[${state.sdk.i}] -> prev.ts -> default: The animation is not yet finished!`;
+    const msg = `${errPath(state)}The animation is not yet finished!`;
     console.warn(msg);
     return msg;
   }
 
   // Warn guard
   if (state.sdk.isSubmitted === true) {
-    const msg = `StudioForm[${state.sdk.i}] -> prev.ts -> default: Form already submitted!`;
+    const msg = `${errPath(state)}Form already submitted!`;
     console.warn(msg);
     return msg;
   }
@@ -34,7 +36,7 @@ export default function (stateId: number, options: Options) {
     });
 
     // Programmatically
-    const msg = `StudioForm[${state.sdk.i}] -> prev.ts -> default: Can't navigate backwards any further!`;
+    const msg = `${errPath(state)}Can't navigate backwards any further!`;
     console.warn(msg);
     return msg;
   }

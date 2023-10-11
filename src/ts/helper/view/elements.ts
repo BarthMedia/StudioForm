@@ -1,7 +1,10 @@
 // Imports
 import * as helper from '../helper';
+import * as config from '../../config';
 
 // Export
+const errPath = (s: any) =>
+  `${helper.errorName(s)} -> elements.ts -> default: `;
 export default function (state: any) {
   // Values
   const obj = state.elements;
@@ -15,11 +18,11 @@ export default function (state: any) {
     // Create
     let val = strArr
       .map(str => {
-        const tmpVal = `[studio-form="${str}"]`;
+        const tmpVal = `[${config.PRODUCT_NAME}="${str}"]`;
         return isDomWide
           ? `[data-sf-id="${state.sdk.i}"] ` +
               tmpVal +
-              `,[studio-form-${state.sdk.i}="${str}"]`
+              `,[${config.PRODUCT_NAME}-${state.sdk.i}="${str}"]`
           : tmpVal;
       })
       .join(',');
@@ -69,9 +72,7 @@ export default function (state: any) {
     ) {
       // Emptiness guard
       if (obj[key].length < 1)
-        throw new Error(
-          `StudioForm[${state.sdk.i}] -> elements.ts -> default: state.elements.${key}.length is 0`
-        );
+        throw new Error(`${errPath(state)}state.elements.${key}.length is 0`);
 
       // Continue
       return true;
@@ -80,7 +81,7 @@ export default function (state: any) {
     // Elements
     if (!helper.isElement(obj[key]))
       throw new Error(
-        `StudioForm[${state.sdk.i}] -> elements.ts -> default: state.elements.${key} is not an element`
+        `${errPath(state)}state.elements.${key} is not an element`
       );
 
     // Default
@@ -121,14 +122,14 @@ export default function (state: any) {
     // Loop
     ['next', 'Continue Button'].forEach(str => {
       child
-        .querySelectorAll(`[studio-form="${str}"]`)
+        .querySelectorAll(`[${config.PRODUCT_NAME}="${str}"]`)
         .forEach((btn: HTMLElement) => {
           obj.nextBtns.push(btn);
         });
     });
   }
   document
-    .querySelectorAll(`[studio-form-${state.sdk.i}="next"`)
+    .querySelectorAll(`[${config.PRODUCT_NAME}-${state.sdk.i}="next"`)
     .forEach(el => obj.nextBtns.push(el));
 
   // Data response fields

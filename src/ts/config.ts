@@ -13,6 +13,11 @@ export const DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER = 0.5;
 // Anchor
 export const DEFAULT_OFFSET = 16;
 
+// Product name
+export const PRODUCT_NAME = 'studio-form';
+export const PRODUCT_NAME_CAMEL_CASE = 'StudioForm';
+
 // Button selector
-export const BUTTON_SELECTOR =
-  '[studio-form="submit"], [studio-form="next"], .w-button:not([studio-form="Not a Button"]):not([studio-form="no-button"]):not([studio-form="prev"])';
+export const INPUTS_SELECTOR = `input, select, textarea`;
+export const LABEL_SELECTOR = `label, [${PRODUCT_NAME}="label"]`;
+export const BUTTON_SELECTOR = `[${PRODUCT_NAME}="submit"], [${PRODUCT_NAME}="next"], .w-button:not([${PRODUCT_NAME}="Not a Button"]):not([${PRODUCT_NAME}="no-button"]):not([${PRODUCT_NAME}="prev"])`;

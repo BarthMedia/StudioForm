@@ -4,8 +4,10 @@ import * as model from '../../model';
 import slideType from './slideType';
 import slideButtons from './slideButtons';
 import swapSubmitButtons from '../view/swapSubmitButtons';
+import * as config from '../../config';
 
 // Export
+const errPath = (s: any) => `${helper.errorName(s)}slideLogic.ts -> default`;
 export default function (stateId: number) {
   // Values
   const state = model.state[stateId];
@@ -94,12 +96,12 @@ export default function (stateId: number) {
       if (btn.next === false) return true;
 
       // Set general attrbiute
-      btn.el.setAttribute('studio-form', 'next');
+      btn.el.setAttribute(config.PRODUCT_NAME, 'next');
 
       // Is last step guard logic
       if (slide.i >= slideLogic.length - 1) {
         btn.next = false;
-        btn.el.setAttribute('studio-form', 'submit');
+        btn.el.setAttribute(config.PRODUCT_NAME, 'submit');
         return true;
       }
 
@@ -134,9 +136,15 @@ export default function (stateId: number) {
           btn.next = index;
         } else {
           console.warn(
-            `StudioForm[${state.sdk.i}] -> slideLogic.ts -> default -> slideLogic.forEach() callback -> slide.btns.every() callback: The partner slide for btns[${btn.i}].conditional === '${btn.conditional}' (in state.elements.slides[${slide.i}]) has not been found.`
+            `${errPath(
+              state
+            )}-> slideLogic.forEach() callback -> slide.btns.every() callback: The partner slide for btns[${
+              btn.i
+            }].conditional === '${btn.conditional}' (in state.elements.slides[${
+              slide.i
+            }]) has not been found.`
           );
-          btn.el.setAttribute('studio-form', 'submit');
+          btn.el.setAttribute(config.PRODUCT_NAME, 'submit');
           btn.next = false;
         }
 
