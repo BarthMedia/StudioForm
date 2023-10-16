@@ -260,6 +260,7 @@ export default function (stateId: number, slideId: number, options: Options) {
 
           // Length check
           const lenghtRes = validateLength(input);
+          console.log(lenghtRes);
           if (lenghtRes !== true) {
             // Push
             targetInputs.push({
