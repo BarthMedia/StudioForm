@@ -12,21 +12,76 @@ import * as config from '../config';
 export const errorName = (s: any) =>
   `${config.PRODUCT_NAME_CAMEL_CASE}[${s.sdk.i}] -> `;
 
+// Classlist toggle
+type cltArgs = {
+  el: HTMLElement;
+  otherEls?: HTMLElement[];
+  mode: string;
+  class: string;
+  closest?: {
+    parent: string;
+    allowParent?: {
+      refEl?: HTMLElement;
+      getAttr?: string;
+      tagName?: true;
+      equals: string;
+    };
+  };
+};
+export const classListToggle = (args: cltArgs | cltArgs[]) => {
+  // Loop logic
+  const _args = Array.isArray(args) ? args : [args];
+
+  // Loop
+  _args.forEach(args => {
+    // Parent
+    let parent = args.el;
+    if (args.closest) {
+      // Define
+      const arg = args.closest;
+      const refEl = arg.allowParent?.refEl || args.el;
+      const equals = arg.allowParent?.getAttr
+        ? refEl.getAttribute(arg.allowParent.getAttr)
+        : refEl.tagName;
+
+      // Logic
+      if (!arg.allowParent || equals === arg.allowParent.equals)
+        parent = args.el.closest(arg.parent) || parent;
+    }
+
+    const elements: (HTMLElement | Element)[] = [parent];
+    if (args.otherEls) args.otherEls.forEach(_el => elements.push(_el));
+
+    // Find child elements
+    parent.querySelectorAll('*').forEach(el => elements.push(el));
+
+    // Add / remove ${sfAttr}
+    elements.forEach(el =>
+      el.classList?.[args.mode](
+        `${config.PRODUCT_NAME_CLASS_PREFIX}${args.class}`
+      )
+    );
+
+    // Log
+    // console.log(parent, elements);
+  });
+};
+
 // Get all ${sfAttr} elements
-const sfAttr = 'sf-hide';
+const sfAttr = 'hide';
+const sfhOptions = {
+  class: sfAttr,
+  closest: {
+    parent: `[${config.PRODUCT_NAME}="${sfAttr}"]`,
+    allowParent: {
+      getAttr: `${config.CUSTOM_ATTRIBUTE_PREFIX}closest-${sfAttr}`,
+      equals: 'false',
+    },
+  },
+};
 function _sfHide(element: HTMLElement, mode: string) {
-  // Parent
-  const parent: HTMLElement =
-    element.getAttribute(`data-closest-${sfAttr}`) === 'false'
-      ? element
-      : element.closest(`[${config.PRODUCT_NAME}="${sfAttr}"]`) || element;
-  const elements: (HTMLElement | Element)[] = [parent];
-
-  // Find child elements
-  parent.querySelectorAll('*').forEach(el => elements.push(el));
-
-  // Add / remove ${sfAttr}
-  elements.forEach(el => el.classList?.[mode](`${sfAttr}`));
+  // Toogle
+  classListToggle({ ...sfhOptions, el: element, mode: mode });
 }
 
 // Add sf hide
@@ -74,7 +129,7 @@ export function isElementTopVisible(
 // Return target element and offset number
 export function returnTargetAndOffset(state: any, options: Options) {
   // Selector
-  const sttAttr = 'data-scroll-to-target';
+  const sttAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}scroll-to-target`;
   const targetSelector =
     typeof options.target === 'string'
       ? options.target
@@ -82,7 +137,7 @@ export function returnTargetAndOffset(state: any, options: Options) {
         options.attributeReferenceElement?.getAttribute(sttAttr) ||
         state.elements.wrapper?.getAttribute(sttAttr) ||
         '';
-  const stoAttr = 'data-scroll-to-offset';
+  const stoAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}scroll-to-offset`;
   const offsetSelector =
     typeof options.offset === 'string'
       ? options.offset

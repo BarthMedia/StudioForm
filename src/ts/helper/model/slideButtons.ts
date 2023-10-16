@@ -20,7 +20,8 @@ export default function (type: string, slide: HTMLElement, state: any) {
     // Modify
     obj.i = i;
     obj.el = btn;
-    obj.conditional = btn?.getAttribute('data-conditional') || '';
+    obj.conditional =
+      btn?.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}conditional`) || '';
     obj.next = btn?.getAttribute(config.PRODUCT_NAME) !== 'submit';
 
     // Push

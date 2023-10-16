@@ -100,20 +100,22 @@ export default function (stateId: number, data: { el: HTMLInputElement }[]) {
   )
     reportValidity();
 
+  // Class list toggle
+  function toggle(el: HTMLElement, mode: string) {
+    helper.classListToggle({
+      el: el,
+      class: 'required',
+      mode: mode,
+      closest: { parent: config.LABEL_SELECTOR },
+    });
+  }
+
   // Delay
   setTimeout(() => {
     // Add class loop
     data.forEach((datum: { el: HTMLElement }) => {
-      // Elements
-      const parent = datum.el.closest(config.LABEL_SELECTOR) || datum.el;
-      const elements: any[] = [parent];
-      const childNodes = parent.querySelectorAll('*');
-      childNodes.forEach(node => elements.push(node));
-
-      // Adding
-      elements.forEach((element: HTMLElement) =>
-        element.classList.add('sf-required')
-      );
+      // Toogle
+      toggle(datum.el, 'add');
     });
 
     // Event listener
@@ -122,16 +124,8 @@ export default function (stateId: number, data: { el: HTMLInputElement }[]) {
       function () {
         // Remove class loop
         data.forEach((datum: { el: HTMLElement }) => {
-          // Elements
-          const parent = datum.el.closest(config.LABEL_SELECTOR) || datum.el;
-          const elements: any[] = [parent];
-          const childNodes = parent.querySelectorAll('*');
-          childNodes.forEach(node => elements.push(node));
-
-          // Removing
-          elements.forEach((element: HTMLElement) =>
-            element.classList.remove('sf-required')
-          );
+          // Toogle
+          toggle(datum.el, 'remove');
         });
       },
       { once: true }

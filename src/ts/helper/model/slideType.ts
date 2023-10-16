@@ -31,7 +31,9 @@ export default function (slide: HTMLElement, state: any) {
   // if (isCheckboxOnly) type = 'checkbox'; // Legacy
   if (isRadioOnly) type = 'radio';
   if (isEmpty) type = 'empty';
-  const typeAttr = slide.getAttribute('data-slide-type');
+  const typeAttr = slide.getAttribute(
+    `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-type`
+  );
   if (typeAttr && typeAttr !== '') type = typeAttr;
 
   // Return

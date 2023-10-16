@@ -16,6 +16,8 @@ export const DEFAULT_OFFSET = 16;
 // Product name
 export const PRODUCT_NAME = 'studio-form';
 export const PRODUCT_NAME_CAMEL_CASE = 'StudioForm';
+export const PRODUCT_NAME_CLASS_PREFIX = 'sf-';
+export const CUSTOM_ATTRIBUTE_PREFIX = 'data-';
 
 // Button selector
 export const INPUTS_SELECTOR = `input, select, textarea`;

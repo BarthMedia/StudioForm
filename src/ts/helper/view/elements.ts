@@ -11,7 +11,10 @@ export default function (state: any) {
   const el: HTMLElement = state.elements.wrapper;
 
   // Set data id
-  el.setAttribute('data-sf-id', state.sdk.i);
+  el.setAttribute(
+    `${config.CUSTOM_ATTRIBUTE_PREFIX}${config.PRODUCT_NAME_CLASS_PREFIX}id`,
+    state.sdk.i
+  );
 
   // Define helper - returnSelector
   function rs(isDomWide: boolean, ...strArr: string[]) {
@@ -20,7 +23,7 @@ export default function (state: any) {
       .map(str => {
         const tmpVal = `[${config.PRODUCT_NAME}="${str}"]`;
         return isDomWide
-          ? `[data-sf-id="${state.sdk.i}"] ` +
+          ? `[${config.CUSTOM_ATTRIBUTE_PREFIX}${config.PRODUCT_NAME_CLASS_PREFIX}id="${state.sdk.i}"] ` +
               tmpVal +
               `,[${config.PRODUCT_NAME}-${state.sdk.i}="${str}"]`
           : tmpVal;

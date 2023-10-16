@@ -38,10 +38,13 @@ export default function (stateId: number) {
 
     // Conditional next
     obj.conditionalNext =
-      (slide.getAttribute('data-conditional-next') || 'false') === 'true';
+      (slide.getAttribute(
+        `${config.CUSTOM_ATTRIBUTE_PREFIX}conditional-next`
+      ) || 'false') === 'true';
 
     // Conditional next
-    obj.conditional = slide.getAttribute('data-conditional') || '';
+    obj.conditional =
+      slide.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}conditional`) || '';
 
     // Push
     slideLogic.push(obj);

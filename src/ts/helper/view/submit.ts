@@ -52,14 +52,18 @@ export default async function (stateId: number, options: Options) {
 
   // Set all submit buttons to data-wait
   const waitAttr = 'data-wait';
+  const sfsClass = 'submit';
   const currentButtons = state.sdk.slideLogic[currentSlideId].btns;
   if (currentButtons)
     currentButtons.forEach((btn: any) => {
+      // Class toggle
+      helper.classListToggle({ el: btn.el, class: sfsClass, mode: 'add' });
+
       // Guard
       if ((btn.el.getAttribute(waitAttr) || '') === '') return;
 
       // Set data default
-      if (!btn.textDefault) btn.textDefault = btn.el.innerText;
+      if (!btn.textDefault) btn.textDefault = btn.el.innerHTML;
 
       // Overwrite text
       btn.el.innerHTML = btn.el.getAttribute(waitAttr);
@@ -103,6 +107,9 @@ export default async function (stateId: number, options: Options) {
     // Reset buttons
     if (currentButtons)
       currentButtons.forEach((btn: any) => {
+        // Class toggle
+        helper.classListToggle({ el: btn.el, class: sfsClass, mode: 'remove' });
+
         // Guard
         if ((btn.el.getAttribute(waitAttr) || '') === '') return;
 

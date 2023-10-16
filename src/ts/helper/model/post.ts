@@ -12,7 +12,7 @@ export default async function (stateId: number) {
   let method = 'POST';
   let apiUrl =
     'https://webflow.com/api/v1/form/' +
-    document.querySelector('html')?.getAttribute('data-wf-site');
+    document.querySelector('html')?.getAttribute(`data-wf-site`);
 
   // Guard
   if (!helper.isElement(form))
@@ -24,9 +24,9 @@ export default async function (stateId: number) {
   const fields: { key: string; value: string }[] = [];
   const files: { key: string; value: File }[] = [];
   let payload: any = {
-    name: form.getAttribute('data-name'),
-    pageId: document.querySelector('html')?.getAttribute('data-wf-page'),
-    elementId: form.getAttribute('data-wf-element-id'),
+    name: form.getAttribute(`data-name`),
+    pageId: document.querySelector('html')?.getAttribute(`data-wf-page`),
+    elementId: form.getAttribute(`data-wf-element-id`),
     source: location.href,
     // test: false,
     // dolphin: false,
@@ -59,7 +59,7 @@ export default async function (stateId: number) {
     inputs.forEach(input => {
       // Values
       const key =
-        input.getAttribute('data-name') ||
+        input.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}name`) ||
         input.getAttribute('name') ||
         input.getAttribute('id') ||
         input.getAttribute('class') ||
@@ -67,7 +67,10 @@ export default async function (stateId: number) {
         input.tagName;
 
       // Radio edgecase
-      if (input.type === 'radio' && !input.hasAttribute('data-selected'))
+      if (
+        input.type === 'radio' &&
+        !input.hasAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}selected`)
+      )
         return;
 
       // Logic
@@ -120,8 +123,10 @@ export default async function (stateId: number) {
 
     // If data-method attribute specified
     const dataMethod: string = (
-      form.getAttribute('data-method') ||
-      state.elements.wrapper.getAttribute('data-method') ||
+      form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}method`) ||
+      state.elements.wrapper.getAttribute(
+        `${config.CUSTOM_ATTRIBUTE_PREFIX}method`
+      ) ||
       ''
     ).toUpperCase();
     if (['GET', 'PUT', 'POST', 'PATCH', 'DELETE'].includes(dataMethod))
@@ -131,17 +136,18 @@ export default async function (stateId: number) {
   // Define headers
   const headers = {
     Accept:
-      form.getAttribute('data-headers-accept') ||
+      form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}headers-accept`) ||
       'application/json, text/javascript, */*; q=0.01',
     'Content-Type':
-      form.getAttribute('data-headers-content-type') ||
-      'application/x-www-form-urlencoded; charset=UTF-8',
+      form.getAttribute(
+        `${config.CUSTOM_ATTRIBUTE_PREFIX}headers-content-type`
+      ) || 'application/x-www-form-urlencoded; charset=UTF-8',
   };
 
   // Custom headers || If accept header or content type specified on form
   const isCustomHeaders =
-    form.getAttribute('data-headers-accept') ||
-    form.getAttribute('data-headers-content-type')
+    form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}headers-accept`) ||
+    form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}headers-content-type`)
       ? true
       : false;
 
@@ -178,7 +184,8 @@ export default async function (stateId: number) {
   }
 
   // Auth token
-  const authToken = form.getAttribute('data-auth-token') || '';
+  const authToken =
+    form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}auth-token`) || '';
   if (authToken !== '') {
     options.headers = options.headers
       ? { ...options.headers, Authorization: `Bearer ${authToken}` }
@@ -194,8 +201,9 @@ export default async function (stateId: number) {
       apiUrl,
       options,
       parseInt(
-        state.elements.wrapper.getAttribute('data-form-submit-timeout-sec') ||
-          config.TIMEOUT_SEC.toString()
+        state.elements.wrapper.getAttribute(
+          `${config.CUSTOM_ATTRIBUTE_PREFIX}timeout`
+        ) || config.TIMEOUT_SEC.toString()
       )
     );
   } catch (err) {

@@ -1,5 +1,6 @@
 // Imports
 import * as helper from '../helper';
+import * as config from '../../config';
 import next from './next';
 import prev from './prev';
 import submit from './submit';
@@ -92,4 +93,87 @@ export default function init(state: any) {
       state.sdk.prev();
     });
   });
+
+  // Hover / set active form
+  const activeAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}-active`;
+  state.elements.wrapper.addEventListener('mouseover', () => {
+    // Select all elements with data-active attribute
+    const activeElements = document.querySelectorAll(`[${activeAttr}]`);
+
+    // Remove the ${config.CUSTOM_ATTRIBUTE_PREFIX}-active attribute from all of them
+    activeElements.forEach(element => {
+      element.removeAttribute(activeAttr);
+    });
+
+    // Add to wrapper
+    state.elements.wrapper.setAttribute(activeAttr, '');
+  });
+
+  // Init on sdk 0
+  if (state.sdk.i === 0) state.elements.wrapper.setAttribute(activeAttr, '');
+
+  // * Keyboard *
+  document.addEventListener('keydown', (event: KeyboardEvent) => {
+    // Check if the event target is an input element (e.g., input or textarea)
+    if (
+      event.target instanceof HTMLInputElement ||
+      event.target instanceof HTMLTextAreaElement
+    ) {
+      return; // Don't trigger custom functions if the target is an input field
+    }
+
+    // Guard 2
+    if (!state.elements.wrapper.hasAttribute(activeAttr)) return;
+
+    // Guard 3
+    const currentSlide =
+      state.sdk.slideLogic[
+        state.sdk.slideRecord[state.sdk.slideRecord.length - 1]
+      ];
+
+    if (
+      !state.modes.keyboardEvents ||
+      currentSlide.el.getAttribute(
+        `${config.CUSTOM_ATTRIBUTE_PREFIX}keyboard-events`
+      ) === 'false'
+    )
+      return;
+
+    // Switch
+    if (event.key === 'Escape') {
+      onEscape(currentSlide.i);
+    } else if (event.key === 'Enter') {
+      onEnter(currentSlide.i);
+    } else if (event.key === 'ArrowLeft') {
+      onArrowLeft(currentSlide.i);
+    } else if (event.key === 'ArrowRight') {
+      onArrowRight(currentSlide.i);
+    }
+  });
+
+  // Function to be called when Escape key is pressed
+  function onEscape(slideId: number) {
+    // Add your custom logic here
+    state.sdk.prev();
+    state.sdk.clearAllSuggestedButton(slideId);
+  }
+
+  // Function to be called when Enter key is pressed
+  function onEnter(slideId: number) {
+    // Add your custom logic here
+    state.sdk.next();
+    state.sdk.clearAllSuggestedButton(slideId);
+  }
+
+  // Function to be called when Left Arrow key is pressed
+  function onArrowLeft(slideId: number) {
+    // Add your custom logic here
+    state.sdk.suggestNext(slideId);
+  }
+
+  // Function to be called when Right Arrow key is pressed
+  function onArrowRight(slideId: number) {
+    // Add your custom logic here
+    state.sdk.suggestPrev(slideId);
+  }
 }

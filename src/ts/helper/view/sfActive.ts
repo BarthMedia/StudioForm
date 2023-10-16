@@ -2,10 +2,10 @@
 import * as helper from '../helper';
 import * as config from '../../config';
 
-// Export
+// Export active / inactive
 export default function init(state: any) {
   // Define
-  function toggle(id: number, mode: string) {
+  function toggle(id: number, mode: string, prefix = '') {
     // Elements
     const inner: NodeListOf<HTMLElement> =
       state.elements.wrapper.querySelectorAll(
@@ -14,22 +14,33 @@ export default function init(state: any) {
     const outer: NodeListOf<HTMLElement> = document.querySelectorAll(
       `[${config.PRODUCT_NAME}-${state.sdk.i}="active-${id}"]`
     );
-    const elements: HTMLElement[] = [];
 
     // Loop
     [inner, outer].forEach(list => {
       // Loop
       list.forEach(parent => {
-        // Push
-        elements.push(parent);
-
-        // Push loop
-        parent.childNodes.forEach(node => elements.push(node as HTMLElement));
+        // Toggle
+        helper.classListToggle({
+          el: parent,
+          class: prefix + 'active',
+          mode: mode,
+        });
       });
     });
 
-    // ClassList loop
-    elements.forEach(el => el.classList[mode]('sf-active'));
+    // Inactive mode
+    const arr = state.view.sfInactiveArray;
+    if (mode === 'add' && prefix === '') {
+      // Remove
+      arr.forEach((_id: number) => {
+        if (_id >= id) toggle(_id, 'remove', 'in');
+      });
+    } else if (prefix === '') {
+      // Add to array
+      if (!arr.includes(id)) {
+        arr.push(id);
+      }
+    }
   }
 
   // Add
@@ -40,6 +51,7 @@ export default function init(state: any) {
   // Remove
   state.removeSfActive = (slideId: number) => {
     toggle(slideId, 'remove');
+    toggle(slideId, 'add', 'in');
   };
 
   // Initialize

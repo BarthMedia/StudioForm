@@ -4,17 +4,16 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-let double = false;
 const errPath = (s: any) => `${helper.errorName(s)} -> next.ts -> default`;
 export default function (stateId: number, options: Options) {
-  // Guard
-  if (double) return;
-
   // Values
   const state = model.state[stateId];
   let next: number | undefined | boolean;
   const currentSlideId: number =
     state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
+
+  // Guard -1
+  if (state.view.suggestDoubleClick) return;
 
   // Guard 0 - Let animations finish
   if (
@@ -77,11 +76,6 @@ export default function (stateId: number, options: Options) {
       if (!suggestedBtnFound) {
         // Elements
         const btnEL: HTMLElement = currentSlide.btns[0].el;
-
-        // Mark a click action
-        double = true;
-        btnEL.click();
-        double = false;
 
         // Suggest btn[0]
         if (state.modes.autoSuggestButtons)

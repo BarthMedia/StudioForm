@@ -3,9 +3,64 @@ import * as helper from '../helper';
 import * as model from '../../model';
 import * as config from '../../config';
 
+// + Helper +
+
+// Text
+function validateLength(
+  inputElement: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+) {
+  const value = inputElement.value;
+  const minLength = inputElement.getAttribute('minlength');
+  const maxLength = inputElement.getAttribute('maxlength');
+
+  if (minLength !== null && value.length < parseInt(minLength)) {
+    // The input doesn't meet the minlength requirement.
+    return `Minimum length required: ${minLength} characters.`;
+  }
+
+  if (maxLength !== null && value.length > parseInt(maxLength)) {
+    // The input exceeds the maxlength requirement.
+    return `Maximum length allowed: ${maxLength} characters.`;
+  }
+
+  // The input meets the length requirements.
+  return true;
+}
+
+// Number
+function validateNumberInput(inputElement: HTMLInputElement) {
+  const value = parseFloat(inputElement.value); // Convert input value to a floating-point number
+  const min = parseFloat(inputElement.getAttribute('min') || '');
+  const max = parseFloat(inputElement.getAttribute('max') || '');
+  const step = parseFloat(inputElement.getAttribute('step') || '');
+
+  if (!isNaN(value)) {
+    // Check "min" attribute
+    if (!isNaN(min) && value < min) {
+      return `Value must be greater than or equal to ${min}.`;
+    }
+
+    // Check "max" attribute
+    if (!isNaN(max) && value > max) {
+      return `Value must be less than or equal to ${max}.`;
+    }
+
+    // Check "step" attribute
+    if (!isNaN(step) && (value - min) % step !== 0) {
+      return `Value must be in increments of ${step}.`;
+    }
+
+    // If all checks pass, the value is valid
+    return true;
+  } else {
+    // If the input is not a valid number, return an error message
+    return 'Please enter a valid number.';
+  }
+}
+
 // Export
 const errPath = (s: any) => `${helper.errorName(s)}requirements.ts -> default`;
-const sfidAttr = 'data-sf-input-id';
+const sfidAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}${config.PRODUCT_NAME_CLASS_PREFIX}input-id`;
 export default function (stateId: number, slideId: number, options: Options) {
   // Positive guard
   if (options.doNotCheckSlideRequirements === true) return true;
@@ -74,7 +129,8 @@ export default function (stateId: number, slideId: number, options: Options) {
     // Loop
     radios.forEach(radio => {
       // Logic
-      if (radio.hasAttribute('data-selected')) selectedFound = true;
+      if (radio.hasAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}selected`))
+        selectedFound = true;
     });
 
     // SDK - Default
@@ -127,7 +183,7 @@ export default function (stateId: number, slideId: number, options: Options) {
       if (groups.indexOf(radio.name) === -1) groups.push(radio.name);
     });
 
-    // Test each group if it has at least one 'data-selected'
+    // Test each group if it has at least one '${config.CUSTOM_ATTRIBUTE_PREFIX}selected'
     groups.forEach(str => {
       // Elements
       const radios: NodeListOf<HTMLInputElement> =
@@ -138,7 +194,8 @@ export default function (stateId: number, slideId: number, options: Options) {
 
       // Loop
       radios.forEach(radio => {
-        if (radio.hasAttribute('data-selected')) selectedFound = true;
+        if (radio.hasAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}selected`))
+          selectedFound = true;
       });
 
       // Logic
@@ -164,12 +221,15 @@ export default function (stateId: number, slideId: number, options: Options) {
           // Required checking
           if (!input.hasAttribute('required')) return;
 
+          // Values
+          const index = parseInt(input.getAttribute(sfidAttr) || '');
+
           // Is empty
           if (input.value === '') {
             // Push
             targetInputs.push({
               el: input,
-              i: parseInt(input.getAttribute(sfidAttr) || ''),
+              i: index,
               msg: 'empty',
               regExp: undefined,
             });
@@ -178,25 +238,53 @@ export default function (stateId: number, slideId: number, options: Options) {
             return;
           }
 
+          // Validate number
+          if (input.type === 'number') {
+            // Values
+            const res = validateNumberInput(input as HTMLInputElement);
+
+            // Throw if
+            if (res !== true) {
+              // Push
+              targetInputs.push({
+                el: input,
+                i: index,
+                msg: res,
+                regExp: undefined,
+              });
+
+              // Skip code below
+              return;
+            }
+          }
+
+          // Length check
+          const lenghtRes = validateLength(input);
+          if (lenghtRes !== true) {
+            // Push
+            targetInputs.push({
+              el: input,
+              i: index,
+              msg: lenghtRes,
+              regExp: undefined,
+            });
+
+            // Skip code below
+            return;
+          }
+
           // Regex test
-          if (
-            input.getAttribute('data-regex') ||
-            input.getAttribute('data-reg-exp')
-          ) {
+          if (input.getAttribute('pattern')) {
             try {
               // Values
-              const regExp = new RegExp(
-                input.getAttribute('data-regex') ||
-                  input.getAttribute('data-reg-exp') ||
-                  ''
-              );
+              const regExp = new RegExp(input.getAttribute('pattern') || '');
 
               // Logic
               if (!regExp.test(input.value)) {
                 // Push
                 targetInputs.push({
                   el: input,
-                  i: parseInt(input.getAttribute(sfidAttr) || ''),
+                  i: index,
                   msg: 'custom regular expression',
                   regExp: regExp,
                 });
@@ -225,7 +313,7 @@ export default function (stateId: number, slideId: number, options: Options) {
               // Push
               targetInputs.push({
                 el: input,
-                i: parseInt(input.getAttribute(sfidAttr) || ''),
+                i: index,
                 msg: 'email',
                 regExp: regExp,
               });
@@ -245,7 +333,7 @@ export default function (stateId: number, slideId: number, options: Options) {
               // Push
               targetInputs.push({
                 el: input,
-                i: parseInt(input.getAttribute(sfidAttr) || ''),
+                i: index,
                 msg: 'telephone',
                 regExp: regExp,
               });
@@ -265,7 +353,7 @@ export default function (stateId: number, slideId: number, options: Options) {
               // Push
               targetInputs.push({
                 el: input,
-                i: parseInt(input.getAttribute(sfidAttr) || ''),
+                i: index,
                 msg: 'number',
                 regExp: regExp,
               });
@@ -308,6 +396,12 @@ export default function (stateId: number, slideId: number, options: Options) {
   }
 
   // * * * Custom case / If type unkown case * * *
-  if (currentSlide.el.getAttribute('data-requirements', 'true')) return true;
+  if (
+    currentSlide.el.getAttribute(
+      `${config.CUSTOM_ATTRIBUTE_PREFIX}requirements`,
+      'true'
+    )
+  )
+    return true;
   else return false;
 }

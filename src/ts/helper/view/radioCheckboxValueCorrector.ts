@@ -1,9 +1,10 @@
 // Imports
 import * as config from '../../config';
+import * as helper from '../helper';
 
 // Export
-const sfsAttr = 'data-selected';
-const sfsClass = 'sf-selected';
+const sfsAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}selected`;
+const sfsClass = 'selected';
 export default function (state: any) {
   // Consider that checkbox and radio requirements should work different when they are required
   // When required, have the value euqal = '', else 'off' else 'on'
@@ -18,10 +19,15 @@ export default function (state: any) {
       // Guard
       if (input.type !== 'checkbox' && input.type !== 'radio') return;
 
+      // Class list toggle options
+      const el = (input.closest(config.LABEL_SELECTOR) || input) as HTMLElement;
+      const cltOptions = {
+        el: input,
+        class: sfsClass,
+        closest: { parent: config.LABEL_SELECTOR },
+      };
+
       // Elements
-      const el = input.closest(config.LABEL_SELECTOR) || input;
-      const allElements: any[] = [el];
-      el.querySelectorAll('*').forEach(node => allElements.push(node));
 
       // Guard
       let isOn = input.hasAttribute('checked');
@@ -30,10 +36,7 @@ export default function (state: any) {
       // Checkbox case
       if (input.type === 'checkbox') {
         // Add 'sf-selected' class
-        if (isOn)
-          allElements.forEach((element: HTMLElement) =>
-            element.classList.add(sfsClass)
-          );
+        if (isOn) helper.classListToggle({ ...cltOptions, mode: 'add' });
         else {
           if (input.hasAttribute('required')) input.value = '';
           else input.value = 'off';
@@ -57,31 +60,26 @@ export default function (state: any) {
         if (input.type === 'radio') {
           // Elements
           const otherGroupRadios: HTMLInputElement[] = [];
-          state.elements.mask
+          document
             .querySelectorAll(`input[type="radio"][name="${input.name}"]`)
-            .forEach((_input: HTMLInputElement) => {
+            .forEach((_input: any) => {
               if (_input !== input) otherGroupRadios.push(_input);
             });
-          const otherElements: HTMLElement[] = [];
-          otherGroupRadios.forEach(radio => {
-            // Elements
-            const parent = radio.closest(config.LABEL_SELECTOR) || input;
-
-            // Push
-            otherElements.push(parent as HTMLElement);
-
-            // Loop
-            parent
-              .querySelectorAll('*')
-              .forEach(node => otherElements.push(node as HTMLElement));
-          });
+          function otherCltOptions(mode: string) {
+            return otherGroupRadios.map(radio => {
+              return {
+                el: radio as HTMLElement,
+                class: sfsClass,
+                mode: mode,
+                closest: { parent: config.LABEL_SELECTOR },
+              };
+            });
+          }
 
           // * Add *
 
           // Class
-          allElements.forEach((element: HTMLElement) =>
-            element.classList.add(sfsClass)
-          );
+          helper.classListToggle({ ...cltOptions, mode: 'add' });
 
           // Attribute
           input.setAttribute(sfsAttr, '');
@@ -89,9 +87,7 @@ export default function (state: any) {
           // * Remove *
 
           // Class
-          otherElements.forEach((element: HTMLElement) =>
-            element.classList.remove(sfsClass)
-          );
+          helper.classListToggle(otherCltOptions('remove'));
 
           // Attribute
           otherGroupRadios.forEach(radio => radio.removeAttribute(sfsAttr));
@@ -102,9 +98,7 @@ export default function (state: any) {
           // Data logic & class switch
           if (isOn) {
             // Remove it
-            allElements.forEach((element: HTMLElement) =>
-              element.classList.remove(sfsClass)
-            );
+            helper.classListToggle({ ...cltOptions, mode: 'remove' });
 
             // Logic
             if (input.hasAttribute('required')) input.value = '';
@@ -112,9 +106,7 @@ export default function (state: any) {
             isOn = false;
           } else {
             // Add it
-            allElements.forEach((element: HTMLElement) =>
-              element.classList.add(sfsClass)
-            );
+            helper.classListToggle({ ...cltOptions, mode: 'add' });
 
             // Logic
             input.value = 'on';

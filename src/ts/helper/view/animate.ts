@@ -77,7 +77,7 @@ export default function (index: number, options: Options) {
   const nextOrCurrentSlide = isSubmit ? nextSlide : currentSlide;
 
   // Is equalDimensions
-  const edmAttr = 'data-slide-equal-dimensions-multiplier';
+  const edmAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-equal-dimensions-multiplier`;
   let equalDimensions =
     currentWidth === nextWidth && currentHeight === nextHeight;
   let equalDimensionsMulitplier = parseFloat(
@@ -93,7 +93,7 @@ export default function (index: number, options: Options) {
   const isReverse = isSubmit !== true ? cId > nId! : false;
 
   // Opacity
-  const soAttr = 'data-slide-opacity';
+  const soAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-opacity`;
   let opacityCurrent = parseFloat(
     nextOrCurrentSlide.el.getAttribute(soAttr) ||
       state.elements.wrapper.getAttribute(soAttr) ||
@@ -108,7 +108,7 @@ export default function (index: number, options: Options) {
   opacityNext = isNaN(opacityNext) ? 0 : opacityNext;
 
   // Z-index
-  const sziAttr = 'data-slide-z-index';
+  const sziAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-z-index`;
   let zIndex = parseFloat(
     nextSlide.el.getAttribute(sziAttr) ||
       state.elements.wrapper.getAttribute(sziAttr)
@@ -116,7 +116,7 @@ export default function (index: number, options: Options) {
   zIndex = isNaN(zIndex) ? 1 : zIndex;
 
   // Current
-  const smcAttr = 'data-slide-move-current';
+  const smcAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-move-current`;
   let moveCurrentMultiplier = parseFloat(
     nextOrCurrentSlide.el.getAttribute(smcAttr) ||
       state.elements.wrapper.getAttribute(smcAttr) ||
@@ -125,7 +125,7 @@ export default function (index: number, options: Options) {
   moveCurrentMultiplier = isNaN(moveCurrentMultiplier)
     ? 1
     : moveCurrentMultiplier;
-  const stscAttr = 'data-slide-time-sec-current';
+  const stscAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-time-sec-current`;
   let timeCurrent = parseFloat(
     nextOrCurrentSlide.el.getAttribute(stscAttr) ||
       state.elements.wrapper.getAttribute(stscAttr) ||
@@ -134,14 +134,14 @@ export default function (index: number, options: Options) {
   timeCurrent = isNaN(timeCurrent) ? 1 : timeCurrent;
 
   // Next
-  const smnAttr = 'data-slide-move-next';
+  const smnAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-move-next`;
   let moveNextMultiplier = parseFloat(
     nextOrCurrentSlide.el.getAttribute(smnAttr) ||
       state.elements.wrapper.getAttribute(smnAttr) ||
       config.DEFAULT_SLIDE_MOVE_NEXT.toString()
   );
   moveNextMultiplier = isNaN(moveNextMultiplier) ? 1 : moveNextMultiplier;
-  const stcnAttr = 'data-slide-time-sec-next';
+  const stcnAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-time-sec-next`;
   let timeNext = parseFloat(
     nextOrCurrentSlide.el.getAttribute(stcnAttr) ||
       state.elements.wrapper.getAttribute(stcnAttr) ||
@@ -150,7 +150,7 @@ export default function (index: number, options: Options) {
   timeNext = isNaN(timeNext) ? 1 : timeNext;
 
   // Direction math
-  const sdAttr = 'data-slide-direction';
+  const sdAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-direction`;
   let direction: any =
     nextOrCurrentSlide.el.getAttribute(sdAttr) ||
     state.elements.wrapper.getAttribute(sdAttr);
@@ -385,8 +385,8 @@ export default function (index: number, options: Options) {
     );
 
   // Add / remove sf-active
-  state.addSfActive(nId);
   state.removeSfActive(cId);
+  state.addSfActive(nId);
 
   // Trigger the after trigger
   helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterAnimate);

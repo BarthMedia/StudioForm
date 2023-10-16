@@ -1,6 +1,7 @@
 // Imports
 import * as helper from '../helper';
 import * as model from '../../model';
+import * as config from '../../config';
 
 // Export
 export default function (state: any) {
@@ -20,7 +21,11 @@ export default function (state: any) {
       if (!label) return;
 
       // Guard
-      if ((label.getAttribute('data-swap-text') || 'true') !== 'true') return;
+      if (
+        (label.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}swap-text`) ||
+          'true') !== 'true'
+      )
+        return;
 
       // Values
       const originalText = label?.innerHTML;
@@ -28,15 +33,26 @@ export default function (state: any) {
       label.childNodes.forEach(node => allElements.push(node as HTMLElement));
 
       // Define
+
       function f(mode: string) {
-        allElements.forEach(el => el?.classList?.[mode]('sf-uploaded'));
+        const sfuOptions = {
+          class: 'uploaded',
+          mode: mode,
+        };
+        helper.classListToggle({
+          ...sfuOptions,
+          el: label!,
+          otherEls: [input],
+        });
       }
 
       // Event listener
       input.addEventListener('change', _ => {
         // Values
         const selectedFile = input.files?.[0];
-        const prefix = label.getAttribute('data-swap-prefix') || '';
+        const prefix =
+          label.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}swap-prefix`) ||
+          '';
 
         // Logic swap
         if (selectedFile) {

@@ -55,7 +55,8 @@ export default function (stateId: number, options: Options) {
     gsapObj.isRunning = true;
 
     // Values
-    const direction = el.getAttribute('data-axis') || 'x';
+    const direction =
+      el.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}axis`) || 'x';
     const isX = direction.indexOf('x') > -1;
     const isY = direction.indexOf('y') > -1;
 

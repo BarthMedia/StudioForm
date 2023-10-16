@@ -8,10 +8,12 @@ export default function init(state: any) {
     // Genereate checkbox groups
     const groups: Set<string> = new Set();
     slide.el
-      .querySelectorAll('[data-group]')
+      .querySelectorAll(`[${config.CUSTOM_ATTRIBUTE_PREFIX}group]`)
       .forEach((input: HTMLInputElement) => {
         // Values
-        const val = input.getAttribute('data-group');
+        const val = input.getAttribute(
+          `${config.CUSTOM_ATTRIBUTE_PREFIX}group`
+        );
 
         // Ensure the value is unique before adding it to the Set
         if (val && !groups.has(val)) {
@@ -22,7 +24,7 @@ export default function init(state: any) {
     // Loop
     groups.forEach(str => {
       // Elements
-      const selector = `[data-group="${str}"]`;
+      const selector = `[${config.CUSTOM_ATTRIBUTE_PREFIX}group="${str}"]`;
       const inputs: NodeListOf<HTMLInputElement> | HTMLInputElement[] =
         slide.el.querySelectorAll(`${selector} input, input${selector}`);
 
@@ -42,10 +44,12 @@ export default function init(state: any) {
         (checkboxes[0] as HTMLElement);
 
       // Values
-      let min = parseInt(source.getAttribute('data-min') || '');
+      let min = parseInt(
+        source.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}min`) || ''
+      );
       if (isNaN(min)) min = 1;
       let max: number | undefined = parseInt(
-        source.getAttribute('data-max') || ''
+        source.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}max`) || ''
       );
       if (isNaN(max)) max = undefined;
 
@@ -53,11 +57,14 @@ export default function init(state: any) {
       function valueLogic(checkbox: HTMLInputElement) {
         // Await Studio Forms value correction
         setTimeout(() => {
-          const addValue = checkbox.classList.contains('sf-selected')
+          const addValue = checkbox.classList.contains(
+            `${config.PRODUCT_NAME_CLASS_PREFIX}selected`
+          )
             ? true
             : false;
           checkbox.value = addValue
-            ? checkbox.getAttribute('data-value') || 'on'
+            ? checkbox.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}value`) ||
+              'on'
             : '';
         }, 1);
       }
@@ -67,7 +74,8 @@ export default function init(state: any) {
         // Reset
         checkbox.removeAttribute('required');
         checkbox.value = checkbox.hasAttribute('checked')
-          ? checkbox.getAttribute('data-value') || 'on'
+          ? checkbox.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}value`) ||
+            'on'
           : '';
 
         // Event listener
