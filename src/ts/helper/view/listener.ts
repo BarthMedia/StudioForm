@@ -140,7 +140,7 @@ export default function init(state: any) {
       return;
 
     // Switch
-    if (event.key === 'Escape') {
+    if (event.key === 'Backspace') {
       onEscape(currentSlide.i);
     } else if (event.key === 'Enter') {
       onEnter(currentSlide.i);
