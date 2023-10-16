@@ -3,7 +3,9 @@ import * as helper from '../helper';
 import * as model from '../../model';
 import * as config from '../../config';
 
-// Helper
+// + Helper +
+
+// Class list toggle
 function toggle(btn: HTMLElement, mode: string) {
   // Toggle
   helper.classListToggle({
@@ -135,6 +137,7 @@ export default function init(state: any) {
     // Event listener
     if (state.modes.autoRemoveButtonSuggestion) {
       setTimeout(() => {
+        // Event
         document.body.addEventListener(
           'click',
           function () {
@@ -144,15 +147,14 @@ export default function init(state: any) {
           },
           { once: true }
         );
+
+        // Alter slideLogic
+        btn.suggested = true;
+
+        // * Select all relevant elments *
+        toggle(btn.el, 'add');
       }, 1);
     }
-
-    // Alter slideLogic
-    btn.suggested = true;
-
-    // * Select all relevant elments *
-
-    toggle(btn.el, 'add');
 
     // * Scroll towards button *
     if (
