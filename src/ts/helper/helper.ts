@@ -61,9 +61,6 @@ export const classListToggle = (args: cltArgs | cltArgs[]) => {
         `${config.PRODUCT_NAME_CLASS_PREFIX}${args.class}`
       )
     );
-
-    // Log
-    // console.log(parent, elements);
   });
 };
 

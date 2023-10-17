@@ -185,17 +185,4 @@ export default function (stateId: number) {
 
   // Add to state
   state.sdk.slideLogic = slideLogic;
-
-  // Log
-  // slideLogic.forEach(slide => {
-  //   // Log
-  //   console.log(slide.i);
-
-  //   // Loop
-  //   if (slide.btns) slide.btns.forEach(btn => console.log(btn));
-  //   else console.log('_null_case_ ', slide);
-
-  //   // Log
-  //   console.log('---');
-  // });
 }

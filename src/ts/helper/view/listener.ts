@@ -113,46 +113,64 @@ export default function init(state: any) {
   if (state.sdk.i === 0) state.elements.wrapper.setAttribute(activeAttr, '');
 
   // * Keyboard *
+  const keAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}keyboard-events`;
   document.addEventListener('keydown', (event: KeyboardEvent) => {
-    // Check if the event target is an input element (e.g., input or textarea)
-    if (
+    // Elements
+    const target =
       event.target instanceof HTMLInputElement ||
       event.target instanceof HTMLTextAreaElement
-    ) {
-      return; // Don't trigger custom functions if the target is an input field
-    }
+        ? event.target
+        : null;
 
-    // Guard 2
+    // Guard 1 - Is active instance
     if (!state.elements.wrapper.hasAttribute(activeAttr)) return;
 
-    // Guard 3
+    // Values
     const currentSlide =
       state.sdk.slideLogic[
         state.sdk.slideRecord[state.sdk.slideRecord.length - 1]
       ];
 
+    // Guard 2 - Mode, step, textarea & custom input allowance
     if (
       !state.modes.keyboardEvents ||
-      currentSlide.el.getAttribute(
-        `${config.CUSTOM_ATTRIBUTE_PREFIX}keyboard-events`
-      ) === 'false'
+      currentSlide.el.getAttribute(keAttr) === 'false' ||
+      target?.getAttribute(keAttr) === 'false' ||
+      target instanceof HTMLTextAreaElement
     )
       return;
 
+    // Standard webflow input types
+    const inputTypes = ['text', 'email', 'password', 'phone', 'number'];
+
     // Switch
     if (event.key === 'Backspace') {
-      onEscape(currentSlide.i);
+      // Guard
+      if (inputTypes.includes(target?.type || '')) return;
+
+      // Trigger
+      onBackspace(currentSlide.i);
     } else if (event.key === 'Enter') {
+      // Guard
+
+      // Trigger
       onEnter(currentSlide.i);
     } else if (event.key === 'ArrowLeft') {
+      // Guard
+
+      // Trigger
       onArrowLeft(currentSlide.i);
     } else if (event.key === 'ArrowRight') {
+      // Guard
+      if (inputTypes.includes(target?.type || '')) return;
+
+      // Trigger
       onArrowRight(currentSlide.i);
     }
   });
 
   // Function to be called when Escape key is pressed
-  function onEscape(slideId: number) {
+  function onBackspace(slideId: number) {
     // Add your custom logic here
     state.sdk.prev();
     state.sdk.clearAllSuggestedButton(slideId);
