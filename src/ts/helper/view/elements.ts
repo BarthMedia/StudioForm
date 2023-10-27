@@ -17,7 +17,7 @@ export default function (state: any) {
   );
 
   // Define helper - returnSelector
-  function rs(isDomWide: boolean, ...strArr: string[]) {
+  function returnSelector(isDomWide: boolean, ...strArr: string[]) {
     // Create
     let val = strArr
       .map(str => {
@@ -38,13 +38,13 @@ export default function (state: any) {
 
   // Mask
   obj.mask =
-    el.querySelector(rs(false, 'mask')) ||
+    el.querySelector(returnSelector(false, 'mask')) ||
     el.querySelector('form') ||
     el.querySelector('*');
 
   // Dividers
   const dividers: NodeListOf<HTMLElement> = document.querySelectorAll(
-    rs(true, 'Visual Divider', 'visual-divider', 'divider')
+    returnSelector(true, 'Visual Divider', 'visual-divider', 'divider')
   );
   if (state.modes.removeVisualDividers)
     dividers.forEach(divider => divider.remove());
@@ -57,7 +57,7 @@ export default function (state: any) {
   }
 
   // Slides
-  obj.slides = obj.mask?.querySelectorAll(rs(false, 'slide'));
+  obj.slides = obj.mask?.querySelectorAll(returnSelector(false, 'slide'));
   if (obj.slides?.length === 0) obj.slides = obj.mask?.childNodes;
 
   // Success & error messages
@@ -95,22 +95,28 @@ export default function (state: any) {
 
   // Progress
   obj.progress = {};
-  obj.progress.bars = document.querySelectorAll(rs(true, 'progress-bar'));
+  obj.progress.bars = document.querySelectorAll(
+    returnSelector(true, 'progress-bar')
+  );
   obj.progress.currentSlides = document.querySelectorAll(
-    rs(true, 'current-slide')
+    returnSelector(true, 'current-slide')
   );
   obj.progress.minMaxSlides = document.querySelectorAll(
-    rs(true, 'min-max-slides')
+    returnSelector(true, 'min-max-slides')
   );
-  obj.progress.minSlides = document.querySelectorAll(rs(true, 'min-slides'));
-  obj.progress.maxSlides = document.querySelectorAll(rs(true, 'max-slides'));
+  obj.progress.minSlides = document.querySelectorAll(
+    returnSelector(true, 'min-slides')
+  );
+  obj.progress.maxSlides = document.querySelectorAll(
+    returnSelector(true, 'max-slides')
+  );
 
   // * Backwards & forwards buttons *
 
   // Prev
   obj.prevBtns = [];
   document
-    .querySelectorAll(rs(true, 'prev', 'Backwards Button'))
+    .querySelectorAll(returnSelector(true, 'prev', 'Backwards Button'))
     .forEach(el => obj.prevBtns.push(el));
 
   // Next
@@ -136,5 +142,7 @@ export default function (state: any) {
     .forEach(el => obj.nextBtns.push(el));
 
   // Data response fields
-  obj.responseData = el.querySelectorAll(rs(true, 'response-data', 'response'));
+  obj.responseData = el.querySelectorAll(
+    returnSelector(true, 'response-data', 'response')
+  );
 }
