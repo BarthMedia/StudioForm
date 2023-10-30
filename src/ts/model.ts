@@ -7,28 +7,18 @@ import calculateProgress from './helper/model/calculateProgress';
 import requirements from './helper/model/requirements';
 import post from './helper/model/fetch';
 
-// Initialize
-export const init = (
-  push: (...args: unknown[]) => void,
-  init: (...initAllNewOrReInitNamesOrReInitAll: unknown[]) => void,
-  destroy: (...allOrNames: unknown[]) => void
-) => {
-  // + Create proxy window api +
-
-  // Values
-  state.api = {
-    version: config.VERSION,
-    push: push,
-    init: init,
-    destroy: destroy,
-  };
-
-  // Read mostly
-  state.proxy = createReadMostlyProxy(state.api) as StudioForm;
-};
-
 // Main object
 export const state: StudioFormState = {
+  // Config
+  modes: {},
+  initModes: (
+    instanceName: string,
+    wrapper: HTMLElement,
+    mask: HTMLElement
+  ) => {
+    modes(state, instanceName, wrapper, mask);
+  },
+
   // Main api
   api: [],
   proxy: [],
@@ -57,6 +47,78 @@ export const state: StudioFormState = {
     // Return
     return allowance;
   },
+};
+
+// Non-instance keys
+export const arrayProperties = [
+  'version',
+  'push',
+  'init',
+  'destroy',
+  'keys',
+  'length',
+  'pop',
+  'shift',
+  'forEach',
+  'instances',
+];
+
+// Initialize
+export const init = (
+  push: (...args: unknown[]) => void,
+  init: (...initAllNewOrReInitNamesOrReInitAll: unknown[]) => void,
+  destroy: (...allOrNames: unknown[]) => void
+) => {
+  // + Create proxy window api +
+
+  // Values
+  state.api = {
+    version: config.VERSION,
+    push: push,
+    init: init,
+    destroy: destroy,
+    get keys() {
+      return Object.keys(this).filter(key => !arrayProperties.includes(key));
+    },
+    get length() {
+      return this.keys.length;
+    },
+    pop: function () {
+      if (this.length > 0) {
+        const lastKey = this.keys[this.keys.length - 1];
+        this.destroy(lastKey);
+        return lastKey;
+      } else {
+        return undefined; // No instances to pop
+      }
+    },
+    shift: function () {
+      if (this.length > 0) {
+        const firstKey = this.keys[0];
+        this.destroy(firstKey);
+        return firstKey;
+      } else {
+        return undefined; // No instances to shift
+      }
+    },
+    forEach: function (
+      callback: (
+        instance: unknown,
+        index: number,
+        instances: unknown[]
+      ) => unknown
+    ) {
+      this.keys.forEach((key: string, index: number) => {
+        callback(this[key], index, this.instances);
+      });
+    },
+    get instances() {
+      return this.keys.map((key: string) => this[key]);
+    },
+  };
+
+  // Read mostly
+  state.proxy = createReadMostlyProxy(state.api) as StudioForm;
 };
 
 // Define wrtie event

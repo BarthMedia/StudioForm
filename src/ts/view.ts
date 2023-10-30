@@ -1,5 +1,4 @@
 // Imports
-import elements from './helper/view/elements';
 import listener from './helper/view/listener';
 import animate from './helper/view/animate';
 import * as helper from './helper/helper';
@@ -8,6 +7,7 @@ import animateProgress from './helper/view/animateProgress';
 import anchor from './helper/view/scrollTo';
 import required from './helper/view/required';
 import sfActive from './helper/view/sfActive';
+import elements from './helper/view/elements';
 
 // Ultimate string creator
 function createSelector(instanceName: string | null, ...strings: string[]) {
@@ -56,9 +56,8 @@ export default function init(state: StudioFormState) {
       const wrapper = (
         el.tagName === 'FORM' ? el.parentElement : el
       ) as HTMLElement;
-      const mask = (el.querySelector(createSelector(null, 'mask')) ||
-        el.querySelector('form') ||
-        el.querySelector('*')) as HTMLElement | null;
+      const mask = (wrapper.querySelector('form') ||
+        wrapper.querySelector('*')) as HTMLElement | null;
 
       // Simple guard
       if (!mask) {
@@ -66,14 +65,19 @@ export default function init(state: StudioFormState) {
         return;
       }
 
+      // Already active guard
+      if (mask.hasAttribute(`${config.PRODUCT_NAME_SHORT}-name`)) return;
+
       // Instance name
       let instanceName =
+        mask.getAttribute(`wized`) ||
         mask.getAttribute(`data-name`) ||
         mask.getAttribute('name') ||
         mask.getAttribute('id') ||
         mask.getAttribute('class') ||
         mask.tagName;
-      instanceName = '2';
+
+      // Unique name loop
       Object.keys(state.api).forEach(str => {
         // Skip
         if (str !== instanceName) return;
@@ -91,6 +95,12 @@ export default function init(state: StudioFormState) {
         // Else
         instanceName = split.join('') + '-' + (int + 1);
       });
+
+      // Initiate config
+      state.initModes(instanceName, wrapper, mask);
+
+      // Generate elements
+      // const els = elements(wrapper, mask, state);
 
       // Add new instance to state
       state.api[instanceName] = {

@@ -42,6 +42,11 @@ interface StudioFormConfig {
 }
 
 interface StudioFormInstance {
+  // Api
+  auth?: string;
+  resolve?: boolean;
+
+  // Static
   name: string;
   // index: number; -- legacy
   elements: StudioFormElements;
@@ -70,7 +75,17 @@ interface StudioFormInstance {
   config: StudioFormConfig;
 }
 
+interface StudioFormModes {
+  promise: boolean;
+}
+
 type StudioFormState = {
+  modes: { [instanceName: string]: StudioFormModes };
+  initModes: (
+    instanceName: string,
+    wrapper: HTMLElement,
+    mask: HTMLElement
+  ) => void;
   api: StudioForm;
   proxy: StudioForm;
   get proxyWrite(): boolean;
@@ -91,6 +106,15 @@ type StudioForm =
       [instanceName: string]:
         | StudioFormInstance
         | string
+        | number
+        | unknown[]
+        | ((
+            callback: (
+              instance: unknown,
+              index: number,
+              instances: unknown[]
+            ) => unknown
+          ) => void)
         | ((...args: unknown[]) => void);
     }
   | unknown[];
