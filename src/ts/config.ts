@@ -13,9 +13,16 @@ export const DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER = 0.5;
 // Anchor
 export const DEFAULT_OFFSET = 16;
 
-// Product name
-export const PRODUCT_NAME = 'studio-form';
+// Version
+export const VERSION = '1.2.0';
+
+// Product name -- NEW
+export const PRODUCT_NAME_LONG = 'studio-form';
+export const PRODUCT_NAME_SHORT = 'sf';
 export const PRODUCT_NAME_CAMEL_CASE = 'StudioForm';
+
+// --- ! LEGACY // Product name --- ! LEGACY
+export const PRODUCT_NAME = 'studio-form';
 export const PRODUCT_NAME_CLASS_PREFIX = 'sf-';
 export const CUSTOM_ATTRIBUTE_PREFIX = 'data-';
 

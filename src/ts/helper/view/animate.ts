@@ -384,6 +384,8 @@ export default function (index: number, options: Options) {
         : state.sdk.animationData.timeBoth * 1000 + 1
     );
 
+  console.log('NEW SCROLL TO TOP MODE; RESPECT IT!!!!!!!!!!!!!');
+
   // Add / remove sf-active
   state.removeSfActive(cId);
   state.addSfActive(nId);

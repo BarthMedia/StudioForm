@@ -59,7 +59,7 @@ export default async function (stateId: number) {
     inputs.forEach(input => {
       // Values
       const key =
-        input.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}name`) ||
+        input.getAttribute(`data-name`) ||
         input.getAttribute('name') ||
         input.getAttribute('id') ||
         input.getAttribute('class') ||

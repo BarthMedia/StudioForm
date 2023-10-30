@@ -1,6 +1,6 @@
 {
   "name": "@bmg.studio/form",
-  "version": "1.1.3a",
+  "version": "1.2.0",
   "description": "Universal, multi-step, conditional webflow form creation script",
   "default": "src/index.html",
   "scripts": {
@@ -11,12 +11,20 @@
   "author": "Leon B. Barth",
   "license": "MIT",
   "devDependencies": {
+    "@types/gsap": "^3.0.0",
     "parcel": "^2.8.3",
-    "process": "^0.11.10",
     "typescript": "^5.0.4"
   },
   "dependencies": {
     "core-js": "^3.29.0",
     "regenerator-runtime": "^0.13.11"
-  }
+  },
+  "resolutions": {
+    "typescript": "^5.0.4"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "not IE 11"
+  ]
 }

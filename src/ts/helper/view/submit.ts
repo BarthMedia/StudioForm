@@ -11,6 +11,8 @@ export default async function (stateId: number, options: Options) {
   const currentSlideId: number =
     state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
 
+  console.log('Console.log! New allow show error message mode!');
+
   // Slider mode guard
   if (state.modes.isSlider === true) {
     const msg = `${errPath(state)}Slider mode doesn't allow for submission!`;

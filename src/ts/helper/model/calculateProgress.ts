@@ -149,6 +149,8 @@ export default function (i: number) {
   max += slideRecordLength - 1;
   const addition = state.modes._100PercentProgressOnSubmitOnly ? 1 : 0;
 
+  console.log("IF SLIDER MODE, YOU CAN'T COUNT SUCCESS MESSAGE");
+
   // Logic
   const returnVal = {
     shortest: {
