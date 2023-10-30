@@ -93,7 +93,13 @@ export default function init(state: StudioFormState) {
       });
 
       // Add new instance to state
-      state.api[instanceName] = undefined;
+      state.api[instanceName] = {
+        undefined: undefined,
+        name: instanceName,
+        index: Math.random() * 8,
+      };
+
+      // CONTINUE HERE!
 
       // Elements
 

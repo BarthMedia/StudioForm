@@ -141,7 +141,7 @@ export default function init(state: any) {
       return;
 
     // Standard webflow input types
-    const inputTypes = ['text', 'email', 'password', 'phone', 'number'];
+    const inputTypes = ['text', 'email', 'password', 'tel', 'number'];
 
     // Switch
     if (event.key === 'Backspace') {
