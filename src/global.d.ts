@@ -34,7 +34,7 @@ interface StudioFormConfig {
     get any(): string;
   };
   modes: {
-    get resetOnSubmit(): boolean;
+    [name: string]: boolean;
   };
   fetch: {
     get any(): string;
@@ -44,7 +44,8 @@ interface StudioFormConfig {
 interface StudioFormInstance {
   // Api
   auth?: string;
-  resolve?: boolean;
+  promise?: boolean; // For custom promises!
+  resolve?: boolean; // sf-await get's removed // Allow for class prefix
 
   // Static
   name: string;
@@ -75,26 +76,22 @@ interface StudioFormInstance {
   config: StudioFormConfig;
 }
 
-interface StudioFormModes {
-  [name: string]: boolean;
-}
-
 type StudioFormState = {
-  modes: { [instanceName: string]: StudioFormModes };
-  initModes: (
+  instances: { [instanceName: string]: StudioFormInstance };
+  initInstance: (
     instanceName: string,
     wrapper: HTMLElement,
     mask: HTMLElement
   ) => void;
-  createReadMostlyProxy: (object: object) => object;
+  createReadMostlyProxy: (object: object, description?: string) => object;
   api: StudioForm;
   proxy: StudioForm;
   get proxyWrite(): boolean;
-  proxyWriteHandlers: ((event: ProxyWriteEvent) => true | void)[];
 };
 
 type ProxyWriteEvent = {
   mode: string;
+  description: string;
   data: {
     target: object;
     property: string | symbol;

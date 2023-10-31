@@ -8,9 +8,45 @@ import * as config from '../config';
 
 // + Functions +
 
+// Ultimate query string creator
+export function createSelector(
+  instanceName: string | null,
+  ...strings: string[]
+) {
+  // Values
+  let val = '';
+
+  // Loop
+  strings.forEach((str, i) => {
+    // Values
+    const base = [
+      `[${config.PRODUCT_NAME_SHORT}="${str}"]`,
+      `[${config.PRODUCT_NAME_LONG}="${str}"]`,
+    ];
+    const wrapper = `[${config.PRODUCT_NAME_SHORT}-name="${instanceName}"]`;
+    const advanced = [
+      `[${config.PRODUCT_NAME_SHORT}-${instanceName}="${str}"]`,
+      `[${config.PRODUCT_NAME_LONG}-${instanceName}="${str}"]`,
+    ];
+
+    // Logic
+    if (!instanceName) {
+      val += base.join(',') + (i < strings.length - 1 ? ',' : '');
+      return;
+    }
+
+    // Else
+    val += base.map(str => `${wrapper} ${str}`).join(',') + ',';
+    val += advanced.join(',') + (i < strings.length - 1 ? ',' : '');
+  });
+
+  // Return
+  return val;
+}
+
 // Return product name
-export const errorName = (s: any) =>
-  `${config.PRODUCT_NAME_CAMEL_CASE}[${s.sdk.i}] -> `;
+export const errorName = (name: any) =>
+  `${config.PRODUCT_NAME_CAMEL_CASE}[${name}] ->`;
 
 // Classlist toggle
 type cltArgs = {

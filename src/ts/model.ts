@@ -1,50 +1,57 @@
 // Imports
 import * as helper from './helper/helper';
 import * as config from './config';
-import modes from './helper/model/modes';
-import slideLogic from './helper/model/slideLogic';
-import calculateProgress from './helper/model/calculateProgress';
-import requirements from './helper/model/requirements';
-import post from './helper/model/fetch';
+import * as instance from './helper/model/instance';
 
 // Main object
 export const state: StudioFormState = {
   // Config
-  modes: {},
-  initModes: (
+  instances: {},
+  initInstance: (
     instanceName: string,
     wrapper: HTMLElement,
     mask: HTMLElement
   ) => {
-    modes(state, instanceName, wrapper, mask);
+    instance.init(instanceName, wrapper, mask);
   },
 
   // Main api
-  api: [],
-  proxy: [],
+  api: {},
+  proxy: {},
 
   // Create proxy
   createReadMostlyProxy: createReadMostlyProxy,
 
-  // Proxy write event handlers
-  proxyWriteHandlers: {},
-
   // Get proxy write event
   get proxyWrite() {
-    // Loop
-    let allowance = false;
-    this.proxyWriteHandlers.forEach(
-      (handler: (event: ProxyWriteEvent) => true | void) => {
-        if (handler(proxyWriteEvent)) allowance = true;
-      }
+    // Dispatch body event
+    document.body.dispatchEvent(
+      new CustomEvent(
+        `${config.PRODUCT_NAME_SHORT}-api-${proxyWriteEvent.mode}-${proxyWriteEvent.description}`,
+        {
+          bubbles: false,
+          cancelable: true,
+          detail: proxyWriteEvent.data,
+        }
+      )
     );
+
+    // Loop
+    const allowance =
+      document.body.getAttribute(config.API_WRITE_ATTRIBUTE) === 'true';
+
+    // Reset
+    document.body.removeAttribute(config.API_WRITE_ATTRIBUTE);
 
     // Actually fullfill operation
     if (allowance) {
-      proxyWriteEvent.mode === 'set'
-        ? (proxyWriteEvent.data.target[proxyWriteEvent.data.property] =
-            proxyWriteEvent.data.value)
-        : delete proxyWriteEvent.data.target[proxyWriteEvent.data.property];
+      // Always delete
+      delete proxyWriteEvent.data.target[proxyWriteEvent.data.property];
+
+      // Sometimes set
+      if (proxyWriteEvent.mode === 'set')
+        proxyWriteEvent.data.target[proxyWriteEvent.data.property] =
+          proxyWriteEvent.data.value;
     }
 
     // Return
@@ -135,11 +142,15 @@ const proxyErr = (property: string | symbol, value: unknown = undefined) =>
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> model.ts:`;
 
 // Create read only proxy
-function createReadMostlyProxy(obj: object) {
+function createReadMostlyProxy(obj: object, description = 'root') {
   return new Proxy(obj, {
     set(target, property, value) {
       // Write access
-      proxyWriteEvent = { mode: 'set', data: { target, property, value } };
+      proxyWriteEvent = {
+        mode: 'set',
+        description: description,
+        data: { target, property, value },
+      };
       if (state.proxyWrite) return true;
 
       // Prevent any property from being set
@@ -148,7 +159,11 @@ function createReadMostlyProxy(obj: object) {
     },
     deleteProperty(target, property) {
       // Write access
-      proxyWriteEvent = { mode: 'set', data: { target, property } };
+      proxyWriteEvent = {
+        mode: 'set',
+        description: description,
+        data: { target, property },
+      };
       if (state.proxyWrite) return true;
 
       // Prevent any property from being deleted
@@ -167,82 +182,3 @@ function createReadMostlyProxy(obj: object) {
     },
   });
 }
-
-// // Function
-// export function init(wrapper: HTMLElement, index: number) {
-//   // Values
-//   const obj: any = {};
-
-//   // + Define +
-
-//   // ELements
-//   obj.elements = {};
-//   obj.elements.wrapper = wrapper;
-
-//   // * SDK *
-
-//   // Base
-//   obj.sdk = {};
-//   obj.sdk.i = index;
-
-//   // Custom code
-//   obj.sdk.events = {};
-
-//   // Animation data
-//   obj.sdk.animationData = {};
-
-//   // 3rd party
-//   obj.sdk.register = {};
-
-//   // Progress
-//   obj.sdk.slideRecord = [0];
-
-//   // Modes
-//   modes(obj);
-
-//   // View init
-//   obj.view = {};
-//   obj.view.sfInactiveArray = [];
-//   obj.view.eventsFunctionArrays = {};
-//   obj.view.gsapTimeline = {};
-//   obj.view.gsapProgressBarTimeline = {};
-
-//   // Model functions
-//   obj.model = {};
-
-//   // * Add callbacks to model *
-
-//   // Generate slide logic
-//   obj.model.generateSlideLogic = function () {
-//     slideLogic(index);
-//   };
-
-//   // Post data
-//   obj.sdk.data = {};
-//   obj.model.post = async function () {
-//     return post(index);
-//   };
-
-//   // Calculate progress
-//   obj.model.generateProgressData = function () {
-//     const data = calculateProgress(index);
-//     obj.sdk.pathProgressData = data;
-//   };
-
-//   // Check step requirements
-//   const eventFunctionArrays = obj.view.eventsFunctionArrays;
-//   helper.addEventsInfrastrucutre(obj, 'CheckSlideRequirements');
-//   obj.sdk.slideRequirementsData = {};
-//   obj.sdk.slideRequirements = function (
-//     slideId: number,
-//     options: Options = {}
-//   ) {
-//     helper.triggerAllFunctions(eventFunctionArrays.onCheckSlideRequirements);
-//     const res = requirements(index, slideId, options);
-//     helper.triggerAllFunctions(eventFunctionArrays.afterCheckSlideRequirements);
-//     return res;
-//   };
-
-//   // Push
-//   state.push(obj);
-// }

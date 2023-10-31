@@ -9,48 +9,12 @@ import required from './helper/view/required';
 import sfActive from './helper/view/sfActive';
 import elements from './helper/view/elements';
 
-// Ultimate string creator
-function createSelector(instanceName: string | null, ...strings: string[]) {
-  // Values
-  let val = '';
-
-  // Loop
-  strings.forEach((str, i) => {
-    // Values
-    const base = [
-      `[${config.PRODUCT_NAME_LONG}="${str}"]`,
-      `[${config.PRODUCT_NAME_SHORT}="${str}"]`,
-    ];
-
-    // Logic
-    if (!instanceName) {
-      val += base.join(',') + (i < strings.length - 1 ? ',' : '');
-      return;
-    }
-  });
-
-  // // Create
-  // let val = strArr
-  //   .map(str => {
-  //     const tmpVal = `[${config.PRODUCT_NAME}="${str}"]`;
-  //     return isDomWide
-  //       ? `[${config.CUSTOM_ATTRIBUTE_PREFIX}${config.PRODUCT_NAME_CLASS_PREFIX}id="${state.sdk.i}"] ` +
-  //           tmpVal +
-  //           `,[${config.PRODUCT_NAME}-${state.sdk.i}="${str}"]`
-  //       : tmpVal;
-  //   })
-  //   .join(',');
-
-  // Return
-  return val;
-}
-
 // Export
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> view.ts:`;
 export default function init(state: StudioFormState) {
   // Elements loop
   document
-    .querySelectorAll(createSelector(null, 'wrapper', 'mask'))
+    .querySelectorAll(helper.createSelector(null, 'wrapper', 'mask'))
     .forEach(el => {
       // Logical elements
       const wrapper = (
@@ -66,16 +30,20 @@ export default function init(state: StudioFormState) {
       }
 
       // Already active guard
-      if (mask.hasAttribute(`${config.PRODUCT_NAME_SHORT}-name`)) return;
+      const sfNameAttr = `${config.PRODUCT_NAME_SHORT}-name`;
+      if (wrapper.hasAttribute(sfNameAttr)) return;
 
       // Instance name
-      let instanceName =
+      let instanceName = (
         mask.getAttribute(`wized`) ||
         mask.getAttribute(`data-name`) ||
         mask.getAttribute('name') ||
         mask.getAttribute('id') ||
         mask.getAttribute('class') ||
-        mask.tagName;
+        mask.tagName
+      )
+        .toLowerCase()
+        .replace('/ /g', '-');
 
       // Unique name loop
       Object.keys(state.api).forEach(str => {
@@ -96,31 +64,34 @@ export default function init(state: StudioFormState) {
         instanceName = split.join('') + '-' + (int + 1);
       });
 
+      // Set attribute
+      wrapper.setAttribute(sfNameAttr, instanceName);
+
       // Initiate config
-      state.initModes(instanceName, wrapper, mask);
+      state.initInstance(instanceName, wrapper, mask);
 
       // Generate elements
       // const els = elements(wrapper, mask, state);
 
       // Add new instance to state
-      state.api[instanceName] = {
-        undefined: undefined,
-        name: instanceName,
-        index: Math.random() * 8,
-      };
+      // state.api[instanceName] = {
+      //   undefined: undefined,
+      //   name: instanceName,
+      //   index: Math.random() * 8,
+      // };
 
       // CONTINUE HERE!
 
       // Elements
 
       // Log
-      console.log(instanceName, el, wrapper);
+      // console.log(instanceName, mask, wrapper);
     });
 
   // Return elements
   // elements(state);
 
-  console.log(state);
+  // console.log(state);
 
   // // Generate step logic
   // state.model.generateSlideLogic();

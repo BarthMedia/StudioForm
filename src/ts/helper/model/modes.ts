@@ -4,17 +4,7 @@ import * as config from '../../config';
 
 // Export
 const errPath = (s: any) => `${helper.errorName(s)}modes.ts -> default:`;
-export default function (
-  state: StudioFormState,
-  instanceName: string,
-  wrapper: HTMLElement,
-  mask: HTMLElement
-) {
-  // Define
-  // state.modes = {};
-  // const obj = state.modes;
-  // const el: HTMLElement = state.elements.wrapper;
-
+export default function (wrapper: HTMLElement, mask: HTMLElement) {
   // Helper
   function getAttribute(str: string, bool = true) {
     // Values
@@ -50,14 +40,14 @@ export default function (
       return getAttribute('simple-data');
     },
 
-    // Remove visual dividers
-    get removeDividers() {
-      return getAttribute('remove-dividers');
-    },
-
     // Promise / resolve
     get promise() {
       return getAttribute('promise', false);
+    },
+
+    // Auto resolve on prev
+    get autoResolveOnPrev() {
+      return getAttribute('auto-resolve-on-prev', false);
     },
 
     // Remove conditionally invisible slides
@@ -157,7 +147,5 @@ export default function (
   };
 
   // Expose to api & handle change requests
-  state.modes[instanceName] = state.createReadMostlyProxy(
-    obj
-  ) as StudioFormModes;
+  return obj;
 }

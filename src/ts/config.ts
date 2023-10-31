@@ -21,12 +21,10 @@ export const PRODUCT_NAME_LONG = 'studio-form';
 export const PRODUCT_NAME_SHORT = 'sf';
 export const PRODUCT_NAME_CAMEL_CASE = 'StudioForm';
 
-// --- ! LEGACY // Product name --- ! LEGACY
-export const PRODUCT_NAME = 'studio-form';
-export const PRODUCT_NAME_CLASS_PREFIX = 'sf-';
-export const CUSTOM_ATTRIBUTE_PREFIX = 'data-';
+// API write event
+export const API_WRITE_ATTRIBUTE = 'sf-api-write';
 
 // Button selector
 export const INPUTS_SELECTOR = `input, select, textarea`;
-export const LABEL_SELECTOR = `label, [${PRODUCT_NAME}="label"]`;
-export const BUTTON_SELECTOR = `[${PRODUCT_NAME}="submit"], [${PRODUCT_NAME}="next"], .w-button:not([${PRODUCT_NAME}="Not a Button"]):not([${PRODUCT_NAME}="no-button"]):not([${PRODUCT_NAME}="prev"])`;
+// export const LABEL_SELECTOR = `label, [${PRODUCT_NAME}="label"]`;
+// export const BUTTON_SELECTOR = `[${PRODUCT_NAME}="submit"], [${PRODUCT_NAME}="next"], .w-button:not([${PRODUCT_NAME}="Not a Button"]):not([${PRODUCT_NAME}="no-button"]):not([${PRODUCT_NAME}="prev"])`;
