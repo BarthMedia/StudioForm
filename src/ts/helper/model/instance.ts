@@ -93,6 +93,7 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
 
   // Create
   const instanceMain = {
+    name: name,
     elements: elementsProxy,
     config: configProxy,
   };

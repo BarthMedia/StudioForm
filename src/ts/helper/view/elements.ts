@@ -3,8 +3,6 @@ import * as helper from '../helper';
 import * as config from '../../config';
 
 // Export
-const errPath = (s: any) =>
-  `${helper.errorName(s)} -> elements.ts -> default: `;
 export default function (
   modes: { [name: string]: boolean },
   instanceName: string,
@@ -30,33 +28,55 @@ export default function (
     });
   }
 
-  // Generate nexts
-  const nexts: HTMLElement[] = [];
-  querySelectorAll('next').forEach(el => {
-    if (el.closest('form') !== mask) nexts.push(el);
-  });
-
   // Create
   const obj = {
     // Standard
     wrapper: wrapper,
     mask: mask,
-    slides: mask.childNodes as NodeListOf<HTMLElement>,
+    get slides() {
+      return mask.childNodes as NodeListOf<HTMLElement>;
+    },
     successMsg: wrapper.querySelector('.w-form-done') as HTMLElement | null,
     errorMsg: wrapper.querySelector('.w-form-fail') as HTMLElement | null,
 
     // Progress
-    progressBars: querySelectorAll('progress-bar'),
-    currentSlides: querySelectorAll('current-slide'),
-    minMaxSlides: querySelectorAll('min-max-slides'),
-    minSlides: querySelectorAll('min-slides'),
-    maxSlides: querySelectorAll('max-slides'),
+    get progressBars() {
+      return querySelectorAll('progress-bar');
+    },
+    get currentSlides() {
+      return querySelectorAll('current-slide');
+    },
+    get minMaxSlides() {
+      return querySelectorAll('min-max-slides');
+    },
+    get minSlides() {
+      return querySelectorAll('min-slides');
+    },
+    get maxSlides() {
+      return querySelectorAll('max-slides');
+    },
+
     // Fetch response
-    res: querySelectorAll('res'),
+    get res() {
+      return querySelectorAll('res');
+    },
 
     // External buttons
-    prevs: querySelectorAll('prev'),
-    nexts: nexts,
+    get prevs() {
+      return querySelectorAll('prev');
+    },
+    get nexts() {
+      // Generate nexts
+      const nexts: HTMLElement[] = [];
+      querySelectorAll('next').forEach(el => {
+        if (
+          (el.closest(`[${config.PRODUCT_NAME_SHORT}-name]>form`) ||
+            el.closest(`[${config.PRODUCT_NAME_SHORT}-name]>*`)) !== mask
+        )
+          nexts.push(el);
+      });
+      return nexts;
+    },
   };
 
   // Return

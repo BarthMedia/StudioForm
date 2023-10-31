@@ -3,7 +3,6 @@ import * as helper from '../helper';
 import * as config from '../../config';
 
 // Export
-const errPath = (s: any) => `${helper.errorName(s)}modes.ts -> default:`;
 export default function (wrapper: HTMLElement, mask: HTMLElement) {
   // Helper
   function getAttribute(str: string, bool = true) {
