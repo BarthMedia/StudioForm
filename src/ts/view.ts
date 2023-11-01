@@ -5,7 +5,7 @@ import * as helper from './helper/helper';
 import * as config from './config';
 import animateProgress from './helper/view/animateProgress';
 import anchor from './helper/view/scrollTo';
-import required from './helper/view/required';
+import required from './helper/view/reportValidity';
 import sfActive from './helper/view/sfActive';
 import elements from './helper/view/elements';
 
