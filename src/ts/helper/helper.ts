@@ -126,7 +126,7 @@ export const classListToggle = (...args: classListToggleArgs[]) => {
     // Add / remove ${sfAttr}
     elements.forEach(el =>
       el.classList?.[args.mode](
-        `${window.StudioForm['config'].comboClassPrefix}${args.class}`
+        `${window.StudioForm['config']?.comboClassPrefix}${args.class}`
       )
     );
   });
