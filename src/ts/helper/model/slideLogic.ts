@@ -7,16 +7,21 @@ import swapSubmitButtons from '../view/swapSubmitButtons';
 import * as config from '../../config';
 
 // Export
-const errPath = (s: any) => `${helper.errorName(s)}slideLogic.ts -> default`;
-export default function (stateId: number) {
+const errPath = (n: any) => `${helper.errorName(n)}slideLogic.ts:`;
+export default function (
+  name: string,
+  modes: { [name: string]: boolean },
+  elements: StudioFormElements
+) {
   // Values
-  const state = model.state[stateId];
-  const slideLogic: any[] = [];
+  const slideLogic: StudioFormSlideLogic[] = [];
+
+  console.log('data-conditional turns into sf-conditional');
 
   // Init loop
-  for (let i = 0, n = state.elements.slides.length; i < n; i++) {
+  for (let i = 0, n = elements.slides.length; i < n; i++) {
     // Elements
-    const slide: HTMLElement = state.elements.slides[i];
+    const slide = elements.slides[i];
 
     // * Define *
     const obj: any = {};

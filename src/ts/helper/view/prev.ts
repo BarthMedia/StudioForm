@@ -9,6 +9,10 @@ export default function (stateId: number, options: Options) {
   // Values
   const state = model.state[stateId];
 
+  console.log(
+    "Resolve event has to include direction, 'prev, 'next, 'submit, 'custom'"
+  );
+
   // Guard 0 - Let animations finish
   if (
     state.modes.waitForAnimations === true &&

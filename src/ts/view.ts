@@ -41,9 +41,7 @@ export default function init(state: StudioFormState) {
         mask.getAttribute('id') ||
         mask.getAttribute('class') ||
         mask.tagName
-      )
-        .toLowerCase()
-        .replace('/ /g', '-');
+      ).replace(/[^a-zA-Z0-9-_.]/g, '_'); // Replace invalid characters with hyphensy
 
       // Unique name loop
       Object.keys(state.api).forEach(str => {
@@ -51,17 +49,17 @@ export default function init(state: StudioFormState) {
         if (str !== instanceName) return;
 
         // Split logic
-        const split = str.split('-');
+        const split = str.split('_');
         const int = parseInt(split.pop() || '');
 
         // Skip if NaN
         if (isNaN(int)) {
-          instanceName = str + '-2';
+          instanceName = str + '_2';
           return;
         }
 
         // Else
-        instanceName = split.join('') + '-' + (int + 1);
+        instanceName = split.join('') + '_' + (int + 1);
       });
 
       // Set attribute
@@ -70,73 +68,57 @@ export default function init(state: StudioFormState) {
       // Initiate config
       state.initInstance(instanceName, wrapper, mask);
 
-      // Generate elements
-      // const els = elements(wrapper, mask, state);
+      // Values
+      const instance = state.api[instanceName] as StudioFormInstance | null;
 
-      // Add new instance to state
-      // state.api[instanceName] = {
-      //   undefined: undefined,
-      //   name: instanceName,
-      //   index: Math.random() * 8,
-      // };
-
-      // CONTINUE HERE!
-
-      // Elements
+      // Guard
+      if (!instance) return;
 
       // Log
-      // console.log(instanceName, mask, wrapper);
+      console.log(instance.elements.nexts);
+
+      // // Init sf active functionality
+      // sfActive(state);
+
+      // // Calculate initial progress
+      // state.view.progress = function (options: Options = {}) {
+      //   animateProgress(state.sdk.i, options);
+      // };
+      // state.view.progress();
+
+      // // Animate anchor
+      // state.sdk.scrollTo = function (options: Options = {}) {
+      //   anchor(state.sdk.i, options);
+      // };
+
+      // // * Set animate available *
+
+      // // Add events infrastrucutre
+      // const eventFunctionArrays = state.view.eventsFunctionArrays;
+      // helper.addEventsInfrastrucutre(state, 'Animate');
+
+      // // State view
+      // state.view.animate = function (options: Options = {}) {
+      //   helper.triggerAllFunctions(eventFunctionArrays.onAnimate);
+      //   animate(state.sdk.i, options);
+      // };
+
+      // // Render error endpoint
+      // helper.addEventsInfrastrucutre(state, 'RenderRequirements');
+      // state.view.renderRequirements = function (data = []) {
+      //   helper.triggerAllFunctions(eventFunctionArrays.onRenderRequirements);
+      //   required(state.sdk.i, data);
+      // };
+
+      // // * Init initial style *
+
+      // // Steps
+      // state.sdk.slideLogic.forEach((slide: any) => {
+      //   slide.el.style.display = 'none';
+      // });
+      // state.sdk.slideLogic[0].el.style.display = '';
+
+      // // * Init event listeners *
+      // listener(state);
     });
-
-  // Return elements
-  // elements(state);
-
-  // console.log(state);
-
-  // // Generate step logic
-  // state.model.generateSlideLogic();
-
-  // // Init sf active functionality
-  // sfActive(state);
-
-  // // Calculate initial progress
-  // state.view.progress = function (options: Options = {}) {
-  //   animateProgress(state.sdk.i, options);
-  // };
-  // state.view.progress();
-
-  // // Animate anchor
-  // state.sdk.scrollTo = function (options: Options = {}) {
-  //   anchor(state.sdk.i, options);
-  // };
-
-  // // * Set animate available *
-
-  // // Add events infrastrucutre
-  // const eventFunctionArrays = state.view.eventsFunctionArrays;
-  // helper.addEventsInfrastrucutre(state, 'Animate');
-
-  // // State view
-  // state.view.animate = function (options: Options = {}) {
-  //   helper.triggerAllFunctions(eventFunctionArrays.onAnimate);
-  //   animate(state.sdk.i, options);
-  // };
-
-  // // Render error endpoint
-  // helper.addEventsInfrastrucutre(state, 'RenderRequirements');
-  // state.view.renderRequirements = function (data = []) {
-  //   helper.triggerAllFunctions(eventFunctionArrays.onRenderRequirements);
-  //   required(state.sdk.i, data);
-  // };
-
-  // // * Init initial style *
-
-  // // Steps
-  // state.sdk.slideLogic.forEach((slide: any) => {
-  //   slide.el.style.display = 'none';
-  // });
-  // state.sdk.slideLogic[0].el.style.display = '';
-
-  // // * Init event listeners *
-  // listener(state);
 }

@@ -12,6 +12,15 @@ export default async function (stateId: number, options: Options) {
     state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
 
   console.log('Console.log! New allow show error message mode!');
+  console.log('MAKE IT OPTIONAL, THAT ERROR MESSAGE IS EVEN SHOWN !');
+  console.log(
+    'ERROR AND SUCCESS MESSAGES ARE NO LISTS!',
+    'nope, no lists! this can be alternatively achieved by Wized users listening to sf-after-submit!'
+  );
+
+  console.log(
+    'CONSIDER, firing sf-submit event instead of submit native event, in case that causes any troubles!'
+  );
 
   // Slider mode guard
   if (state.modes.isSlider === true) {

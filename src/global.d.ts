@@ -1,12 +1,42 @@
 // Global d.ts
 
 interface StudioFormElements {
+  // Standard
   wrapper: HTMLElement;
   mask: HTMLElement;
+  get slides(): NodeListOf<HTMLElement>;
+  successMsg: HTMLElement | null;
+  errorMsg: HTMLElement | null;
+
+  // Progress
+  get progressBars(): NodeListOf<HTMLElement>;
+  get currentSlides(): NodeListOf<HTMLElement>;
+  get minMaxSlides(): NodeListOf<HTMLElement>;
+  get minSlides(): NodeListOf<HTMLElement>;
+  get maxSlides(): NodeListOf<HTMLElement>;
+
+  // Fetch response
+  get res(): NodeListOf<HTMLElement>;
+
+  // External buttons
+  get prevs(): NodeListOf<HTMLElement>;
+  get nexts(): HTMLElement[];
 }
 
 interface StudioFormSlideLogic {
-  any: any;
+  type: string;
+  index: number;
+  element: HTMLElement;
+  buttons:
+    | false
+    | {
+        index: number;
+        element: HTMLElement;
+        conditional: string;
+        next: boolean | number;
+      }[];
+  conditional: string;
+  conditionalNext: boolean | string | undefined;
 }
 
 interface StudioFormButtonObject {
@@ -42,24 +72,37 @@ interface StudioFormConfig {
 }
 
 interface StudioFormInstance {
-  // Api
+  // Write API
   auth?: string;
   promise?: boolean; // For custom promises!
   resolve?: boolean; // sf-await get's removed // Allow for class prefix
 
-  // Static
+  // Wized API
+  reset: (options?: {}) => void;
+  fetch: (options?: {
+    url?: string;
+    method?: string;
+    authorization?: string;
+    accept?: string;
+    contentType?: string;
+    formData?: FormData;
+    headers?: Headers;
+  }) => unknown;
+  get formData(): FormData;
+  progress: (options?: { animate: boolean }) => unknown;
+  to: (slideId: number, options?: {}) => boolean;
+
+  // Standard
   name: string;
   // index: number; -- legacy
   elements: StudioFormElements;
-  logic: StudioFormSlideLogic;
+  logic: StudioFormSlideLogic[];
   record: number[];
-  to: (slideId: number, options: StudioFormApiOptions) => void;
-  next: (options: StudioFormApiOptions) => void;
-  prev: (options: StudioFormApiOptions) => void;
-  submit: (options: StudioFormApiOptions) => void;
-  scrollTo: (options: StudioFormApiOptions) => void;
+  next: (options?: {}) => void;
+  prev: (options?: {}) => void;
+  submit: (options?: {}) => void;
+  scrollTo: (options?: {}) => void;
   reportValidity: () => void; // slideRequirements -- legacy
-  reset: (options: StudioFormApiOptions) => void;
   suggest: {
     clear: (slideId: number) => {};
     next: (slideId: number) => {};
@@ -89,7 +132,7 @@ type StudioFormState = {
   get proxyWrite(): boolean;
 };
 
-type ProxyWriteEvent = {
+interface ProxyWriteEvent {
   mode: string;
   description: string;
   data: {
@@ -97,12 +140,18 @@ type ProxyWriteEvent = {
     property: string | symbol;
     value?: unknown;
   };
+}
+
+type StudioFormGlobalConfig = {
+  comboClassPrefix: string;
+  eventPrefix: string;
 };
 
 type StudioForm =
   | {
       [instanceName: string]:
         | StudioFormInstance
+        | StudioFormGlobalConfig
         | string
         | number
         | unknown[]

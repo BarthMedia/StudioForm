@@ -24,6 +24,16 @@ const errPath = (s: any) =>
   `${helper.errorName(s)}suggestButton.ts -> init -> `;
 const sfgClass = `suggested`;
 export default function init(state: any) {
+  console.log(
+    'On suggest, check that all buttons are actually uneuqal display none!'
+  );
+  console.log(
+    'buttons structure has to be written in a way, that it is a getter',
+    'espcially if more then 1 button!',
+    'or it is also just enough, if you remove the button?? , nah. has to be live!',
+    'button has to be visible!'
+  );
+
   // * Add events *
   const eventFunctionArrays = state.view.eventsFunctionArrays;
   helper.addEventsInfrastrucutre(state, 'ButtonSuggestion');

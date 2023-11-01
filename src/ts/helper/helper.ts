@@ -8,6 +8,41 @@ import * as config from '../config';
 
 // + Functions +
 
+// Get attribute
+export function getAttribute(str: string, ...elements: HTMLElement[]) {
+  // Values
+  const querys = [
+    `${config.PRODUCT_NAME_SHORT}-${str}`,
+    `${config.PRODUCT_NAME_LONG}-${str}`,
+  ];
+  let val: string | null = null;
+
+  // Loop
+  querys.forEach(str => {
+    // Values
+    let attr: string | null = null;
+
+    // Loop
+    elements.every(el => {
+      // Logic
+      const getAttr = el.getAttribute(str);
+      if (getAttr) {
+        attr = getAttr;
+        return false;
+      }
+
+      // Default
+      return true;
+    });
+
+    // Overwrite
+    if (attr) val = attr;
+  });
+
+  // Return
+  return val as string | null;
+}
+
 // Ultimate query string creator
 export function createSelector(
   instanceName: string | null,
@@ -49,7 +84,7 @@ export const errorName = (name: any) =>
   `${config.PRODUCT_NAME_CAMEL_CASE}[${name}] ->`;
 
 // Classlist toggle
-type cltArgs = {
+type classListToggleArgs = {
   el: HTMLElement;
   otherEls?: HTMLElement[];
   mode: string;
@@ -64,12 +99,9 @@ type cltArgs = {
     };
   };
 };
-export const classListToggle = (args: cltArgs | cltArgs[]) => {
-  // Loop logic
-  const _args = Array.isArray(args) ? args : [args];
-
+export const classListToggle = (...args: classListToggleArgs[]) => {
   // Loop
-  _args.forEach(args => {
+  args.forEach(args => {
     // Parent
     let parent = args.el;
     if (args.closest) {
@@ -94,7 +126,7 @@ export const classListToggle = (args: cltArgs | cltArgs[]) => {
     // Add / remove ${sfAttr}
     elements.forEach(el =>
       el.classList?.[args.mode](
-        `${config.PRODUCT_NAME_CLASS_PREFIX}${args.class}`
+        `${window.StudioForm['config'].comboClassPrefix}${args.class}`
       )
     );
   });

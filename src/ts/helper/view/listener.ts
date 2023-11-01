@@ -30,6 +30,13 @@ declare global {
 
 // Export
 export default function init(state: any) {
+  console.log(
+    'reduce number of events, to sf-animate, sf-submit, sf-fetch ... sf-on-fetch .. sf-after-fetch -- okay. Still better like this!'
+  );
+  console.log('requires new mask - no-bubbling - event structure!');
+  console.log('also sf-on-error, sf-after-error');
+  console.log('sf-resolve-true', 'sf-resolve-false event', 'sf-promise event!');
+
   // Achieve correct values
   radioCheckboxValueCorrector(state);
 

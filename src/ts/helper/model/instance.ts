@@ -4,10 +4,13 @@
 import * as helper from '../helper';
 import * as config from '../../config';
 import * as model from '../../model';
+
+// View
 import elements from '../view/elements';
 
 // Model
 import modes from './modes';
+import slideLogic from './slideLogic';
 
 // + Define +
 interface StudioFormEvent {
@@ -57,7 +60,7 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   const modesProxy = model.state.createReadMostlyProxy(
     modesMain,
     `${name}-modes`
-  );
+  ) as { [name: string]: boolean };
   const modesWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${name}-modes`;
   const modesWrite = (e: unknown) => {
     if (typeof e?.['detail']?.value === 'boolean')
@@ -67,19 +70,20 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   events[name].push({ name: modesWriteName, function: modesWrite });
 
   // + Elements +
-  const elementsMain = elements(
-    modesProxy as { [name: string]: boolean },
-    name,
-    wrapper,
-    mask
-  );
-  const elementsProxy = model.state.createReadMostlyProxy(elementsMain);
+  const elementsMain = elements(modesProxy, name, wrapper, mask);
+  const elementsProxy = model.state.createReadMostlyProxy(
+    elementsMain
+  ) as StudioFormElements;
 
   // Simple guard
   if (!elementsMain.slides.length) {
     console.warn(`${errPath(name)} Couldn't find slides!`, elementsMain);
     return;
   }
+
+  // Generate step logic
+  //   const logicMain = slideLogic(name, modesProxy, elementsProxy);
+  //   const logicProxy = model.state.createReadMostlyProxy(logicMain);
 
   // + Config +
 
@@ -94,6 +98,8 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   // Create
   const instanceMain = {
     name: name,
+    // logic: logicProxy,
+    record: [0],
     elements: elementsProxy,
     config: configProxy,
   };

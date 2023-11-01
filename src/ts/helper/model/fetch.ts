@@ -6,6 +6,13 @@ import * as config from '../../config';
 // Export
 const errPath = (s: any) => `${helper.errorName(s)}post.ts -> default`;
 export default async function (stateId: number) {
+  console.log(
+    'if slide record .length 0 throw error, if slide record 1, approach single form format,'
+  );
+  console.log(
+    'slide record .legnt >= 2 then push form data in FinSweet format to wized!'
+  );
+
   // Values
   const state = model.state[stateId];
   const form: HTMLFormElement = state.elements.mask;

@@ -9,6 +9,8 @@ export default function (state: any) {
   // Consider that checkbox and radio requirements should work different when they are required
   // When required, have the value euqal = '', else 'off' else 'on'
 
+  console.log('THIS CAN NOT FIRE, WHEN CLICK EVENT TARGET IS ANCHOR!');
+
   // Loop
   state.sdk.slideLogic.forEach((slide: { el: HTMLElement }) => {
     // Elements

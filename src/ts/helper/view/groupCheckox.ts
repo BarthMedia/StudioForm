@@ -5,6 +5,10 @@ import * as config from '../../config';
 export default function init(state: any) {
   // Loop
   state.sdk.slideLogic.forEach((slide: any) => {
+    console.log(
+      'Create sf- / studio-form-value attribute for checkboxes & groups, and only after that fall back to native value value!'
+    );
+
     // Genereate checkbox groups
     const groups: Set<string> = new Set();
     slide.el

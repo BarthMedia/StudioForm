@@ -90,39 +90,34 @@ function main() {
   // Add
   window[config.PRODUCT_NAME_CAMEL_CASE] = api;
 
+  // Remove sf-cloak
+  [config.PRODUCT_NAME_SHORT, config.PRODUCT_NAME_LONG].forEach(str => {
+    // Loop
+    document.querySelectorAll(`[${str}-cloak]`).forEach(el => {
+      // Add to classList
+      helper.classListToggle({
+        el: el as HTMLElement,
+        mode: 'add',
+        class: 'hide',
+      });
+    });
+  });
+
   // + Initialize +
   api['init']();
   // @ts-ignore
   api['push'](...args);
-
-  // Elements loop
-  // document
-  //   .querySelectorAll(
-  //     `[${config.PRODUCT_NAME}="wrapper"], [${config.PRODUCT_NAME}="mask"]`
-  //   )
-  //   .forEach((wrapper, index) => {
-  //     // Init
-  //     model.init(wrapper as HTMLElement, index);
-  //     view(model.state[index]);
-
-  //     // Grant simple or advanced api access
-  //     // api.push(model.state[index].api);
-  //   });
-
-  // Define
-  // const api: StudioFormInstance[] = [];
-
-  // Add state to window
-  // window[config.PRODUCT_NAME_CAMEL_CASE] = api;
 }
 
-// Loader
-'undefined' === typeof gsap
-  ? helper.scriptLoader(
-      'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js',
-      loaderLogic
-    )
-  : loaderLogic();
+// + Loader +
+
+// GSAP
+const gsapSrc =
+  'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js';
+const gsapScript = document.querySelector(`script[src="${gsapSrc}"]`);
+gsapScript ? loaderLogic() : helper.scriptLoader(gsapSrc, loaderLogic);
+
+// Main
 function loaderLogic() {
   // Check if DOM is already loaded
   if (document.readyState === 'loading') {

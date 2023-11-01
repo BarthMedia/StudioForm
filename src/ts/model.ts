@@ -5,7 +5,7 @@ import * as instance from './helper/model/instance';
 
 // Main object
 export const state: StudioFormState = {
-  // Config
+  // Instances
   instances: {},
   initInstance: (
     instanceName: string,
@@ -61,17 +61,41 @@ export const state: StudioFormState = {
 
 // Non-instance keys
 export const arrayProperties = [
-  'version',
-  'push',
-  'init',
+  'config',
   'destroy',
+  'forEach',
+  'init',
+  'instances',
   'keys',
   'length',
   'pop',
+  'push',
   'shift',
-  'forEach',
-  'instances',
+  'version',
 ];
+
+// Global configuration
+const globalConfigMain = {
+  get comboClassPrefix() {
+    return (
+      helper.getAttribute('combo-class-prefix', document.body) ||
+      `${config.PRODUCT_NAME_SHORT}-`
+    );
+  },
+  get eventPrefix() {
+    return helper.getAttribute('event-prefix', document.body) || ``;
+  },
+};
+const globalConfigProxy = state.createReadMostlyProxy(
+  globalConfigMain,
+  'global-config'
+) as StudioFormGlobalConfig;
+const globalConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-global-config`;
+const globalConfigWrite = (e: unknown) => {
+  if (typeof e?.['detail']?.value === 'string')
+    document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+};
+document.body.addEventListener(globalConfigWriteName, globalConfigWrite);
 
 // Initialize
 export const init = (
@@ -83,10 +107,16 @@ export const init = (
 
   // Values
   state.api = {
+    // Stanard
     version: config.VERSION,
     push: push,
     init: init,
     destroy: destroy,
+
+    // Config
+    config: globalConfigProxy,
+
+    // API
     get keys() {
       return Object.keys(this).filter(key => !arrayProperties.includes(key));
     },

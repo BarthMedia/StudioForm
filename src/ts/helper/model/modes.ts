@@ -7,18 +7,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
   // Helper
   function getAttribute(str: string, bool = true) {
     // Values
-    const querys = [
-      `${config.PRODUCT_NAME_SHORT}-${str}`,
-      `${config.PRODUCT_NAME_LONG}-${str}`,
-    ];
-    let val: string | null = null;
-
-    // Loop
-    querys.forEach(str => {
-      // Values
-      const attr = wrapper.getAttribute(str) || mask.getAttribute(str);
-      if (attr) val = attr;
-    });
+    let val = helper.getAttribute(str, mask, wrapper);
 
     // Fallback
     val = !val ? bool.toString() : val;
@@ -26,6 +15,17 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // Return
     return val === 'true';
   }
+
+  // TODO
+  console.log(
+    'Build this as the next one! WIZED.prevent-default & WIZED.reset!'
+  );
+  console.log(
+    '!!!!!! build wized specific mode - attributes - in regards to reset & preventDefault!'
+  );
+  console.log(
+    'V2 is the standard now, no need to test for. Expect potential failure anyways'
+  );
 
   // * Modes *
   const obj = {
