@@ -16,78 +16,68 @@ export default function (
   // Values
   const slideLogic: StudioFormSlideLogic[] = [];
 
-  console.log('data-conditional turns into sf-conditional');
-
   // Init loop
   for (let i = 0, n = elements.slides.length; i < n; i++) {
     // Elements
     const slide = elements.slides[i];
 
-    // * Define *
-    const obj: any = {};
-
-    // Index
-    obj.i = i;
-
-    // Element
-    obj.el = slide;
-
     // Swap submit buttons
-    swapSubmitButtons(slide, state);
+    swapSubmitButtons(slide, modes);
 
-    // Generate slide type
-    obj.type = slideType(slide, state);
+    // * Define *
+    const type = slideType(slide);
+    const obj: StudioFormSlideLogic = {
+      // Base
+      index: i,
+      element: slide,
+      type: type,
 
-    // Generate slide buttons
-    obj.btns = slideButtons(obj.type, slide, state);
-
-    // Conditional next
-    obj.conditionalNext =
-      (slide.getAttribute(
-        `${config.CUSTOM_ATTRIBUTE_PREFIX}conditional-next`
-      ) || 'false') === 'true';
-
-    // Conditional next
-    obj.conditional =
-      slide.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}conditional`) || '';
+      // Logic
+      buttons: slideButtons(type, slide),
+      conditional: helper.getAttribute('conditional', slide) || '',
+      conditionalNext:
+        (helper.getAttribute('conditional-next', slide) || 'false') === 'true',
+    };
 
     // Push
     slideLogic.push(obj);
   }
 
   // * slide logic loop *
-  slideLogic.forEach((slide: any) => {
+  slideLogic.forEach(slide => {
     // No btns case
-    if (slide.btns.length < 1) {
+    if (slide.buttons && slide.buttons.length < 1) {
       // Set btns to false
-      slide.btns = false;
+      slide.buttons = false;
 
       // Calculate slide.next
       let next: false | number = false;
 
       // Else return the next step that is unconditional & not conditional next
-      next = (() => {
-        for (let i = 0, n = slideLogic.length; i < n; i++) {
-          const _tmpSlide = slideLogic[i];
-          if (
-            _tmpSlide.i > slide.i &&
-            _tmpSlide.conditional === '' &&
-            _tmpSlide.conditionalNext === false
-          ) {
-            return _tmpSlide.i;
-          }
+      for (let i = 0, n = slideLogic.length; i < n; i++) {
+        // Value
+        const _tmpSlide = slideLogic[i];
+
+        // Logic
+        if (
+          _tmpSlide.index > slide.index &&
+          _tmpSlide.conditional === '' &&
+          _tmpSlide.conditionalNext === false
+        ) {
+          next = _tmpSlide.index;
+          break;
         }
-      })();
+      }
 
       // If conditional next is set, return next step index
-      if (slide.i < slideLogic.length - 1)
-        if (slideLogic[slide.i + 1]?.conditionalNext === true) {
+      if (slide.index < slideLogic.length - 1)
+        if (slideLogic[slide.index + 1]?.conditionalNext === true) {
           // Set button goal
-          next = slide.i + 1;
+          next = slide.index + 1;
         }
 
       // Is last step logic
-      if (slide.i >= slideLogic.length - 1) {
+      if (slide.index >= slideLogic.length - 1) {
         next = false;
       }
 
@@ -99,95 +89,95 @@ export default function (
     }
 
     // Find next slide
-    slide.btns.every((btn: any) => {
-      // Set last step attribute - guard
-      if (btn.next === false) return true;
+    if (slide.buttons)
+      slide.buttons.every(button => {
+        // Set last step attribute - guard
+        if (button.next === false) return true;
 
-      // Set general attrbiute
-      btn.el.setAttribute(config.PRODUCT_NAME, 'next');
+        // Set general attrbiute
+        button.element.setAttribute(config.PRODUCT_NAME_SHORT, 'next');
 
-      // Is last step guard logic
-      if (slide.i >= slideLogic.length - 1) {
-        btn.next = false;
-        btn.el.setAttribute(config.PRODUCT_NAME, 'submit');
-        return true;
-      }
-
-      // If a conditional is set, set the the button next step id to it
-      if (btn.conditional !== '') {
-        // Values
-        let tmpSlide: any | undefined;
-
-        // Search loop
-        slideLogic.every((_tmpSlide: any) => {
-          // Logic
-          if (btn.conditional === _tmpSlide.conditional) {
-            tmpSlide = _tmpSlide;
-            return false;
-          }
-
-          // Default
+        // Is last step guard logic
+        if (slide.index >= slideLogic.length - 1) {
+          button.next = false;
+          button.element.setAttribute(config.PRODUCT_NAME_SHORT, 'submit');
           return true;
-        });
-
-        // If found
-        if (tmpSlide) {
-          // * Conditional case *
-
-          // Values
-          let index = tmpSlide.i;
-
-          // Guard for eventual jump back case
-          if (index <= slide.i) btn.conditionalPrev = true;
-
-          // Set
-          btn.next = index;
-        } else {
-          console.warn(
-            `${errPath(
-              state
-            )}-> slideLogic.forEach() callback -> slide.btns.every() callback: The partner slide for btns[${
-              btn.i
-            }].conditional === '${btn.conditional}' (in state.elements.slides[${
-              slide.i
-            }]) has not been found.`
-          );
-          btn.el.setAttribute(config.PRODUCT_NAME, 'submit');
-          btn.next = false;
         }
 
-        // Skip code below
-        return true;
-      }
+        // If a conditional is set, set the the button next step id to it
+        if (button.conditional !== '') {
+          // Values
+          let tmpSlide: any | undefined;
 
-      // If conditional next is set, return next step index
-      if (slideLogic[slide.i + 1]?.conditionalNext === true) {
-        // Set button goal
-        btn.next = slide.i + 1;
+          // Search loop
+          slideLogic.every((_tmpSlide: any) => {
+            // Logic
+            if (button.conditional === _tmpSlide.conditional) {
+              tmpSlide = _tmpSlide;
+              return false;
+            }
 
-        // Skip code below
-        return true;
-      }
+            // Default
+            return true;
+          });
 
-      // Else return the next step that is unconditional & not conditional next
-      btn.next = (() => {
+          // If found
+          if (tmpSlide) {
+            // * Conditional case *
+
+            // Values
+            let index = tmpSlide.i;
+
+            // Guard for eventual jump back case
+            if (index <= slide.index) button.conditionalPrev = true;
+
+            // Set
+            button.next = index;
+          } else {
+            console.warn(
+              `${errPath(
+                name
+              )} -> slideLogic.forEach() callback -> slide.btns.every() callback: The partner slide for btns[${
+                button.index
+              }].conditional === '${
+                button.conditional
+              }' (in state.elements.slides[${slide.index}]) has not been found.`
+            );
+            button.element.setAttribute(config.PRODUCT_NAME_SHORT, 'submit');
+            button.next = false;
+          }
+
+          // Skip code below
+          return true;
+        }
+
+        // If conditional next is set, return next step index
+        if (slideLogic[slide.index + 1]?.conditionalNext === true) {
+          // Set button goal
+          button.next = slide.index + 1;
+
+          // Skip code below
+          return true;
+        }
+
+        // Else return the next step that is unconditional & not conditional next
         for (let i = 0, n = slideLogic.length; i < n; i++) {
           const _tmpSlide = slideLogic[i];
           if (
-            _tmpSlide.i > slide.i &&
+            _tmpSlide.index > slide.index &&
             _tmpSlide.conditional === '' &&
             _tmpSlide.conditionalNext === false
           ) {
-            return _tmpSlide.i;
+            button.next = _tmpSlide.index;
+            break;
           }
         }
-      })();
 
-      // Default
-      return true;
-    });
+        // Default
+        return true;
+      });
   });
 
   // Add to state
-  state.sdk.slideLogic = slideLogic;
+  return slideLogic;
 }

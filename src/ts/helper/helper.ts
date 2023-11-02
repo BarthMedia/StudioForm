@@ -5,15 +5,16 @@ import { async } from 'regenerator-runtime';
 
 // Custom
 import * as config from '../config';
+import * as model from '../model';
 
 // + Functions +
 
 // Get attribute
-export function getAttribute(str: string, ...elements: HTMLElement[]) {
+export function getAttribute(str: string | null, ...elements: HTMLElement[]) {
   // Values
   const querys = [
-    `${config.PRODUCT_NAME_SHORT}-${str}`,
-    `${config.PRODUCT_NAME_LONG}-${str}`,
+    `${config.PRODUCT_NAME_SHORT}${str === null ? '' : `-${str}`}`,
+    `${config.PRODUCT_NAME_LONG}${str === null ? '' : `-${str}`}`,
   ];
   let val: string | null = null;
 
@@ -42,6 +43,17 @@ export function getAttribute(str: string, ...elements: HTMLElement[]) {
   // Return
   return val as string | null;
 }
+
+// Button selector
+export const INPUTS_SELECTOR = `input, select, textarea`;
+export const LABEL_SELECTOR = 'label, ' + createSelector(null, 'label');
+export const BUTTON_SELECTOR =
+  createSelector(null, 'submit', 'next') +
+  ',.w-button' +
+  createSelector(null, 'no-next', 'no-button')
+    .split(',')
+    .map(str => `:not(${str})`)
+    .join('');
 
 // Ultimate query string creator
 export function createSelector(
@@ -109,7 +121,7 @@ export const classListToggle = (...args: classListToggleArgs[]) => {
       const arg = args.closest;
       const refEl = arg.allowParent?.refEl || args.el;
       const equals = arg.allowParent?.getAttr
-        ? refEl.getAttribute(arg.allowParent.getAttr)
+        ? getAttribute(arg.allowParent.getAttr, refEl)
         : refEl.tagName;
 
       // Logic
@@ -126,7 +138,7 @@ export const classListToggle = (...args: classListToggleArgs[]) => {
     // Add / remove ${sfAttr}
     elements.forEach(el =>
       el.classList?.[args.mode](
-        `${window.StudioForm['config']?.comboClassPrefix}${args.class}`
+        `${model.state.api['config'].comboClassPrefix}${args.class}`
       )
     );
   });
@@ -137,9 +149,9 @@ const sfAttr = 'hide';
 const sfhOptions = {
   class: sfAttr,
   closest: {
-    parent: `[${config.PRODUCT_NAME}="${sfAttr}"]`,
+    parent: createSelector(null, sfAttr),
     allowParent: {
-      getAttr: `${config.CUSTOM_ATTRIBUTE_PREFIX}closest-${sfAttr}`,
+      getAttr: `closest-${sfAttr}`,
       equals: 'false',
     },
   },
@@ -168,7 +180,7 @@ export function isElementTopVisible(
 ) {
   // Elements
   const scrollToElement: HTMLElement | null = state.elements.wrapper.closest(
-    ['window-scroll'].map(str => `[${config.PRODUCT_NAME}="${str}"]`).join(', ')
+    createSelector(null, 'window-scroll')
   );
 
   // Get the position of the element relative to the viewport
@@ -194,21 +206,27 @@ export function isElementTopVisible(
 // Return target element and offset number
 export function returnTargetAndOffset(state: any, options: Options) {
   // Selector
-  const sttAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}scroll-to-target`;
+  const sttAttr = `scroll-to-target`;
   const targetSelector =
     typeof options.target === 'string'
       ? options.target
       : undefined ||
-        options.attributeReferenceElement?.getAttribute(sttAttr) ||
-        state.elements.wrapper?.getAttribute(sttAttr) ||
+        getAttribute(
+          sttAttr,
+          state.elements.wrapper,
+          options.attributeReferenceElement as HTMLElement
+        ) ||
         '';
-  const stoAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}scroll-to-offset`;
+  const stoAttr = `scroll-to-offset`;
   const offsetSelector =
     typeof options.offset === 'string'
       ? options.offset
       : undefined ||
-        options.attributeReferenceElement?.getAttribute(stoAttr) ||
-        state.elements.wrapper?.getAttribute(stoAttr) ||
+        getAttribute(
+          stoAttr,
+          state.elements.wrapper,
+          options.attributeReferenceElement as HTMLElement
+        ) ||
         '';
 
   // Elements
@@ -235,45 +253,6 @@ export function returnTargetAndOffset(state: any, options: Options) {
 
 // + + +
 
-// Add events infrastructure
-export function addEventsInfrastrucutre(state: any, name: string) {
-  // Values
-  const initEvents = state.sdk.events;
-  const eventFunctionArrays = state.view.eventsFunctionArrays;
-
-  // Create neccessary model.state.view.eventsFunctionArrays infrastructure
-  eventFunctionArrays[`on${name}`] = [];
-  eventFunctionArrays[`after${name}`] = [];
-
-  // Add sdk events
-  initEvents[`on${name}`] = function (...callbacks: any[]) {
-    pushFunctionsOnly(callbacks, eventFunctionArrays[`on${name}`]);
-  };
-  initEvents[`after${name}`] = function (...callbacks: any[]) {
-    pushFunctionsOnly(callbacks, eventFunctionArrays[`after${name}`]);
-  };
-}
-
-// Trigger all functions
-export function triggerAllFunctions(arr: any[]) {
-  arr.forEach(item => item());
-}
-
-// Push function only to array
-export function pushFunctionsOnly(args: any | any[], arr: any[]) {
-  // Logic
-  if (args['forEach']) {
-    args.forEach((arg: any) => f(arg));
-  } else {
-    f(args);
-  }
-
-  // Define
-  function f(val: any) {
-    if (typeof val === 'function') arr.push(val);
-  }
-}
-
 // Allows for loading other scripts
 export function scriptLoader(externalScript = 'foo.js', callback: () => void) {
   const scriptPromise = new Promise((resolve, reject) => {
@@ -297,32 +276,6 @@ export function isElement(o: any) {
         o !== null &&
         o.nodeType === 1 &&
         typeof o.nodeName === 'string';
-}
-
-// String to array
-export function stringToArray(
-  string: string,
-  splitter: any = ',',
-  removeWhiteSpaces = true,
-  removeQuotes = true,
-  removeBrackets = true
-) {
-  // - Manipulation -
-
-  // Remove brackets
-  if (removeBrackets) string = string.replace(/[\[\]]/g, '');
-
-  // Remove quotes
-  if (removeQuotes) string = string.replace(/['"]/g, '');
-
-  // Remove white spaces
-  if (removeWhiteSpaces) string = string.replace(/ /g, '').replace(/\n/g, '');
-
-  // Split
-  const arr = splitter !== false ? string.split(splitter) : string;
-
-  // Return
-  return arr;
 }
 
 // Timeout

@@ -3,28 +3,22 @@ import * as helper from '../helper';
 import * as config from '../../config';
 
 // Export active / inactive
-export default function init(state: any) {
+export default function init(instance: StudioFormInstance) {
   // Define
   function toggle(id: number, mode: string, prefix = '') {
     // Elements
-    const inner: NodeListOf<HTMLElement> =
-      state.elements.wrapper.querySelectorAll(
-        `[${config.PRODUCT_NAME}="active-${id}"]`
+    const elements: NodeListOf<HTMLElement> =
+      instance.elements.wrapper.querySelectorAll(
+        helper.createSelector(instance.name, `active-${id}`)
       );
-    const outer: NodeListOf<HTMLElement> = document.querySelectorAll(
-      `[${config.PRODUCT_NAME}-${state.sdk.i}="active-${id}"]`
-    );
 
     // Loop
-    [inner, outer].forEach(list => {
-      // Loop
-      list.forEach(parent => {
-        // Toggle
-        helper.classListToggle({
-          el: parent,
-          class: prefix + 'active',
-          mode: mode,
-        });
+    elements.forEach(parent => {
+      // Toggle
+      helper.classListToggle({
+        el: parent,
+        class: prefix + 'active',
+        mode: mode,
       });
     });
 

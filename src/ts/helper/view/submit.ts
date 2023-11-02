@@ -22,6 +22,10 @@ export default async function (stateId: number, options: Options) {
     'CONSIDER, firing sf-submit event instead of submit native event, in case that causes any troubles!'
   );
 
+  console.log(`Prevent default, fires the submit event, but does never start the submission.
+
+  Make StudioForm behave like this ○`);
+
   // Slider mode guard
   if (state.modes.isSlider === true) {
     const msg = `${errPath(state)}Slider mode doesn't allow for submission!`;

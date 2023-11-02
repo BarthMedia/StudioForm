@@ -4,10 +4,10 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-export default function (slide: HTMLElement, state: any) {
+export default function (slide: HTMLElement) {
   // Elements
-  const inputs = slide.querySelectorAll(config.INPUTS_SELECTOR);
-  const buttons = slide.querySelectorAll(config.BUTTON_SELECTOR);
+  const inputs = slide.querySelectorAll(helper.INPUTS_SELECTOR);
+  const buttons = slide.querySelectorAll(helper.BUTTON_SELECTOR);
 
   // Values
   const isEmpty = inputs.length < 1;
@@ -31,10 +31,8 @@ export default function (slide: HTMLElement, state: any) {
   // if (isCheckboxOnly) type = 'checkbox'; // Legacy
   if (isRadioOnly) type = 'radio';
   if (isEmpty) type = 'empty';
-  const typeAttr = slide.getAttribute(
-    `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-type`
-  );
-  if (typeAttr && typeAttr !== '') type = typeAttr;
+  const typeAttr = helper.getAttribute('slide-type') || '';
+  if (typeAttr !== '') type = typeAttr;
 
   // Return
   return type;

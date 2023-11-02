@@ -13,22 +13,16 @@ import modes from './modes';
 import slideLogic from './slideLogic';
 
 // + Define +
-interface StudioFormEvent {
-  [instanceName: string]: {
-    name: string;
-    function: (e: unknown) => void;
-  }[];
-}
 
 // + Export +
 
-// Storage / "garbage collection"
-const events: StudioFormEvent = {};
-
 // Destroy
 export const destroy = (name: string) => {
+  // Values
+  const events = model.state.events;
+
   // Log
-  console.log('I gotta destroy these event listeners!', events);
+  console.log('I gotta destroy these event listeners!');
 
   // Remove DOM reference
   const sfNameAttr = `${config.PRODUCT_NAME_SHORT}-name`;
@@ -53,7 +47,7 @@ export const destroy = (name: string) => {
 const errPath = (n: string) => `${helper.errorName(n)} instance.ts:`;
 export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   // Initiate events
-  events[name] = [];
+  const event: StudioFormEvent[] = (model.state.events[name] = []);
 
   // + Modes - proxy & event listener +
   const modesMain = modes(wrapper, mask);
@@ -67,7 +61,7 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
       document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
   };
   document.body.addEventListener(modesWriteName, modesWrite);
-  events[name].push({ name: modesWriteName, function: modesWrite });
+  event.push({ name: modesWriteName, function: modesWrite });
 
   // + Elements +
   const elementsMain = elements(modesProxy, name, wrapper, mask);
@@ -81,9 +75,13 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
     return;
   }
 
-  // Generate step logic
-  //   const logicMain = slideLogic(name, modesProxy, elementsProxy);
-  //   const logicProxy = model.state.createReadMostlyProxy(logicMain);
+  // Generate slide logic
+  const logicMain = slideLogic(name, modesProxy, elementsProxy);
+  const logicProxy = model.state.createReadMostlyProxy(logicMain);
+
+  // Slide record
+  const recordMain = [0];
+  const recordProxy = model.state.createReadMostlyProxy(recordMain);
 
   // + Config +
 
@@ -98,8 +96,8 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   // Create
   const instanceMain = {
     name: name,
-    // logic: logicProxy,
-    record: [0],
+    logic: logicProxy,
+    record: recordProxy,
     elements: elementsProxy,
     config: configProxy,
   };
@@ -117,7 +115,9 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
       const value = e?.['detail']?.value as unknown;
       let write = false;
 
-      // Logic
+      // + Logic +
+
+      // Authorization
       if (
         property === 'auth' &&
         (typeof value === 'string' || typeof value === 'undefined')
@@ -125,19 +125,22 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
         write = true;
       }
 
+      // Promise / resolve & submitted
       if (
-        ['promise', 'resolve'].includes(String(property)) &&
+        ['promise', 'resolve', 'submitted'].includes(String(property)) &&
         (typeof value === 'boolean' || typeof value === 'undefined')
       ) {
         write = true;
-        console.log('!!!!!!!! Programm promise / resolve & co. events!');
+        console.log(
+          '!!!!!!!! Programm promise / resolve & submitted co. events!'
+        );
       }
 
       // Write
       if (write) document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
     };
     document.body.addEventListener(instanceWriteName, instanceWrite);
-    events[name].push({ name: instanceWriteName, function: instanceWrite });
+    event.push({ name: instanceWriteName, function: instanceWrite });
   });
 
   // Add proxy

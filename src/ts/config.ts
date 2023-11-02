@@ -1,5 +1,5 @@
 // Other
-export const TIMEOUT_SEC = 10;
+export const TIMEOUT_SEC = 300;
 
 // Animate.ts
 export const DEFAULT_SLIDE_DIRECTION = 90;
@@ -23,8 +23,3 @@ export const PRODUCT_NAME_CAMEL_CASE = 'StudioForm';
 
 // API write event
 export const API_WRITE_ATTRIBUTE = 'sf-api-write';
-
-// Button selector
-export const INPUTS_SELECTOR = `input, select, textarea`;
-// export const LABEL_SELECTOR = `label, [${PRODUCT_NAME}="label"]`;
-// export const BUTTON_SELECTOR = `[${PRODUCT_NAME}="submit"], [${PRODUCT_NAME}="next"], .w-button:not([${PRODUCT_NAME}="Not a Button"]):not([${PRODUCT_NAME}="no-button"]):not([${PRODUCT_NAME}="prev"])`;

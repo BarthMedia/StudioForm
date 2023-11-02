@@ -4,9 +4,12 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-export default function (slide: HTMLElement, state: any) {
+export default function (
+  slide: HTMLElement,
+  modes: { [name: string]: boolean }
+) {
   // Guard
-  if (!state.modes.swapSubmitButtons) return;
+  if (!modes.swapSubmitButtons) return;
 
   // Elements
   const submits = slide.querySelectorAll('input[type="submit"]');
@@ -31,7 +34,7 @@ export default function (slide: HTMLElement, state: any) {
     }
     btn.removeAttribute('type');
     btn.removeAttribute('value');
-    btn.setAttribute(config.PRODUCT_NAME, 'submit');
+    btn.setAttribute(config.PRODUCT_NAME_SHORT, 'submit');
     btn.innerHTML = submit.getAttribute('value') || '';
 
     // Swap

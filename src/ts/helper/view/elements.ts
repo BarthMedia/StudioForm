@@ -57,8 +57,8 @@ export default function (
     },
 
     // Fetch response
-    get res() {
-      return querySelectorAll('res');
+    get responses() {
+      return querySelectorAll('response');
     },
 
     // External buttons
@@ -76,6 +76,16 @@ export default function (
           nexts.push(el);
       });
       return nexts;
+    },
+
+    // To's
+    get tos() {
+      // Generate to's
+      const lists: NodeListOf<HTMLElement>[] = [];
+      for (let i = 0, n = obj.slides.length; i < n; i++) {
+        lists.push(querySelectorAll(`to-${i}`));
+      }
+      return lists;
     },
   };
 

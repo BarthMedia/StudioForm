@@ -4,7 +4,9 @@ import * as config from '../../config';
 
 // Export
 export default function (wrapper: HTMLElement, mask: HTMLElement) {
-  // Helper
+  // + Helper +
+
+  // Attribute
   function getAttribute(str: string, bool = true) {
     // Values
     let val = helper.getAttribute(str, mask, wrapper);
@@ -16,22 +18,88 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     return val === 'true';
   }
 
-  // TODO
-  console.log(
-    'Build this as the next one! WIZED.prevent-default & WIZED.reset!'
-  );
-  console.log(
-    '!!!!!! build wized specific mode - attributes - in regards to reset & preventDefault!'
-  );
-  console.log(
-    'V2 is the standard now, no need to test for. Expect potential failure anyways'
-  );
+  // Return wized config
+  function returnWizedConfig(str: string, bool = true) {
+    // Values
+    let val = helper.getAttribute(str, mask, wrapper);
+
+    // Try / catch wized logic
+    if (obj.wized) {
+      try {
+        // Value
+        let found: false | { 'prevent-default': boolean; reset: boolean } =
+          false;
+
+        // Nested loop
+        window.Wized?.['config'].actions.every((action: unknown) => {
+          // Match
+          let match: false | { 'prevent-default': boolean; reset: boolean } =
+            false;
+
+          // Loop
+          if (action?.['attributes'])
+            action['attributes'].forEach((attribute: unknown) => {
+              // Logic loop
+              if (attribute?.['name'] === 'Login') {
+                if (action)
+                  action['actions'].forEach((action: unknown) => {
+                    // Logic
+                    if (action?.['event'] === 'submit') {
+                      match = {
+                        'prevent-default': action['preventDefault'] || false,
+                        reset: action['resetForm'] || false,
+                      };
+                    }
+                  });
+              }
+            });
+
+          // Guard
+          if (match === false) return true;
+
+          // Overwrite
+          found = match;
+        });
+
+        // Overwrite logic
+        if (!val && found !== false) val = (found[str] as boolean).toString();
+      } catch (error) {
+        console.warn(
+          `StudioForm[${wrapper.getAttribute(
+            `${config.PRODUCT_NAME_SHORT}-name`
+          )}] -> modes.ts: `,
+          error
+        );
+      }
+    }
+
+    // Fallback
+    val = !val ? bool.toString() : val;
+
+    // Return
+    return val === 'true';
+  }
 
   // * Modes *
   const obj = {
+    // Wized active
+    get wized() {
+      return window.Wized && (mask.getAttribute('wized') || '') !== '';
+    },
+
+    // Wized reset
+    get reset() {
+      return returnWizedConfig('reset', false);
+    },
+
+    // Wized / prevent default
+    get preventDefault() {
+      return returnWizedConfig('prevent-default', false);
+    },
+
     // Allow keyboard
-    get keyboard() {
-      return getAttribute('keyboard');
+    get keyboardEvents() {
+      return getAttribute('keyboard-events');
     },
 
     // Add simple data structure -- legacy "JotForm mode"

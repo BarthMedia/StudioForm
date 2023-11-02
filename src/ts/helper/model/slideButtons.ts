@@ -4,25 +4,27 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-export default function (type: string, slide: HTMLElement, state: any) {
+export default function (type: string, slide: HTMLElement) {
   // Elements
-  const inputs = slide.querySelectorAll(config.INPUTS_SELECTOR);
-  const buttons = slide.querySelectorAll(config.BUTTON_SELECTOR);
+  const inputs = slide.querySelectorAll(
+    helper.INPUTS_SELECTOR
+  ) as NodeListOf<HTMLElement>;
+  const buttons = slide.querySelectorAll(
+    helper.BUTTON_SELECTOR
+  ) as NodeListOf<HTMLElement>;
 
   // Define
-  const arr: any[] = [];
+  const arr: StudioFormButtonLogic[] = [];
 
   // Helper
-  function modifyObj(btn: HTMLElement | Element | null, i: number) {
+  function modifyObj(button: HTMLElement, i: number) {
     // Values
-    const obj: any = {};
-
-    // Modify
-    obj.i = i;
-    obj.el = btn;
-    obj.conditional =
-      btn?.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}conditional`) || '';
-    obj.next = btn?.getAttribute(config.PRODUCT_NAME) !== 'submit';
+    const obj: StudioFormButtonLogic = {
+      index: i,
+      element: button,
+      conditional: helper.getAttribute('conditional', button) || '',
+      next: helper.getAttribute(null, button) !== 'submit',
+    };
 
     // Push
     arr.push(obj);
@@ -32,10 +34,10 @@ export default function (type: string, slide: HTMLElement, state: any) {
   if (type === 'radio') {
     inputs.forEach((input, index) => {
       // Elments
-      const button = input.closest(config.LABEL_SELECTOR);
+      const button = input.closest(helper.LABEL_SELECTOR) as HTMLElement | null;
 
       // Modify
-      modifyObj(button, index);
+      modifyObj(button || input, index);
     });
 
     // Return

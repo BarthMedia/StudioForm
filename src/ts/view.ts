@@ -1,8 +1,8 @@
 // Imports
-import listener from './helper/view/listener';
-import animate from './helper/view/animate';
 import * as helper from './helper/helper';
 import * as config from './config';
+import listener from './helper/view/listener';
+import animate from './helper/view/animate';
 import animateProgress from './helper/view/animateProgress';
 import anchor from './helper/view/scrollTo';
 import required from './helper/view/reportValidity';
@@ -44,7 +44,7 @@ export default function init(state: StudioFormState) {
       ).replace(/[^a-zA-Z0-9-_.]/g, '_'); // Replace invalid characters with hyphensy
 
       // Unique name loop
-      Object.keys(state.api).forEach(str => {
+      ['name', ...Object.keys(state.api)].forEach(str => {
         // Skip
         if (str !== instanceName) return;
 
@@ -74,11 +74,11 @@ export default function init(state: StudioFormState) {
       // Guard
       if (!instance) return;
 
+      // Init sf active functionality
+      sfActive(instance);
+
       // Log
       console.log(instance.elements.nexts);
-
-      // // Init sf active functionality
-      // sfActive(state);
 
       // // Calculate initial progress
       // state.view.progress = function (options: Options = {}) {

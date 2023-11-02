@@ -5,6 +5,9 @@ import * as instance from './helper/model/instance';
 
 // Main object
 export const state: StudioFormState = {
+  // Storage / "garbage collection"
+  events: {},
+
   // Instances
   instances: {},
   initInstance: (
@@ -158,7 +161,7 @@ export const init = (
   };
 
   // Read mostly
-  state.proxy = createReadMostlyProxy(state.api) as StudioForm;
+  state.proxy = createReadMostlyProxy(state.api, 'root') as StudioForm;
 };
 
 // Define wrtie event
@@ -172,7 +175,7 @@ const proxyErr = (property: string | symbol, value: unknown = undefined) =>
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> model.ts:`;
 
 // Create read only proxy
-function createReadMostlyProxy(obj: object, description = 'root') {
+function createReadMostlyProxy(obj: object, description = 'undefined') {
   return new Proxy(obj, {
     set(target, property, value) {
       // Write access

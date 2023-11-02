@@ -16,27 +16,29 @@ interface StudioFormElements {
   get maxSlides(): NodeListOf<HTMLElement>;
 
   // Fetch response
-  get res(): NodeListOf<HTMLElement>;
+  get responses(): NodeListOf<HTMLElement>;
 
   // External buttons
   get prevs(): NodeListOf<HTMLElement>;
   get nexts(): HTMLElement[];
+  get tos(): NodeListOf<HTMLElement>[];
 }
 
+interface StudioFormButtonLogic {
+  index: number;
+  element: HTMLElement;
+  conditional: string;
+  next: boolean | number;
+  conditionalPrev?: true;
+}
 interface StudioFormSlideLogic {
   type: string;
   index: number;
   element: HTMLElement;
-  buttons:
-    | false
-    | {
-        index: number;
-        element: HTMLElement;
-        conditional: string;
-        next: boolean | number;
-      }[];
+  buttons: false | StudioFormButtonLogic[];
   conditional: string;
   conditionalNext: boolean | string | undefined;
+  next?: false | number;
 }
 
 interface StudioFormButtonObject {
@@ -76,6 +78,7 @@ interface StudioFormInstance {
   auth?: string;
   promise?: boolean; // For custom promises!
   resolve?: boolean; // sf-await get's removed // Allow for class prefix
+  submitted?: boolean;
 
   // Wized API
   reset: (options?: {}) => void;
@@ -119,13 +122,28 @@ interface StudioFormInstance {
   config: StudioFormConfig;
 }
 
+interface StudioFormEvents {
+  [instanceName: string]: StudioFormEvent[];
+}
+
+interface StudioFormEvent {
+  name: string;
+  function: (e: unknown) => void;
+}
+
 type StudioFormState = {
+  // Storage / "garbage collection"
+  events: StudioFormEvents;
+
+  // Backbone
   instances: { [instanceName: string]: StudioFormInstance };
   initInstance: (
     instanceName: string,
     wrapper: HTMLElement,
     mask: HTMLElement
   ) => void;
+
+  // Proxy & API
   createReadMostlyProxy: (object: object, description?: string) => object;
   api: StudioForm;
   proxy: StudioForm;
