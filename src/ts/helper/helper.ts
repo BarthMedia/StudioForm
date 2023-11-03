@@ -44,7 +44,7 @@ export function getAttribute(str: string | null, ...elements: HTMLElement[]) {
   return val as string | null;
 }
 
-// Button selector
+// Button & others selector
 export const INPUTS_SELECTOR = `input, select, textarea`;
 export const LABEL_SELECTOR = 'label, ' + createSelector(null, 'label');
 export const BUTTON_SELECTOR =
@@ -133,7 +133,8 @@ export const classListToggle = (...args: classListToggleArgs[]) => {
     if (args.otherEls) args.otherEls.forEach(_el => elements.push(_el));
 
     // Find child elements
-    parent.querySelectorAll('*').forEach(el => elements.push(el));
+    if (model.state.api['config'].classCascading)
+      parent.querySelectorAll('*').forEach(el => elements.push(el));
 
     // Add / remove ${sfAttr}
     elements.forEach(el =>

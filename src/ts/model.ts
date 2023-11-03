@@ -79,6 +79,7 @@ export const arrayProperties = [
 
 // Global configuration
 const globalConfigMain = {
+  // String
   get comboClassPrefix() {
     return (
       helper.getAttribute('combo-class-prefix', document.body) ||
@@ -87,6 +88,14 @@ const globalConfigMain = {
   },
   get eventPrefix() {
     return helper.getAttribute('event-prefix', document.body) || ``;
+  },
+
+  // Boolean
+  get classCascading() {
+    return (
+      (helper.getAttribute('class-cascading', document.body) || `true`) ===
+      'true'
+    );
   },
 };
 const globalConfigProxy = state.createReadMostlyProxy(

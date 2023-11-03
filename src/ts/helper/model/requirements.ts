@@ -76,6 +76,9 @@ export default function (stateId: number, slideId: number, options: Options) {
   // * * * Empty case * * *
   if (currentSlide.type === 'empty') return true;
 
+  console.log('Respect disabled attribute!');
+  console.log('Respect readonly attribute!');
+
   // // * * * Checkbox case * * * // Legacy
   // if (currentSlide.type === 'checkbox') {
   //   // Elements
