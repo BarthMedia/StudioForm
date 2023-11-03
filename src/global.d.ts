@@ -163,6 +163,7 @@ interface ProxyWriteEvent {
 type StudioFormGlobalConfig = {
   comboClassPrefix: string;
   eventPrefix: string;
+  classCascading: boolean;
 };
 
 type StudioForm =

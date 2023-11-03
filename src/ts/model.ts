@@ -104,7 +104,17 @@ const globalConfigProxy = state.createReadMostlyProxy(
 ) as StudioFormGlobalConfig;
 const globalConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-global-config`;
 const globalConfigWrite = (e: unknown) => {
-  if (typeof e?.['detail']?.value === 'string')
+  // Values
+  const classCascadingName = 'classCascading';
+  const detail = e?.['detail'];
+  const property = detail?.property;
+  const value = detail?.value;
+
+  // Logic
+  if (
+    (property === classCascadingName && value === 'boolean') ||
+    (property !== classCascadingName && value === 'string')
+  )
     document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
 };
 document.body.addEventListener(globalConfigWriteName, globalConfigWrite);

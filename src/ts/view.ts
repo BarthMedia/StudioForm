@@ -46,7 +46,7 @@ export default function init(state: StudioFormState) {
       // Unique name loop
       ['name', ...Object.keys(state.api)].forEach(str => {
         // Skip
-        if (str !== instanceName) return;
+        if (str.toLowerCase() !== instanceName.toLowerCase()) return;
 
         // Split logic
         const split = str.split('_');
