@@ -9,6 +9,7 @@ export const state: StudioFormState = {
   events: {},
 
   // Instances
+  ghostInstances: {},
   instances: {},
   initInstance: (
     instanceName: string,
@@ -48,13 +49,25 @@ export const state: StudioFormState = {
 
     // Actually fullfill operation
     if (allowance) {
+      // Values
+      const data = proxyWriteEvent.data;
+      const property = data.property;
+      const value = data.value;
+
       // Always delete
-      delete proxyWriteEvent.data.target[proxyWriteEvent.data.property];
+      delete data.target[property];
 
       // Sometimes set
-      if (proxyWriteEvent.mode === 'set')
-        proxyWriteEvent.data.target[proxyWriteEvent.data.property] =
-          proxyWriteEvent.data.value;
+      if (proxyWriteEvent.mode === 'set') data.target[property] = value;
+
+      // If auth
+      if (property === 'auth') {
+        if (typeof value === 'string') {
+          data.target[property] = true;
+        } else {
+          delete data.target[property];
+        }
+      }
     }
 
     // Return

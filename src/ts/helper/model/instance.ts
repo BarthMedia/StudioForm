@@ -39,6 +39,7 @@ export const destroy = (name: string) => {
   delete events[name];
 
   // Delete instance
+  delete model.state.ghostInstances[name];
   delete model.state.instances[name];
   delete model.state.api[name];
 };
@@ -76,35 +77,75 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   }
 
   // Generate slide logic
-  const logicMain = slideLogic(name, modesProxy, elementsProxy);
-  const logicProxy = model.state.createReadMostlyProxy(logicMain);
+  const logicMain: StudioFormSlideLogic[] = slideLogic(
+    name,
+    modesProxy,
+    elementsProxy
+  );
+  const logicProxy = model.state.createReadMostlyProxy(
+    logicMain
+  ) as StudioFormSlideLogic[];
 
   // Slide record
   const recordMain = [0];
-  const recordProxy = model.state.createReadMostlyProxy(recordMain);
+  const recordProxy = model.state.createReadMostlyProxy(recordMain) as number[];
 
   // + Config +
 
   // Config
-  const configMain = {
+  const configMain: StudioFormConfig = {
     modes: modesProxy,
   };
-  const configProxy = model.state.createReadMostlyProxy(configMain);
+  const configProxy = model.state.createReadMostlyProxy(
+    configMain
+  ) as StudioFormConfig;
+
+  // + Data +
+
+  // Animation data
+  const animationDataMain = {};
+  const animationDataProxy =
+    model.state.createReadMostlyProxy(animationDataMain);
+
+  // Progress data
+  const progressDataMain = {};
+  const progressDataProxy = model.state.createReadMostlyProxy(progressDataMain);
+
+  // Data
+  const dataMain: StudioFormData = {
+    animation: animationDataProxy,
+    progress: progressDataProxy,
+    fetch: {},
+  };
+  const dataProxy = model.state.createReadMostlyProxy(
+    dataMain
+  ) as StudioFormData;
 
   // + Instance +
 
   // Create
-  const instanceMain = {
+  const instanceMain: StudioFormInstance = {
+    // Functions
+
+    // Continue here!
+
+    // Data
     name: name,
     logic: logicProxy,
     record: recordProxy,
     elements: elementsProxy,
+    data: dataProxy,
     config: configProxy,
   };
   const instanceProxy = model.state.createReadMostlyProxy(
     instanceMain,
     `${name}-instance`
-  );
+  ) as StudioFormInstance;
+
+  // Auhtorization storage
+  const authMain = {
+    token: undefined as undefined | string,
+  };
 
   // Writing events
   ['set', 'delete'].forEach(str => {
@@ -120,9 +161,15 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
       // Authorization
       if (
         property === 'auth' &&
-        (typeof value === 'string' || typeof value === 'undefined')
+        (typeof value === 'string' ||
+          typeof value === 'undefined' ||
+          typeof value === 'boolean')
       ) {
-        write = true;
+        if (value !== true) {
+          if (typeof value === 'string') authMain.token = value;
+          else authMain.token = undefined;
+          write = true;
+        }
       }
 
       // Promise / resolve & submitted
@@ -143,8 +190,17 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
     event.push({ name: instanceWriteName, function: instanceWrite });
   });
 
+  // + Ghost instance +
+  const ghostInstanceMain: StudioFormGhostInstance = {
+    auth: authMain,
+    record: recordMain,
+    animationData: animationDataMain,
+    progressData: progressDataMain,
+  };
+
   // Add proxy
-  model.state.instances[name] = instanceProxy as any; // !!! Remove any
+  model.state.ghostInstances[name] = ghostInstanceMain;
+  model.state.instances[name] = instanceProxy;
   model.state.api[name] = model.state.instances[name];
 };
 

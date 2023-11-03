@@ -84,6 +84,11 @@ export default async function (stateId: number, options: Options) {
       btn.el.innerHTML = btn.el.getAttribute(waitAttr);
     });
 
+  console.log(
+    'Still have after submit event, to allow users to perform timely actions on the submit data',
+    'but only after it was applied and user manipulation could not further break the script'
+  );
+
   // Await response & print to sdk & DOM
   const res: JSON = await state.model.post();
   let resVal: string | undefined;

@@ -75,7 +75,7 @@ interface StudioFormConfig {
 
 interface StudioFormInstance {
   // Write API
-  auth?: string;
+  auth?: true;
   promise?: boolean; // For custom promises!
   resolve?: boolean; // sf-await get's removed // Allow for class prefix
   submitted?: boolean;
@@ -111,15 +111,33 @@ interface StudioFormInstance {
     next: (slideId: number) => {};
     prev: (slideId: number) => {};
   };
-  data: {
-    animation: {
-      any: any;
-    };
-    submission: {
-      any: any;
-    };
-  };
+  data: StudioFormData;
   config: StudioFormConfig;
+}
+
+interface StudioFormData {
+  animation: SFAnimationData;
+  fetch: SFFetchData;
+  progress: SFProgressData;
+}
+
+interface SFAnimationData {
+  any?: any;
+}
+
+interface SFFetchData {
+  any?: any;
+}
+
+interface SFProgressData {
+  any?: any;
+}
+
+interface StudioFormGhostInstance {
+  auth: { token: string | undefined };
+  record: number[];
+  animationData: SFAnimationData;
+  progressData: SFProgressData;
 }
 
 interface StudioFormEvents {
@@ -136,6 +154,7 @@ type StudioFormState = {
   events: StudioFormEvents;
 
   // Backbone
+  ghostInstances: { [instanceName: string]: StudioFormGhostInstance };
   instances: { [instanceName: string]: StudioFormInstance };
   initInstance: (
     instanceName: string,
