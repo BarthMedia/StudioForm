@@ -92,6 +92,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return returnWizedConfig('reset', false);
     },
 
+    // Smooth reset
+    get smoothReset() {
+      return getAttribute('smooth-reset');
+    },
+
     // Wized / prevent default
     get preventDefault() {
       return returnWizedConfig('prevent-default', false);

@@ -1,8 +1,9 @@
 // Imports
 import * as model from './model';
 import view from './view';
-import * as helper from './helper/helper';
 import * as config from './config';
+import * as utils from './helper/controller/utils';
+import * as viewUtils from './helper/view/utils';
 
 // global.d.ts
 import { gsap } from 'gsap';
@@ -96,7 +97,7 @@ function main() {
     // Loop
     document.querySelectorAll(`[${str}-cloak]`).forEach(el => {
       // Add to classList
-      helper.classListToggle({
+      viewUtils.classListToggle({
         el: el as HTMLElement,
         mode: 'add',
         class: 'hide',
@@ -116,7 +117,7 @@ function main() {
 const gsapSrc =
   'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js';
 const gsapScript = document.querySelector(`script[src="${gsapSrc}"]`);
-gsapScript ? loaderLogic() : helper.scriptLoader(gsapSrc, loaderLogic);
+gsapScript ? loaderLogic() : utils.scriptLoader(gsapSrc, loaderLogic);
 
 // Main
 function loaderLogic() {

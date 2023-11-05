@@ -1,5 +1,5 @@
 // Imports
-import * as helper from './helper/helper';
+import * as utils from './helper/view/utils';
 import * as config from './config';
 import listener from './helper/view/listener';
 import animate from './helper/view/animate';
@@ -14,7 +14,7 @@ const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> view.ts:`;
 export default function init(state: StudioFormState) {
   // Elements loop
   document
-    .querySelectorAll(helper.createSelector(null, 'wrapper', 'mask'))
+    .querySelectorAll(utils.createSelector(null, 'wrapper', 'mask'))
     .forEach(el => {
       // Logical elements
       const wrapper = (
