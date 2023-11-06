@@ -1,5 +1,5 @@
 // Imports
-import * as helper from '../helper';
+import * as viewUtils from '../view/utils';
 import * as config from '../../config';
 
 // Export
@@ -9,7 +9,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
   // Attribute
   function getAttribute(str: string, bool = true) {
     // Values
-    let val = helper.getAttribute(str, mask, wrapper);
+    let val = viewUtils.getAttribute(str, mask, wrapper);
 
     // Fallback
     val = !val ? bool.toString() : val;
@@ -21,48 +21,50 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
   // Return wized config
   function returnWizedConfig(str: string, bool = true) {
     // Values
-    let val = helper.getAttribute(str, mask, wrapper);
+    let val = viewUtils.getAttribute(str, mask, wrapper);
 
     // Try / catch wized logic
-    if (obj.wized) {
+    if (!val && obj.wized) {
       try {
         // Value
         let found: false | { 'prevent-default': boolean; reset: boolean } =
           false;
 
         // Nested loop
-        window.Wized?.['config'].actions.every((action: unknown) => {
-          // Match
-          let match: false | { 'prevent-default': boolean; reset: boolean } =
-            false;
+        [...window.Wized?.['config'].actions]
+          .reverse()
+          .every((action: unknown) => {
+            // Match
+            let match: false | { 'prevent-default': boolean; reset: boolean } =
+              false;
 
-          // Loop
-          if (action?.['attributes'])
-            action['attributes'].forEach((attribute: unknown) => {
-              // Logic loop
-              if (attribute?.['name'] === 'Login') {
-                if (action)
-                  action['actions'].forEach((action: unknown) => {
-                    // Logic
-                    if (action?.['event'] === 'submit') {
-                      match = {
-                        'prevent-default': action['preventDefault'] || false,
-                        reset: action['resetForm'] || false,
-                      };
-                    }
-                  });
-              }
-            });
+            // Loop
+            if (action?.['attributes'])
+              action['attributes'].forEach((attribute: unknown) => {
+                // Logic loop
+                if (attribute?.['name'] === 'Login') {
+                  if (action)
+                    action['actions'].forEach((action: unknown) => {
+                      // Logic
+                      if (action?.['event'] === 'submit') {
+                        match = {
+                          'prevent-default': action['preventDefault'] || false,
+                          reset: action['resetForm'] || false,
+                        };
+                      }
+                    });
+                }
+              });
 
-          // Guard
-          if (match === false) return true;
+            // Guard
+            if (match === false) return true;
 
-          // Overwrite
-          found = match;
-        });
+            // Overwrite
+            found = match;
+          });
 
         // Overwrite logic
-        if (!val && found !== false) val = (found[str] as boolean).toString();
+        if (found !== false) val = (found[str] as boolean).toString();
       } catch (error) {
         console.warn(
           `StudioForm[${wrapper.getAttribute(

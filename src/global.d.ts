@@ -41,25 +41,21 @@ interface StudioFormSlideLogic {
   next?: false | number;
 }
 
-interface StudioFormButtonObject {
-  any: any;
-}
-
-interface StudioFormApiOptions {
-  passSlideRequirements?: boolean;
-  buttonObject?: StudioFormButtonObject;
-  currentSlideId?: number;
-  nextSlideId?: number;
-  isSubmit?: boolean;
-  scrollToTarget?: boolean;
-  target?: HTMLElement | string;
-  offset?: HTMLElement | string | number;
-  attributeReferenceElement?: HTMLElement;
-  awaitAnimation?: boolean;
-  skipAnimations?: boolean;
-  forceSubmissionSuccess?: boolean;
-  callback?: (success: boolean) => void;
-}
+// interface StudioFormApiOptions {
+//   passSlideRequirements?: boolean;
+//   buttonObject?: StudioFormButtonObject;
+//   currentSlideId?: number;
+//   nextSlideId?: number;
+//   isSubmit?: boolean;
+//   scrollToTarget?: boolean;
+//   target?: HTMLElement | string;
+//   offset?: HTMLElement | string | number;
+//   attributeReferenceElement?: HTMLElement;
+//   awaitAnimation?: boolean;
+//   skipAnimations?: boolean;
+//   forceSubmissionSuccess?: boolean;
+//   callback?: (success: boolean) => void;
+// }
 
 interface StudioFormConfig {
   animations: {

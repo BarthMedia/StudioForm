@@ -1,7 +1,8 @@
 // + Imports +
 
 // Root
-import * as helper from '../helper';
+import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
 import * as model from '../../model';
 
@@ -45,7 +46,7 @@ export const destroy = (name: string) => {
 };
 
 // Init
-const errPath = (n: string) => `${helper.errorName(n)} instance.ts:`;
+const errPath = (n: string) => `${controllerUtils.errorName(n)} instance.ts:`;
 export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   // Initiate events
   const event: StudioFormEvent[] = (model.state.events[name] = []);
