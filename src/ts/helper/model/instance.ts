@@ -146,9 +146,9 @@ export const init = (
 
   // Config
   const configMain: StudioFormConfig = {
-    modes: modesProxy,
     animations: animationsConfigProxy,
     fetch: fetchConfigProxy,
+    modes: modesProxy,
   };
   const configProxy = model.state.createReadMostlyProxy(
     configMain
@@ -229,15 +229,9 @@ export const init = (
     // + Functions +
 
     // API
-    reset: (options = {}) => {
-      console.log('I have to built');
-    },
     fetch: async (options = {}) => {
       console.log('I have to built', 'I think fetched event could be sweet!');
       console.log('I WILL RETURN FETCH DATA!');
-    },
-    reportValidity: () => {
-      console.log('I have to built');
     },
     promise: async () => {
       console.log(
@@ -253,12 +247,29 @@ export const init = (
       );
       return true;
     },
+    reportValidity: () => {
+      console.log('I have to built');
+    },
+    reset: (options = {}) => {
+      console.log('I have to built');
+    },
 
-    // Navigation
+    // - Navigation -
+
+    // Special use action
     to: async (slideId, options = {}) => {
       console.log('I have to built', 'I think fetched event could be sweet!');
       return true;
     },
+    scrollTo: (options: SFOScrollTo) => {
+      console.log(
+        "Throw error if API user try's this without supplying options!"
+      );
+      console.log('I have to built', 'I think fetched event could be sweet!');
+    },
+    suggest: suggestProxy,
+
+    // Native actions
     prev: async (options = {}) => {
       console.log('I have to built', 'I think fetched event could be sweet!');
       return true;
@@ -276,24 +287,17 @@ export const init = (
       console.log('I have to built', 'I think fetched event could be sweet!');
       return true;
     },
-    scrollTo: (options: SFOScrollTo) => {
-      console.log(
-        "Throw error if API user try's this without supplying options!"
-      );
-      console.log('I have to built', 'I think fetched event could be sweet!');
-    },
-    suggest: suggestProxy,
-
-    // External data
-    hidden: hiddenDataProxy,
 
     // Internal data
     name: instanceName,
+    elements: elementsProxy,
+    config: configProxy,
     logic: logicProxy,
     record: recordProxy,
-    elements: elementsProxy,
     data: dataProxy,
-    config: configProxy,
+
+    // External data
+    hidden: hiddenDataProxy,
   };
   const instanceProxy = model.state.createReadMostlyProxy(
     instanceMain,
