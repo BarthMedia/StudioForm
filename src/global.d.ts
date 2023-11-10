@@ -99,7 +99,7 @@ interface SFSuggest {
 interface StudioFormInstance {
   // Write API
   auth?: true;
-  promise?: boolean; // For custom promises!
+  promise: () => Promise<boolean>; // For custom promises!
   resolve?: boolean; // sf-await get's removed // Allow for class prefix
   submitted?: boolean;
 

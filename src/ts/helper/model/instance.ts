@@ -239,6 +239,20 @@ export const init = (
     reportValidity: () => {
       console.log('I have to built');
     },
+    promise: async () => {
+      console.log(
+        'I have to built',
+        "I'm the super cool promise resolve feature!",
+        'When i am called, all the elements of the current slide:',
+        'receive the sf-promise class.',
+        'and no navigation action can be performed',
+        "until the JS user set's resolve = true or false!",
+        "resolve get's removed as soon as it is set, awesome proxy trigger",
+        "resolve basically never get's to be really set!",
+        'resolve only allows boolean!'
+      );
+      return true;
+    },
 
     // Navigation
     to: async (slideId, options = {}) => {
@@ -318,7 +332,7 @@ export const init = (
 
       // Promise / resolve & submitted
       if (
-        ['promise', 'resolve', 'submitted'].includes(String(property)) &&
+        ['resolve', 'submitted'].includes(String(property)) &&
         (typeof value === 'boolean' || typeof value === 'undefined')
       ) {
         write = true;
