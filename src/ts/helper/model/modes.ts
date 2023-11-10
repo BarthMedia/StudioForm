@@ -42,7 +42,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
             if (action?.['attributes'])
               action['attributes'].forEach((attribute: unknown) => {
                 // Logic loop
-                if (attribute?.['name'] === 'Login') {
+                if (attribute?.['name'] === mask.getAttribute('wized')) {
                   if (action)
                     action['actions'].forEach((action: unknown) => {
                       // Logic

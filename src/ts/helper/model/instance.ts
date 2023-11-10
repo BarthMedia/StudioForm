@@ -12,13 +12,15 @@ import elements from '../view/elements';
 // Model
 import modes from './modes';
 import slideLogic from './slideLogic';
+import animationsConfig from './configAnimations';
+import fetchConfig from './configFetch';
 
 // + Define +
 
 // + Export +
 
 // Destroy
-export const destroy = (name: string) => {
+export const destroy = (instanceName: string) => {
   // Values
   const events = model.state.events;
 
@@ -32,31 +34,35 @@ export const destroy = (name: string) => {
     ?.removeAttribute(sfNameAttr);
 
   // Loop
-  events[name].forEach(arg =>
+  events[instanceName].forEach(arg =>
     document.body.removeEventListener(arg.name, arg.function)
   );
 
   // Delete
-  delete events[name];
+  delete events[instanceName];
 
   // Delete instance
-  delete model.state.ghostInstances[name];
-  delete model.state.instances[name];
-  delete model.state.api[name];
+  delete model.state.ghostInstances[instanceName];
+  delete model.state.instances[instanceName];
+  delete model.state.api[instanceName];
 };
 
 // Init
 const errPath = (n: string) => `${controllerUtils.errorName(n)} instance.ts:`;
-export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
+export const init = (
+  instanceName: string,
+  wrapper: HTMLElement,
+  mask: HTMLElement
+) => {
   // Initiate events
-  const event: StudioFormEvent[] = (model.state.events[name] = []);
+  const event: StudioFormEvent[] = (model.state.events[instanceName] = []);
 
   // + Modes - proxy & event listener +
   const modesMain = modes(wrapper, mask);
   const modesProxy = model.state.createReadMostlyProxy(
     modesMain,
-    `${name}-modes`
-  ) as { [name: string]: boolean };
+    `${instanceName}-modes`
+  ) as SFModesConfig;
   const modesWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${name}-modes`;
   const modesWrite = (e: unknown) => {
     if (typeof e?.['detail']?.value === 'boolean')
@@ -66,20 +72,25 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   event.push({ name: modesWriteName, function: modesWrite });
 
   // + Elements +
-  const elementsMain = elements(modesProxy, name, wrapper, mask);
+  const elementsMain = elements(modesProxy, instanceName, wrapper, mask);
   const elementsProxy = model.state.createReadMostlyProxy(
     elementsMain
   ) as StudioFormElements;
 
   // Simple guard
   if (!elementsMain.slides.length) {
-    console.warn(`${errPath(name)} Couldn't find slides!`, elementsMain);
+    console.warn(
+      `${errPath(instanceName)} Couldn't find slides!`,
+      elementsMain
+    );
     return;
   }
 
+  // + Slide logic / record +
+
   // Generate slide logic
   const logicMain: StudioFormSlideLogic[] = slideLogic(
-    name,
+    instanceName,
     modesProxy,
     elementsProxy
   );
@@ -93,9 +104,51 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
 
   // + Config +
 
+  // Generate animation config
+  const animationsConfigMain: SFAnimationConfig = animationsConfig(
+    instanceName,
+    wrapper,
+    mask
+  );
+  const animationsConfigProxy = model.state.createReadMostlyProxy(
+    animationsConfigMain,
+    `${instanceName}-animations-config`
+  ) as SFAnimationConfig;
+  const animationsConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}-animations-config`;
+  const animationsConfigWrite = (e: unknown) => {
+    // Writing logic
+    if (typeof e?.['detail']?.value === 'boolean')
+      document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+  };
+  document.body.addEventListener(
+    animationsConfigWriteName,
+    animationsConfigWrite
+  );
+  event.push({
+    name: animationsConfigWriteName,
+    function: animationsConfigWrite,
+  });
+
+  // Generate fetch config
+  const fetchConfigMain: SFFetchConfig = fetchConfig(wrapper, mask);
+  const fetchConfigProxy = model.state.createReadMostlyProxy(
+    fetchConfigMain,
+    `${instanceName}-fetch-config`
+  ) as SFFetchConfig;
+  const fetchConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${name}-fetch-config`;
+  const fetchConfigWrite = (e: unknown) => {
+    // Writing logic
+    if (typeof e?.['detail']?.value === 'boolean')
+      document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+  };
+  document.body.addEventListener(fetchConfigWriteName, fetchConfigWrite);
+  event.push({ name: fetchConfigWriteName, function: fetchConfigWrite });
+
   // Config
   const configMain: StudioFormConfig = {
     modes: modesProxy,
+    animations: animationsConfigProxy,
+    fetch: fetchConfigProxy,
   };
   const configProxy = model.state.createReadMostlyProxy(
     configMain
@@ -109,29 +162,119 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
     model.state.createReadMostlyProxy(animationDataMain);
 
   // Progress data
-  const progressDataMain = {};
-  const progressDataProxy = model.state.createReadMostlyProxy(progressDataMain);
+  const fetchDataMain = {};
+  const fetchDataProxy = model.state.createReadMostlyProxy(fetchDataMain);
+
+  console.log(
+    '// Make it possible to easily delete fetch data',
+    'Should be a proxy though'
+  );
+
+  console.log(
+    'Getters for data. form / progress are suppiror to other methods'
+  );
 
   // Data
   const dataMain: StudioFormData = {
     animation: animationDataProxy,
-    progress: progressDataProxy,
-    fetch: {},
+    fetch: fetchDataProxy,
+    get form() {
+      console.log('Generate form data file');
+      return {};
+    },
+    get progress() {
+      console.log('progress data file');
+      return {};
+    },
   };
   const dataProxy = model.state.createReadMostlyProxy(
     dataMain
   ) as StudioFormData;
 
+  // Hidden data fields by external users
+  console.log('Apply similar write only technique, as you have done ');
+  console.log(
+    'Only accept strings, and files',
+    "const type = (value instanceof File) ? 'file' : typeof value;"
+  );
+  console.log('Have dataForm.ts respect these hidden values!');
+  const hiddenDataMain: SFHidden = {};
+  const hiddenDataProxy = model.state.createReadMostlyProxy(
+    hiddenDataMain
+  ) as SFHidden;
+
+  // Suggest Proxy
+  const suggestMain: SFSuggest = {
+    clear: () => {
+      console.log('I have to built');
+    },
+    next: () => {
+      console.log('I have to built');
+      console.log(
+        "Throw warnings if somebody try's to do this on slide, where there are no !visible! 2+ buttons"
+      );
+    },
+    prev: () => {
+      console.log('I have to built');
+    },
+  };
+  const suggestProxy = model.state.createReadMostlyProxy(
+    suggestMain
+  ) as SFSuggest;
+
   // + Instance +
 
   // Create
   const instanceMain: StudioFormInstance = {
-    // Functions
+    // + Functions +
 
-    // Continue here!
+    // API
+    reset: (options = {}) => {
+      console.log('I have to built');
+    },
+    fetch: async (options = {}) => {
+      console.log('I have to built', 'I think fetched event could be sweet!');
+      console.log('I WILL RETURN FETCH DATA!');
+    },
+    reportValidity: () => {
+      console.log('I have to built');
+    },
 
-    // Data
-    name: name,
+    // Navigation
+    to: async (slideId, options = {}) => {
+      console.log('I have to built', 'I think fetched event could be sweet!');
+      return true;
+    },
+    prev: async (options = {}) => {
+      console.log('I have to built', 'I think fetched event could be sweet!');
+      return true;
+    },
+    next: async (options = {}) => {
+      console.log(
+        "Consider promise resolve feature always on these navigation API's.",
+        'Call the class sf-promise',
+        'And call the submit calls sf-submit'
+      );
+      console.log('I have to built', 'I think fetched event could be sweet!');
+      return true;
+    },
+    submit: async (options = {}) => {
+      console.log('I have to built', 'I think fetched event could be sweet!');
+      return true;
+    },
+    scrollTo: (options: SFOScrollTo) => {
+      console.log(
+        "Throw error if API user try's this without supplying options!"
+      );
+      console.log('I have to built', 'I think fetched event could be sweet!');
+    },
+    suggest: suggestProxy,
+
+    // External data
+    hidden: hiddenDataProxy,
+
+    // Internal data
+    name: instanceName,
     logic: logicProxy,
     record: recordProxy,
     elements: elementsProxy,
@@ -140,7 +283,7 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
   };
   const instanceProxy = model.state.createReadMostlyProxy(
     instanceMain,
-    `${name}-instance`
+    `${instanceName}-instance`
   ) as StudioFormInstance;
 
   // Auhtorization storage
@@ -150,7 +293,7 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
 
   // Writing events
   ['set', 'delete'].forEach(str => {
-    const instanceWriteName = `${config.PRODUCT_NAME_SHORT}-api-${str}-${name}-instance`;
+    const instanceWriteName = `${config.PRODUCT_NAME_SHORT}-api-${str}-${instanceName}-instance`;
     const instanceWrite = (e: unknown) => {
       // Values
       const property = e?.['detail']?.property as string | symbol;
@@ -196,13 +339,14 @@ export const init = (name: string, wrapper: HTMLElement, mask: HTMLElement) => {
     auth: authMain,
     record: recordMain,
     animationData: animationDataMain,
-    progressData: progressDataMain,
+    hiddenData: hiddenDataMain,
+    fetchData: fetchDataMain,
   };
 
   // Add proxy
-  model.state.ghostInstances[name] = ghostInstanceMain;
-  model.state.instances[name] = instanceProxy;
-  model.state.api[name] = model.state.instances[name];
+  model.state.ghostInstances[instanceName] = ghostInstanceMain;
+  model.state.instances[instanceName] = instanceProxy;
+  model.state.api[instanceName] = model.state.instances[instanceName];
 };
 
 /**

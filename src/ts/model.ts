@@ -1,5 +1,6 @@
 // Imports
-import * as helper from './helper/helper';
+import * as utils from './helper/model/utils';
+import * as viewUtils from './helper/view/utils';
 import * as config from './config';
 import * as instance from './helper/model/instance';
 
@@ -95,18 +96,18 @@ const globalConfigMain = {
   // String
   get comboClassPrefix() {
     return (
-      helper.getAttribute('combo-class-prefix', document.body) ||
+      viewUtils.getAttribute('combo-class-prefix', document.body) ||
       `${config.PRODUCT_NAME_SHORT}-`
     );
   },
   get eventPrefix() {
-    return helper.getAttribute('event-prefix', document.body) || ``;
+    return viewUtils.getAttribute('event-prefix', document.body) || ``;
   },
 
   // Boolean
   get classCascading() {
     return (
-      (helper.getAttribute('class-cascading', document.body) || `true`) ===
+      (viewUtils.getAttribute('class-cascading', document.body) || `true`) ===
       'true'
     );
   },

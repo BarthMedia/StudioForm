@@ -1,11 +1,11 @@
 // + Imports +
 import * as model from '../../model';
 import * as config from '../../config';
-import * as helper from '../helper';
+import * as controllerUtils from '../controller/utils';
 
 // + Exports +
 const errPath = (s: any) =>
-  `${helper.errorName(s)}calculateProgress.ts -> default`;
+  `${controllerUtils.errorName(s)}calculateProgress.ts -> default`;
 export default function (i: number) {
   // Values
   const state = model.state[i];

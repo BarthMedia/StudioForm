@@ -1,10 +1,10 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
 import * as config from '../../config';
 
 // Export
 export default function (
-  modes: { [name: string]: boolean },
+  modes: SFModesConfig,
   instanceName: string,
   wrapper: HTMLElement,
   mask: HTMLElement
@@ -12,7 +12,7 @@ export default function (
   // Define
   const querySelectorAll = (...args: string[]) => {
     return document.querySelectorAll(
-      helper.createSelector(instanceName, ...args)
+      utils.createSelector(instanceName, ...args)
     ) as NodeListOf<HTMLElement>;
   };
 

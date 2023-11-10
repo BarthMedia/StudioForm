@@ -1,5 +1,7 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
+import * as viewUtils from '../view/utils';
 import * as model from '../../model';
 import slideType from './slideType';
 import slideButtons from './slideButtons';
@@ -7,10 +9,10 @@ import swapSubmitButtons from '../view/swapSubmitButtons';
 import * as config from '../../config';
 
 // Export
-const errPath = (n: any) => `${helper.errorName(n)}slideLogic.ts:`;
+const errPath = (n: any) => `${controllerUtils.errorName(n)} slideLogic.ts:`;
 export default function (
   name: string,
-  modes: { [name: string]: boolean },
+  modes: SFModesConfig,
   elements: StudioFormElements
 ) {
   // Values
@@ -20,6 +22,12 @@ export default function (
   for (let i = 0, n = elements.slides.length; i < n; i++) {
     // Elements
     const slide = elements.slides[i];
+
+    // Guard
+    if (!viewUtils.isElement(slide))
+      throw new Error(
+        `${errPath(name)} Slide[${i}] is not a valid HTML element!`
+      );
 
     // Swap submit buttons
     swapSubmitButtons(slide, modes);
@@ -34,9 +42,10 @@ export default function (
 
       // Logic
       buttons: slideButtons(type, slide),
-      conditional: helper.getAttribute('conditional', slide) || '',
+      conditional: viewUtils.getAttribute('conditional', slide) || '',
       conditionalNext:
-        (helper.getAttribute('conditional-next', slide) || 'false') === 'true',
+        (viewUtils.getAttribute('conditional-next', slide) || 'false') ===
+        'true',
     };
 
     // Push

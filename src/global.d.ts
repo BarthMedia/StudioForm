@@ -57,17 +57,44 @@ interface StudioFormSlideLogic {
 //   callback?: (success: boolean) => void;
 // }
 
-interface StudioFormConfig {
-  animations: {
-    get any(): string;
-  };
-  modes: {
-    [name: string]: boolean;
-  };
-  fetch: {
-    get any(): string;
-  };
+interface SFAnimationConfig {
+  get any(): string;
 }
+
+interface SFFetchConfig {
+  get any(): string;
+}
+
+interface SFModesConfig {
+  [name: string]: boolean;
+}
+
+interface StudioFormConfig {
+  animations: SFAnimationConfig;
+  fetch: SFFetchConfig;
+  modes: SFModesConfig;
+}
+
+// + Instance API options +
+
+interface SFOScrollTo {
+  target: string | HTMLElement;
+  offset?: string | HTMLElement;
+}
+
+// + Instance API other +
+
+interface SFHidden {
+  [name: string]: string | File;
+}
+
+interface SFSuggest {
+  clear: () => void;
+  next: () => void;
+  prev: () => void;
+}
+
+// + Instance API +
 
 interface StudioFormInstance {
   // Write API
@@ -87,26 +114,24 @@ interface StudioFormInstance {
     formData?: FormData;
     headers?: Headers;
   }) => unknown;
-  get formData(): FormData;
-  progress: (options?: { animate: boolean }) => unknown;
-  to: (slideId: number, options?: {}) => boolean;
+  reportValidity: () => void; // slideRequirements -- legacy
 
-  // Standard
+  // Navigation
+  to: (slideId: number, options?: {}) => Promise<boolean>;
+  next: (options?: {}) => Promise<boolean>;
+  prev: (options?: {}) => Promise<boolean>;
+  submit: (options?: {}) => Promise<boolean>;
+  scrollTo: (options: SFOScrollTo) => void;
+  suggest: SFSuggest;
+
+  // External data
+  hidden: SFHidden;
+
+  // Internal data
   name: string;
-  // index: number; -- legacy
   elements: StudioFormElements;
   logic: StudioFormSlideLogic[];
   record: number[];
-  next: (options?: {}) => void;
-  prev: (options?: {}) => void;
-  submit: (options?: {}) => void;
-  scrollTo: (options?: {}) => void;
-  reportValidity: () => void; // slideRequirements -- legacy
-  suggest: {
-    clear: (slideId: number) => {};
-    next: (slideId: number) => {};
-    prev: (slideId: number) => {};
-  };
   data: StudioFormData;
   config: StudioFormConfig;
 }
@@ -114,7 +139,16 @@ interface StudioFormInstance {
 interface StudioFormData {
   animation: SFAnimationData;
   fetch: SFFetchData;
-  progress: SFProgressData;
+  get form(): SFFormData;
+  get progress(): SFProgressData;
+}
+
+interface SFFormData {
+  any?: any;
+}
+
+interface SFProgressData {
+  any?: any;
 }
 
 interface SFAnimationData {
@@ -125,15 +159,16 @@ interface SFFetchData {
   any?: any;
 }
 
-interface SFProgressData {
+interface SFHiddenData {
   any?: any;
 }
 
 interface StudioFormGhostInstance {
   auth: { token: string | undefined };
-  record: number[];
   animationData: SFAnimationData;
-  progressData: SFProgressData;
+  fetchData: SFFetchData;
+  hiddenData: SFHiddenData;
+  record: number[];
 }
 
 interface StudioFormEvents {

@@ -35,13 +35,12 @@ export default function init(state: StudioFormState) {
 
       // Instance name
       let instanceName = (
-        mask.getAttribute(`wized`) ||
         mask.getAttribute(`data-name`) ||
         mask.getAttribute('name') ||
         mask.getAttribute('id') ||
         mask.getAttribute('class') ||
         mask.tagName
-      ).replace(/[^a-zA-Z0-9-_.]/g, '_'); // Replace invalid characters with hyphensy
+      ).replace(/[^a-zA-Z0-9-_.]/g, '_'); // Replace invalid characters with hyphens
 
       // Unique name loop
       ['name', ...Object.keys(state.api)].forEach(str => {
@@ -75,7 +74,7 @@ export default function init(state: StudioFormState) {
       if (!instance) return;
 
       // Init sf active functionality
-      sfActive(instance);
+      // sfActive(instance);
 
       // Log
       console.log(instance.elements.nexts);

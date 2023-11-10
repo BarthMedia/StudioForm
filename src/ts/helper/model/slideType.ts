@@ -1,13 +1,15 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
+import * as viewUtils from '../view/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
 export default function (slide: HTMLElement) {
   // Elements
-  const inputs = slide.querySelectorAll(helper.INPUTS_SELECTOR);
-  const buttons = slide.querySelectorAll(helper.BUTTON_SELECTOR);
+  const inputs = slide.querySelectorAll(viewUtils.INPUTS_SELECTOR);
+  const buttons = slide.querySelectorAll(viewUtils.BUTTON_SELECTOR);
 
   // Values
   const isEmpty = inputs.length < 1;
@@ -31,7 +33,7 @@ export default function (slide: HTMLElement) {
   // if (isCheckboxOnly) type = 'checkbox'; // Legacy
   if (isRadioOnly) type = 'radio';
   if (isEmpty) type = 'empty';
-  const typeAttr = helper.getAttribute('slide-type') || '';
+  const typeAttr = viewUtils.getAttribute('slide-type') || '';
   if (typeAttr !== '') type = typeAttr;
 
   // Return

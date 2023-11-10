@@ -1,13 +1,9 @@
 // Imports
-import * as helper from '../helper';
 import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-export default function (
-  slide: HTMLElement,
-  modes: { [name: string]: boolean }
-) {
+export default function (slide: HTMLElement, modes: SFModesConfig) {
   // Guard
   if (!modes.swapSubmitButtons) return;
 

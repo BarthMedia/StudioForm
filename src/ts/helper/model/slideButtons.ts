@@ -1,5 +1,7 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
+import * as viewUtils from '../view/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
@@ -7,10 +9,10 @@ import * as config from '../../config';
 export default function (type: string, slide: HTMLElement) {
   // Elements
   const inputs = slide.querySelectorAll(
-    helper.INPUTS_SELECTOR
+    viewUtils.INPUTS_SELECTOR
   ) as NodeListOf<HTMLElement>;
   const buttons = slide.querySelectorAll(
-    helper.BUTTON_SELECTOR
+    viewUtils.BUTTON_SELECTOR
   ) as NodeListOf<HTMLElement>;
 
   // Define
@@ -22,8 +24,8 @@ export default function (type: string, slide: HTMLElement) {
     const obj: StudioFormButtonLogic = {
       index: i,
       element: button,
-      conditional: helper.getAttribute('conditional', button) || '',
-      next: helper.getAttribute(null, button) !== 'submit',
+      conditional: viewUtils.getAttribute('conditional', button) || '',
+      next: viewUtils.getAttribute(null, button) !== 'submit',
     };
 
     // Push
@@ -34,7 +36,9 @@ export default function (type: string, slide: HTMLElement) {
   if (type === 'radio') {
     inputs.forEach((input, index) => {
       // Elments
-      const button = input.closest(helper.LABEL_SELECTOR) as HTMLElement | null;
+      const button = input.closest(
+        viewUtils.LABEL_SELECTOR
+      ) as HTMLElement | null;
 
       // Modify
       modifyObj(button || input, index);
