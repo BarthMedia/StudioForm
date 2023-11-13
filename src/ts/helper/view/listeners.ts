@@ -1,10 +1,10 @@
 // Imports
 import * as helper from '../helper';
 import * as config from '../../config';
-import next from './next';
-import prev from './prev';
-import submit from './submit';
-import suggestButton from './suggestButton';
+import next from '../model/next';
+import prev from '../model/prev';
+import submit from '../model/submit';
+import suggestButton from './suggest';
 import radioCheckboxValueCorrector from './radioCheckboxValueCorrector';
 import fileUploadLabelChanger from './fileUploadLabelChanger';
 import groupCheckox from './groupCheckox';

@@ -28,16 +28,42 @@ export default function (
     });
   }
 
+  console.log('Find sf-anchor elements!');
+  console.log("Change sf-response field into sf='error'");
+
   // Create
-  const obj = {
+  const obj: StudioFormElements = {
     // Standard
     wrapper: wrapper,
     mask: mask,
     get slides() {
       return mask.childNodes as NodeListOf<HTMLElement>;
     },
-    successMsg: wrapper.querySelector('.w-form-done') as HTMLElement | null,
-    errorMsg: wrapper.querySelector('.w-form-fail') as HTMLElement | null,
+    done: wrapper.querySelector('.w-form-done') as HTMLElement | null,
+    fail: wrapper.querySelector('.w-form-fail') as HTMLElement | null,
+
+    // Fetch response
+    get failMessages() {
+      return querySelectorAll('fail', 'fail-message', 'fail-response');
+    },
+
+    // Anchor
+    get anchor() {
+      // Values
+      let element: HTMLElement | null = null;
+      const elements = querySelectorAll('anchor');
+
+      // Loop
+      for (let i = 0, n = elements.length; i < n; i++) {
+        if (utils.isElement(elements[i]) && elements[i].offsetParent !== null) {
+          element = elements[i];
+          break;
+        }
+      }
+
+      // Return
+      return element;
+    },
 
     // Progress
     get progressBars() {
@@ -54,11 +80,6 @@ export default function (
     },
     get maxSlides() {
       return querySelectorAll('max-slides');
-    },
-
-    // Fetch response
-    get responses() {
-      return querySelectorAll('response');
     },
 
     // External buttons

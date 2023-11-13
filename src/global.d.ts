@@ -5,8 +5,8 @@ interface StudioFormElements {
   wrapper: HTMLElement;
   mask: HTMLElement;
   get slides(): NodeListOf<HTMLElement>;
-  successMsg: HTMLElement | null;
-  errorMsg: HTMLElement | null;
+  done: HTMLElement | null;
+  fail: HTMLElement | null;
 
   // Progress
   get progressBars(): NodeListOf<HTMLElement>;
@@ -16,7 +16,10 @@ interface StudioFormElements {
   get maxSlides(): NodeListOf<HTMLElement>;
 
   // Fetch response
-  get responses(): NodeListOf<HTMLElement>;
+  get failMessages(): NodeListOf<HTMLElement>;
+
+  // Anchor
+  anchor: HTMLElement | null;
 
   // External buttons
   get prevs(): NodeListOf<HTMLElement>;

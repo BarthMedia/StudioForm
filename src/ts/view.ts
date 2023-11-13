@@ -1,12 +1,12 @@
 // Imports
 import * as utils from './helper/view/utils';
 import * as config from './config';
-import listener from './helper/view/listener';
-import animate from './helper/view/animate';
+import listener from './helper/view/listeners';
+import animate from './helper/view/animateTransition';
 import animateProgress from './helper/view/animateProgress';
 import anchor from './helper/view/scrollTo';
 import required from './helper/view/reportValidity';
-import sfActive from './helper/view/sfActive';
+import sfActive from './helper/view/active';
 import elements from './helper/view/elements';
 
 // Export
@@ -58,7 +58,7 @@ export default function init(state: StudioFormState) {
         }
 
         // Else
-        instanceName = split.join('') + '_' + (int + 1);
+        instanceName = split.join('_') + '_' + (int + 1);
       });
 
       // Set attribute

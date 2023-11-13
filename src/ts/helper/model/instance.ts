@@ -14,6 +14,7 @@ import modes from './modes';
 import slideLogic from './slideLogic';
 import animationsConfig from './configAnimations';
 import fetchConfig from './configFetch';
+import dataForm from './dataForm';
 
 // + Define +
 
@@ -30,7 +31,7 @@ export const destroy = (instanceName: string) => {
   // Remove DOM reference
   const sfNameAttr = `${config.PRODUCT_NAME_SHORT}-name`;
   document
-    .querySelector(`[${sfNameAttr}="${name}"]`)
+    .querySelector(`[${sfNameAttr}="${instanceName}"]`)
     ?.removeAttribute(sfNameAttr);
 
   // Loop
@@ -57,13 +58,16 @@ export const init = (
   // Initiate events
   const event: StudioFormEvent[] = (model.state.events[instanceName] = []);
 
+  // Proxy write set prefix
+  const proxyWriteSetPrefix = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}`;
+
   // + Modes - proxy & event listener +
   const modesMain = modes(wrapper, mask);
   const modesProxy = model.state.createReadMostlyProxy(
     modesMain,
     `${instanceName}-modes`
   ) as SFModesConfig;
-  const modesWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${name}-modes`;
+  const modesWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}-modes`;
   const modesWrite = (e: unknown) => {
     if (typeof e?.['detail']?.value === 'boolean')
       document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
@@ -135,7 +139,7 @@ export const init = (
     fetchConfigMain,
     `${instanceName}-fetch-config`
   ) as SFFetchConfig;
-  const fetchConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${name}-fetch-config`;
+  const fetchConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}-fetch-config`;
   const fetchConfigWrite = (e: unknown) => {
     // Writing logic
     if (typeof e?.['detail']?.value === 'boolean')
@@ -179,8 +183,7 @@ export const init = (
     animation: animationDataProxy,
     fetch: fetchDataProxy,
     get form() {
-      console.log('Generate form data file');
-      return {};
+      return dataForm(instanceProxy);
     },
     get progress() {
       console.log('progress data file');
@@ -198,10 +201,44 @@ export const init = (
     "const type = (value instanceof File) ? 'file' : typeof value;"
   );
   console.log('Have dataForm.ts respect these hidden values!');
+  const hiddenDataSecret: SFHidden = {};
   const hiddenDataMain: SFHidden = {};
   const hiddenDataProxy = model.state.createReadMostlyProxy(
-    hiddenDataMain
+    hiddenDataMain,
+    `${instanceName}-hidden`
   ) as SFHidden;
+
+  // Writing events
+  ['set', 'delete'].forEach(str => {
+    const hiddenWriteName = `${config.PRODUCT_NAME_SHORT}-api-${str}-${instanceName}-hidden`;
+    const hiddenWrite = (e: unknown) => {
+      // Values
+      const property = e?.['detail']?.property as string | symbol;
+      const value = e?.['detail']?.value as unknown;
+      let write = false;
+
+      // + Logic +
+
+      // Files / strings
+
+      // Write
+      if (typeof value === 'string' || value instanceof File) {
+        hiddenDataSecret[property.toString()] = value;
+        write = true;
+      }
+
+      // Delete
+      if (typeof value === 'undefined' || value === false) {
+        delete hiddenDataSecret[property.toString()];
+        write = true;
+      }
+
+      // Write
+      if (write) document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+    };
+    document.body.addEventListener(hiddenWriteName, hiddenWrite);
+    event.push({ name: hiddenWriteName, function: hiddenWrite });
+  });
 
   // Suggest Proxy
   const suggestMain: SFSuggest = {
@@ -251,6 +288,7 @@ export const init = (
       console.log('I have to built');
     },
     reset: (options = {}) => {
+      console.log('Remove sf hide on reset !!!');
       console.log('I have to built');
     },
 
@@ -357,7 +395,7 @@ export const init = (
     auth: authMain,
     record: recordMain,
     animationData: animationDataMain,
-    hiddenData: hiddenDataMain,
+    hiddenData: hiddenDataSecret,
     fetchData: fetchDataMain,
   };
 

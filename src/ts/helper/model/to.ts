@@ -9,6 +9,8 @@ export default function (stateId: number, options: Options) {
   // Values
   const state = model.state[stateId];
 
+  console.log('Major importance & logic shall happen in this file!');
+
   console.log(
     'I SHALL WORK BASED ON THE .elements.tos.forEach().forEach() functionality!'
   );

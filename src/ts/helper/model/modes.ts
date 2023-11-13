@@ -114,6 +114,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('simple-data');
     },
 
+    // Partial data
+    get partialData() {
+      return getAttribute('partial-data');
+    },
+
     // Promise / resolve
     get promise() {
       return getAttribute('promise', false);

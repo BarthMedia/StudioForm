@@ -69,6 +69,15 @@ export const state: StudioFormState = {
           delete data.target[property];
         }
       }
+
+      // Hidden values
+      if (proxyWriteEvent.description.endsWith('hidden')) {
+        if (typeof value === 'string' || value instanceof File) {
+          data.target[property] = true;
+        } else {
+          delete data.target[property];
+        }
+      }
     }
 
     // Return

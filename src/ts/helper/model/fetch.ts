@@ -1,10 +1,12 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
+import * as viewUtils from '../view/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-const errPath = (s: any) => `${helper.errorName(s)}post.ts -> default`;
+const errPath = (s: any) => `${controllerUtils.errorName(s)}post.ts -> default`;
 export default async function (stateId: number) {
   console.log(
     'if slide record .length 0 throw error, if slide record 1, approach single form format,'
@@ -20,10 +22,6 @@ export default async function (stateId: number) {
   let apiUrl =
     'https://webflow.com/api/v1/form/' +
     document.querySelector('html')?.getAttribute(`data-wf-site`);
-
-  // Guard
-  if (!helper.isElement(form))
-    throw new Error(`${errPath(state)}: Couldn't find form!`);
 
   // * Find all data and store in object for post request *
 
@@ -59,7 +57,7 @@ export default async function (stateId: number) {
 
     // Elements
     const inputs: HTMLInputElement[] = slide.el.querySelectorAll(
-      config.INPUTS_SELECTOR
+      viewUtils.INPUTS_SELECTOR
     );
 
     // Loop
