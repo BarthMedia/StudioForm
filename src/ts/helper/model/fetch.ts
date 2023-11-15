@@ -4,198 +4,143 @@ import * as controllerUtils from '../controller/utils';
 import * as viewUtils from '../view/utils';
 import * as model from '../../model';
 import * as config from '../../config';
+import dataForm from './dataForm';
+
+// Helper
+const errPath = (n: string) => `${controllerUtils.errorName(n)} post.ts:`;
 
 // Export
-const errPath = (s: any) => `${controllerUtils.errorName(s)}post.ts -> default`;
-export default async function (stateId: number) {
-  console.log(
-    'if slide record .length 0 throw error, if slide record 1, approach single form format,'
-  );
-  console.log(
-    'slide record .legnt >= 2 then push form data in FinSweet format to wized!'
-  );
-
+export default async function (
+  instance: StudioFormInstance,
+  options: SFOFetch
+) {
   // Values
-  const state = model.state[stateId];
-  const form: HTMLFormElement = state.elements.mask;
+  const formBlock = instance.elements.wrapper;
+  const form = instance.elements.mask as HTMLFormElement;
+  const formData = dataForm(instance, true);
+  const isFiles = formData instanceof FormData;
+  const action = form.getAttribute('action') || '';
+  const hasAction = action !== '';
+
+  // Guard
+  if (formData === false) return false;
+
+  // Variables
   let method = 'POST';
-  let apiUrl =
+  let apiUrl: string | URL =
     'https://webflow.com/api/v1/form/' +
     document.querySelector('html')?.getAttribute(`data-wf-site`);
 
-  // * Find all data and store in object for post request *
-
-  // Define payload
-  const fields: { key: string; value: string }[] = [];
-  const files: { key: string; value: File }[] = [];
-  let payload: any = {
-    name: form.getAttribute(`data-name`),
-    pageId: document.querySelector('html')?.getAttribute(`data-wf-page`),
-    elementId: form.getAttribute(`data-wf-element-id`),
-    source: location.href,
-    // test: false,
-    // dolphin: false,
-  };
-
-  // * JotForm mode *
-  let jotFormMode = false;
-  if (
-    state.modes.isJotFrom ||
-    (form.getAttribute('action') || '').indexOf('jotform.com/submit') > -1
-  ) {
-    // Update
-    jotFormMode = true;
-    payload = [];
-  }
-
-  // * Make async call *
-
-  // Find all fields
-  state.sdk.slideRecord.forEach((id: number) => {
-    // Values
-    const slide = state.sdk.slideLogic[id];
-
-    // Elements
-    const inputs: HTMLInputElement[] = slide.el.querySelectorAll(
-      viewUtils.INPUTS_SELECTOR
-    );
-
-    // Loop
-    inputs.forEach(input => {
-      // Values
-      const key =
-        input.getAttribute(`data-name`) ||
-        input.getAttribute('name') ||
-        input.getAttribute('id') ||
-        input.getAttribute('class') ||
-        input.getAttribute('type') ||
-        input.tagName;
-
-      // Radio edgecase
-      if (
-        input.type === 'radio' &&
-        !input.hasAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}selected`)
-      )
-        return;
-
-      // Logic
-      if (input.type !== 'file') {
-        if (!jotFormMode || input.value !== '')
-          fields.push({
-            key: key,
-            value: input.value,
-          });
-      } else {
-        if (input.files) {
-          for (let i = 0, n = input.files.length; i < n; i++) {
-            files.push({
-              key: `${key}${!jotFormMode ? '][' : ''}${!jotFormMode ? i : ''}`,
-              value: input.files[i],
-            });
-          }
-        }
-      }
-    });
-  });
-
-  // Fields loop
-  const isFiles = files.length > 0;
-  fields.forEach((field: { key: string; value: any }) => {
-    if (!jotFormMode) payload[`fields[${field.key}]`] = field.value;
-    else payload.push(field);
-  });
-  files.forEach(file => {
-    if (!jotFormMode) payload[`files[${file.key}]`] = file.value;
-    else payload.push(file);
-  });
-
-  // Iterate through the JSON object and add properties to formData
-  const formData = isFiles ? new FormData() : new URLSearchParams();
-  if (!jotFormMode)
-    for (const key in payload) {
-      formData.append(key, payload[key]);
-    }
-  else
-    payload.forEach((item: { key: string; value: any }) =>
-      formData.append(item.key, item.value)
-    );
-
-  // * If form has specified action attribute *
-  if (form.getAttribute('action') || '' !== '') {
+  // Custom method & url
+  if (hasAction) {
     // Overwrite method & url
-    method = (form.getAttribute('method') || '').toUpperCase();
-    apiUrl = form.getAttribute('action') || '';
-
-    // If data-method attribute specified
-    const dataMethod: string = (
-      form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}method`) ||
-      state.elements.wrapper.getAttribute(
-        `${config.CUSTOM_ATTRIBUTE_PREFIX}method`
-      ) ||
+    const tmpMethod = (
+      viewUtils.getAttribute('method', form, formBlock) ||
+      form.getAttribute('method') ||
       ''
     ).toUpperCase();
-    if (['GET', 'PUT', 'POST', 'PATCH', 'DELETE'].includes(dataMethod))
-      method = dataMethod;
+    apiUrl = form.getAttribute('action') as string;
+
+    // Logic
+    if (['GET', 'PUT', 'POST', 'PATCH', 'DELETE'].includes(tmpMethod))
+      method = tmpMethod;
   }
 
+  // Morph into url
+  try {
+    apiUrl = new URL(apiUrl);
+  } catch (error) {
+    console.error(`${errPath}: Invalid action URL:`, error.message);
+    return false;
+  }
+
+  console.log('Try / catch everything that can go wrong in here!');
+
+  console.log('continue here! <3');
+
+  console.log('Return all relevant fetch data after making call!');
+
+  console.log(
+    method,
+    apiUrl,
+    formData,
+    "Don't forget to obscure and hide form data when presenting in output later!"
+  );
+
+  // Custom headers attributes
+  const acceptAttr = viewUtils.getAttribute('accept', form, formBlock);
+  const contentTypeAttr = viewUtils.getAttribute(
+    'content-type',
+    form,
+    formBlock
+  );
+
+  console.log(
+    'GO AHEAD AND MAKE SURE THAT YOU CAN MANIPULATE ALL OF THESE KEY VALUES THROUGHT THE FETCH CONFIG!'
+  );
+  console.log('MAKE LITERALLY EVERYTHING AVAILABLE!');
+
   // Define headers
-  const headers = {
-    Accept:
-      form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}headers-accept`) ||
-      'application/json, text/javascript, */*; q=0.01',
+  const headers = new Headers({
+    Accept: acceptAttr || 'application/json, text/javascript, */*; q=0.01',
     'Content-Type':
-      form.getAttribute(
-        `${config.CUSTOM_ATTRIBUTE_PREFIX}headers-content-type`
-      ) || 'application/x-www-form-urlencoded; charset=UTF-8',
-  };
+      contentTypeAttr || 'application/x-www-form-urlencoded; charset=UTF-8',
+  });
 
   // Custom headers || If accept header or content type specified on form
-  const isCustomHeaders =
-    form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}headers-accept`) ||
-    form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}headers-content-type`)
-      ? true
-      : false;
+  const isCustomHeaders = acceptAttr || contentTypeAttr ? true : false;
 
   // Create the options for the fetch request
-  const options: { method: string; headers?: any; body: any } = {
+  const fetchOptions: {
+    method: string;
+    headers?: Headers;
+    body?: FormData | string;
+  } = {
     method: method,
     headers: headers,
     body: isFiles ? formData : formData.toString(),
   };
   if (isFiles && !isCustomHeaders) delete options.headers;
 
+  console.log(
+    ' request: { ...fetchOptions, body: (ONLY IF NOT GET REQUEST!) overwrite body with non-private data!, url: your URL , etc.! }'
+  );
+  console.log(' respone:', 'headers, result = false, status, error');
+
+  console.log(
+    'Make sure that Accept, url, content-type & method can be changed via ',
+    'config.fetch!',
+    'also redirect url!'
+  );
+
   // + GET Request +
   if (method === 'GET') {
     // Update options
     if (!isCustomHeaders) delete options.headers;
-    delete options.body;
+    delete fetchOptions.body;
 
     // + Update url +
-
-    // Step 1: Create url
-    const url = new URL(apiUrl);
-
-    // Step 2: Create a new URLSearchParams object from the existing URL's search parameters
-    const existingSearchParams = url.searchParams;
-
-    // Step 3: Append the new key-value pairs from the JSON to the URLSearchParams object
-    for (const field of fields) {
-      existingSearchParams.append(field.key, field.value);
-    }
-
-    // Step 4: Update the URL's search with the modified URLSearchParams object
-    url.search = existingSearchParams.toString();
-    apiUrl = url.href;
+    formData.forEach((value: string | File, key: string) => {
+      if (typeof value === 'string')
+        (apiUrl as URL).searchParams.append(key, value);
+    });
   }
 
   // Auth token
-  const authToken =
-    form.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}auth-token`) || '';
+  const authToken = model.state.ghostInstances[instance.name].auth.token || '';
   if (authToken !== '') {
-    options.headers = options.headers
-      ? { ...options.headers, Authorization: `Bearer ${authToken}` }
-      : { Authorization: `Bearer ${authToken}` };
+    fetchOptions.headers = fetchOptions.headers
+      ? (fetchOptions.headers.append('Authorization', `Bearer ${authToken}`),
+        fetchOptions.headers)
+      : new Headers({
+          Authorization: `Bearer ${authToken}`,
+        });
   }
+
+  console.log(
+    'Congrats on pulling of the secure auth token!',
+    'Now make sure you can customize the config and that the fetch works reliably in every usecase!'
+  );
 
   // Await
   let res: any;

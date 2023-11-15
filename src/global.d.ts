@@ -85,6 +85,16 @@ interface SFOScrollTo {
   offset?: string | HTMLElement;
 }
 
+interface SFOFetch {
+  url?: string;
+  method?: string;
+  authorization?: string;
+  accept?: string;
+  contentType?: string;
+  formData?: FormData;
+  headers?: Headers;
+}
+
 // + Instance API other +
 
 interface SFHidden {
@@ -108,15 +118,7 @@ interface StudioFormInstance {
 
   // Wized API
   reset: (options?: {}) => void;
-  fetch: (options?: {
-    url?: string;
-    method?: string;
-    authorization?: string;
-    accept?: string;
-    contentType?: string;
-    formData?: FormData;
-    headers?: Headers;
-  }) => unknown;
+  fetch: (options?: SFOFetch) => unknown;
   reportValidity: () => void; // slideRequirements -- legacy
 
   // Navigation
@@ -143,12 +145,11 @@ interface StudioFormData {
   animation: SFAnimationData;
   fetch: SFFetchData;
   get form(): SFFormData;
+  get params(): false | URLSearchParams;
   get progress(): SFProgressData;
 }
 
-interface SFFormData {
-  any?: any;
-}
+type SFFormData = false | FormData | URLSearchParams;
 
 interface SFProgressData {
   any?: any;

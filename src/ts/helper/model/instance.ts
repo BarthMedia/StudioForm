@@ -10,11 +10,16 @@ import * as model from '../../model';
 import elements from '../view/elements';
 
 // Model
+
+// Initiation
 import modes from './modes';
 import slideLogic from './slideLogic';
 import animationsConfig from './configAnimations';
 import fetchConfig from './configFetch';
+
+// Usage
 import dataForm from './dataForm';
+import fetch from './fetch';
 
 // + Define +
 
@@ -185,6 +190,9 @@ export const init = (
     get form() {
       return dataForm(instanceProxy);
     },
+    get params() {
+      return dataForm(instanceProxy, false, true) as URLSearchParams | false;
+    },
     get progress() {
       console.log('progress data file');
       return {};
@@ -266,9 +274,8 @@ export const init = (
     // + Functions +
 
     // API
-    fetch: async (options = {}) => {
-      console.log('I have to built', 'I think fetched event could be sweet!');
-      console.log('I WILL RETURN FETCH DATA!');
+    fetch: async (options: SFOFetch = {}) => {
+      return await fetch(instanceProxy, options);
     },
     promise: async () => {
       console.log(

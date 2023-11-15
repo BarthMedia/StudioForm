@@ -4,7 +4,11 @@ import * as config from '../../config';
 import * as model from '../../model';
 
 // Export
-export default function (instance: StudioFormInstance, internal = false) {
+export default function (
+  instance: StudioFormInstance,
+  internal = false,
+  generateUrlSearchParams = false
+) {
   // Elements
   const form = (
     instance.elements.mask.tagName === 'FORM' ? instance.elements.mask : null
@@ -15,54 +19,33 @@ export default function (instance: StudioFormInstance, internal = false) {
   // Guard
   if (!form) return false;
 
-  // // + Helper +
-
-  // // Attribute
-  // function getAttribute(str: string, bool = true) {
-  //   console.log(
-  //     'Get most recent model version',
-  //     'Reference most recent slide old / slide next!',
-  //     'instanceName not needed i believe!'
-  //   );
-
-  //   // Values
-  //   let val = viewUtils.getAttribute(str, mask, wrapper);
-
-  //   // Fallback
-  //   val = !val ? bool.toString() : val;
-
-  //   // Return
-  //   return val === 'true';
-  // }
-
-  // getAttribute('test');
-
-  // // Object
-  // const obj = {};
-
-  /**
-   *
-   *
-   *
-   *
-   *
-   */
-
-  // Define payload
+  // Values
   const fields: { key: string; value: string }[] = [];
-  const files: { key: string; value: File }[] = [];
-  const xWwwPayload = {
-    name: form.getAttribute('data-name'),
-    pageId: document.querySelector('html')?.getAttribute('data-wf-page'),
-    elementId: form.getAttribute('data-wf-element-id'),
-    source: location.href,
-  };
-
-  console.log(hidden, '<!--- HIDDEN DATA');
+  let files: { key: string; value: File }[] = [];
 
   // Data mode
-  const complex =
-    (form.getAttribute('action') || '') === '' || !modes.simpleData;
+  let complex = (form.getAttribute('action') || '') === '' || !modes.simpleData;
+  if (generateUrlSearchParams) complex = false;
+
+  // Define payload
+  const payload = (
+    complex
+      ? [
+          { key: 'name', value: form.getAttribute('data-name') || '' },
+          {
+            key: 'pageId',
+            value:
+              document.querySelector('html')?.getAttribute('data-wf-page') ||
+              '',
+          },
+          {
+            key: 'elementId',
+            value: form.getAttribute('data-wf-element-id') || '',
+          },
+          { key: 'source', value: location.href },
+        ]
+      : []
+  ) as { key: string; value: string | File }[];
 
   // * Loop *
 
@@ -71,18 +54,10 @@ export default function (instance: StudioFormInstance, internal = false) {
     // Guard
     if (modes.partialData && !instance.record.includes(slide.index)) return;
 
-    console.log(slide);
-  });
-
-  // Find all fields
-  instance.record.forEach(id => {
-    // Values
-    const slide = instance.logic[id];
-
     // Elements
-    const inputs: NodeListOf<HTMLInputElement> = slide.element.querySelectorAll(
+    const inputs = slide.element.querySelectorAll(
       viewUtils.INPUTS_SELECTOR
-    );
+    ) as NodeListOf<HTMLInputElement>;
 
     // Loop
     inputs.forEach(input => {
@@ -94,65 +69,82 @@ export default function (instance: StudioFormInstance, internal = false) {
         input.getAttribute('class') ||
         input.getAttribute('type') ||
         input.tagName;
+      const value = input.type !== 'file' ? input.value : input.files;
 
       // Radio edgecase
       if (
         input.type === 'radio' &&
-        !input.hasAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}selected`)
+        !input.hasAttribute(`${config.PRODUCT_NAME_SHORT}-selected`)
       )
         return;
 
       // Logic
-      if (input.type !== 'file') {
-        if (!jotFormMode || input.value !== '')
-          fields.push({
-            key: key,
-            value: input.value,
-          });
-      } else {
-        if (input.files) {
-          for (let i = 0, n = input.files.length; i < n; i++) {
-            files.push({
-              key: `${key}${!jotFormMode ? '][' : ''}${!jotFormMode ? i : ''}`,
-              value: input.files[i],
-            });
-          }
-        }
-      }
+      if (value) addVals(key, value);
     });
   });
 
-  // Fields loop
-  const isFiles = files.length > 0;
-  fields.forEach((field: { key: string; value: any }) => {
-    if (!jotFormMode) payload[`fields[${field.key}]`] = field.value;
-    else payload.push(field);
-  });
-  files.forEach(file => {
-    if (!jotFormMode) payload[`files[${file.key}]`] = file.value;
-    else payload.push(file);
-  });
+  // Define helper
+  function addVals(key: string, value: string | FileList | File) {
+    // Logic
+    if (typeof key === 'string') {
+      fields.push({
+        key: key,
+        value: value as string,
+      });
+    } else {
+      // Values
+      const isFile = value instanceof File;
 
-  // Iterate through the JSON object and add properties to formData
-  const formData = isFiles ? new FormData() : new URLSearchParams();
-  if (!jotFormMode)
-    for (const key in payload) {
-      formData.append(key, payload[key]);
+      // Loop
+      for (let i = 0, n = isFile ? 1 : value.length; i < n; i++) {
+        // Push
+        files.push({
+          key: `${key}${complex ? '][' : ''}${complex ? i : ''}`,
+          value: (isFile ? value : value[i]) as File,
+        });
+      }
     }
-  else
-    payload.forEach((item: { key: string; value: any }) =>
-      formData.append(item.key, item.value)
-    );
+  }
 
-  /**
-   *
-   *
-   *
-   *
-   *
-   *
-   */
+  // Hidden
+  if (!generateUrlSearchParams)
+    Object.keys(hidden).forEach(key => {
+      // Values
+      const value = (internal ? hidden[key] : '* * * HIDDEN * * *') as
+        | string
+        | File;
+
+      // Logic
+      addVals(key, value);
+    });
+
+  // * URL param data *
+  if (generateUrlSearchParams) files = [];
+
+  // * Create data *
+
+  // Values
+  const isFiles = files.length > 0;
+  const formData = isFiles ? new FormData() : new URLSearchParams();
+
+  // Prepare
+  [
+    { name: 'fields', data: fields },
+    { name: 'files', data: files },
+  ].forEach(obj => {
+    // Loop
+    obj.data.forEach((datum: { key: string; value: string | File }) => {
+      payload.push(
+        complex
+          ? { key: `${obj.name}[${datum.key}]`, value: datum.value }
+          : datum
+      );
+    });
+  });
+
+  // @ts-ignore
+  payload.forEach(item => formData.append(item.key, item.value));
 
   // Expose to api & handle change requests
-  return obj;
+  return formData;
 }

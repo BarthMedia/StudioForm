@@ -6,7 +6,7 @@ import animate from './helper/view/animateTransition';
 import animateProgress from './helper/view/animateProgress';
 import anchor from './helper/view/scrollTo';
 import required from './helper/view/reportValidity';
-import sfActive from './helper/view/active';
+import sfActive from './helper/view/animateActive';
 import elements from './helper/view/elements';
 
 // Export
