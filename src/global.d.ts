@@ -122,7 +122,7 @@ interface StudioFormInstance {
 
   // Wized API
   reset: (options?: {}) => void;
-  fetch: (options?: SFOFetch) => unknown;
+  fetch: (options?: SFOFetch) => Promise<boolean>;
   reportValidity: () => void; // slideRequirements -- legacy
 
   // Navigation

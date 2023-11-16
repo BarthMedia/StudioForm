@@ -110,9 +110,7 @@ export default function (
   if (!generateUrlSearchParams)
     Object.keys(hidden).forEach(key => {
       // Values
-      const value = (internal ? hidden[key] : '* * * HIDDEN * * *') as
-        | string
-        | File;
+      const value = (internal ? hidden[key] : config.HIDDEN) as string | File;
 
       // Logic
       addVals(key, value);

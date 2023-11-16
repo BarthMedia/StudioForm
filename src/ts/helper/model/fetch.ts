@@ -12,7 +12,8 @@ const errPath = (n: string) => `${controllerUtils.errorName(n)} post.ts:`;
 // Export
 export default async function (
   instance: StudioFormInstance,
-  options: SFOFetch
+  options: SFOFetch,
+  internal = false
 ) {
   console.log('BUILD OUT FETCH CONFIG PROPERLY!', 'REALLY IMPORTANT TO-DO!');
 
@@ -252,6 +253,13 @@ export default async function (
   sfApi.request = output.request;
   sfApi.response = output.response;
 
+  // External / internal
+  if (!internal)
+    console.log(
+      'Fire fetched-external event!',
+      'make it easy for first registered event listener to delete response out of api'
+    );
+
   // Return
-  return output;
+  return true;
 }
