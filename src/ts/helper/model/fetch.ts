@@ -12,10 +12,11 @@ const errPath = (n: string) => `${controllerUtils.errorName(n)} post.ts:`;
 // Export
 export default async function (
   instance: StudioFormInstance,
-  options: SFOFetch,
+  externalOptions: SFOFetch,
   internal = false
 ) {
   console.log('BUILD OUT FETCH CONFIG PROPERLY!', 'REALLY IMPORTANT TO-DO!');
+  console.log('Also fully respect external options', externalOptions);
 
   // Values
   const formBlock = instance.elements.wrapper;
@@ -90,7 +91,7 @@ export default async function (
   // + GET Request +
   if (method === 'GET') {
     // Update options
-    if (!isCustomHeaders) delete options.headers;
+    if (!isCustomHeaders) delete fetchOptions.headers;
     delete fetchOptions.body;
 
     // + Update url +
