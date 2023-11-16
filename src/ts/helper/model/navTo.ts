@@ -9,6 +9,8 @@ export default function (stateId: number, options: Options) {
   // Values
   const state = model.state[stateId];
 
+  console.log('Should very well have a sf-name feature!');
+
   console.log('Major importance & logic shall happen in this file!');
 
   console.log(

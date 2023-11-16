@@ -67,7 +67,7 @@ export function createSelector(
       `[${config.PRODUCT_NAME_SHORT}="${str}"]`,
       `[${config.PRODUCT_NAME_LONG}="${str}"]`,
     ];
-    const wrapper = `[${config.PRODUCT_NAME_SHORT}-name="${instanceName}"]`;
+    const wrapper = `[${config.PRODUCT_NAME_SHORT}-id="${instanceName}"]`;
     const advanced = [
       `[${config.PRODUCT_NAME_SHORT}-${instanceName}="${str}"]`,
       `[${config.PRODUCT_NAME_LONG}-${instanceName}="${str}"]`,

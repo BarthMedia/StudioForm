@@ -35,9 +35,13 @@ interface StudioFormButtonLogic {
   conditionalPrev?: true;
 }
 interface StudioFormSlideLogic {
-  type: string;
+  // Info
+  get name(): string | null;
   index: number;
   element: HTMLElement;
+  type: string;
+
+  // Logic
   buttons: false | StudioFormButtonLogic[];
   conditional: string;
   conditionalNext: boolean | string | undefined;
@@ -156,11 +160,30 @@ interface SFProgressData {
 }
 
 interface SFAnimationData {
-  any?: any;
+  any: any;
 }
 
 interface SFFetchData {
-  any?: any;
+  redirect?: string;
+  request?: {
+    url: string;
+    method: string;
+    headers?: Headers;
+    body?: String | FormData;
+    params?: URLSearchParams;
+  };
+  response?: {
+    ok: boolean;
+    contentType?: string;
+    headers: Headers;
+    result?: false | unknown;
+    status: number;
+    error?: {
+      message: string | unknown;
+      code?: string | unknown;
+      details?: null | unknown;
+    };
+  };
 }
 
 interface SFHiddenData {

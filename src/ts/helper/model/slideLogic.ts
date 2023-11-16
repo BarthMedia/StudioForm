@@ -36,6 +36,9 @@ export default function (
     const type = slideType(slide);
     const obj: StudioFormSlideLogic = {
       // Base
+      get name() {
+        return viewUtils.getAttribute('name', slide);
+      },
       index: i,
       element: slide,
       type: type,

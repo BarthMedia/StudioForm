@@ -14,6 +14,8 @@ export default async function (
   instance: StudioFormInstance,
   options: SFOFetch
 ) {
+  console.log('BUILD OUT FETCH CONFIG PROPERLY!', 'REALLY IMPORTANT TO-DO!');
+
   // Values
   const formBlock = instance.elements.wrapper;
   const form = instance.elements.mask as HTMLFormElement;
@@ -54,19 +56,6 @@ export default async function (
     return false;
   }
 
-  console.log('Try / catch everything that can go wrong in here!');
-
-  console.log('continue here! <3');
-
-  console.log('Return all relevant fetch data after making call!');
-
-  console.log(
-    method,
-    apiUrl,
-    formData,
-    "Don't forget to obscure and hide form data when presenting in output later!"
-  );
-
   // Custom headers attributes
   const acceptAttr = viewUtils.getAttribute('accept', form, formBlock);
   const contentTypeAttr = viewUtils.getAttribute(
@@ -74,11 +63,6 @@ export default async function (
     form,
     formBlock
   );
-
-  console.log(
-    'GO AHEAD AND MAKE SURE THAT YOU CAN MANIPULATE ALL OF THESE KEY VALUES THROUGHT THE FETCH CONFIG!'
-  );
-  console.log('MAKE LITERALLY EVERYTHING AVAILABLE!');
 
   // Define headers
   const headers = new Headers({
@@ -100,18 +84,7 @@ export default async function (
     headers: headers,
     body: isFiles ? formData : formData.toString(),
   };
-  if (isFiles && !isCustomHeaders) delete options.headers;
-
-  console.log(
-    ' request: { ...fetchOptions, body: (ONLY IF NOT GET REQUEST!) overwrite body with non-private data!, url: your URL , etc.! }'
-  );
-  console.log(' respone:', 'headers, result = false, status, error');
-
-  console.log(
-    'Make sure that Accept, url, content-type & method can be changed via ',
-    'config.fetch!',
-    'also redirect url!'
-  );
+  if (isFiles && !isCustomHeaders) delete fetchOptions.headers;
 
   // + GET Request +
   if (method === 'GET') {
@@ -128,39 +101,17 @@ export default async function (
 
   // Auth token
   const authToken = model.state.ghostInstances[instance.name].auth.token || '';
-  if (authToken !== '') {
-    fetchOptions.headers = fetchOptions.headers
-      ? (fetchOptions.headers.append('Authorization', `Bearer ${authToken}`),
-        fetchOptions.headers)
-      : new Headers({
-          Authorization: `Bearer ${authToken}`,
-        });
-  }
+  fetchOptions.headers = fetchOptions.headers || new Headers();
 
-  console.log(
-    'Congrats on pulling of the secure auth token!',
-    'Now make sure you can customize the config and that the fetch works reliably in every usecase!'
-  );
+  // Set if
+  if (authToken !== '') {
+    fetchOptions.headers.append('Authorization', `Bearer ${authToken}`);
+  }
 
   // Await
-  let res: any;
-  let status = 'done';
-  try {
-    // Call
-    res = await helper.getJson(
-      apiUrl,
-      options,
-      parseInt(
-        state.elements.wrapper.getAttribute(
-          `${config.CUSTOM_ATTRIBUTE_PREFIX}timeout`
-        ) || config.TIMEOUT_SEC.toString()
-      )
-    );
-  } catch (err) {
-    console.error(`${errPath(state)} -> await fetch(): `, err);
-    status = 'fail';
-    res = err;
-  }
+  const publicFormData = instance.data.form;
+  const publicFormParams = instance.data.params as URLSearchParams;
+  const url = apiUrl.toString();
 
   // + Redirect url +
   let redirect: undefined | string = undefined;
@@ -180,41 +131,127 @@ export default async function (
       }
 
       // Values
-      let url = new URL(attrPrefix + attrVal);
+      let redirectUrl = new URL(attrPrefix + attrVal);
 
-      // * Add params to url if wanted *
-      if (state.modes.fieldParamsRedirect) {
-        // Step 2: Create a new URLSearchParams object from the existing URL's search parameters
-        const existingSearchParams = url.searchParams;
+      // * Add params to redirectUrl if wanted *
+      if (instance.config.modes.fieldParamsRedirect) {
+        // Step 2: Create a new redirectUrlSearchParams object from the existing redirectUrl's search parameters
+        const existingSearchParams = redirectUrl.searchParams;
 
         // Step 3: Append the new key-value pairs from the JSON to the URLSearchParams object
-        for (const field of fields) {
-          existingSearchParams.append(field.key, field.value);
-        }
+        publicFormParams.forEach((value, key) => {
+          existingSearchParams.append(key, value);
+        });
 
         // Step 4: Update the URL's search with the modified URLSearchParams object
-        url.search = existingSearchParams.toString();
+        redirectUrl.search = existingSearchParams.toString();
       }
 
       // Overwrite redirect
-      redirect = url.href;
+      redirect = redirectUrl.toString();
     } catch (err) {
-      console.error(
-        `${errPath(state)} -> try { ... redirect url ... } catch: `,
-        err
-      );
+      console.error(`${errPath(instance.name)} Create redirect url: `, err);
     }
   }
 
-  // Add to sdk
-  state.sdk.data.endpoint = apiUrl;
-  state.sdk.data.options = options;
-  state.sdk.data.method = method;
-  state.sdk.data.payload = payload;
-  state.sdk.data.response = res;
-  state.sdk.data.status = status;
-  state.sdk.data.redirect = redirect;
+  // Output preperation
+  const output: SFFetchData = {
+    redirect: redirect,
+    request: {
+      url: url.split('?')[0],
+      method: method,
+      headers: new Headers(fetchOptions.headers),
+      body:
+        method === 'GET'
+          ? undefined
+          : isFiles
+          ? (publicFormData as FormData)
+          : publicFormData.toString(),
+      params: method !== 'GET' ? undefined : publicFormParams,
+    },
+  };
+
+  // Check if 'Authorization' header exists in the headers
+  if (output?.request?.headers?.has('Authorization')) {
+    output.request.headers.set('Authorization', config.HIDDEN);
+  }
+
+  // Try / catch
+  try {
+    // Fetch operation
+    const response = await Promise.race([
+      fetch(url, fetchOptions),
+      utils.timeout(
+        parseInt(
+          viewUtils.getAttribute('timeout', form, formBlock) ||
+            config.TIMEOUT_SEC.toString()
+        )
+      ),
+    ]);
+
+    if (response instanceof Response) {
+      // Values
+      const headers = new Headers(response.headers);
+      const contentType = response.headers.get('Content-Type');
+      const contentTypeSwitch = contentType?.toLowerCase();
+      let result: unknown;
+
+      // Guard
+      if (!contentTypeSwitch) throw new Error(`Couldn't find "Content-Type"`);
+
+      // Logic
+      switch (true) {
+        case contentTypeSwitch.indexOf('json') > -1:
+          result = await response.json();
+          break;
+        case contentTypeSwitch.indexOf('text') > -1:
+          result = await response.text();
+          break;
+        case contentTypeSwitch.indexOf('form') > -1:
+          result = await response.formData();
+          break;
+        default:
+          result = await response.blob();
+      }
+
+      // Successful fetch
+      output.response = {
+        ok: response.ok,
+        headers: headers,
+        contentType: contentType as string,
+        result: result,
+        status: response.status,
+      };
+
+      // If error
+      if (!response.ok)
+        output.response.error = {
+          message: result?.['message'] ?? 'An error occurred during the fetch.',
+          code: result?.['code'] ?? response.status,
+          details: result?.['payload'] ?? null,
+        };
+    } else throw new Error('Invalid response');
+  } catch (error) {
+    // Handle fetch or parsing errors
+    output.response = {
+      ok: false,
+      headers: new Headers(),
+      result: false,
+      status: 0,
+      error: {
+        message: 'An error occurred during fetch or parsing',
+        code: 'FETCH_ERROR',
+        details: error,
+      },
+    };
+  }
+
+  // Add to api
+  const sfApi = model.state.ghostInstances[instance.name].fetchData;
+  sfApi.redirect = output.redirect;
+  sfApi.request = output.request;
+  sfApi.response = output.response;
 
   // Return
-  return res;
+  return output;
 }

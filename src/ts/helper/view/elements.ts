@@ -28,9 +28,6 @@ export default function (
     });
   }
 
-  console.log('Find sf-anchor elements!');
-  console.log("Change sf-response field into sf='error'");
-
   // Create
   const obj: StudioFormElements = {
     // Standard
@@ -44,7 +41,14 @@ export default function (
 
     // Fetch response
     get failMessages() {
-      return querySelectorAll('fail', 'fail-message', 'fail-response');
+      return querySelectorAll(
+        'fail',
+        'fail-message',
+        'fail-response',
+        'error',
+        'error-message',
+        'error-response'
+      );
     },
 
     // Anchor
@@ -91,8 +95,8 @@ export default function (
       const nexts: HTMLElement[] = [];
       querySelectorAll('next').forEach(el => {
         if (
-          (el.closest(`[${config.PRODUCT_NAME_SHORT}-name]>form`) ||
-            el.closest(`[${config.PRODUCT_NAME_SHORT}-name]>*`)) !== mask
+          (el.closest(`[${config.PRODUCT_NAME_SHORT}-id]>form`) ||
+            el.closest(`[${config.PRODUCT_NAME_SHORT}-id]>*`)) !== mask
         )
           nexts.push(el);
       });

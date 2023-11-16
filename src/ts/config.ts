@@ -16,7 +16,10 @@ export const DEFAULT_OFFSET = 16;
 // Version
 export const VERSION = '1.2.0';
 
-// Product name -- NEW
+// Hidden string
+export const HIDDEN = '* * * HIDDEN * * *';
+
+// Product name
 export const PRODUCT_NAME_LONG = 'studio-form';
 export const PRODUCT_NAME_SHORT = 'sf';
 export const PRODUCT_NAME_CAMEL_CASE = 'StudioForm';
