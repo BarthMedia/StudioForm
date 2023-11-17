@@ -17,6 +17,13 @@ export default async function (instance: StudioFormInstance, internal = false) {
     }
   );
 
+  console.log(
+    "Make sure event's listen on once",
+    'they remove then self from the deliotion register when executed',
+    'or get overwritten',
+    'make sure to be awesome!'
+  );
+
   // Apply styles
   console.log('apply styles to slide', 'unless event is .defaultPrevented');
 
