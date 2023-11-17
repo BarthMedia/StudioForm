@@ -69,7 +69,12 @@ export default function (
         input.getAttribute('class') ||
         input.getAttribute('type') ||
         input.tagName;
-      const value = input.type !== 'file' ? input.value : input.files;
+      const value =
+        input.type !== 'file'
+          ? input.type === 'password' && internal
+            ? config.HIDDEN
+            : input.value
+          : input.files;
 
       // Radio edgecase
       if (
@@ -125,6 +130,20 @@ export default function (
   const isFiles = files.length > 0;
   const formData = isFiles ? new FormData() : new URLSearchParams();
 
+  // Create a Set to keep track of unique keys
+  const uniqueKeys = new Set();
+
+  // Check if the key is not already in the Set
+  function isUniqueKey(key: string) {
+    if (!uniqueKeys.has(key)) {
+      uniqueKeys.add(key);
+      return true;
+    }
+
+    // Return
+    return false;
+  }
+
   // Prepare
   [
     { name: 'fields', data: fields },
@@ -132,11 +151,12 @@ export default function (
   ].forEach(obj => {
     // Loop
     obj.data.forEach((datum: { key: string; value: string | File }) => {
-      payload.push(
-        complex
-          ? { key: `${obj.name}[${datum.key}]`, value: datum.value }
-          : datum
-      );
+      if (!complex || isUniqueKey(datum.key))
+        payload.push(
+          complex
+            ? { key: `${obj.name}[${datum.key}]`, value: datum.value }
+            : datum
+        );
     });
   });
 

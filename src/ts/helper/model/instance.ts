@@ -21,6 +21,9 @@ import fetchConfig from './configFetch';
 import dataForm from './dataForm';
 import fetch from './fetch';
 
+// View
+import animatePromiseResolve from '../view/animatePromiseResolve';
+
 // + Define +
 
 // + Export +
@@ -146,8 +149,17 @@ export const init = (
   ) as SFFetchConfig;
   const fetchConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}-fetch-config`;
   const fetchConfigWrite = (e: unknown) => {
+    // Values
+    let allowance = false;
+    const isTimeout = e?.['detail']?.property === 'timeout';
+
     // Writing logic
-    if (typeof e?.['detail']?.value === 'boolean')
+    if (isTimeout && typeof e?.['detail']?.value === 'number') allowance = true;
+    else if (!isTimeout && typeof e?.['detail']?.value === 'string')
+      allowance = true;
+
+    // Write
+    if (allowance)
       document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
   };
   document.body.addEventListener(fetchConfigWriteName, fetchConfigWrite);
@@ -170,7 +182,7 @@ export const init = (
   const animationDataProxy =
     model.state.createReadMostlyProxy(animationDataMain);
 
-  // Progress data
+  // Fetch data
   const fetchDataMain = {};
   const fetchDataProxy = model.state.createReadMostlyProxy(fetchDataMain);
 
@@ -278,18 +290,7 @@ export const init = (
       return await fetch(instanceProxy, options);
     },
     promise: async () => {
-      console.log(
-        'I have to built',
-        "I'm the super cool promise resolve feature!",
-        'When i am called, all the elements of the current slide:',
-        'receive the sf-promise class.',
-        'and no navigation action can be performed',
-        "until the JS user set's resolve = true or false!",
-        "resolve get's removed as soon as it is set, awesome proxy trigger",
-        "resolve basically never get's to be really set!",
-        'resolve only allows boolean!'
-      );
-      return true;
+      return await animatePromiseResolve(instanceProxy);
     },
     reportValidity: () => {
       console.log('I have to built');

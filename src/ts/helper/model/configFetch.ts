@@ -7,28 +7,42 @@ import * as model from '../../model';
 export default function (wrapper: HTMLElement, mask: HTMLElement) {
   // + Helper +
 
-  // Attribute
-  function getAttribute(str: string, bool = true) {
-    console.log(
-      'Get most recent model version',
-      'Reference most recent slide old / slide next!',
-      'instanceName not needed i believe!'
-    );
+  // action, method, accept, contentType, redirect
 
+  // Attribute
+  function getAttribute(str: string, native = true) {
     // Values
     let val = viewUtils.getAttribute(str, mask, wrapper);
-
-    // Fallback
-    val = !val ? bool.toString() : val;
+    if (!val && native) val = mask.getAttribute(str);
 
     // Return
-    return val === 'true';
+    return val || '';
   }
 
-  getAttribute('test');
-
   // Object
-  const obj = {};
+  const obj = {
+    get action() {
+      return getAttribute('action');
+    },
+    get method() {
+      return getAttribute('method');
+    },
+    get accept() {
+      return getAttribute('accept', false);
+    },
+    get contentType() {
+      return getAttribute('content-type', false);
+    },
+    get redirect() {
+      return getAttribute('redirect');
+    },
+    get timeout() {
+      return parseFloat(
+        viewUtils.getAttribute('timeout', mask, wrapper) ||
+          config.TIMEOUT_SEC.toString()
+      );
+    },
+  };
 
   // Expose to api & handle change requests
   return obj;

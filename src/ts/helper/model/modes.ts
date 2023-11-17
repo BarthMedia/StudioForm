@@ -120,8 +120,8 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     },
 
     // Promise / resolve
-    get promise() {
-      return getAttribute('promise', false);
+    get promiseResolve() {
+      return getAttribute('promise-resolve', false);
     },
 
     // Auto resolve on prev

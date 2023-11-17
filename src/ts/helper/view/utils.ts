@@ -6,6 +6,28 @@ import * as model from '../../model';
 
 // + Exports +
 
+// Dispatch events
+export function dispatchEvent(
+  instanceName: string,
+  eventName: string,
+  cancelable = true,
+  detail?: unknown
+) {
+  // Values
+  const mask = model.state.instances[instanceName].elements.mask;
+  let payload = detail && typeof detail === 'object' ? detail : {};
+  payload = { ...payload, instanceName: instanceName };
+
+  // Dispatch
+  mask.dispatchEvent(
+    new CustomEvent(model.state.api['config'].eventPrefix + eventName, {
+      bubbles: true,
+      cancelable: cancelable,
+      detail: payload,
+    })
+  );
+}
+
 // Get attribute
 export function getAttribute(str: string | null, ...elements: HTMLElement[]) {
   // Values

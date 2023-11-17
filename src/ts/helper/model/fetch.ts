@@ -15,15 +15,13 @@ export default async function (
   externalOptions: SFOFetch,
   internal = false
 ) {
-  console.log('BUILD OUT FETCH CONFIG PROPERLY!', 'REALLY IMPORTANT TO-DO!');
-  console.log('Also fully respect external options', externalOptions);
-
   // Values
   const formBlock = instance.elements.wrapper;
   const form = instance.elements.mask as HTMLFormElement;
-  const formData = dataForm(instance, true);
+  const formData = externalOptions.formData || dataForm(instance, true);
   const isFiles = formData instanceof FormData;
-  const action = form.getAttribute('action') || '';
+  const fetchConfig = instance.config.fetch;
+  const action = fetchConfig.action;
   const hasAction = action !== '';
 
   // Guard
@@ -38,43 +36,49 @@ export default async function (
   // Custom method & url
   if (hasAction) {
     // Overwrite method & url
-    const tmpMethod = (
-      viewUtils.getAttribute('method', form, formBlock) ||
-      form.getAttribute('method') ||
-      ''
-    ).toUpperCase();
-    apiUrl = form.getAttribute('action') as string;
+    const tmpMethod = fetchConfig.method.toUpperCase();
+    apiUrl = action;
 
     // Logic
     if (['GET', 'PUT', 'POST', 'PATCH', 'DELETE'].includes(tmpMethod))
       method = tmpMethod;
   }
 
+  // External options
+  if (externalOptions.url) apiUrl = externalOptions.url;
+  if (externalOptions.method) method = externalOptions.method;
+
   // Morph into url
   try {
     apiUrl = new URL(apiUrl);
   } catch (error) {
-    console.error(`${errPath}: Invalid action URL:`, error.message);
+    console.error(
+      `${errPath(instance.name)}: Invalid action URL:`,
+      error.message
+    );
     return false;
   }
 
   // Custom headers attributes
-  const acceptAttr = viewUtils.getAttribute('accept', form, formBlock);
-  const contentTypeAttr = viewUtils.getAttribute(
-    'content-type',
-    form,
-    formBlock
-  );
+  const acceptStr = externalOptions.accept || fetchConfig.accept;
+  const contentTypeStr = externalOptions.contentType || fetchConfig.contentType;
 
   // Define headers
-  const headers = new Headers({
-    Accept: acceptAttr || 'application/json, text/javascript, */*; q=0.01',
-    'Content-Type':
-      contentTypeAttr || 'application/x-www-form-urlencoded; charset=UTF-8',
-  });
+  const headers =
+    externalOptions.headers ||
+    new Headers({
+      Accept:
+        acceptStr === ''
+          ? 'application/json, text/javascript, */*; q=0.01'
+          : acceptStr,
+      'Content-Type':
+        contentTypeStr === ''
+          ? 'application/x-www-form-urlencoded; charset=UTF-8'
+          : contentTypeStr,
+    });
 
   // Custom headers || If accept header or content type specified on form
-  const isCustomHeaders = acceptAttr || contentTypeAttr ? true : false;
+  const isCustomHeaders = acceptStr !== '' || contentTypeStr !== '';
 
   // Create the options for the fetch request
   const fetchOptions: {
@@ -102,7 +106,10 @@ export default async function (
   }
 
   // Auth token
-  const authToken = model.state.ghostInstances[instance.name].auth.token || '';
+  const authToken =
+    externalOptions.authorization ||
+    model.state.ghostInstances[instance.name].auth.token ||
+    '';
   fetchOptions.headers = fetchOptions.headers || new Headers();
 
   // Set if
@@ -117,10 +124,10 @@ export default async function (
 
   // + Redirect url +
   let redirect: undefined | string = undefined;
-  if (form.getAttribute('redirect') || '' !== '') {
+  if (fetchConfig.redirect !== '') {
     try {
       // Format attribute value
-      const attrVal = form.getAttribute('redirect') || '';
+      const attrVal = fetchConfig.redirect;
       let attrPrefix = '';
 
       // Check if the "redirect" attribute value contains a protocol (e.g., 'http' or 'https')
@@ -183,12 +190,7 @@ export default async function (
     // Fetch operation
     const response = await Promise.race([
       fetch(url, fetchOptions),
-      utils.timeout(
-        parseInt(
-          viewUtils.getAttribute('timeout', form, formBlock) ||
-            config.TIMEOUT_SEC.toString()
-        )
-      ),
+      utils.timeout(fetchConfig.timeout),
     ]);
 
     if (response instanceof Response) {
@@ -250,16 +252,12 @@ export default async function (
 
   // Add to api
   const sfApi = model.state.ghostInstances[instance.name].fetchData;
-  sfApi.redirect = output.redirect;
+  sfApi.redirect = redirect;
   sfApi.request = output.request;
   sfApi.response = output.response;
 
   // External / internal
-  if (!internal)
-    console.log(
-      'Fire fetched-external event!',
-      'make it easy for first registered event listener to delete response out of api'
-    );
+  if (!internal) viewUtils.dispatchEvent(instance.name, 'fetched-api', false);
 
   // Return
   return true;

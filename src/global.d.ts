@@ -69,7 +69,12 @@ interface SFAnimationConfig {
 }
 
 interface SFFetchConfig {
-  get any(): string;
+  get action(): string;
+  get method(): string;
+  get accept(): string;
+  get contentType(): string;
+  get redirect(): string;
+  get timeout(): number;
 }
 
 interface SFModesConfig {
