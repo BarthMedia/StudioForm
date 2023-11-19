@@ -16,7 +16,7 @@ interface StudioFormElements {
   get maxSlides(): NodeListOf<HTMLElement>;
 
   // Fetch response
-  get failMessages(): NodeListOf<HTMLElement>;
+  get error(): NodeListOf<HTMLElement>;
 
   // Anchor
   anchor: HTMLElement | null;
@@ -123,18 +123,22 @@ interface StudioFormInstance {
   auth?: true;
   promise: () => Promise<boolean>; // For custom promises!
   resolve?: boolean; // sf-await get's removed // Allow for class prefix
-  submitted?: boolean;
 
   // Wized API
   reset: (options?: {}) => void;
   fetch: (options?: SFOFetch) => Promise<boolean>;
   reportValidity: () => void; // slideRequirements -- legacy
 
+  // Status
+  isAwaiting: boolean;
+  isTransitioning: boolean;
+  isDone: boolean;
+
   // Navigation
   to: (slideId: number, options?: {}) => Promise<boolean>;
   next: (options?: {}) => Promise<boolean>;
   prev: (options?: {}) => Promise<boolean>;
-  submit: (options?: {}) => Promise<boolean>;
+  submit: (options?: { fake?: boolean }) => Promise<boolean>;
   scrollTo: (options: SFOScrollTo) => void;
   suggest: SFSuggest;
 
@@ -153,6 +157,7 @@ interface StudioFormInstance {
 interface StudioFormData {
   animation: SFAnimationData;
   fetch: SFFetchData;
+  error: SFErrorData;
   get form(): SFFormData;
   get params(): false | URLSearchParams;
   get progress(): SFProgressData;
@@ -191,11 +196,16 @@ interface SFFetchData {
   };
 }
 
+interface SFErrorData {
+  any: any;
+}
+
 interface SFHiddenData {
   any?: any;
 }
 
 interface StudioFormGhostInstance {
+  root: StudioFormInstance;
   auth: { token: string | undefined };
   animationData: SFAnimationData;
   fetchData: SFFetchData;

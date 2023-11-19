@@ -71,6 +71,13 @@ export default function (stateId: number, options: Options) {
       options.callback(false);
     }
 
+    console.log(
+      'allow numbers inside of offset selector!',
+      'sf-offset, general purpose!'
+    );
+
+    console.log("sf-name shall work in .to('Step 56')");
+
     // Warn
     console.warn(
       `${errPath(

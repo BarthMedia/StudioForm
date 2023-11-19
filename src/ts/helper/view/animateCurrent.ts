@@ -4,6 +4,8 @@ import * as config from '../../config';
 
 // Export active / inactive
 export default function init(instance: StudioFormInstance) {
+  console.log('Turn sf-in/active into sf-completed & sf-current!');
+
   // Define
   function toggle(id: number, mode: string, prefix = '') {
     // Elements
@@ -21,6 +23,13 @@ export default function init(instance: StudioFormInstance) {
         mode: mode,
       });
     });
+
+    console.log(
+      'Make sure sf-current is removed at the beginning of animate',
+      'make sure that there is animate-mid',
+      'or just wait for mid for add sf-current to new one!',
+      'at mid, apply sf-completed and add next sf-current?'
+    );
 
     // Inactive mode
     const arr = state.view.sfInactiveArray;

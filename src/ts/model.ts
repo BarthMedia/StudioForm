@@ -49,7 +49,7 @@ export const state: StudioFormState = {
     document.body.removeAttribute(config.API_WRITE_ATTRIBUTE);
 
     // Actually fullfill operation
-    if (allowance) {
+    if (allowance && proxyWriteEvent.data.property !== 'resolve') {
       // Values
       const data = proxyWriteEvent.data;
       const property = data.property;

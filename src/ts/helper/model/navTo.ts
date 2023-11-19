@@ -6,6 +6,14 @@ import * as config from '../../config';
 // Export
 const errPath = (s: any) => `${helper.errorName(s)}prev.ts -> default: `;
 export default function (stateId: number, options: Options) {
+  console.log(
+    "THIS CAN'T MAKE A MOVE IF THERE IS CURRENTLY AN ACTIVE PROMISE!"
+  );
+
+  console.log(
+    "THIS works with 'done', however the target has to be different from the current position!"
+  );
+
   // Values
   const state = model.state[stateId];
 

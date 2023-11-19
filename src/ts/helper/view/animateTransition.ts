@@ -365,7 +365,16 @@ export default function (index: number, options: Options) {
     gsapObj.isRunning = undefined;
   });
 
+  console.log('Respect sf-name?');
+
+  console.log(
+    'Figure out what needs to be done, accessibility wise on transition!',
+    'Also dispatchEvent wise!'
+  );
+
   // * Other animations *
+
+  console.log('Allow to customize easing!!!!!');
 
   // Call progress animation
   state.view.progress(options);

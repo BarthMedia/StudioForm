@@ -40,15 +40,8 @@ export default function (
     fail: wrapper.querySelector('.w-form-fail') as HTMLElement | null,
 
     // Fetch response
-    get failMessages() {
-      return querySelectorAll(
-        'fail',
-        'fail-message',
-        'fail-response',
-        'error',
-        'error-message',
-        'error-response'
-      );
+    get error() {
+      return querySelectorAll('error');
     },
 
     // Anchor

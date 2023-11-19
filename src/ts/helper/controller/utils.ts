@@ -22,4 +22,4 @@ export function scriptLoader(externalScript = 'foo.js', callback: () => void) {
 
 // Return product name
 export const errorName = (name: any) =>
-  `${config.PRODUCT_NAME_CAMEL_CASE}[${name}] ->`;
+  `${config.PRODUCT_NAME_CAMEL_CASE}["${name}"] ->`;

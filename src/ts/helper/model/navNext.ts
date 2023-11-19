@@ -6,6 +6,8 @@ import * as config from '../../config';
 // Export
 const errPath = (s: any) => `${helper.errorName(s)} -> next.ts -> default`;
 export default function (stateId: number, options: Options) {
+  console.log("can't go previous or next if instance == done = true !");
+
   // Values
   const state = model.state[stateId];
   let next: number | undefined | boolean;

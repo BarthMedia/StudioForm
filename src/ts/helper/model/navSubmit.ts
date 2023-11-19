@@ -6,6 +6,9 @@ import * as config from '../../config';
 // Export
 const errPath = (s: any) => `${helper.errorName(s)}submit.ts -> default: `;
 export default async function (stateId: number, options: Options) {
+  console.log('If submission .ok == true, then set resolve to true or false!');
+  console.log('Submission are promises and resolves!');
+
   // Values
   const state = model.state[stateId];
   const currentSlideId: number =

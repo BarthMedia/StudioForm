@@ -9,7 +9,7 @@ import swapSubmitButtons from '../view/swapSubmitButtons';
 import * as config from '../../config';
 
 // Export
-const errPath = (n: any) => `${controllerUtils.errorName(n)} slideLogic.ts:`;
+const errPath = (n: string) => `${controllerUtils.errorName(n)} slideLogic.ts:`;
 export default function (
   name: string,
   modes: SFModesConfig,
@@ -188,6 +188,25 @@ export default function (
         // Default
         return true;
       });
+  });
+
+  // Overwrite with proxies
+  const createReadMostlyProxy = model.state.createReadMostlyProxy;
+  slideLogic.forEach((slideObj, index) => {
+    // Buttons loop
+    if (slideObj.buttons) {
+      slideObj.buttons.forEach((buttonObj, index) => {
+        // Overwrite
+        slideObj.buttons[index] = createReadMostlyProxy(buttonObj);
+      });
+
+      // Turn into proxy array
+      slideObj.buttons = createReadMostlyProxy(slideObj.buttons) as
+        | StudioFormButtonLogic[];
+    }
+
+    // Slide obj overwriting
+    slideLogic[index] = createReadMostlyProxy(slideObj) as StudioFormSlideLogic;
   });
 
   // Add to state

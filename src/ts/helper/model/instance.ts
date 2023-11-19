@@ -2,6 +2,7 @@
 
 // Root
 import * as utils from './utils';
+import * as viewUtils from '../view/utils';
 import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
 import * as model from '../../model';
@@ -30,10 +31,13 @@ import animatePromiseResolve from '../view/animatePromiseResolve';
 
 // Destroy
 export const destroy = (instanceName: string) => {
+  console.log('Reset checkboxes on destroy!');
+
   // Values
   const events = model.state.events;
 
   // Log
+  console.log('I gotta add all these event listeners along the the way');
   console.log('I gotta destroy these event listeners!');
 
   // Remove DOM reference
@@ -66,8 +70,19 @@ export const init = (
   // Initiate events
   const event: StudioFormEvent[] = (model.state.events[instanceName] = []);
 
+  console.log(
+    'make sure, the event.defaultPrevented is respected on submit, in order to know if Wized or other js has successfully reset the form',
+    'If not default prevented, reset on your own, if that is wanted!'
+  );
+
   // Proxy write set prefix
   const proxyWriteSetPrefix = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}`;
+
+  console.log('have animate-end and animate events!');
+
+  console.log('Have fail event!');
+
+  console.log('Respect custom anchor?');
 
   // + Modes - proxy & event listener +
   const modesMain = modes(wrapper, mask);
@@ -178,9 +193,10 @@ export const init = (
   // + Data +
 
   // Animation data
-  const animationDataMain = {};
-  const animationDataProxy =
-    model.state.createReadMostlyProxy(animationDataMain);
+  const animationDataMain: SFAnimationData = {};
+  const animationDataProxy = model.state.createReadMostlyProxy(
+    animationDataMain
+  ) as SFAnimationData;
 
   // Fetch data
   const fetchDataMain = {};
@@ -193,6 +209,11 @@ export const init = (
 
   console.log(
     'Getters for data. form / progress are suppiror to other methods'
+  );
+
+  console.log(
+    'Think error messages much bigger?',
+    'There is not only fetch error, but also other type of requirements error readable through data.error ?'
   );
 
   // Data
@@ -281,6 +302,8 @@ export const init = (
 
   // + Instance +
 
+  console.log("Listen to as many .defaultPrevented logic's as possible");
+
   // Create
   const instanceMain: StudioFormInstance = {
     // + Functions +
@@ -293,6 +316,13 @@ export const init = (
       return await animatePromiseResolve(instanceProxy);
     },
     reportValidity: () => {
+      //
+      console.log(
+        'Report vadility deverse special mode, where you can input an [] of HTMLElements',
+        'This shall then scroll to and make red / apply combo class to the described elements!'
+      );
+
+      //
       console.log('I have to built');
     },
     reset: (options = {}) => {
@@ -333,6 +363,11 @@ export const init = (
       console.log('I have to built', 'I think fetched event could be sweet!');
       return true;
     },
+
+    // Status info
+    isAwaiting: false,
+    isTransitioning: false,
+    isDone: false,
 
     // Internal data
     name: instanceName,
@@ -380,15 +415,28 @@ export const init = (
         }
       }
 
+      console.log(
+        'Make sure to make data.fetch.{} deleteable / null! / nullable!'
+      );
+
       // Promise / resolve & submitted
       if (
-        ['resolve', 'submitted'].includes(String(property)) &&
+        property === 'resolve' &&
         (typeof value === 'boolean' || typeof value === 'undefined')
       ) {
+        // Guard
+        if (!instanceProxy.isAwaiting)
+          throw new Error(
+            `${errPath(instanceName)} There is no active promise!`
+          );
+
+        // Dispatch
+        viewUtils.dispatchEvent(instanceName, 'resolve', false, {
+          success: value,
+        });
+
+        // Write
         write = true;
-        console.log(
-          '!!!!!!!! Programm promise / resolve & submitted co. events!'
-        );
       }
 
       // Write
@@ -400,6 +448,7 @@ export const init = (
 
   // + Ghost instance +
   const ghostInstanceMain: StudioFormGhostInstance = {
+    root: instanceMain,
     auth: authMain,
     record: recordMain,
     animationData: animationDataMain,

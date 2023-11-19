@@ -65,6 +65,7 @@ export function getAttribute(str: string | null, ...elements: HTMLElement[]) {
 
 // Button & others selector
 export const INPUTS_SELECTOR = `input, select, textarea`;
+console.log('REBUILD LABEL INTO CASCADER, AND MAKE LABEL LESS RELEVANT!');
 export const LABEL_SELECTOR = 'label, ' + createSelector(null, 'label');
 export const BUTTON_SELECTOR =
   createSelector(null, 'submit', 'next') +
