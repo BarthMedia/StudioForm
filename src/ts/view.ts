@@ -1,16 +1,22 @@
-// Imports
+// + Imports +
+
+// General
 import * as utils from './helper/view/utils';
 import * as config from './config';
+
+// View
 import listener from './helper/view/listeners';
 import animate from './helper/view/animateTransition';
 import animateProgress from './helper/view/animateProgress';
 import anchor from './helper/view/scrollTo';
 import required from './helper/view/reportValidity';
-import sfActive from './helper/view/animateActive';
+import animateCurrent from './helper/view/animateCurrent';
 import elements from './helper/view/elements';
 
-// Export
+// Error path
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> view.ts:`;
+
+// + Export +
 export default function init(state: StudioFormState) {
   // Elements loop
   document
@@ -73,8 +79,8 @@ export default function init(state: StudioFormState) {
       // Guard
       if (!instance) return;
 
-      // Init sf active functionality
-      // sfActive(instance);
+      // Initial sf active call
+      animateCurrent(instance, 0);
 
       // Log
       console.log(instance.elements.nexts);

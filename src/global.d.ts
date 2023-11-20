@@ -211,6 +211,7 @@ interface StudioFormGhostInstance {
   fetchData: SFFetchData;
   hiddenData: SFHiddenData;
   record: number[];
+  completedCurrent: number[];
 }
 
 interface StudioFormEvents {

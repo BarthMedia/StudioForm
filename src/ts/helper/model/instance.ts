@@ -40,6 +40,11 @@ export const destroy = (instanceName: string) => {
     'But probably garbage collection is very important'
   );
 
+  console.log(
+    'instead of saving saving once events, ',
+    'click the form, and try to resolve a potential fetch!'
+  );
+
   // Values
   const events = model.state.events;
 
@@ -206,8 +211,16 @@ export const init = (
   ) as SFAnimationData;
 
   // Fetch data
-  const fetchDataMain = {};
-  const fetchDataProxy = model.state.createReadMostlyProxy(fetchDataMain);
+  const fetchDataMain: SFFetchData = {};
+  const fetchDataProxy = model.state.createReadMostlyProxy(
+    fetchDataMain
+  ) as SFFetchData;
+
+  // Fetch data
+  const validityDataMain: SFValidityData[] = {};
+  const validityDataProxy = model.state.createReadMostlyProxy(
+    validityDataMain
+  ) as SFValidityData[];
 
   console.log(
     '// Make it possible to easily delete fetch data',
@@ -234,9 +247,10 @@ export const init = (
       return dataForm(instanceProxy, false, true) as URLSearchParams | false;
     },
     get progress() {
-      console.log('progress data file');
+      console.log('progress data.   ... file');
       return {};
     },
+    validity: validityDataProxy,
   };
   const dataProxy = model.state.createReadMostlyProxy(
     dataMain
@@ -461,6 +475,7 @@ export const init = (
     animationData: animationDataMain,
     hiddenData: hiddenDataSecret,
     fetchData: fetchDataMain,
+    completedCurrent: [],
   };
 
   // Add proxy

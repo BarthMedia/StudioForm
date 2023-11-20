@@ -10,6 +10,8 @@ export default function (stateId: number, options: Options) {
     "THIS CAN'T MAKE A MOVE IF THERE IS CURRENTLY AN ACTIVE PROMISE!"
   );
 
+  console.log('Fire animateCurrent within the animate section!');
+
   console.log(
     "THIS works with 'done', however the target has to be different from the current position!"
   );

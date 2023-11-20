@@ -1,62 +1,62 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
 import * as config from '../../config';
+import * as model from '../../model';
 
 // Export active / inactive
-export default function init(instance: StudioFormInstance) {
-  console.log('Turn sf-in/active into sf-completed & sf-current!');
+export default function (instance: StudioFormInstance, timeCurrent: number) {
+  // + Define +
 
-  // Define
-  function toggle(id: number, mode: string, prefix = '') {
+  // Toggle main
+  function toggle(index: number, mode: string, _class: string) {
+    // Values
+    const slide = instance.logic[index];
+    const names = [`current-${index}`];
+    if (slide.name) names.unshift(`current-${slide.name}`);
+    const selector = utils.createSelector(instance.name, ...names);
+
     // Elements
-    const elements: NodeListOf<HTMLElement> =
-      instance.elements.wrapper.querySelectorAll(
-        helper.createSelector(instance.name, `active-${id}`)
-      );
+    const parents: NodeListOf<HTMLElement> =
+      document.querySelectorAll(selector);
 
     // Loop
-    elements.forEach(parent => {
-      // Toggle
-      helper.classListToggle({
-        el: parent,
-        class: prefix + 'active',
-        mode: mode,
-      });
+    parents.forEach(el => {
+      utils.classListToggle({ el: el, mode: mode, class: _class });
     });
-
-    console.log(
-      'Make sure sf-current is removed at the beginning of animate',
-      'make sure that there is animate-mid',
-      'or just wait for mid for add sf-current to new one!',
-      'at mid, apply sf-completed and add next sf-current?'
-    );
-
-    // Inactive mode
-    const arr = state.view.sfInactiveArray;
-    if (mode === 'add' && prefix === '') {
-      // Remove
-      arr.forEach((_id: number) => {
-        if (_id >= id) toggle(_id, 'remove', 'in');
-      });
-    } else if (prefix === '') {
-      // Add to array
-      if (!arr.includes(id)) {
-        arr.push(id);
-      }
-    }
   }
 
-  // Add
-  state.addSfActive = (slideId: number) => {
-    toggle(slideId, 'add');
-  };
+  // Quick toggle
+  function quickToggle(index: number, completed: boolean, current: boolean) {
+    // Toggle
+    toggle(index, completed ? 'add' : 'remove', 'completed');
+    toggle(index, current ? 'add' : 'remove', 'current');
+  }
 
-  // Remove
-  state.removeSfActive = (slideId: number) => {
-    toggle(slideId, 'remove');
-    toggle(slideId, 'add', 'in');
-  };
+  // Update completed / current state
+  const ghost = model.state.ghostInstances[instance.name];
 
-  // Initialize
-  state.addSfActive(0);
+  // To delete
+  ghost.completedCurrent.forEach(index => {
+    if (!instance.record.includes(index)) {
+      // Delete
+      quickToggle(index, false, false);
+    }
+  });
+
+  // Values
+  ghost.completedCurrent = [...instance.record];
+  const tmpRecord = [...instance.record];
+  const currentIndex = tmpRecord.pop();
+
+  // Add completed
+  tmpRecord.forEach(index => {
+    // Add / delete
+    quickToggle(index, true, false);
+  });
+
+  // Current
+  if (typeof currentIndex === 'number')
+    setTimeout(() => {
+      quickToggle(currentIndex, false, true);
+    }, timeCurrent * 1000);
 }
