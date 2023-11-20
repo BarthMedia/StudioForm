@@ -9,6 +9,10 @@ export default async function (stateId: number, options: Options) {
   console.log('If submission .ok == true, then set resolve to true or false!');
   console.log('Submission are promises and resolves!');
 
+  console.log(
+    'The submit / fetch call, shall actually run via this new promise / resolve architecture!'
+  );
+
   // Values
   const state = model.state[stateId];
   const currentSlideId: number =
@@ -19,6 +23,10 @@ export default async function (stateId: number, options: Options) {
   console.log(
     'ERROR AND SUCCESS MESSAGES ARE NO LISTS!',
     'nope, no lists! this can be alternatively achieved by Wized users listening to sf-after-submit!'
+  );
+
+  console.log(
+    'Standard promise only on submit, standard promise on move next, extra even promise on move back!'
   );
 
   console.log(

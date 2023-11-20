@@ -157,10 +157,10 @@ interface StudioFormInstance {
 interface StudioFormData {
   animation: SFAnimationData;
   fetch: SFFetchData;
-  error: SFErrorData;
   get form(): SFFormData;
   get params(): false | URLSearchParams;
   get progress(): SFProgressData;
+  validity: SFValidityData[];
 }
 
 type SFFormData = false | FormData | URLSearchParams;
@@ -196,7 +196,7 @@ interface SFFetchData {
   };
 }
 
-interface SFErrorData {
+interface SFValidityData {
   any: any;
 }
 

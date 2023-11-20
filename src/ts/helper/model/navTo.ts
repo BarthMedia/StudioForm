@@ -14,6 +14,11 @@ export default function (stateId: number, options: Options) {
     "THIS works with 'done', however the target has to be different from the current position!"
   );
 
+  console.log(
+    "Make sure, the native event get's fired on the correct .to() operation",
+    "make sure, that event next, prev, submit, to and their api version's have the apropriate defaultPrevented functionality!"
+  );
+
   // Values
   const state = model.state[stateId];
 

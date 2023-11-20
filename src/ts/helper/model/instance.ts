@@ -33,6 +33,13 @@ import animatePromiseResolve from '../view/animatePromiseResolve';
 export const destroy = (instanceName: string) => {
   console.log('Reset checkboxes on destroy!');
 
+  console.log(
+    'Have a one time event listener',
+    'All events have to be able to be properly garbage collected?',
+    "Maybe sort's itself",
+    'But probably garbage collection is very important'
+  );
+
   // Values
   const events = model.state.events;
 
@@ -313,7 +320,7 @@ export const init = (
       return await fetch(instanceProxy, options);
     },
     promise: async () => {
-      return await animatePromiseResolve(instanceProxy);
+      return await animatePromiseResolve(instanceProxy, false);
     },
     reportValidity: () => {
       //
