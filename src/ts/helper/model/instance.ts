@@ -20,6 +20,7 @@ import fetchConfig from './configFetch';
 
 // Usage
 import dataForm from './dataForm';
+import dataProgress from './dataProgress';
 import fetch from './fetch';
 
 // View
@@ -31,6 +32,10 @@ import animatePromiseResolve from '../view/animatePromiseResolve';
 
 // Destroy
 export const destroy = (instanceName: string) => {
+  // Think about tracking all the currently applied sf-classes.
+  // And how to remove them smoothly! think sf-completed & sf-current
+
+  //
   console.log('Reset checkboxes on destroy!');
 
   console.log(
@@ -247,8 +252,7 @@ export const init = (
       return dataForm(instanceProxy, false, true) as URLSearchParams | false;
     },
     get progress() {
-      console.log('progress data.   ... file');
-      return {};
+      return dataProgress(instanceProxy);
     },
     validity: validityDataProxy,
   };
@@ -476,6 +480,8 @@ export const init = (
     hiddenData: hiddenDataSecret,
     fetchData: fetchDataMain,
     completedCurrent: [],
+    slideCurrent: 0 as number | string,
+    slideNext: 0 as number | string,
   };
 
   // Add proxy

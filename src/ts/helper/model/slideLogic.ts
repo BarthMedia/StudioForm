@@ -8,8 +8,10 @@ import slideButtons from './slideButtons';
 import swapSubmitButtons from '../view/swapSubmitButtons';
 import * as config from '../../config';
 
-// Export
+// Error
 const errPath = (n: string) => `${controllerUtils.errorName(n)} slideLogic.ts:`;
+
+// Export
 export default function (
   name: string,
   modes: SFModesConfig,

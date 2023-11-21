@@ -4,27 +4,12 @@ import * as config from '../../config';
 import * as controllerUtils from '../controller/utils';
 
 // + Exports +
-const errPath = (s: any) =>
-  `${controllerUtils.errorName(s)}calculateProgress.ts -> default`;
-export default function (i: number) {
+const errPath = (n: string) =>
+  `${controllerUtils.errorName(n)} calculateProgress.ts:`;
+export default function (instance: StudioFormInstance) {
   // Values
-  const state = model.state[i];
-
-  // Test
-  // state.modes.calculateProgress = true;
-  // state.sdk.slideRecord = [0];
-
-  // Guard
-  if (state.sdk.slideLogic.length < 1 || state.sdk.slideRecord.length < 1)
-    throw new Error(
-      `${errPath(
-        state
-      )}: state.sdk.slideLogic.length and/or state.sdk.slideRecord.length can't equal 0`
-    );
-
-  // Values
-  const slideLogic: any[] = state.sdk.slideLogic;
-  const slideRecord: number[] = state.sdk.slideRecord;
+  const slideLogic = instance.logic;
+  const slideRecord = instance.record;
 
   // - Return longest or shortest path to the first possible submit -
 
@@ -35,10 +20,10 @@ export default function (i: number) {
     max = 0,
     count = 0,
     tmpCount = 0,
-    treeArray: any[] = [];
+    treeArray: number[] = [];
 
   // Loop function
-  function objectLoop(object: any) {
+  function objectLoop(object: StudioFormSlideLogic) {
     // Values
     let array = returnNextSlideIds(object);
 
@@ -55,10 +40,10 @@ export default function (i: number) {
 
     // Update values
     let securityConditional = false;
-    if (object.btns !== false) {
-      object.btns.every(btn => {
+    if (object.buttons !== false) {
+      object.buttons.every(button => {
         // Guard
-        if (btn.next !== false && btn.next !== undefined) return true;
+        if (button.next !== false && button.next !== undefined) return true;
 
         // Update values
         max = Math.max(max, count);
@@ -103,19 +88,19 @@ export default function (i: number) {
 
     // Action loop
     array.forEach(id => {
+      // False guard
+      if (id === false) return;
+
       // Undefined guard
-      if (id === undefined) {
+      if (typeof id !== 'number') {
         console.warn(
           `${errPath(
-            state
-          )} -> objectLoop -> array.forEach() callback: id === undefined`,
+            instance.name
+          )} objectLoop -> array.forEach() callback: id === undefined`,
           object
         );
         return;
       }
-
-      // False guard
-      if (id === false) return;
 
       // Iniciate loop
       objectLoop(slideLogic[id]);
@@ -123,12 +108,12 @@ export default function (i: number) {
   }
 
   // Return buttons
-  function returnNextSlideIds(object) {
+  function returnNextSlideIds(object: StudioFormSlideLogic) {
     // Value
-    let arr: any[] = [];
+    let arr: (number | boolean | undefined)[] = [];
 
-    if (object.btns)
-      object.btns.forEach(button => {
+    if (object.buttons)
+      object.buttons.forEach(button => {
         if (arr.indexOf(button.next) === -1 && !button.conditionalPrev) {
           arr.push(button.next);
         }
@@ -147,22 +132,20 @@ export default function (i: number) {
   // Finetune math values
   min += slideRecordLength - 1;
   max += slideRecordLength - 1;
-  const addition = state.modes._100PercentProgressOnSubmitOnly ? 1 : 0;
-
-  console.log("IF SLIDER MODE, YOU CAN'T COUNT SUCCESS MESSAGE");
+  const addition =
+    instance.config.modes.countDone && !instance.config.modes.slider ? 1 : 0;
 
   // Logic
-  const returnVal = {
-    shortest: {
+  const returnVal: SFProgressData = {
+    fast: {
       percentage: (slideRecordLength / (min + addition)) * 100,
       path: min,
-      walked: slideRecordLength,
     },
-    longest: {
+    slow: {
       percentage: (slideRecordLength / (max + addition)) * 100,
       path: max,
-      walked: slideRecordLength,
     },
+    traversed: slideRecordLength,
   };
 
   return returnVal;

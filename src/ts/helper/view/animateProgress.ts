@@ -1,30 +1,30 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-const errPath = (s: any) =>
-  `${helper.errorName(s)}animateProgress.ts -> default: `;
-export default function (stateId: number, options: Options) {
+const errPath = (n: string) =>
+  `${controllerUtils.errorName(n)} animateProgress.ts:`;
+export default function (instance: StudioFormInstance) {
   // Values
-  const state = model.state[stateId];
+  const elements = instance.elements;
 
   // Guard
   if (
-    state.elements.progress.bars.length < 1 &&
-    state.elements.progress.currentSlides.length < 1 &&
-    state.elements.progress.minMaxSlides.length < 1 &&
-    state.elements.progress.minSlides.length < 1 &&
-    state.elements.progress.maxSlides.length < 1 &&
-    !state.modes.calculateProgress
+    elements.progressBars.length < 1 &&
+    elements.currentSlides.length < 1 &&
+    elements.minMaxSlides.length < 1 &&
+    elements.minSlides.length < 1 &&
+    elements.maxSlides.length < 1 &&
+    !instance.config.modes.calculateProgress
   )
     return;
 
   // Calculate progress
-  state.model.generateProgressData();
-  const pData = state.sdk.pathProgressData;
-  const aData = state.sdk.animationData;
+  const pData = instance.data.progress;
+  const aData = instance.config.animations;
 
   // Guard
   if (typeof pData !== 'object')

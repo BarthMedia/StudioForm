@@ -82,10 +82,9 @@ export default function init(state: StudioFormState) {
       // Initial sf active call
       animateCurrent(instance, 0);
 
-      // Log
-      console.log(instance.elements.nexts);
+      // Calculate initial progress
+      animateProgress(instance);
 
-      // // Calculate initial progress
       // state.view.progress = function (options: Options = {}) {
       //   animateProgress(state.sdk.i, options);
       // };

@@ -21,6 +21,8 @@ export default function (stateId: number, options: Options) {
     "make sure, that event next, prev, submit, to and their api version's have the apropriate defaultPrevented functionality!"
   );
 
+  console.log('! update slide now and slide next!');
+
   // Values
   const state = model.state[stateId];
 

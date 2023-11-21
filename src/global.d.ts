@@ -166,7 +166,15 @@ interface StudioFormData {
 type SFFormData = false | FormData | URLSearchParams;
 
 interface SFProgressData {
-  any?: any;
+  fast: {
+    percentage: number;
+    path: number;
+  };
+  slow: {
+    percentage: number;
+    path: number;
+  };
+  traversed: number;
 }
 
 interface SFAnimationData {
@@ -205,6 +213,7 @@ interface SFHiddenData {
 }
 
 interface StudioFormGhostInstance {
+  // Other
   root: StudioFormInstance;
   auth: { token: string | undefined };
   animationData: SFAnimationData;
@@ -212,6 +221,10 @@ interface StudioFormGhostInstance {
   hiddenData: SFHiddenData;
   record: number[];
   completedCurrent: number[];
+
+  // Animations
+  slideCurrent: number | string;
+  slideNext: number | string;
 }
 
 interface StudioFormEvents {
