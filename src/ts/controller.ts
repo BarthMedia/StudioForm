@@ -92,10 +92,10 @@ function main() {
   // Add
   window[config.PRODUCT_NAME_CAMEL_CASE] = api;
 
-  // Remove sf-cloak
-  [config.PRODUCT_NAME_SHORT, config.PRODUCT_NAME_LONG].forEach(str => {
-    // Loop
-    document.querySelectorAll(`[${str}-cloak]`).forEach(el => {
+  // Loop
+  document
+    .querySelectorAll(viewUtils.createSelector(null, 'cloak'))
+    .forEach(el => {
       // Add to classList
       viewUtils.classListToggle({
         el: el as HTMLElement,
@@ -103,7 +103,6 @@ function main() {
         class: 'hide',
       });
     });
-  });
 
   // + Initialize +
   api['init']();
