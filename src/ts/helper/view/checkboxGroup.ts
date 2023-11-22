@@ -6,6 +6,10 @@ export default function init(state: any) {
   // Loop
   state.sdk.slideLogic.forEach((slide: any) => {
     console.log(
+      'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 HELPER FILES ACCORDINGLY!'
+    );
+
+    console.log(
       'Create sf- / studio-form-value attribute for checkboxes & groups, and only after that fall back to native value value!'
     );
 

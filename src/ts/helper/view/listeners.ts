@@ -1,126 +1,50 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
 import * as config from '../../config';
-import next from '../model/next';
-import prev from '../model/prev';
-import submit from '../model/submit';
-import suggestButton from './suggest';
-import radioCheckboxValueCorrector from './radioCheckboxValueCorrector';
-import fileUploadLabelChanger from './fileUploadLabelChanger';
-import groupCheckox from './groupCheckox';
-
-// Declare
-declare global {
-  interface Options {
-    doNotCheckSlideRequirements?: boolean;
-    btn?: any;
-    currentSlideId?: number;
-    nextSlideId?: number;
-    isSubmit?: boolean;
-    scrollToTarget?: boolean;
-    target?: HTMLElement | string;
-    offset?: HTMLElement | string | number;
-    attributeReferenceElement?: HTMLElement;
-    doNotWaitForAnimations?: boolean;
-    forceDone?: boolean;
-    doNotAnimate?: boolean;
-    callback?: (success: boolean) => void;
-  }
-}
+import * as model from '../../model';
 
 // Export
-export default function init(state: any) {
-  console.log(
-    'reduce number of events, to sf-animate, sf-submit, sf-fetch ... sf-on-fetch .. sf-after-fetch -- okay. Still better like this!'
-  );
-  console.log('requires new mask - no-bubbling - event structure!');
-  console.log('also sf-on-error, sf-after-error');
-  console.log('sf-resolve-true', 'sf-resolve-false event', 'sf-promise event!');
-
-  // Achieve correct values
-  radioCheckboxValueCorrector(state);
-
-  // Allow for native chechbox groups
-  groupCheckox(state);
-
-  // Achieve useful file upload behaviour
-  fileUploadLabelChanger(state);
-
-  // Add events infrastrucutre
-  const eventFunctionArrays = state.view.eventsFunctionArrays;
-  helper.addEventsInfrastrucutre(state, 'Next');
-  helper.addEventsInfrastrucutre(state, 'Prev');
-  helper.addEventsInfrastrucutre(state, 'Submit');
-
-  // Define sdk
-  state.sdk.next = (options: Options = {}) => {
-    helper.triggerAllFunctions(eventFunctionArrays.onNext);
-    const res = next(state.sdk.i, options);
-    return res;
-  };
-  state.sdk.prev = (options: Options = {}) => {
-    helper.triggerAllFunctions(eventFunctionArrays.onPrev);
-    const res = prev(state.sdk.i, options);
-    return res;
-  };
-  state.sdk.submit = async (options: Options = {}) => {
-    helper.triggerAllFunctions(eventFunctionArrays.onSubmit);
-    const res = await submit(state.sdk.i, options);
-    return res;
-  };
-
-  // Initialize suggest button
-  suggestButton(state);
-
+export default function init(instance: StudioFormInstance) {
   // Slides loop
-  state.sdk.slideLogic.forEach((slide: any) => {
-    // 1 or more btns case
-    if (slide.btns)
-      slide.btns.forEach((btn: any) =>
-        btn.el.addEventListener('click', () => {
-          state.sdk.next({ btn: btn });
+  instance.logic.forEach(slide => {
+    // 1 or more buttons case
+    if (slide.buttons)
+      slide.buttons.forEach(button =>
+        button.element.addEventListener('click', () => {
+          instance.next({ button: button });
         })
       );
   });
 
   // Next buttons
-  state.elements.nextBtns.forEach((btn: HTMLElement) =>
-    btn.addEventListener('click', () => {
-      state.sdk.next();
+  instance.elements.nexts.forEach(button =>
+    button.addEventListener('click', () => {
+      instance.next();
     })
   );
 
   // * Prev buttons *
-  state.elements.prevBtns.forEach((btn: HTMLElement) => {
+  instance.elements.prevs.forEach(button => {
     // Style init
-    helper.addSfHide(btn);
+    utils.addSfHide(button);
 
     // SDK
-    btn.addEventListener('click', () => {
-      state.sdk.prev();
+    button.addEventListener('click', () => {
+      instance.prev();
     });
   });
 
   // Hover / set active form
-  const activeAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}-active`;
-  state.elements.wrapper.addEventListener('mouseover', () => {
-    // Select all elements with data-active attribute
-    const activeElements = document.querySelectorAll(`[${activeAttr}]`);
-
-    // Remove the ${config.CUSTOM_ATTRIBUTE_PREFIX}-active attribute from all of them
-    activeElements.forEach(element => {
-      element.removeAttribute(activeAttr);
-    });
-
-    // Add to wrapper
-    state.elements.wrapper.setAttribute(activeAttr, '');
+  instance.elements.wrapper.addEventListener('mouseover', () => {
+    // Overwrite
+    model.state.activeKeyBoardInstance = instance.name;
   });
 
   // Init on sdk 0
-  if (state.sdk.i === 0) state.elements.wrapper.setAttribute(activeAttr, '');
+  if (model.state.api.keys[0] === instance.name)
+    model.state.activeKeyBoardInstance = instance.name;
 
   // * Keyboard *
-  const keAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}keyboard-events`;
   document.addEventListener('keydown', (event: KeyboardEvent) => {
     // Elements
     const target =
@@ -130,20 +54,17 @@ export default function init(state: any) {
         : null;
 
     // Guard 1 - Is active instance
-    if (!state.elements.wrapper.hasAttribute(activeAttr)) return;
+    if (model.state.activeKeyBoardInstance !== instance.name) return;
 
     // Values
     const currentSlide =
-      state.sdk.slideLogic[
-        state.sdk.slideRecord[state.sdk.slideRecord.length - 1]
-      ];
+      instance.logic[instance.record[instance.record.length - 1]];
 
     // Guard 2 - Mode, step, textarea & custom input allowance
     if (
-      !state.modes.keyboardEvents ||
-      currentSlide.el.getAttribute(keAttr) === 'false' ||
-      target?.getAttribute(keAttr) === 'false' ||
-      target instanceof HTMLTextAreaElement
+      !instance.config.modes.keyboardEvents ||
+      target instanceof HTMLTextAreaElement ||
+      utils.getAttribute('keyboard-events', target, currentSlide.element)
     )
       return;
 
@@ -156,49 +77,85 @@ export default function init(state: any) {
       if (inputTypes.includes(target?.type || '')) return;
 
       // Trigger
-      onBackspace(currentSlide.i);
+      onBackspace();
     } else if (event.key === 'Enter') {
       // Guard
 
       // Trigger
-      onEnter(currentSlide.i);
+      onEnter();
     } else if (event.key === 'ArrowLeft') {
       // Guard
 
       // Trigger
-      onArrowLeft(currentSlide.i);
+      onArrowLeft();
     } else if (event.key === 'ArrowRight') {
       // Guard
       if (inputTypes.includes(target?.type || '')) return;
 
       // Trigger
-      onArrowRight(currentSlide.i);
+      onArrowRight();
     }
   });
 
   // Function to be called when Escape key is pressed
-  function onBackspace(slideId: number) {
+  function onBackspace() {
     // Add your custom logic here
-    state.sdk.prev();
-    state.sdk.clearAllSuggestedButton(slideId);
+    instance.prev();
+    instance.suggest.clear();
   }
 
   // Function to be called when Enter key is pressed
-  function onEnter(slideId: number) {
+  function onEnter() {
     // Add your custom logic here
-    state.sdk.next();
-    state.sdk.clearAllSuggestedButton(slideId);
+    instance.next();
+    instance.suggest.clear();
   }
 
   // Function to be called when Left Arrow key is pressed
-  function onArrowLeft(slideId: number) {
+  function onArrowLeft() {
     // Add your custom logic here
-    state.sdk.suggestNext(slideId);
+    instance.suggest.next();
   }
 
   // Function to be called when Right Arrow key is pressed
-  function onArrowRight(slideId: number) {
+  function onArrowRight() {
     // Add your custom logic here
-    state.sdk.suggestPrev(slideId);
+    instance.suggest.prev();
   }
 }
+
+// Notes
+
+// console.log(
+//   'reduce number of events, to sf-animate, sf-submit, sf-fetch ... sf-on-fetch .. sf-after-fetch -- okay. Still better like this!'
+// );
+// console.log('requires new mask - no-bubbling - event structure!');
+// console.log('also sf-on-error, sf-after-error');
+// console.log('sf-resolve-true', 'sf-resolve-false event', 'sf-promise event!');
+// // Achieve correct values
+// radioCheckboxValueCorrector(instance);
+// // Allow for native chechbox groups
+// groupCheckox(instance);
+// // Achieve useful file upload behaviour
+// fileUploadLabelChanger(instance);
+// // Add events infrastrucutre
+// const eventFunctionArrays = instance.view.eventsFunctionArrays;
+// helper.addEventsInfrastrucutre(instance, 'Next');
+// helper.addEventsInfrastrucutre(instance, 'Prev');
+// helper.addEventsInfrastrucutre(instance, 'Submit');
+// // Define sdk
+// instance.sdk.next = (options: Options = {}) => {
+//   helper.triggerAllFunctions(eventFunctionArrays.onNext);
+//   const res = next(instance.sdk.i, options);
+//   return res;
+// };
+// instance.sdk.prev = (options: Options = {}) => {
+//   helper.triggerAllFunctions(eventFunctionArrays.onPrev);
+//   const res = prev(instance.sdk.i, options);
+//   return res;
+// };
+// instance.sdk.submit = async (options: Options = {}) => {
+//   helper.triggerAllFunctions(eventFunctionArrays.onSubmit);
+//   const res = await submit(instance.sdk.i, options);
+//   return res;
+// };

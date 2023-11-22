@@ -68,12 +68,6 @@ export default function (
   // Object
   const obj = {
     // General
-    get equalDimensionsMultiplier() {
-      return getFloat(
-        'equal-dimensions-multiplier',
-        config.DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER
-      );
-    },
     get direction() {
       // Values
       const val = getAttribute('direction')?.toLowerCase();
@@ -83,6 +77,20 @@ export default function (
 
       // Default return
       return getFloat('direction', config.DEFAULT_SLIDE_DIRECTION);
+    },
+    get ease() {
+      return getAttribute('ease') || 'power1.out';
+    },
+    get equalDimensionsMultiplier() {
+      return getFloat(
+        'equal-dimensions-multiplier',
+        config.DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER
+      );
+    },
+
+    // Progress bar
+    get progressBarAxis() {
+      return getAttribute('progress-bar-axis') || 'x';
     },
 
     // current / current

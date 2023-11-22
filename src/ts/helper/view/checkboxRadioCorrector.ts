@@ -1,11 +1,15 @@
 // Imports
 import * as config from '../../config';
-import * as helper from '../helper';
+import * as utils from './utils';
 
 // Export
 const sfsAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}selected`;
 const sfsClass = 'selected';
 export default function (state: any) {
+  console.log(
+    'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 HELPER FILES ACCORDINGLY!'
+  );
+
   // Consider that checkbox and radio requirements should work different when they are required
   // When required, have the value euqal = '', else 'off' else 'on'
 

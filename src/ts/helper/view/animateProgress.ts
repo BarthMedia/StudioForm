@@ -5,11 +5,10 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-const errPath = (n: string) =>
-  `${controllerUtils.errorName(n)} animateProgress.ts:`;
 export default function (instance: StudioFormInstance) {
   // Values
   const elements = instance.elements;
+  const ghost = model.state.ghostInstances[instance.name];
 
   // Guard
   if (
@@ -26,85 +25,66 @@ export default function (instance: StudioFormInstance) {
   const pData = instance.data.progress;
   const aData = instance.config.animations;
 
-  // Guard
-  if (typeof pData !== 'object')
-    throw new Error(`${errPath(state)}pathProgressData is not an object!`);
-
   // Animate progress bars
-  let bars: any[] = [];
-  [
-    state.elements.progress.bars,
-    document.querySelectorAll(
-      `[${config.PRODUCT_NAME}-${state.sdk.i}="progress-bar"`
-    ),
-  ].forEach((list: any[]) =>
-    list.forEach((item: HTMLElement) => bars.push(item))
-  );
-  bars.forEach((el: HTMLElement) => {
+  elements.progressBars.forEach(el => {
     // Values
     const tl = gsap.timeline();
-    const gsapObj = state.view.gsapProgressBarTimeline;
+    const gsapTl = ghost.gsapTl;
 
     // Clear existing timeline
-    if (gsapObj.isRunning) {
-      gsapObj.tl.clear();
+    if (gsapTl.progress?.isRunning) {
+      gsapTl.progress.tl.clear();
     }
 
     // Values
-    gsapObj.tl = tl;
-    gsapObj.isRunning = true;
+    gsapTl.progress = tl;
+    gsapTl.progress.isRunning = true;
 
     // Values
-    const direction =
-      el.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}axis`) || 'x';
+    const direction = utils.getAttribute('axis', el) || aData.progressBarAxis;
     const isX = direction.indexOf('x') > -1;
     const isY = direction.indexOf('y') > -1;
 
     // GSAP
     const val = {
-      duration: aData.timeBoth,
-      width: isX
-        ? (state.sdk.isSubmitted === true ? 100 : pData.longest.percentage) +
-          '%'
-        : '',
-      height: isY
-        ? (state.sdk.isSubmitted === true ? 100 : pData.longest.percentage) +
-          '%'
-        : '',
+      duration: aData.currentTime + aData.nextTime,
+      ease: aData.ease,
+      width: isX ? (instance.isDone ? 100 : pData.slow.percentage) + '%' : '',
+      height: isY ? (instance.isDone ? 100 : pData.slow.percentage) + '%' : '',
     };
     tl.to(el, val);
     tl.call(() => {
-      gsapObj.isRunning = undefined;
+      if (gsapTl.progress) gsapTl.progress.isRunning = undefined;
     });
   });
 
   // * Display slides info *
 
   // Current
-  state.elements.progress.currentSlides.forEach((el: HTMLElement) => {
+  elements.currentSlides.forEach((el: HTMLElement) => {
     // Alter
-    el.innerHTML = pData.longest.walked;
+    el.innerHTML = pData.traversed + '';
   });
 
   // Min
-  state.elements.progress.minSlides.forEach((el: HTMLElement) => {
+  elements.minSlides.forEach((el: HTMLElement) => {
     // Alter
-    el.innerHTML = pData.shortest.path;
+    el.innerHTML = pData.fast.path + '';
   });
 
   // Max
-  state.elements.progress.maxSlides.forEach((el: HTMLElement) => {
+  elements.maxSlides.forEach((el: HTMLElement) => {
     // Alter
-    el.innerHTML = pData.longest.path;
+    el.innerHTML = pData.slow.path + '';
   });
 
   // Min max
-  state.elements.progress.minMaxSlides.forEach((el: HTMLElement) => {
+  elements.minMaxSlides.forEach((el: HTMLElement) => {
     // Value
     const str: string =
-      pData.longest.path > pData.shortest.path
-        ? pData.shortest.path + ' - ' + pData.longest.path
-        : pData.longest.path;
+      pData.slow.path > pData.fast.path
+        ? pData.fast.path + ' - ' + pData.slow.path
+        : pData.slow.path + '';
 
     // Alter
     el.innerHTML = str;

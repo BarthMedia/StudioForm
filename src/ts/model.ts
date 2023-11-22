@@ -6,6 +6,9 @@ import * as instance from './helper/model/instance';
 
 // Main object
 export const state: StudioFormState = {
+  // Keyboard active
+  activeKeyBoardInstance: '',
+
   // Storage / "garbage collection"
   events: {},
 

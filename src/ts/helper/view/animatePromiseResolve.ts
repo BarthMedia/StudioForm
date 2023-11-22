@@ -62,9 +62,13 @@ export default async function (instance: StudioFormInstance, internal = true) {
   utils.classListToggle(...getElements('add'));
 
   // Event listener
-  instance.elements.mask.addEventListener('resolve', e => resolve(e), {
-    once: true,
-  });
+  instance.elements.mask.addEventListener(
+    model.state.api['config'].eventPrefix + 'resolve',
+    e => resolve(e),
+    {
+      once: true,
+    }
+  );
 
   // Define function
   function resolve(e: Event) {

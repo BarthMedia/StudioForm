@@ -160,8 +160,20 @@ export const init = (
   ) as SFAnimationConfig;
   const animationsConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}-animations-config`;
   const animationsConfigWrite = (e: unknown) => {
+    // Values
+    const detail = e?.['detail'];
+    const value = detail?.value;
+    const property = detail?.property;
+    const stringVals = ['ease', 'progressBarAxis'];
+    const includesStringVals = stringVals.includes(property);
+
     // Writing logic
-    if (typeof e?.['detail']?.value === 'boolean')
+    if (
+      (!includesStringVals &&
+        (typeof value === 'number' ||
+          (property === 'direction' && value === 'off'))) ||
+      (includesStringVals && typeof value === 'string')
+    )
       document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
   };
   document.body.addEventListener(
@@ -307,6 +319,12 @@ export const init = (
   });
 
   // Suggest Proxy
+
+  console.log(`
+  // // Initialize suggest button
+  suggestButton(state);
+  `);
+
   const suggestMain: SFSuggest = {
     clear: () => {
       console.log('I have to built');
@@ -366,7 +384,10 @@ export const init = (
       console.log(
         "Throw error if API user try's this without supplying options!"
       );
-      console.log('I have to built', 'I think fetched event could be sweet!');
+      console.log(
+        'I have to be built',
+        'I think fetched event could be sweet!'
+      );
     },
     suggest: suggestProxy,
 
@@ -473,13 +494,19 @@ export const init = (
 
   // + Ghost instance +
   const ghostInstanceMain: StudioFormGhostInstance = {
-    root: instanceMain,
-    auth: authMain,
-    record: recordMain,
+    // External write
     animationData: animationDataMain,
-    hiddenData: hiddenDataSecret,
     fetchData: fetchDataMain,
+    record: recordMain,
+    root: instanceMain,
+
+    // Secret
+    auth: authMain,
+    hiddenData: hiddenDataSecret,
+
+    // Internal
     completedCurrent: [],
+    gsapTl: {},
     slideCurrent: 0 as number | string,
     slideNext: 0 as number | string,
   };
@@ -559,7 +586,7 @@ export const init = (
 
 //   // Check step requirements
 //   const eventFunctionArrays = obj.view.eventsFunctionArrays;
-//   helper.addEventsInfrastrucutre(obj, 'CheckSlideRequirements');
+//   su.addEventsInfrastrucutre(obj, 'CheckSlideRequirements');
 //   obj.sdk.slideRequirementsData = {};
 //   obj.sdk.slideRequirements = function (
 //     slideId: number,

@@ -65,7 +65,24 @@ interface StudioFormSlideLogic {
 // }
 
 interface SFAnimationConfig {
-  get any(): string;
+  // Current
+  get currentMoveMultiplier(): number;
+  get currentOpacity(): number;
+  get currentTime(): number;
+
+  // General
+  get direction(): number | string;
+  get ease(): string;
+  get equalDimensionsMultiplier(): number;
+
+  // Progress bar
+  get progressBarAxis(): string;
+
+  // Next
+  get nextMoveMultiplier(): number;
+  get nextOpacity(): number;
+  get nextTime(): number;
+  get nextZIndex(): number;
 }
 
 interface SFFetchConfig {
@@ -225,6 +242,10 @@ interface StudioFormGhostInstance {
   // Animations
   slideCurrent: number | string;
   slideNext: number | string;
+  gsapTl: {
+    progress?: gsap.core.Timeline;
+    transition?: gsap.core.Timeline;
+  };
 }
 
 interface StudioFormEvents {
@@ -237,6 +258,9 @@ interface StudioFormEvent {
 }
 
 type StudioFormState = {
+  // Keyboard activity
+  activeKeyBoardInstance: string;
+
   // Storage / "garbage collection"
   events: StudioFormEvents;
 

@@ -6,12 +6,11 @@ import * as config from './config';
 
 // View
 import listener from './helper/view/listeners';
-import animate from './helper/view/animateTransition';
 import animateProgress from './helper/view/animateProgress';
-import anchor from './helper/view/scrollTo';
-import required from './helper/view/reportValidity';
 import animateCurrent from './helper/view/animateCurrent';
-import elements from './helper/view/elements';
+import fileUploadLabelChanger from './helper/view/fileUploadLabelChanger';
+import checkboxRadioCorrector from './helper/view/checkboxRadioCorrector';
+import checkboxGroup from './helper/view/checkboxGroup';
 
 // Error path
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> view.ts:`;
@@ -76,6 +75,8 @@ export default function init(state: StudioFormState) {
       // Values
       const instance = state.api[instanceName] as StudioFormInstance | null;
 
+      // * Initiate *
+
       // Guard
       if (!instance) return;
 
@@ -85,44 +86,20 @@ export default function init(state: StudioFormState) {
       // Calculate initial progress
       animateProgress(instance);
 
-      // state.view.progress = function (options: Options = {}) {
-      //   animateProgress(state.sdk.i, options);
-      // };
-      // state.view.progress();
+      // * Init initial style *
 
-      // // Animate anchor
-      // state.sdk.scrollTo = function (options: Options = {}) {
-      //   anchor(state.sdk.i, options);
-      // };
+      // Steps
+      instance.logic.forEach(slide => {
+        slide.element.style.display = 'none';
+      });
+      instance.logic[0].element.style.display = '';
 
-      // // * Set animate available *
+      // Iniate sub listener scripts
+      fileUploadLabelChanger(instance);
+      checkboxRadioCorrector(instance);
+      checkboxGroup(instance);
 
-      // // Add events infrastrucutre
-      // const eventFunctionArrays = state.view.eventsFunctionArrays;
-      // helper.addEventsInfrastrucutre(state, 'Animate');
-
-      // // State view
-      // state.view.animate = function (options: Options = {}) {
-      //   helper.triggerAllFunctions(eventFunctionArrays.onAnimate);
-      //   animate(state.sdk.i, options);
-      // };
-
-      // // Render error endpoint
-      // helper.addEventsInfrastrucutre(state, 'RenderRequirements');
-      // state.view.renderRequirements = function (data = []) {
-      //   helper.triggerAllFunctions(eventFunctionArrays.onRenderRequirements);
-      //   required(state.sdk.i, data);
-      // };
-
-      // // * Init initial style *
-
-      // // Steps
-      // state.sdk.slideLogic.forEach((slide: any) => {
-      //   slide.el.style.display = 'none';
-      // });
-      // state.sdk.slideLogic[0].el.style.display = '';
-
-      // // * Init event listeners *
-      // listener(state);
+      // * Init main event listeners *
+      listener(instance);
     });
 }

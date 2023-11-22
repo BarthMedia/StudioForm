@@ -29,7 +29,10 @@ export function dispatchEvent(
 }
 
 // Get attribute
-export function getAttribute(str: string | null, ...elements: HTMLElement[]) {
+export function getAttribute(
+  str: string | null,
+  ...elements: (HTMLElement | null)[]
+) {
   // Values
   const querys = [
     `${config.PRODUCT_NAME_SHORT}${str === null ? '' : `-${str}`}`,
@@ -45,7 +48,7 @@ export function getAttribute(str: string | null, ...elements: HTMLElement[]) {
     // Loop
     elements.every(el => {
       // Logic
-      const getAttr = el.getAttribute(str);
+      const getAttr = el?.getAttribute(str);
       if (getAttr) {
         attr = getAttr;
         return false;
@@ -193,7 +196,7 @@ export const removeSfHide = (element: HTMLElement) => {
 export function isElementTopVisible(
   element: HTMLElement,
   state: any,
-  options: Options,
+  options: SFOScrollTo,
   isFullyVisibleMode = false
 ) {
   // Elements
@@ -222,7 +225,7 @@ export function isElementTopVisible(
 }
 
 // Return target element and offset number
-export function returnTargetAndOffset(state: any, options: Options) {
+export function returnTargetAndOffset(state: any, options: SFOScrollTo) {
   // Selector
   const sttAttr = `scroll-to-target`;
   const targetSelector =

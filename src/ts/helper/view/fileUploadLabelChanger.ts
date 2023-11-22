@@ -1,67 +1,65 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-export default function (state: any) {
+export default function (instance: StudioFormInstance) {
+  console.log(
+    'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 HELPER FILES ACCORDINGLY!'
+  );
+
   // Guard
-  if (!state.modes.autoSwapFileUploadLabelText) return;
+  if (!instance.config.modes.autoSwapFileUploadLabel) return;
 
   // Loop
-  state.elements.mask
-    .querySelectorAll('input[type="file"]')
-    .forEach((input: HTMLInputElement) => {
-      // Elements
-      const label = document.querySelector(
-        `[for="${input.id}"]`
-      ) as HTMLElement | null;
+  (
+    instance.elements.mask.querySelectorAll(
+      'input[type="file"]'
+    ) as NodeListOf<HTMLInputElement>
+  ).forEach(input => {
+    // Elements
+    const label = document.querySelector(`[for="${input.id}"]`) as HTMLElement;
 
-      // Guard
-      if (!label) return;
+    // Null guard
+    if (!utils.isElement(label)) return;
 
-      // Guard
-      if (
-        (label.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}swap-text`) ||
-          'true') !== 'true'
-      )
-        return;
+    // Guard
+    if ((utils.getAttribute('swap-text', label) || 'true') !== 'true') return;
 
-      // Values
-      const originalText = label?.innerHTML;
-      const allElements = [label, input];
-      label.childNodes.forEach(node => allElements.push(node as HTMLElement));
+    // Values
+    const originalText = label?.innerHTML;
+    const allElements = [label, input];
+    label.childNodes.forEach(node => allElements.push(node as HTMLElement));
 
-      // Define
+    // Define
 
-      function f(mode: string) {
-        const sfuOptions = {
-          class: 'uploaded',
-          mode: mode,
-        };
-        helper.classListToggle({
-          ...sfuOptions,
-          el: label!,
-          otherEls: [input],
-        });
-      }
-
-      // Event listener
-      input.addEventListener('change', _ => {
-        // Values
-        const selectedFile = input.files?.[0];
-        const prefix =
-          label.getAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}swap-prefix`) ||
-          '';
-
-        // Logic swap
-        if (selectedFile) {
-          label.innerHTML = prefix + selectedFile.name;
-          f('add');
-        } else {
-          label.innerHTML = originalText;
-          f('remove');
-        }
+    function f(mode: string) {
+      const sfuOptions = {
+        class: 'uploaded',
+        mode: mode,
+      };
+      utils.classListToggle({
+        ...sfuOptions,
+        el: label,
+        otherEls: [input],
       });
+    }
+
+    // Event listener
+    input.addEventListener('change', _ => {
+      // Values
+      const selectedFile = input.files?.[0];
+      const prefix = utils.getAttribute('swap-text', label) || '';
+
+      // Logic swap
+      if (selectedFile) {
+        label.innerHTML = prefix + selectedFile.name;
+        f('add');
+      } else {
+        label.innerHTML = originalText;
+        f('remove');
+      }
     });
+  });
 }
