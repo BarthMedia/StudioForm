@@ -237,7 +237,7 @@ interface StudioFormGhostInstance {
   fetchData: SFFetchData;
   hiddenData: SFHiddenData;
   record: number[];
-  completedCurrent: number[];
+  asyncRecord: number[];
 
   // Animations
   slideCurrent: number | string;
@@ -246,6 +246,9 @@ interface StudioFormGhostInstance {
     progress?: gsap.core.Timeline;
     transition?: gsap.core.Timeline;
   };
+
+  // Events
+  observer: MutationObserver | null;
 }
 
 interface StudioFormEvents {
@@ -274,7 +277,6 @@ type StudioFormState = {
   ) => void;
 
   // Proxy & API
-  createReadMostlyProxy: (object: object, description?: string) => object;
   api: StudioForm;
   proxy: StudioForm;
   get proxyWrite(): boolean;

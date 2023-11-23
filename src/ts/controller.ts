@@ -98,7 +98,7 @@ function main() {
     .forEach(el => {
       // Add to classList
       viewUtils.classListToggle({
-        el: el as HTMLElement,
+        element: el as HTMLElement,
         mode: 'add',
         class: 'hide',
       });
@@ -121,7 +121,7 @@ gsapScript ? loaderLogic() : utils.scriptLoader(gsapSrc, loaderLogic);
 // Main
 function loaderLogic() {
   // Check if DOM is already loaded
-  if (document.readyState === 'loading') {
+  if (document.readyState !== 'complete') {
     // If DOM is not loaded, add an event listener
     document.addEventListener('DOMContentLoaded', main);
   } else {

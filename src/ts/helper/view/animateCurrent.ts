@@ -21,7 +21,7 @@ export default function (instance: StudioFormInstance, timeCurrent: number) {
 
     // Loop
     parents.forEach(el => {
-      utils.classListToggle({ el: el, mode: mode, class: _class });
+      utils.classListToggle({ element: el, mode: mode, class: _class });
     });
   }
 
@@ -36,7 +36,7 @@ export default function (instance: StudioFormInstance, timeCurrent: number) {
   const ghost = model.state.ghostInstances[instance.name];
 
   // To delete
-  ghost.completedCurrent.forEach(index => {
+  ghost.asyncRecord.forEach(index => {
     if (!instance.record.includes(index)) {
       // Delete
       quickToggle(index, false, false);
@@ -44,7 +44,7 @@ export default function (instance: StudioFormInstance, timeCurrent: number) {
   });
 
   // Values
-  ghost.completedCurrent = [...instance.record];
+  ghost.asyncRecord = [...instance.record];
   const tmpRecord = [...instance.record];
   const currentIndex = tmpRecord.pop();
 

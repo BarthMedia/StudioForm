@@ -28,16 +28,21 @@ export function dispatchEvent(
   );
 }
 
+// Get attribute strings
+export function getAttributeStrings(str: string | null) {
+  return [
+    `${config.PRODUCT_NAME_SHORT}${str === null ? '' : `-${str}`}`,
+    `${config.PRODUCT_NAME_LONG}${str === null ? '' : `-${str}`}`,
+  ];
+}
+
 // Get attribute
 export function getAttribute(
   str: string | null,
   ...elements: (HTMLElement | null)[]
 ) {
   // Values
-  const querys = [
-    `${config.PRODUCT_NAME_SHORT}${str === null ? '' : `-${str}`}`,
-    `${config.PRODUCT_NAME_LONG}${str === null ? '' : `-${str}`}`,
-  ];
+  const querys = getAttributeStrings(str);
   let val: string | null = null;
 
   // Loop
@@ -101,13 +106,13 @@ export function createSelector(
 
     // Logic
     if (!instanceName) {
-      val += base.join(',') + (i < strings.length - 1 ? ',' : '');
+      val += base.join() + (i < strings.length - 1 ? ',' : '');
       return;
     }
 
     // Else
-    val += base.map(str => `${wrapper} ${str}`).join(',') + ',';
-    val += advanced.join(',') + (i < strings.length - 1 ? ',' : '');
+    val += base.map(str => `${wrapper} ${str}`).join() + ',';
+    val += advanced.join() + (i < strings.length - 1 ? ',' : '');
   });
 
   // Return
@@ -116,37 +121,40 @@ export function createSelector(
 
 // Classlist toggle
 type classListToggleArgs = {
-  el: HTMLElement;
+  element: HTMLElement;
   otherEls?: HTMLElement[];
   mode: string;
   class: string;
   closest?: {
-    parent: string;
-    allowParent?: {
-      refEl?: HTMLElement;
-      getAttr?: string;
-      tagName?: true;
-      equals: string;
-    };
+    cascader: boolean;
   };
 };
 
+// Cloest cascader
+export const closestCascader = (element: HTMLElement) => {
+  // Values
+  const cascader = element.closest(
+    createSelector(null, 'cascader')
+  ) as HTMLElement | null;
+  const label = ['checkbox', 'radio'].includes(
+    element.getAttribute('type') || ''
+  )
+    ? element.closest('label')
+    : null;
+
+  // Return
+  return cascader || label || element;
+};
+
+// Class list toggle
 export const classListToggle = (...args: classListToggleArgs[]) => {
   // Loop
   args.forEach(args => {
     // Parent
-    let parent = args.el;
+    let parent = args.element;
     if (args.closest) {
-      // Define
-      const arg = args.closest;
-      const refEl = arg.allowParent?.refEl || args.el;
-      const equals = arg.allowParent?.getAttr
-        ? getAttribute(arg.allowParent.getAttr, refEl)
-        : refEl.tagName;
-
-      // Logic
-      if (!arg.allowParent || equals === arg.allowParent.equals)
-        parent = args.el.closest(arg.parent) || parent;
+      // Overwrite
+      parent = closestCascader(parent);
     }
 
     const elements: (HTMLElement | Element)[] = [parent];
@@ -170,16 +178,12 @@ const sfAttr = 'hide';
 const sfhOptions = {
   class: sfAttr,
   closest: {
-    parent: createSelector(null, sfAttr),
-    allowParent: {
-      getAttr: `closest-${sfAttr}`,
-      equals: 'false',
-    },
+    cascader: true,
   },
 };
 function _sfHide(element: HTMLElement, mode: string) {
   // Toogle
-  classListToggle({ ...sfhOptions, el: element, mode: mode });
+  classListToggle({ ...sfhOptions, element: element, mode: mode });
 }
 
 // Add sf hide
@@ -199,6 +203,8 @@ export function isElementTopVisible(
   options: SFOScrollTo,
   isFullyVisibleMode = false
 ) {
+  console.log('Think about window-scroll if that is the correct name??');
+
   // Elements
   const scrollToElement: HTMLElement | null = state.elements.wrapper.closest(
     createSelector(null, 'window-scroll')

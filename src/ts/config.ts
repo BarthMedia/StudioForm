@@ -1,6 +1,9 @@
 // Other
 export const TIMEOUT_SEC = 300;
 
+// Initial load
+export const INITIAL_PROGRESS_BAR_ANIMATION_DELAY = 0.5;
+
 // Animate.ts
 export const DEFAULT_SLIDE_DIRECTION = 90;
 export const DEFAULT_SLIDE_OPACITY = 0;

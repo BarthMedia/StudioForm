@@ -27,9 +27,6 @@ export const state: StudioFormState = {
   api: {},
   proxy: {},
 
-  // Create proxy
-  createReadMostlyProxy: createReadMostlyProxy,
-
   // Get proxy write event
   get proxyWrite() {
     // Dispatch body event
@@ -124,7 +121,7 @@ const globalConfigMain = {
     );
   },
 };
-const globalConfigProxy = state.createReadMostlyProxy(
+const globalConfigProxy = createReadMostlyProxy(
   globalConfigMain,
   'global-config'
 ) as StudioFormGlobalConfig;
@@ -220,7 +217,7 @@ const proxyErr = (property: string | symbol, value: unknown = undefined) =>
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> model.ts:`;
 
 // Create read only proxy
-function createReadMostlyProxy(obj: object, description = 'undefined') {
+export function createReadMostlyProxy(obj: object, description = 'undefined') {
   return new Proxy(obj, {
     set(target, property, value) {
       // Write access

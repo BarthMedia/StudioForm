@@ -32,6 +32,12 @@ import animatePromiseResolve from '../view/animatePromiseResolve';
 
 // Destroy
 export const destroy = (instanceName: string) => {
+  // Values
+  const ghostInstances = model.state.ghostInstances;
+
+  // Disconnect observer
+  ghostInstances[instanceName].observer?.disconnect();
+
   // Think about tracking all the currently applied sf-classes.
   // And how to remove them smoothly! think sf-completed & sf-current
 
@@ -72,7 +78,7 @@ export const destroy = (instanceName: string) => {
   delete events[instanceName];
 
   // Delete instance
-  delete model.state.ghostInstances[instanceName];
+  delete ghostInstances[instanceName];
   delete model.state.instances[instanceName];
   delete model.state.api[instanceName];
 };
@@ -84,6 +90,11 @@ export const init = (
   wrapper: HTMLElement,
   mask: HTMLElement
 ) => {
+  // NOTE: TODO
+  console.log(
+    'Have a more unified and clear way of listening to proxy write events!'
+  );
+
   // Initiate events
   const event: StudioFormEvent[] = (model.state.events[instanceName] = []);
 
@@ -103,7 +114,7 @@ export const init = (
 
   // + Modes - proxy & event listener +
   const modesMain = modes(wrapper, mask);
-  const modesProxy = model.state.createReadMostlyProxy(
+  const modesProxy = model.createReadMostlyProxy(
     modesMain,
     `${instanceName}-modes`
   ) as SFModesConfig;
@@ -117,7 +128,7 @@ export const init = (
 
   // + Elements +
   const elementsMain = elements(modesProxy, instanceName, wrapper, mask);
-  const elementsProxy = model.state.createReadMostlyProxy(
+  const elementsProxy = model.createReadMostlyProxy(
     elementsMain
   ) as StudioFormElements;
 
@@ -138,13 +149,13 @@ export const init = (
     modesProxy,
     elementsProxy
   );
-  const logicProxy = model.state.createReadMostlyProxy(
+  const logicProxy = model.createReadMostlyProxy(
     logicMain
   ) as StudioFormSlideLogic[];
 
   // Slide record
   const recordMain = [0];
-  const recordProxy = model.state.createReadMostlyProxy(recordMain) as number[];
+  const recordProxy = model.createReadMostlyProxy(recordMain) as number[];
 
   // + Config +
 
@@ -154,7 +165,7 @@ export const init = (
     wrapper,
     mask
   );
-  const animationsConfigProxy = model.state.createReadMostlyProxy(
+  const animationsConfigProxy = model.createReadMostlyProxy(
     animationsConfigMain,
     `${instanceName}-animations-config`
   ) as SFAnimationConfig;
@@ -187,7 +198,7 @@ export const init = (
 
   // Generate fetch config
   const fetchConfigMain: SFFetchConfig = fetchConfig(wrapper, mask);
-  const fetchConfigProxy = model.state.createReadMostlyProxy(
+  const fetchConfigProxy = model.createReadMostlyProxy(
     fetchConfigMain,
     `${instanceName}-fetch-config`
   ) as SFFetchConfig;
@@ -215,7 +226,7 @@ export const init = (
     fetch: fetchConfigProxy,
     modes: modesProxy,
   };
-  const configProxy = model.state.createReadMostlyProxy(
+  const configProxy = model.createReadMostlyProxy(
     configMain
   ) as StudioFormConfig;
 
@@ -223,19 +234,19 @@ export const init = (
 
   // Animation data
   const animationDataMain: SFAnimationData = {};
-  const animationDataProxy = model.state.createReadMostlyProxy(
+  const animationDataProxy = model.createReadMostlyProxy(
     animationDataMain
   ) as SFAnimationData;
 
   // Fetch data
   const fetchDataMain: SFFetchData = {};
-  const fetchDataProxy = model.state.createReadMostlyProxy(
+  const fetchDataProxy = model.createReadMostlyProxy(
     fetchDataMain
   ) as SFFetchData;
 
   // Fetch data
   const validityDataMain: SFValidityData[] = {};
-  const validityDataProxy = model.state.createReadMostlyProxy(
+  const validityDataProxy = model.createReadMostlyProxy(
     validityDataMain
   ) as SFValidityData[];
 
@@ -268,9 +279,7 @@ export const init = (
     },
     validity: validityDataProxy,
   };
-  const dataProxy = model.state.createReadMostlyProxy(
-    dataMain
-  ) as StudioFormData;
+  const dataProxy = model.createReadMostlyProxy(dataMain) as StudioFormData;
 
   // Hidden data fields by external users
   console.log('Apply similar write only technique, as you have done ');
@@ -281,7 +290,7 @@ export const init = (
   console.log('Have dataForm.ts respect these hidden values!');
   const hiddenDataSecret: SFHidden = {};
   const hiddenDataMain: SFHidden = {};
-  const hiddenDataProxy = model.state.createReadMostlyProxy(
+  const hiddenDataProxy = model.createReadMostlyProxy(
     hiddenDataMain,
     `${instanceName}-hidden`
   ) as SFHidden;
@@ -339,9 +348,7 @@ export const init = (
       console.log('I have to built');
     },
   };
-  const suggestProxy = model.state.createReadMostlyProxy(
-    suggestMain
-  ) as SFSuggest;
+  const suggestProxy = model.createReadMostlyProxy(suggestMain) as SFSuggest;
 
   // + Instance +
 
@@ -426,7 +433,7 @@ export const init = (
     // External data
     hidden: hiddenDataProxy,
   };
-  const instanceProxy = model.state.createReadMostlyProxy(
+  const instanceProxy = model.createReadMostlyProxy(
     instanceMain,
     `${instanceName}-instance`
   ) as StudioFormInstance;
@@ -505,10 +512,13 @@ export const init = (
     hiddenData: hiddenDataSecret,
 
     // Internal
-    completedCurrent: [],
+    asyncRecord: [],
     gsapTl: {},
     slideCurrent: 0 as number | string,
     slideNext: 0 as number | string,
+
+    // Events
+    observer: null,
   };
 
   // Add proxy

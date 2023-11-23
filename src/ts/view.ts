@@ -3,6 +3,7 @@
 // General
 import * as utils from './helper/view/utils';
 import * as config from './config';
+import * as model from './model';
 
 // View
 import listener from './helper/view/listeners';
@@ -84,7 +85,9 @@ export default function init(state: StudioFormState) {
       animateCurrent(instance, 0);
 
       // Calculate initial progress
-      animateProgress(instance);
+      setTimeout(() => {
+        animateProgress(instance);
+      }, config.INITIAL_PROGRESS_BAR_ANIMATION_DELAY * 1000);
 
       // * Init initial style *
 
@@ -94,10 +97,53 @@ export default function init(state: StudioFormState) {
       });
       instance.logic[0].element.style.display = '';
 
+      // Observe
+      const observer = new MutationObserver(observe);
+      model.state.ghostInstances[instanceName].observer = observer;
+      observer.observe(mask, { childList: true, subtree: true });
+
       // Iniate sub listener scripts
-      fileUploadLabelChanger(instance);
-      checkboxRadioCorrector(instance);
-      checkboxGroup(instance);
+      function observe(mutationsList: MutationRecord[]) {
+        // Values
+        const newFileInputs: HTMLInputElement[] = [];
+        const newCheckboxInputs: HTMLInputElement[] = [];
+        const newRadioInputs: HTMLInputElement[] = [];
+
+        // Loop
+        mutationsList.forEach(mutation => {
+          // Guard
+          if (mutation.type !== 'childList') return;
+
+          // Loops
+          mutation.addedNodes.forEach(node => {
+            // Overwrite
+            let nodes = [node];
+            if (node instanceof Element)
+              node
+                .querySelectorAll('input')
+                .forEach(input => nodes.push(input));
+
+            // Loop
+            nodes.forEach(node => {
+              // Guard
+              if (!(node instanceof HTMLInputElement)) return;
+
+              // Logic
+              if (node.type === 'file') newFileInputs.push(node);
+              if (node.type === 'checkbox') newCheckboxInputs.push(node);
+              if (node.type === 'radio') newRadioInputs.push(node);
+            });
+          });
+        });
+
+        // Log
+        console.log('MLIST: ', newFileInputs);
+
+        // Fire
+        fileUploadLabelChanger(instance!, newFileInputs);
+        checkboxRadioCorrector(instance!, newCheckboxInputs, newRadioInputs);
+        checkboxGroup(instance!, newCheckboxInputs);
+      }
 
       // * Init main event listeners *
       listener(instance);

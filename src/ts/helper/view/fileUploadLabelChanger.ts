@@ -41,7 +41,7 @@ export default function (instance: StudioFormInstance) {
       };
       utils.classListToggle({
         ...sfuOptions,
-        el: label,
+        element: label,
         otherEls: [input],
       });
     }

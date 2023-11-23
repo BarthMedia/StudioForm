@@ -193,7 +193,7 @@ export default function (
   });
 
   // Overwrite with proxies
-  const createReadMostlyProxy = model.state.createReadMostlyProxy;
+  const createReadMostlyProxy = model.createReadMostlyProxy;
   slideLogic.forEach((slideObj, index) => {
     // Buttons loop
     if (slideObj.buttons) {

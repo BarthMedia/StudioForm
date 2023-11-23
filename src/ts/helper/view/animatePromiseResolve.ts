@@ -36,12 +36,12 @@ export default async function (instance: StudioFormInstance, internal = true) {
       .querySelectorAll(inner)
       .forEach(el => elements.push(el as HTMLElement));
     document
-      .querySelectorAll(outer.join(','))
+      .querySelectorAll(outer.join())
       .forEach(el => elements.push(el as HTMLElement));
 
     // Return
     return elements.map(el => {
-      return { el: el, mode: mode, class: awaitAttr };
+      return { element: el, mode: mode, class: awaitAttr };
     });
   }
 

@@ -2,35 +2,38 @@
 import * as config from '../../config';
 import * as utils from './utils';
 
+// utils
+const sfsVal = 'selected';
+
 // Export
-const sfsAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}selected`;
-const sfsClass = 'selected';
-export default function (state: any) {
+export default function (instance: StudioFormInstance) {
   console.log(
-    'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 HELPER FILES ACCORDINGLY!'
+    'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 utils FILES ACCORDINGLY!',
+    'done',
+    'now respect, that these changes actually happen!'
   );
 
   // Consider that checkbox and radio requirements should work different when they are required
   // When required, have the value euqal = '', else 'off' else 'on'
 
-  console.log('THIS CAN NOT FIRE, WHEN CLICK EVENT TARGET IS ANCHOR!');
-
   // Loop
-  state.sdk.slideLogic.forEach((slide: { el: HTMLElement }) => {
+  instance.logic.forEach(slide => {
     // Elements
-    const inputs = slide.el.querySelectorAll('input');
+    const inputs = slide.element.querySelectorAll(
+      ['checkbox', 'radio'].map(str => `input[type="${str}"]`).join()
+    ) as NodeListOf<HTMLInputElement>;
 
     // Loop
     inputs.forEach(input => {
       // Guard
-      if (input.type !== 'checkbox' && input.type !== 'radio') return;
+      console.log(input);
 
       // Class list toggle options
-      const el = (input.closest(config.LABEL_SELECTOR) || input) as HTMLElement;
+      const element = utils.closestCascader(input);
       const cltOptions = {
-        el: input,
-        class: sfsClass,
-        closest: { parent: config.LABEL_SELECTOR },
+        element: input,
+        class: sfsVal,
+        closest: { cascader: true },
       };
 
       // Elements
@@ -42,7 +45,7 @@ export default function (state: any) {
       // Checkbox case
       if (input.type === 'checkbox') {
         // Add 'sf-selected' class
-        if (isOn) helper.classListToggle({ ...cltOptions, mode: 'add' });
+        if (isOn) utils.classListToggle({ ...cltOptions, mode: 'add' });
         else {
           if (input.hasAttribute('required')) input.value = '';
           else input.value = 'off';
@@ -50,7 +53,10 @@ export default function (state: any) {
       }
 
       // Event listener
-      el.addEventListener('click', () => {
+      element.addEventListener('click', event => {
+        // Guard
+        if (event.target?.['tagName'] === 'A') return;
+
         // Timeout guard
         if (isTimeout) return;
         else {
@@ -74,10 +80,10 @@ export default function (state: any) {
           function otherCltOptions(mode: string) {
             return otherGroupRadios.map(radio => {
               return {
-                el: radio as HTMLElement,
-                class: sfsClass,
+                element: radio as HTMLElement,
+                class: sfsVal,
                 mode: mode,
-                closest: { parent: config.LABEL_SELECTOR },
+                closest: { cascader: true },
               };
             });
           }
@@ -85,18 +91,18 @@ export default function (state: any) {
           // * Add *
 
           // Class
-          helper.classListToggle({ ...cltOptions, mode: 'add' });
+          utils.classListToggle({ ...cltOptions, mode: 'add' });
 
           // Attribute
-          input.setAttribute(sfsAttr, '');
+          input.setAttribute(sfsVal, '');
 
           // * Remove *
 
           // Class
-          helper.classListToggle(otherCltOptions('remove'));
+          utils.classListToggle(...otherCltOptions('remove'));
 
           // Attribute
-          otherGroupRadios.forEach(radio => radio.removeAttribute(sfsAttr));
+          otherGroupRadios.forEach(radio => radio.removeAttribute(sfsVal));
         }
 
         // Checkbox
@@ -104,7 +110,7 @@ export default function (state: any) {
           // Data logic & class switch
           if (isOn) {
             // Remove it
-            helper.classListToggle({ ...cltOptions, mode: 'remove' });
+            utils.classListToggle({ ...cltOptions, mode: 'remove' });
 
             // Logic
             if (input.hasAttribute('required')) input.value = '';
@@ -112,7 +118,7 @@ export default function (state: any) {
             isOn = false;
           } else {
             // Add it
-            helper.classListToggle({ ...cltOptions, mode: 'add' });
+            utils.classListToggle({ ...cltOptions, mode: 'add' });
 
             // Logic
             input.value = 'on';
