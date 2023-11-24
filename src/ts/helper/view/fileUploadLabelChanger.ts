@@ -4,13 +4,35 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-export default function (instance: StudioFormInstance) {
+export default function (
+  instance: StudioFormInstance,
+  fileInputs: HTMLInputElement[]
+) {
+  // Guard
+  if (!fileInputs.length) return;
+
   console.log(
     'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 HELPER FILES ACCORDINGLY!'
   );
 
   // Guard
   if (!instance.config.modes.autoSwapFileUploadLabel) return;
+
+  setTimeout(() => {
+    console.log(
+      'Use custom new elements to build this out for JFP',
+
+      'BUILD OUT NATIVE FILE DRAG SUPPORT',
+
+      "Have some sort of file label text ... ? or like data-wait, maybe sf-uploaded='This hase been uploaded FILE_NAME'",
+
+      fileInputs,
+
+      'Perfect, you got it to reliably work <3',
+
+      instance.name
+    );
+  }, 5000);
 
   // Loop
   (

@@ -63,12 +63,14 @@ export default function (
     inputs.forEach(input => {
       // Values
       const key =
-        input.getAttribute(`data-name`) ||
-        input.getAttribute('name') ||
-        input.getAttribute('id') ||
-        input.getAttribute('class') ||
-        input.getAttribute('type') ||
-        input.tagName;
+        viewUtils.getAttributeOr(
+          input,
+          'data-name',
+          'name',
+          'id',
+          'class',
+          'type'
+        ) || input.tagName;
       const value =
         input.type !== 'file'
           ? input.type === 'password' && internal

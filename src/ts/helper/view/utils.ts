@@ -28,6 +28,30 @@ export function dispatchEvent(
   );
 }
 
+// Get attribute ||
+export function getAttributeOr(element: HTMLElement, ...strings: string[]) {
+  // Values
+  let returnVal: string | null = null;
+
+  // Loop
+  strings.every(str => {
+    // Values
+    const val = element.getAttribute(str);
+
+    // Logic
+    if (val) {
+      returnVal = val;
+      return false;
+    }
+
+    // Default
+    return true;
+  });
+
+  // Return
+  return returnVal as string | null;
+}
+
 // Get attribute strings
 export function getAttributeStrings(str: string | null) {
   return [

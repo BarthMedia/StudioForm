@@ -3,7 +3,13 @@ import * as config from '../../config';
 import * as utils from './utils';
 
 // + Export +
-export default function init(instance: StudioFormInstance) {
+export default function init(
+  instance: StudioFormInstance,
+  checkboxInputs: HTMLInputElement[]
+) {
+  // Guard
+  if (!checkboxInputs.length) return;
+
   // Loop
   instance.logic.forEach(slide => {
     console.log(

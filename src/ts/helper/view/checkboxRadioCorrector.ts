@@ -6,7 +6,14 @@ import * as utils from './utils';
 const sfsVal = 'selected';
 
 // Export
-export default function (instance: StudioFormInstance) {
+export default function (
+  instance: StudioFormInstance,
+  checkboxInputs: HTMLInputElement[],
+  radioInputs: HTMLInputElement[]
+) {
+  // Guard
+  if (!checkboxInputs.length && !radioInputs.length) return;
+
   console.log(
     'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 utils FILES ACCORDINGLY!',
     'done',

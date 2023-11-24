@@ -21,30 +21,32 @@ export default function init(state: StudioFormState) {
   // Elements loop
   document
     .querySelectorAll(utils.createSelector(null, 'wrapper', 'mask'))
-    .forEach(el => {
+    .forEach(async el => {
       // Logical elements
       const wrapper = (
-        el.tagName === 'FORM' ? el.parentElement : el
+        el.tagName === 'FORM'
+          ? el.parentElement
+          : utils.getAttribute(null, el as HTMLElement) === 'mask' &&
+            !el.classList.contains('w-form')
+          ? el.parentElement
+          : el
       ) as HTMLElement;
       const mask = (wrapper.querySelector('form') ||
         wrapper.querySelector('*')) as HTMLElement | null;
 
-      // Simple guard
+      // Guard - Simple
       if (!mask) {
         console.warn(`${errPath} Couldn't find mask!`, wrapper);
         return;
       }
 
-      // Already active guard
+      // Guard - Already active
       const sfNameAttr = `${config.PRODUCT_NAME_SHORT}-id`;
       if (wrapper.hasAttribute(sfNameAttr)) return;
 
       // Instance name
       let instanceName = (
-        mask.getAttribute(`data-name`) ||
-        mask.getAttribute('name') ||
-        mask.getAttribute('id') ||
-        mask.getAttribute('class') ||
+        utils.getAttributeOr(mask, 'data-name', 'name', 'id', 'class') ||
         mask.tagName
       ).replace(/[^a-zA-Z0-9-_.]/g, '_'); // Replace invalid characters with hyphens
 
@@ -99,23 +101,29 @@ export default function init(state: StudioFormState) {
 
       // Observe
       const observer = new MutationObserver(observe);
-      model.state.ghostInstances[instanceName].observer = observer;
       observer.observe(mask, { childList: true, subtree: true });
+      model.state.ghostInstances[instanceName].observer = observer;
 
-      // Iniate sub listener scripts
-      function observe(mutationsList: MutationRecord[]) {
+      // Initiate
+      let initiated = false;
+      setTimeout(() => {
+        observe(null);
+      }, 1);
+
+      // Define observer function
+      function observe(mutationsList: MutationRecord[] | null) {
+        // Guard
+        if (!initiated && mutationsList !== null) return;
+        if (!initiated) initiated = true;
+
         // Values
         const newFileInputs: HTMLInputElement[] = [];
         const newCheckboxInputs: HTMLInputElement[] = [];
         const newRadioInputs: HTMLInputElement[] = [];
 
-        // Loop
-        mutationsList.forEach(mutation => {
-          // Guard
-          if (mutation.type !== 'childList') return;
-
-          // Loops
-          mutation.addedNodes.forEach(node => {
+        // Define
+        function nodeLoop(nodes: NodeList) {
+          nodes.forEach(node => {
             // Overwrite
             let nodes = [node];
             if (node instanceof Element)
@@ -134,10 +142,18 @@ export default function init(state: StudioFormState) {
               if (node.type === 'radio') newRadioInputs.push(node);
             });
           });
-        });
+        }
 
-        // Log
-        console.log('MLIST: ', newFileInputs);
+        // Loop
+        if (mutationsList)
+          mutationsList.forEach(mutation => {
+            // Guard
+            if (mutation.type !== 'childList') return;
+
+            // Loops
+            nodeLoop(mutation.addedNodes);
+          });
+        else nodeLoop(mask!.childNodes);
 
         // Fire
         fileUploadLabelChanger(instance!, newFileInputs);
