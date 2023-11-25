@@ -113,6 +113,7 @@ export default function (
 
         // Label text
         if (allowLabelSwap) label.innerHTML = originalText;
+        label.removeAttribute(`${config.PRODUCT_NAME_SHORT}-file-name`);
 
         // Remove file
         delete ghost.files[key];
@@ -162,9 +163,11 @@ export default function (
       const name = allowedFiles.map(file => file.name).join(', ');
       const prefix = utils.getAttribute('swap-prefix', label, input) || '';
       const suffix = utils.getAttribute('swap-suffix', label, input) || '';
+      const fileName = prefix + name + suffix;
 
       // Swap
-      if (allowLabelSwap) label.innerHTML = prefix + name + suffix;
+      if (allowLabelSwap) label.innerHTML = fileName;
+      label.setAttribute(`${config.PRODUCT_NAME_SHORT}-file-name`, fileName);
       uploaded('add');
 
       // Add files
