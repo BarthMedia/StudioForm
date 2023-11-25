@@ -14,7 +14,8 @@ export default function (
     instance.elements.mask.tagName === 'FORM' ? instance.elements.mask : null
   ) as HTMLInputElement | null;
   const modes = instance.config.modes;
-  const hidden = model.state.ghostInstances[instance.name].hiddenData;
+  const ghost = model.state.ghostInstances[instance.name];
+  const hidden = ghost.hiddenData;
 
   // Guard
   if (!form) return false;
@@ -62,21 +63,13 @@ export default function (
     // Loop
     inputs.forEach(input => {
       // Values
-      const key =
-        viewUtils.getAttributeOr(
-          input,
-          'data-name',
-          'name',
-          'id',
-          'class',
-          'type'
-        ) || input.tagName;
+      const key = viewUtils.getInputKey(input);
       const value =
         input.type !== 'file'
-          ? input.type === 'password' && internal
+          ? input.type === 'password' && !internal
             ? config.HIDDEN
             : input.value
-          : input.files;
+          : false;
 
       // Radio edgecase
       if (
@@ -86,30 +79,44 @@ export default function (
         return;
 
       // Logic
-      if (value) addVals(key, value);
+      addVals(key, value);
     });
   });
 
   // Define helper
-  function addVals(key: string, value: string | FileList | File) {
+  function addVals(key: string, value: string | false | File) {
     // Logic
-    if (typeof key === 'string') {
-      fields.push({
-        key: key,
-        value: value as string,
-      });
+    if (typeof value === 'string') {
+      if (value !== '')
+        fields.push({
+          key: key,
+          value: value,
+        });
     } else {
       // Values
-      const isFile = value instanceof File;
+      const fileValue = value ? value : ghost.files[key];
+      const isFile = fileValue instanceof File;
 
-      // Loop
-      for (let i = 0, n = isFile ? 1 : value.length; i < n; i++) {
+      // Guard
+      if (!fileValue) return;
+
+      // Define
+      function push(index: number | null) {
+        // Values
+        const isNull = index === null;
+
         // Push
         files.push({
-          key: `${key}${complex ? '][' : ''}${complex ? i : ''}`,
-          value: (isFile ? value : value[i]) as File,
+          key: `${key}${complex && !isNull ? ']' : ''}${
+            !isNull ? '[' + index : ''
+          }${complex || isNull ? '' : ']'}`,
+          value: isNull ? fileValue : fileValue[index],
         });
       }
+
+      // Single file
+      if (isFile) push(null);
+      else fileValue.forEach((_, index) => push(index));
     }
   }
 

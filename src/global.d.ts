@@ -174,10 +174,15 @@ interface StudioFormInstance {
 interface StudioFormData {
   animation: SFAnimationData;
   fetch: SFFetchData;
+  files: SFFilesData;
   get form(): SFFormData;
   get params(): false | URLSearchParams;
   get progress(): SFProgressData;
   validity: SFValidityData[];
+}
+
+interface SFFilesData {
+  [name: string]: File | File[];
 }
 
 type SFFormData = false | FormData | URLSearchParams;
@@ -238,6 +243,7 @@ interface StudioFormGhostInstance {
   hiddenData: SFHiddenData;
   record: number[];
   asyncRecord: number[];
+  files: SFFilesData;
 
   // Animations
   slideCurrent: number | string;

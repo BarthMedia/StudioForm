@@ -226,6 +226,16 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     get autoSwapFileUploadLabel() {
       return getAttribute('auto-swap-file-upload-label');
     },
+
+    // File dropping
+    get fileDrop() {
+      return getAttribute('file-drop');
+    },
+
+    // File dropping
+    get fileLabelSwap() {
+      return getAttribute('file-label-swap');
+    },
   };
 
   // Expose to api & handle change requests

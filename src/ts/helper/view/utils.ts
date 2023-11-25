@@ -28,6 +28,14 @@ export function dispatchEvent(
   );
 }
 
+// Get input key
+export function getInputKey(input: HTMLInputElement) {
+  return (
+    getAttributeOr(input, 'data-name', 'name', 'id', 'class', 'type') ||
+    input.tagName
+  ).replace(/[!'()*]/g, '_');
+}
+
 // Get attribute ||
 export function getAttributeOr(element: HTMLElement, ...strings: string[]) {
   // Values

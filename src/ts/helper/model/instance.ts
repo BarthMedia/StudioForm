@@ -264,10 +264,17 @@ export const init = (
     'There is not only fetch error, but also other type of requirements error readable through data.error ?'
   );
 
+  // Files data
+  const filesDataMain: SFFilesData = {};
+  const filesDataProxy = model.createReadMostlyProxy(
+    filesDataMain
+  ) as SFFilesData;
+
   // Data
   const dataMain: StudioFormData = {
     animation: animationDataProxy,
     fetch: fetchDataProxy,
+    files: filesDataProxy,
     get form() {
       return dataForm(instanceProxy);
     },
@@ -501,11 +508,12 @@ export const init = (
 
   // + Ghost instance +
   const ghostInstanceMain: StudioFormGhostInstance = {
-    // External write
+    // External read & sometimes write
     animationData: animationDataMain,
     fetchData: fetchDataMain,
     record: recordMain,
     root: instanceMain,
+    files: filesDataMain,
 
     // Secret
     auth: authMain,

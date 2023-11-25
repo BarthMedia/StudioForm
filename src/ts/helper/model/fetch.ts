@@ -78,7 +78,10 @@ export default async function (
     });
 
   // Custom headers || If accept header or content type specified on form
-  const isCustomHeaders = acceptStr !== '' || contentTypeStr !== '';
+  const isCustomHeaders =
+    externalOptions.headers !== undefined ||
+    acceptStr !== '' ||
+    contentTypeStr !== '';
 
   // Create the options for the fetch request
   const fetchOptions: {
