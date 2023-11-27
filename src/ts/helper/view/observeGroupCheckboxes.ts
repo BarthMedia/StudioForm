@@ -10,6 +10,8 @@ export default function init(
   // Guard
   if (!checkboxInputs.length) return;
 
+  console.log('Make sure, this also works for complex data type structure!');
+
   // Loop
   instance.logic.forEach(slide => {
     console.log(

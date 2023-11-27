@@ -3,7 +3,7 @@ import * as config from '../../config';
 import * as utils from './utils';
 
 // utils
-const sfsVal = 'selected';
+const sfsVal = 'checked';
 
 // Export
 export default function (
@@ -11,8 +11,52 @@ export default function (
   checkboxInputs: HTMLInputElement[],
   radioInputs: HTMLInputElement[]
 ) {
+  console.log('Maybe merge group checkbox & checked');
+
   // Guard
   if (!checkboxInputs.length && !radioInputs.length) return;
+
+  // Define
+  function toggle(input: HTMLInputElement, mode = 'remove') {
+    // Toggle
+    utils.classListToggle({
+      element: input,
+      class: sfsVal,
+      mode: mode,
+      closest: { cascader: true },
+    });
+  }
+
+  // Radios
+  radioInputs.forEach(input => {
+    // Values
+    const cascader = utils.closestCascader(input);
+
+    // Event listener
+    cascader.addEventListener('click', e => {
+      // Guard
+      if (e.target?.['tagName'] !== 'INPUT') return;
+
+      // Elements
+      const inputs = instance.elements.mask.querySelectorAll(
+        `input[name="${input.name}"]`
+      ) as NodeListOf<HTMLInputElement>;
+
+      // Loop
+      inputs.forEach(otherInput => {
+        // Guard
+        if (otherInput === input) return;
+
+        // Deselect
+        toggle(otherInput);
+      });
+
+      // Select
+      toggle(input, 'add');
+    });
+  });
+
+  // Checkboxes
 
   console.log(
     'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 utils FILES ACCORDINGLY!',
@@ -37,11 +81,6 @@ export default function (
 
       // Class list toggle options
       const element = utils.closestCascader(input);
-      const cltOptions = {
-        element: input,
-        class: sfsVal,
-        closest: { cascader: true },
-      };
 
       // Elements
 

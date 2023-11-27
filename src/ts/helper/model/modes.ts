@@ -222,11 +222,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('field-params-redirect');
     },
 
-    // Auto swap file upload label text
-    get autoSwapFileUploadLabel() {
-      return getAttribute('auto-swap-file-upload-label');
-    },
-
     // File dropping
     get fileDrop() {
       return getAttribute('file-drop');

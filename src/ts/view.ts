@@ -9,9 +9,9 @@ import * as model from './model';
 import listener from './helper/view/listeners';
 import animateProgress from './helper/view/animateProgress';
 import animateCurrent from './helper/view/animateCurrent';
-import fileUploadLabelChanger from './helper/view/fileUploadLabelChanger';
-import checkboxRadioCorrector from './helper/view/checkboxRadioCorrector';
-import checkboxGroup from './helper/view/checkboxGroup';
+import fileUploadLabelChanger from './helper/view/observeAttachments';
+import checkboxRadioCorrector from './helper/view/observeChecked';
+import checkboxGroup from './helper/view/observeGroupCheckboxes';
 
 // Error path
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> view.ts:`;

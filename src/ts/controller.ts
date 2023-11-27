@@ -35,6 +35,11 @@ function main() {
     return;
   }
 
+  console.log(
+    'Respect area-hidden and area-label attributes!',
+    'Also tabindex ??'
+  );
+
   // + Define functions +
 
   // Push

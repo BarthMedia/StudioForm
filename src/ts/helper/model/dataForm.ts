@@ -101,15 +101,14 @@ export default function (
       if (!fileValue) return;
 
       // Define
-      function push(index: number | null) {
+      function push(index: number | null, _key = key) {
         // Values
         const isNull = index === null;
+        const key = !complex ? _key : `${_key}${!isNull ? '][' + index : ''}`;
 
         // Push
         files.push({
-          key: `${key}${complex && !isNull ? ']' : ''}${
-            !isNull ? '[' + index : ''
-          }${complex || isNull ? '' : ']'}`,
+          key: key,
           value: isNull ? fileValue : fileValue[index],
         });
       }

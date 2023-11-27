@@ -11,25 +11,6 @@ export default function (
   // Guard
   if (!fileInputs.length) return;
 
-  // Guard
-  if (!instance.config.modes.autoSwapFileUploadLabel) return;
-
-  setTimeout(() => {
-    console.log(
-      'Use custom new elements to build this out for JFP',
-
-      'BUILD OUT NATIVE FILE DRAG SUPPORT',
-
-      "Have some sort of file label text ... ? or like data-wait, maybe sf-uploaded='This hase been uploaded FILE_NAME'",
-
-      fileInputs,
-
-      'Perfect, you got it to reliably work <3',
-
-      instance.name
-    );
-  }, 5000);
-
   // Values
   const ghost = model.state.ghostInstances[instance.name];
 
@@ -67,12 +48,12 @@ export default function (
         // Handle
         handleFiles(event.dataTransfer?.files);
       });
-    }
 
-    // Click
-    label.addEventListener('click', _ => {
-      handleFiles(null);
-    });
+      // Click
+      label.addEventListener('click', _ => {
+        handleFiles(null);
+      });
+    }
 
     // Input change event listener
     input.addEventListener('change', _ => {
@@ -88,7 +69,7 @@ export default function (
 
     // Add uploaded
     function uploaded(mode: string) {
-      toggle(mode, 'uploaded');
+      toggle(mode, 'attached');
     }
 
     // Toggle
@@ -107,7 +88,7 @@ export default function (
     const allowLabelSwap = instance.config.modes.fileLabelSwap;
     function handleFiles(files: FileList | undefined | null) {
       // Define
-      function falsy() {
+      function falsy(isVadilityError = false) {
         // Handle class swap
         uploaded('remove');
 
@@ -115,8 +96,14 @@ export default function (
         if (allowLabelSwap) label.innerHTML = originalText;
         label.removeAttribute(`${config.PRODUCT_NAME_SHORT}-file-name`);
 
+        // Report vadility
+        if (isVadilityError) instance.reportValidity(label);
+
         // Remove file
         delete ghost.files[key];
+
+        // Fire event
+        utils.dispatchEvent(instance.name, 'detached', false, { key: key });
       }
 
       // Values
@@ -136,8 +123,23 @@ export default function (
         return;
       }
 
+      // Functions
+      function getAttribute(string: string) {
+        // Values
+        const val = parseFloat(utils.getAttribute(string, input, label) || '');
+
+        // Return
+        return isNaN(val) ? null : val;
+      }
+
+      // Special attributes
+      const minFiles = getAttribute('min-files');
+      const maxFiles = getAttribute('max-files');
+      const minSize = getAttribute('min-size');
+      const maxSize = getAttribute('max-size');
+
       // Loop & variables
-      const allowedFiles: File[] = [];
+      let allowedFiles: File[] = [];
       for (let i = 0, n = files.length; i < n; i++) {
         // Values
         const file = files[i];
@@ -146,14 +148,26 @@ export default function (
         if (!isMultiple && i) break;
 
         // Only push if accepted
-        if (!acceptedTypes || acceptedTypes.includes(file.type))
+        if (!acceptedTypes || acceptedTypes.includes(file.type)) {
+          // Min & max size
+          if (minSize !== null && file.size < minSize) continue;
+          if (maxSize !== null && file.size > maxSize) continue;
+
+          // Success
           allowedFiles.push(file);
+        }
       }
+
+      // Test file numbers
+      if (minFiles !== null && allowedFiles.length >= minFiles)
+        allowedFiles = [];
+      if (maxFiles !== null && allowedFiles.length <= maxFiles)
+        allowedFiles = [];
 
       // Guard
       if (!allowedFiles.length) {
         // Falsy
-        falsy();
+        falsy(true);
 
         // Skip code below
         return;
@@ -161,8 +175,8 @@ export default function (
 
       // Values
       const name = allowedFiles.map(file => file.name).join(', ');
-      const prefix = utils.getAttribute('swap-prefix', label, input) || '';
-      const suffix = utils.getAttribute('swap-suffix', label, input) || '';
+      const prefix = utils.getAttribute('swap-prefix', input, label) || '';
+      const suffix = utils.getAttribute('swap-suffix', input, label) || '';
       const fileName = prefix + name + suffix;
 
       // Swap
@@ -174,6 +188,9 @@ export default function (
       ghost.files[key] = !isMultiple
         ? allowedFiles[0]
         : (model.createReadMostlyProxy(allowedFiles) as File[]);
+
+      // Fire event
+      utils.dispatchEvent(instance.name, 'attached', false, { key: key });
     }
   });
 }

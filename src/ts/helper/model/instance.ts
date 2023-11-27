@@ -372,7 +372,10 @@ export const init = (
     promise: async () => {
       return await animatePromiseResolve(instanceProxy, false);
     },
-    reportValidity: () => {
+    reportValidity: (...elements) => {
+      // Log
+      console.log('respect ...elements', elements);
+
       //
       console.log(
         'Report vadility deverse special mode, where you can input an [] of HTMLElements',

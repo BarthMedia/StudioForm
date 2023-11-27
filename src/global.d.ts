@@ -144,7 +144,7 @@ interface StudioFormInstance {
   // Wized API
   reset: (options?: {}) => void;
   fetch: (options?: SFOFetch) => Promise<boolean>;
-  reportValidity: () => void; // slideRequirements -- legacy
+  reportValidity: (...elements: HTMLElement[]) => void; // slideRequirements -- legacy
 
   // Status
   isAwaiting: boolean;
