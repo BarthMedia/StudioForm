@@ -9,9 +9,8 @@ import * as model from './model';
 import listener from './helper/view/listeners';
 import animateProgress from './helper/view/animateProgress';
 import animateCurrent from './helper/view/animateCurrent';
-import fileUploadLabelChanger from './helper/view/observeAttachments';
-import checkboxRadioCorrector from './helper/view/observeChecked';
-import checkboxGroup from './helper/view/observeGroupCheckboxes';
+import observerAttachments from './helper/view/observeAttachments';
+import observeChecked from './helper/view/observeChecked';
 
 // Error path
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> view.ts:`;
@@ -156,9 +155,8 @@ export default function init(state: StudioFormState) {
         else nodeLoop(mask!.childNodes);
 
         // Fire
-        fileUploadLabelChanger(instance!, newFileInputs);
-        checkboxRadioCorrector(instance!, newCheckboxInputs, newRadioInputs);
-        checkboxGroup(instance!, newCheckboxInputs);
+        observerAttachments(instance!, newFileInputs);
+        observeChecked(instance!, newRadioInputs, newCheckboxInputs);
       }
 
       // * Init main event listeners *

@@ -1,5 +1,6 @@
 // Imports
 import * as config from '../../config';
+import elements from './elements';
 import * as utils from './utils';
 
 // utils
@@ -8,16 +9,22 @@ const sfsVal = 'checked';
 // Export
 export default function (
   instance: StudioFormInstance,
-  checkboxInputs: HTMLInputElement[],
-  radioInputs: HTMLInputElement[]
+  radioInputs: HTMLInputElement[],
+  checkboxInputs: HTMLInputElement[]
 ) {
-  console.log('Maybe merge group checkbox & checked');
-
   // Guard
   if (!checkboxInputs.length && !radioInputs.length) return;
 
-  // Define
+  // + Define +
+
+  // Class list toggle
   function toggle(input: HTMLInputElement, mode = 'remove') {
+    // Add / remove checked
+    const attr = `${config.PRODUCT_NAME_SHORT}-checked`;
+    mode === 'add'
+      ? input.setAttribute(attr, 'true')
+      : input.removeAttribute(attr);
+
     // Toggle
     utils.classListToggle({
       element: input,
@@ -25,6 +32,23 @@ export default function (
       mode: mode,
       closest: { cascader: true },
     });
+  }
+
+  // Closest slide
+  function closestSlide(element: HTMLElement) {
+    // Start from the given element and move up the DOM hierarchy
+    while (element && element.parentElement) {
+      // Check if the parent element is instance.elements.mask
+      if (element.parentElement === instance.elements.mask) {
+        // Return the current element if the condition is met
+        return element;
+      }
+      // Move up to the next parent element
+      element = element.parentElement;
+    }
+
+    // Return null if no matching parent is found
+    return null;
   }
 
   // Radios
@@ -38,12 +62,12 @@ export default function (
       if (e.target?.['tagName'] !== 'INPUT') return;
 
       // Elements
-      const inputs = instance.elements.mask.querySelectorAll(
-        `input[name="${input.name}"]`
-      ) as NodeListOf<HTMLInputElement>;
+      const inputs = closestSlide(input)?.querySelectorAll(
+        `input[name="${input.name}"][type="radio"]`
+      ) as NodeListOf<HTMLInputElement> | undefined;
 
       // Loop
-      inputs.forEach(otherInput => {
+      inputs?.forEach(otherInput => {
         // Guard
         if (otherInput === input) return;
 
@@ -57,121 +81,83 @@ export default function (
   });
 
   // Checkboxes
+  checkboxInputs.forEach(input => {
+    // Save initial state
+    const attr = `${config.PRODUCT_NAME_SHORT}-required`;
+    if (!input.hasAttribute(attr))
+      input.setAttribute(attr, input.hasAttribute('required').toString());
 
-  console.log(
-    'CREATE OBSEVER, THAT TESTS FOR NEW HTML ELEMENT CHANGES, AND ADJUSTS THESE 3 utils FILES ACCORDINGLY!',
-    'done',
-    'now respect, that these changes actually happen!'
-  );
+    // Getter
+    function isRequired() {
+      return input.getAttribute(attr) === 'true';
+    }
 
-  // Consider that checkbox and radio requirements should work different when they are required
-  // When required, have the value euqal = '', else 'off' else 'on'
+    // Has attribute checked
+    checkState(input.hasAttribute('checked'));
 
-  // Loop
-  instance.logic.forEach(slide => {
-    // Elements
-    const inputs = slide.element.querySelectorAll(
-      ['checkbox', 'radio'].map(str => `input[type="${str}"]`).join()
-    ) as NodeListOf<HTMLInputElement>;
-
-    // Loop
-    inputs.forEach(input => {
-      // Guard
-      console.log(input);
-
-      // Class list toggle options
-      const element = utils.closestCascader(input);
-
-      // Elements
+    // Define toggle
+    function checkState(checked: boolean) {
+      // Group
+      const inputs = closestSlide(input)?.querySelectorAll(
+        `input[name="${input.name}"][type="checkbox"]`
+      ) as NodeListOf<HTMLInputElement> | undefined;
 
       // Guard
-      let isOn = input.hasAttribute('checked');
-      let isTimeout = false;
+      if (!inputs) return;
 
-      // Checkbox case
-      if (input.type === 'checkbox') {
-        // Add 'sf-selected' class
-        if (isOn) utils.classListToggle({ ...cltOptions, mode: 'add' });
-        else {
-          if (input.hasAttribute('required')) input.value = '';
-          else input.value = 'off';
-        }
+      // Single checkbox
+      if (inputs.length < 2) {
+        input.required = isRequired();
       }
 
-      // Event listener
-      element.addEventListener('click', event => {
-        // Guard
-        if (event.target?.['tagName'] === 'A') return;
+      // Checkbox group
+      if (inputs.length > 1) {
+        // Values
+        let min = parseInt(utils.getAttribute('min', ...inputs) || '1');
+        min = isNaN(min) ? 1 : min;
+        let max: number | null = parseInt(
+          utils.getAttribute('max', ...inputs) || ''
+        );
+        max = isNaN(max) ? null : max;
 
-        // Timeout guard
-        if (isTimeout) return;
-        else {
-          isTimeout = true;
-          setTimeout(() => {
-            isTimeout = false;
-          }, 1);
+        // Define
+        function requirementToggle(
+          inputs: NodeListOf<HTMLInputElement>,
+          bool: boolean
+        ) {
+          inputs.forEach(input => (input.required = bool));
         }
 
-        // * Radio / Checkbox logic
+        // Math
+        let count = 0;
+        inputs.forEach(input => (count += input.checked ? 1 : 0));
 
-        // Radio
-        if (input.type === 'radio') {
-          // Elements
-          const otherGroupRadios: HTMLInputElement[] = [];
-          document
-            .querySelectorAll(`input[type="radio"][name="${input.name}"]`)
-            .forEach((_input: any) => {
-              if (_input !== input) otherGroupRadios.push(_input);
-            });
-          function otherCltOptions(mode: string) {
-            return otherGroupRadios.map(radio => {
-              return {
-                element: radio as HTMLElement,
-                class: sfsVal,
-                mode: mode,
-                closest: { cascader: true },
-              };
-            });
-          }
+        // Logic
+        let isValid = count >= min;
+        if (max !== null) isValid = count <= max;
+        requirementToggle(inputs, !isValid);
+      }
 
-          // * Add *
+      // Toggle
+      if (checked) {
+        input.value = utils.getAttribute('value', input) || 'on';
+        toggle(input, 'add');
+      } else {
+        input.value = input.hasAttribute('required') ? '' : 'off';
+        toggle(input, 'remove');
+      }
+    }
 
-          // Class
-          utils.classListToggle({ ...cltOptions, mode: 'add' });
+    // Elements
+    const cascader = utils.closestCascader(input);
 
-          // Attribute
-          input.setAttribute(sfsVal, '');
+    // Event listener
+    cascader.addEventListener('click', e => {
+      // Guard
+      if (e.target?.['tagName'] !== 'INPUT') return;
 
-          // * Remove *
-
-          // Class
-          utils.classListToggle(...otherCltOptions('remove'));
-
-          // Attribute
-          otherGroupRadios.forEach(radio => radio.removeAttribute(sfsVal));
-        }
-
-        // Checkbox
-        if (input.type === 'checkbox') {
-          // Data logic & class switch
-          if (isOn) {
-            // Remove it
-            utils.classListToggle({ ...cltOptions, mode: 'remove' });
-
-            // Logic
-            if (input.hasAttribute('required')) input.value = '';
-            else input.value = 'off';
-            isOn = false;
-          } else {
-            // Add it
-            utils.classListToggle({ ...cltOptions, mode: 'add' });
-
-            // Logic
-            input.value = 'on';
-            isOn = true;
-          }
-        }
-      });
+      // Toggle
+      checkState(input.checked);
     });
   });
 }

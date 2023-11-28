@@ -79,6 +79,11 @@ export default function (stateId: number, options: Options) {
   // Logic
   state.sdk.slideRecord.pop();
 
+  console.log(
+    '.focus, on the new current slide!!!!!',
+    'Make it possible to programmatically insert super custom transitions!'
+  );
+
   // * Animate *
 
   // Main
