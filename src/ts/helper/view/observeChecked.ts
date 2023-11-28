@@ -143,7 +143,8 @@ export default function (
         input.value = utils.getAttribute('value', input) || 'on';
         toggle(input, 'add');
       } else {
-        input.value = input.hasAttribute('required') ? '' : 'off';
+        input.value =
+          input.hasAttribute('required') || inputs.length > 1 ? '' : 'off';
         toggle(input, 'remove');
       }
     }
