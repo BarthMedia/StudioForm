@@ -24,7 +24,10 @@ interface StudioFormElements {
   // External buttons
   get prevs(): NodeListOf<HTMLElement>;
   get nexts(): HTMLElement[];
-  get tos(): NodeListOf<HTMLElement>[];
+  get tos(): {
+    nodeList: NodeListOf<HTMLElement>;
+    values: string[];
+  }[];
 }
 
 interface StudioFormButtonLogic {
@@ -120,6 +123,17 @@ interface SFOFetch {
   formData?: FormData;
   headers?: Headers;
 }
+
+// + Instance navigation API options +
+interface SFONavNext {
+  button?: StudioFormButtonLogic;
+}
+
+interface SFONavPrev {}
+
+interface SFONavSubmit {}
+
+interface SFONavTo {}
 
 // + Instance API other +
 

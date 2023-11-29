@@ -3,6 +3,11 @@ import * as utils from './utils';
 import * as config from '../../config';
 import * as model from '../../model';
 
+// Navigation
+import navNext from '../model/navNext';
+import navPrev from '../model/navPrev';
+import navTo from '../model/navTo';
+
 // Export
 export default function init(instance: StudioFormInstance) {
   // Slides loop
@@ -11,15 +16,15 @@ export default function init(instance: StudioFormInstance) {
     if (slide.buttons)
       slide.buttons.forEach(button =>
         button.element.addEventListener('click', () => {
-          instance.next({ button: button });
+          navNext(instance, { button: button }, true);
         })
       );
   });
 
-  // Next buttons
+  // * Next buttons *
   instance.elements.nexts.forEach(button =>
     button.addEventListener('click', () => {
-      instance.next();
+      navNext(instance, {}, true);
     })
   );
 
@@ -30,9 +35,27 @@ export default function init(instance: StudioFormInstance) {
 
     // SDK
     button.addEventListener('click', () => {
-      instance.prev();
+      navPrev(instance, {}, true);
     });
   });
+
+  // * To buttons *
+  instance.elements.tos.forEach(obj => {
+    // Loop
+    obj.nodeList.forEach(button => {
+      // Values
+      const slideIdentification = (
+        utils.getAttribute(null, button) || ''
+      ).slice(3);
+
+      // Event
+      button.addEventListener('click', () => {
+        navTo(instance, slideIdentification, {}, true);
+      });
+    });
+  });
+
+  // * Keyboard events *
 
   // Hover / set active form
   instance.elements.wrapper.addEventListener('mouseover', () => {
@@ -100,62 +123,26 @@ export default function init(instance: StudioFormInstance) {
   // Function to be called when Escape key is pressed
   function onBackspace() {
     // Add your custom logic here
-    instance.prev();
+    navNext(instance, {}, true);
     instance.suggest.clear();
   }
 
   // Function to be called when Enter key is pressed
   function onEnter() {
     // Add your custom logic here
-    instance.next();
+    navNext(instance, {}, true);
     instance.suggest.clear();
   }
 
   // Function to be called when Left Arrow key is pressed
   function onArrowLeft() {
     // Add your custom logic here
-    instance.suggest.next();
+    navNext(instance, {}, true);
   }
 
   // Function to be called when Right Arrow key is pressed
   function onArrowRight() {
     // Add your custom logic here
-    instance.suggest.prev();
+    navPrev(instance, {}, true);
   }
 }
-
-// Notes
-
-// console.log(
-//   'reduce number of events, to sf-animate, sf-submit, sf-fetch ... sf-on-fetch .. sf-after-fetch -- okay. Still better like this!'
-// );
-// console.log('requires new mask - no-bubbling - event structure!');
-// console.log('also sf-on-error, sf-after-error');
-// console.log('sf-resolve-true', 'sf-resolve-false event', 'sf-promise event!');
-// // Achieve correct values
-// radioCheckboxValueCorrector(instance);
-// // Allow for native chechbox groups
-// groupCheckox(instance);
-// // Achieve useful file upload behaviour
-// fileUploadLabelChanger(instance);
-// // Add events infrastrucutre
-// const eventFunctionArrays = instance.view.eventsFunctionArrays;
-// helper.addEventsInfrastrucutre(instance, 'Next');
-// helper.addEventsInfrastrucutre(instance, 'Prev');
-// helper.addEventsInfrastrucutre(instance, 'Submit');
-// // Define sdk
-// instance.sdk.next = (options: Options = {}) => {
-//   helper.triggerAllFunctions(eventFunctionArrays.onNext);
-//   const res = next(instance.sdk.i, options);
-//   return res;
-// };
-// instance.sdk.prev = (options: Options = {}) => {
-//   helper.triggerAllFunctions(eventFunctionArrays.onPrev);
-//   const res = prev(instance.sdk.i, options);
-//   return res;
-// };
-// instance.sdk.submit = async (options: Options = {}) => {
-//   helper.triggerAllFunctions(eventFunctionArrays.onSubmit);
-//   const res = await submit(instance.sdk.i, options);
-//   return res;
-// };

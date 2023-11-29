@@ -26,6 +26,12 @@ import fetch from './fetch';
 // View
 import animatePromiseResolve from '../view/animatePromiseResolve';
 
+// Navigation
+import navNext from './navNext';
+import navPrev from './navPrev';
+import navSubmit from './navSubmit';
+import navTo from './navTo';
+
 // + Define +
 
 // + Export +
@@ -393,9 +399,8 @@ export const init = (
     // - Navigation -
 
     // Special use action
-    to: async (slideId, options = {}) => {
-      console.log('I have to built', 'I think fetched event could be sweet!');
-      return true;
+    to: async (slideIdentification, options = {}) => {
+      return await navTo(instanceProxy, slideIdentification, options);
     },
     scrollTo: (options: SFOScrollTo) => {
       console.log(
@@ -410,21 +415,13 @@ export const init = (
 
     // Native actions
     prev: async (options = {}) => {
-      console.log('I have to built', 'I think fetched event could be sweet!');
-      return true;
+      return await navPrev(instanceProxy, options);
     },
     next: async (options = {}) => {
-      console.log(
-        "Consider promise resolve feature always on these navigation API's.",
-        'Call the class sf-promise',
-        'And call the submit calls sf-submit'
-      );
-      console.log('I have to built', 'I think fetched event could be sweet!');
-      return true;
+      return await navNext(instanceProxy, options);
     },
     submit: async (options = {}) => {
-      console.log('I have to built', 'I think fetched event could be sweet!');
-      return true;
+      return await navSubmit(instanceProxy, options);
     },
 
     // Status info

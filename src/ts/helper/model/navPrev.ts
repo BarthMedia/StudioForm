@@ -1,5 +1,5 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
 import * as model from '../../model';
 import * as config from '../../config';
 

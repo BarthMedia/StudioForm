@@ -1,5 +1,5 @@
 // Imports
-import * as helper from '../helper';
+import * as viewUtils from '../view/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
@@ -215,7 +215,7 @@ export default function (stateId: number, slideId: number, options: Options) {
 
     // * Other input types loop *
     currentSlide.el
-      .querySelectorAll(config.INPUTS_SELECTOR)
+      .querySelectorAll(viewUtils.INPUTS_SELECTOR)
       .forEach(
         (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
           // Don't test radios
@@ -226,6 +226,21 @@ export default function (stateId: number, slideId: number, options: Options) {
 
           // Values
           const index = parseInt(input.getAttribute(sfidAttr) || '');
+
+          // File
+          if (input.type === 'file') {
+            // Push
+            if (!input.hasAttribute(`${config.PRODUCT_NAME_LONG}-attached`))
+              targetInputs.push({
+                el: input,
+                i: index,
+                msg: 'no file(s) attached',
+                regExp: undefined,
+              });
+
+            // Skip code below
+            return;
+          }
 
           // Is empty
           if (input.value === '') {

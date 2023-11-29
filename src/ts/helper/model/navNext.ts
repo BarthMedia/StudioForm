@@ -1,18 +1,29 @@
 // Imports
-import * as helper from '../helper';
+import * as viewUtils from '../view/utils';
+import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
-// Export
-const errPath = (s: any) => `${helper.errorName(s)} -> next.ts -> default`;
-export default function (stateId: number, options: Options) {
-  console.log("can't go previous or next if instance == done = true !");
+// Error
+const errPath = (n: string) => `${controllerUtils.errorName(n)} next.ts:`;
 
+// Export
+export default async function (
+  instance: StudioFormInstance,
+  options: SFONavNext,
+  internal = false
+) {
   // Values
-  const state = model.state[stateId];
+  const ghost = model.state.ghostInstances[instance.name];
   let next: number | undefined | boolean;
-  const currentSlideId: number =
-    state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
+  const currentSlideId = instance.record[instance.record.length - 1];
+
+  // Warn guard
+  if (instance.isDone) {
+    const msg = `${errPath} Form already submitted!`;
+    console.warn(msg);
+    return msg;
+  }
 
   // Guard -1
   if (state.view.suggestDoubleClick) return;
@@ -23,14 +34,7 @@ export default function (stateId: number, options: Options) {
     options.doNotWaitForAnimations !== true &&
     state.view.gsapTimeline.isRunning === true
   ) {
-    const msg = `${errPath}: The animation is not yet finished!`;
-    console.warn(msg);
-    return msg;
-  }
-
-  // Warn guard
-  if (state.sdk.isSubmitted === true) {
-    const msg = `${errPath}: Form already submitted!`;
+    const msg = `${errPath} The animation is not yet finished!`;
     console.warn(msg);
     return msg;
   }

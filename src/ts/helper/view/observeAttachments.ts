@@ -13,6 +13,7 @@ export default function (
 
   // Values
   const ghost = model.state.ghostInstances[instance.name];
+  const modes = instance.config.modes;
 
   // Loop
   fileInputs.forEach(input => {
@@ -27,33 +28,43 @@ export default function (
 
     // + Event listeners +
 
-    // File drop
-    if (instance.config.modes.fileDrop) {
-      // Add sf-drag-over
-      label.addEventListener('dragover', function (event) {
+    // File drop events
+    ['dragover', 'dragleave', 'drop'].forEach((str, index) => {
+      // Listen
+      label.addEventListener(str, function (event) {
+        // Guard
+        if (!modes.fileDrop) return;
+
+        // Functionality
         event.preventDefault();
-        dragOver('add');
-      });
 
-      label.addEventListener('dragleave', function (event) {
-        event.preventDefault();
-        dragOver();
+        // Switch
+        switch (index) {
+          case 0: {
+            dragOver('add');
+            break;
+          }
+          case 1: {
+            dragOver();
+            break;
+          }
+          case 2: {
+            dragOver();
+            handleFiles((event as DragEvent).dataTransfer?.files);
+            break;
+          }
+        }
       });
+    });
 
-      label.addEventListener('drop', function (event) {
-        // Prevent
-        event.preventDefault();
-        dragOver();
+    // Click
+    label.addEventListener('click', _ => {
+      // Guard
+      if (!modes.fileDrop) return;
 
-        // Handle
-        handleFiles(event.dataTransfer?.files);
-      });
-
-      // Click
-      label.addEventListener('click', _ => {
-        handleFiles(null);
-      });
-    }
+      // Functionality
+      handleFiles(null);
+    });
 
     // Input change event listener
     input.addEventListener('change', _ => {
@@ -85,7 +96,7 @@ export default function (
     }
 
     // Handle files!
-    const allowLabelSwap = instance.config.modes.fileLabelSwap;
+    const attachedAttr = `${config.PRODUCT_NAME_SHORT}-attached`;
     function handleFiles(files: FileList | undefined | null) {
       // Define
       function falsy(isVadilityError = false) {
@@ -93,14 +104,14 @@ export default function (
         uploaded('remove');
 
         // Label text
-        if (allowLabelSwap) label.innerHTML = originalText;
-        label.removeAttribute(`${config.PRODUCT_NAME_SHORT}-file-name`);
+        if (modes.fileLabelSwap) label.innerHTML = originalText;
 
         // Report vadility
         if (isVadilityError) instance.reportValidity(label);
 
         // Remove file
         delete ghost.files[key];
+        input.removeAttribute(attachedAttr);
 
         // Fire event
         utils.dispatchEvent(instance.name, 'detached', false, { key: key });
@@ -180,14 +191,14 @@ export default function (
       const fileName = prefix + name + suffix;
 
       // Swap
-      if (allowLabelSwap) label.innerHTML = fileName;
-      label.setAttribute(`${config.PRODUCT_NAME_SHORT}-file-name`, fileName);
+      if (modes.fileLabelSwap) label.innerHTML = fileName;
       uploaded('add');
 
       // Add files
       ghost.files[key] = !isMultiple
         ? allowedFiles[0]
         : (model.createReadMostlyProxy(allowedFiles) as File[]);
+      input.setAttribute(attachedAttr, 'true');
 
       // Fire event
       utils.dispatchEvent(instance.name, 'attached', false, { key: key });

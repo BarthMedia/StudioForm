@@ -1,6 +1,7 @@
 // Imports
 import * as utils from './utils';
 import * as config from '../../config';
+import * as model from '../../model';
 
 // Export
 export default function (
@@ -98,10 +99,25 @@ export default function (
 
     // To's
     get tos() {
+      // Values
+      const instance = model.state.instances[instanceName];
+
       // Generate to's
-      const lists: NodeListOf<HTMLElement>[] = [];
+      const lists: {
+        nodeList: NodeListOf<HTMLElement>;
+        values: string[];
+      }[] = [];
       for (let i = 0, n = obj.slides.length; i < n; i++) {
-        lists.push(querySelectorAll(`to-${i}`));
+        // Values
+        const name = instance.logic[i].name;
+        const strings = [`to-${i}`];
+        if (name) strings.unshift(`to-${name}`);
+
+        // Push
+        lists.push({
+          nodeList: querySelectorAll(`to-${i}`, ...strings),
+          values: strings,
+        });
       }
       return lists;
     },
