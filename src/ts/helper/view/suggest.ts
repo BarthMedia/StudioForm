@@ -19,6 +19,10 @@ function toggle(btn: HTMLElement, mode: string) {
   });
 }
 
+console.log(
+  'Suggest has to be the logic center, that takes into account weather or not a button is set to display none or not!'
+);
+
 // Export
 const errPath = (s: any) =>
   `${helper.errorName(s)}suggestButton.ts -> init -> `;
@@ -126,6 +130,12 @@ export default function init(state: any) {
 
   // Suggest
   function suggest(slideId: number, buttonId: number) {
+    // Todo!
+    console.log(
+      'If step type radio, suggest that particular radio button.',
+      "Have one mode, where it doesn't suggest, but instantly continues, and one where just suggests the last clicked radio!"
+    );
+
     // Trigger
     helper.triggerAllFunctions(eventFunctionArrays.onButtonSuggestion);
 

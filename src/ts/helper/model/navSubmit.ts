@@ -1,11 +1,20 @@
 // Imports
 import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
+// Error
+const errPath = (i: StudioFormInstance) =>
+  `${controllerUtils.errorName(i.name)} submit.ts:`;
+
 // Export
-const errPath = (s: any) => `${helper.errorName(s)}submit.ts -> default: `;
-export default async function (stateId: number, options: Options) {
+export default async function (
+  instance: StudioFormInstance,
+  options: SFONav,
+  internal = false,
+  navToCommand = false
+) {
   console.log('If submission .ok == true, then set resolve to true or false!');
   console.log('Submission are promises and resolves!');
 

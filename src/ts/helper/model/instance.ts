@@ -522,6 +522,7 @@ export const init = (
     // Internal
     asyncRecord: [],
     gsapTl: {},
+    suggest: {},
     slideCurrent: 0 as number | string,
     slideNext: 0 as number | string,
 

@@ -1,11 +1,89 @@
 // Imports
 import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
+// Navigation
+import navSubmit from './navSubmit';
+
+// Error
+const errPath = (i: StudioFormInstance) =>
+  `${controllerUtils.errorName(i.name)} to.ts:`;
+
 // Export
-const errPath = (s: any) => `${helper.errorName(s)}prev.ts -> default: `;
-export default function (stateId: number, options: Options) {
+export default async function (
+  instance: StudioFormInstance,
+  slideIdentification: string | number,
+  options: SFONav,
+  internal = false,
+  navSubmitCommand = false
+) {
+  // Values
+  const ghost = model.state.ghostInstances[instance.name];
+  const modes = instance.config.modes;
+
+  // Guard - 0
+  if (!['string', 'number'].includes(typeof slideIdentification)) {
+    const msg = `${errPath(instance)} Invalid type of slide identification: `;
+    console.error(msg, slideIdentification);
+    return false;
+  }
+
+  // Warn guard - 1
+  if (
+    (modes.awaitAnimations || options.awaitAnimations) &&
+    ghost.gsapTl.transition?.isRunning
+  ) {
+    const msg = `${errPath(instance)} The animation is not yet finished!`;
+    console.warn(msg);
+    return false;
+  }
+
+  // Manipulate to number
+  if (
+    typeof slideIdentification === 'string' &&
+    /^\d+$/.test(slideIdentification)
+  )
+    slideIdentification = parseInt(slideIdentification);
+
+  // * Submission *
+
+  // Guard - is done!
+  if (instance.isDone && slideIdentification === 'done') {
+    const msg = `${errPath(instance)} Form already submitted!`;
+    console.warn(msg);
+    return false;
+  }
+
+  // If done
+  if (slideIdentification === 'done' && !navSubmitCommand) {
+    // Fetch
+    const res = await navSubmit();
+
+    // Logic
+    if (!res) return false;
+  }
+
+  // * Next / prev *
+
+  // * Animate
+
+  // Guard
+
+  console.log(
+    'if slideIdentification pattern matches numbers exclusively, turn into numbers. Or if already number'
+  );
+
+  //*
+
+  /**
+   *
+   *
+   *
+   *
+   *
+   */
   console.log(
     "THIS CAN'T MAKE A MOVE IF THERE IS CURRENTLY AN ACTIVE PROMISE!"
   );

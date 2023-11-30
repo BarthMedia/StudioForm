@@ -61,7 +61,7 @@ interface StudioFormSlideLogic {
 //   target?: HTMLElement | string;
 //   offset?: HTMLElement | string | number;
 //   attributeReferenceElement?: HTMLElement;
-//   awaitAnimation?: boolean;
+//   awaitAnimations?: boolean;
 //   skipAnimations?: boolean;
 //   forceSubmissionSuccess?: boolean;
 //   callback?: (success: boolean) => void;
@@ -125,15 +125,16 @@ interface SFOFetch {
 }
 
 // + Instance navigation API options +
-interface SFONavNext {
+interface SFONav {
+  // Submit
+  fake?: boolean;
+
+  // General
   button?: StudioFormButtonLogic;
+  awaitAnimations?: boolean;
+  skipAnimations?: boolean;
+  skipRequirements?: boolean;
 }
-
-interface SFONavPrev {}
-
-interface SFONavSubmit {}
-
-interface SFONavTo {}
 
 // + Instance API other +
 
@@ -167,7 +168,7 @@ interface StudioFormInstance {
 
   // Navigation
   to: (slideId: number, options?: {}) => Promise<boolean>;
-  next: (options?: {}) => Promise<boolean>;
+  next: (options?: {}) => Promise<boolean | string>;
   prev: (options?: {}) => Promise<boolean>;
   submit: (options?: { fake?: boolean }) => Promise<boolean>;
   scrollTo: (options: SFOScrollTo) => void;
@@ -265,6 +266,12 @@ interface StudioFormGhostInstance {
   gsapTl: {
     progress?: gsap.core.Timeline;
     transition?: gsap.core.Timeline;
+  };
+
+  // Suggest
+  suggest: {
+    doubleClick?: true;
+    button: HTMLElement;
   };
 
   // Events

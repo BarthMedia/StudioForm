@@ -4,71 +4,73 @@ import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
+// Navigation
+import navTo from './navTo';
+
 // Error
-const errPath = (n: string) => `${controllerUtils.errorName(n)} next.ts:`;
+const errPath = (i: StudioFormInstance) =>
+  `${controllerUtils.errorName(i.name)} next.ts:`;
 
 // Export
 export default async function (
   instance: StudioFormInstance,
-  options: SFONavNext,
+  options: SFONav,
   internal = false
 ) {
   // Values
   const ghost = model.state.ghostInstances[instance.name];
+  const modes = instance.config.modes;
   let next: number | undefined | boolean;
   const currentSlideId = instance.record[instance.record.length - 1];
 
-  // Warn guard
-  if (instance.isDone) {
-    const msg = `${errPath} Form already submitted!`;
-    console.warn(msg);
-    return msg;
-  }
-
   // Guard -1
-  if (state.view.suggestDoubleClick) return;
+  if (ghost.suggest.doubleClick) return;
 
-  // Guard 0 - Let animations finish
-  if (
-    state.modes.waitForAnimations === true &&
-    options.doNotWaitForAnimations !== true &&
-    state.view.gsapTimeline.isRunning === true
-  ) {
-    const msg = `${errPath} The animation is not yet finished!`;
+  // Warn guard - 0
+  if (instance.isDone) {
+    const msg = `${errPath(instance)} Form already submitted!`;
     console.warn(msg);
-    return msg;
+    return false;
   }
+
+  // Warn guard - 1
+  if (
+    (modes.awaitAnimations || options.awaitAnimations) &&
+    ghost.gsapTl.transition?.isRunning
+  ) {
+    const msg = `${errPath(instance)} The animation is not yet finished!`;
+    console.warn(msg);
+    return false;
+  }
+
+  // * * * Logic * * *
 
   // Button click case
-  if (options.btn) {
-    next = options.btn.next;
+  if (options.button) {
+    next = options.button.next;
   }
 
   // If no button click
-  if (!options.btn) {
+  if (!options.button) {
     // Values
-    const currentSlide = state.sdk.slideLogic[currentSlideId];
-
-    // Guard
-    if (!currentSlide)
-      throw new Error(`${errPath}: Unable to find the current slide!`);
+    const currentSlide = instance.logic[currentSlideId];
 
     // No buttons case
-    if (currentSlide.btns === false) {
+    if (currentSlide.buttons === false) {
       next = currentSlide.next;
-    } else if (currentSlide.btns.length === 1) {
-      next = currentSlide.btns[0].next;
+    } else if (currentSlide.buttons.length === 1) {
+      next = currentSlide.buttons[0].next;
     } else {
       // Values
-      let suggestedBtnFound = false;
+      let suggestedButtonFound = false;
 
       // Loop for suggested button
-      currentSlide.btns.every((btn: any) => {
+      currentSlide.buttons.every(button => {
         // Logic
-        if (btn.suggested) {
+        if (button.element === ghost.suggest.button) {
           // Update
-          next = btn.next;
-          suggestedBtnFound = true;
+          next = button.next;
+          suggestedButtonFound = true;
 
           // Break
           return false;
@@ -79,22 +81,12 @@ export default async function (
       });
 
       // If not found suggest the first button
-      if (!suggestedBtnFound) {
-        // Elements
-        const btnEL: HTMLElement = currentSlide.btns[0].el;
-
-        // Suggest btn[0]
-        if (state.modes.autoSuggestButtons)
-          state.sdk.suggestButton(currentSlideId, 0);
+      if (!suggestedButtonFound) {
+        // Suggest button[0]
+        if (modes.autoSuggestButtons) instance.suggest.next();
 
         // Skip code below
-        return {
-          msg: `${errPath(state)} -> state.sdk.slideLogic[${
-            currentSlide.i
-          }] -> .btns[0] was suggested!`,
-          slideId: currentSlide.i,
-          buttonId: 0,
-        };
+        return 'suggest';
       }
     }
   }
@@ -106,55 +98,65 @@ export default async function (
 
   // Guard
   if (typeof next !== 'number' && next !== false)
-    throw new Error(`${errPath(state)}: Unable to find a logical next slide!`);
+    throw new Error(
+      `${errPath(instance)}: Unable to find a logical next slide!`
+    );
 
-  // If next === false call submit event
-  if (next === false) {
-    state.sdk.submit(options);
-    return;
-  }
+  // Success
+  return await navTo(
+    instance,
+    next === false ? 'done' : next,
+    options,
+    internal
+  );
 
-  // Check step requirements
-  if (!state.sdk.slideRequirements(currentSlideId, options)) {
-    return;
-  }
+  // // If next === false call submit event
+  // if (next === false) {
+  //   instance.submit(options);
+  //   return;
+  // }
 
-  // * Jump back logic *
+  // // Check step requirements
+  // if (!instance.slideRequirements(currentSlideId, options)) {
+  //   return;
+  // }
 
-  // Values
-  const i = state.sdk.slideRecord.indexOf(next);
-  if (next < currentSlideId) {
-    // Guard
-    if (i < 0)
-      throw new Error(
-        `${errPath(
-          state
-        )} -> if (next < currentSlideId) { ... }: Unable to find a logical next slide!`
-      );
+  // // * Jump back logic *
 
-    // Slice
-    state.sdk.slideRecord = state.sdk.slideRecord.slice(0, i + 1);
-  } else if (next !== currentSlideId) {
-    // Don't push duplicates
-    if (i < 0) state.sdk.slideRecord.push(next);
-  }
+  // // Values
+  // const i = instance.slideRecord.indexOf(next);
+  // if (next < currentSlideId) {
+  //   // Guard
+  //   if (i < 0)
+  //     throw new Error(
+  //       `${errPath(
+  //         instance
+  //       )} -> if (next < currentSlideId) { ... }: Unable to find a logical next slide!`
+  //     );
 
-  // * Animate *
+  //   // Slice
+  //   instance.slideRecord = instance.slideRecord.slice(0, i + 1);
+  // } else if (next !== currentSlideId) {
+  //   // Don't push duplicates
+  //   if (i < 0) instance.slideRecord.push(next);
+  // }
 
-  // Main
-  state.view.animate({
-    ...options,
-    currentSlideId: currentSlideId,
-    nextSlideId: next,
-  });
+  // // * Animate *
 
-  // Prev buttons
-  if (next > currentSlideId)
-    state.elements.prevBtns.forEach((btn: HTMLElement) => {
-      // Style init
-      helper.removeSfHide(btn);
-    });
+  // // Main
+  // instance.view.animate({
+  //   ...options,
+  //   currentSlideId: currentSlideId,
+  //   nextSlideId: next,
+  // });
 
-  // Trigger events
-  helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterNext);
+  // // Prev buttons
+  // if (next > currentSlideId)
+  //   instance.elements.prevbuttons.forEach((button: HTMLElement) => {
+  //     // Style init
+  //     helper.removeSfHide(button);
+  //   });
+
+  // // Trigger events
+  // helper.triggerAllFunctions(instance.view.eventsFunctionArrays.afterNext);
 }
