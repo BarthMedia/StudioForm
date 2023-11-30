@@ -135,8 +135,8 @@ const globalConfigWrite = (e: unknown) => {
 
   // Logic
   if (
-    (property === classCascadingName && value === 'boolean') ||
-    (property !== classCascadingName && value === 'string')
+    (property === classCascadingName && typeof value === 'boolean') ||
+    (property !== classCascadingName && typeof value === 'string')
   )
     document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
 };

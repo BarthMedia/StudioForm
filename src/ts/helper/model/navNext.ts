@@ -85,6 +85,12 @@ export default async function (
         // Suggest button[0]
         if (modes.autoSuggestButtons) instance.suggest.next();
 
+        console.log(
+          'Make / await ',
+          'internal / external button suggestion',
+          'Make external api event suffix changelable in global settings'
+        );
+
         // Skip code below
         return 'suggest';
       }
