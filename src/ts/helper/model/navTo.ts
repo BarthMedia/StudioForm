@@ -17,12 +17,22 @@ export default async function (
   slideIdentification: string | number,
   options: SFONav,
   internal = false,
-  navSubmitCommand = false
+  navSubmitCommand = false,
+  navPrevCommand = false
 ) {
   //  + + + Preperation + + +
 
   // Guard - 0 - Nav
-  if (!utils.navGuard(instance, errPath, options, { to: true })) return false;
+  if (
+    !utils.navGuard(
+      instance,
+      errPath,
+      options,
+      { to: true, prev: navPrevCommand },
+      true
+    )
+  )
+    return false;
 
   // Values
   const modes = instance.config.modes;

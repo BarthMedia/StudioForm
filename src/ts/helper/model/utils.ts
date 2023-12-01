@@ -30,7 +30,8 @@ export const navGuard = function (
   instance: StudioFormInstance,
   errPath: (instance: StudioFormInstance) => string,
   options: SFONav,
-  { to, submit, prev }: { to?: true; submit?: true; prev?: true } = {}
+  { to, submit, prev }: { to?: true; submit?: true; prev?: true } = {},
+  reportValidity = false
 ) {
   // Values
   const ghost = model.state.ghostInstances[instance.name];
@@ -88,7 +89,11 @@ export const navGuard = function (
   if (!pass) return false;
 
   // Test requirements
-  if (modes.reportValidity && (modes.onPrevReportValidity || !prev))
+  if (
+    reportValidity &&
+    modes.reportValidity &&
+    (modes.onPrevReportValidity || !prev)
+  )
     return instance.reportValidity();
 
   // Default

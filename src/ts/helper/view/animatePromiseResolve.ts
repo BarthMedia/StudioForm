@@ -13,7 +13,8 @@ const errPath = (n: string) =>
 export default async function (
   instance: StudioFormInstance,
   internal = true,
-  isSubmit = false
+  isSubmit = false,
+  asyncCallBack: () => Promise<boolean> = async () => true
 ) {
   // Guard
   if (instance.isAwaiting)
@@ -65,6 +66,9 @@ export default async function (
 
   // Listen to prevent default
   if (promiseEvent.defaultPrevented) return false;
+
+  // Alternative promise
+  if (isSubmit) return await asyncCallBack();
 
   // Style children with class
   utils.classListToggle(...getElements('add'));

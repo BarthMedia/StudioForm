@@ -8,6 +8,9 @@ import * as config from '../../config';
 // View
 import animatePromiseResolve from '../view/animatePromiseResolve';
 
+// Fetch
+import fetch from './fetch';
+
 // Error
 const errPath = (i: StudioFormInstance) =>
   `${controllerUtils.errorName(i)} submit.ts:`;
@@ -20,7 +23,9 @@ export default async function (
   navToCommand = false
 ) {
   // Guard - Nav
-  if (!utils.navGuard(instance, errPath, options, { submit: true }))
+  if (
+    !utils.navGuard(instance, errPath, options, { submit: true }, !navToCommand)
+  )
     return false;
 
   // Values
@@ -35,15 +40,48 @@ export default async function (
   // Respect wized reset
   modes.reset;
 
-  // Dispatch event
-  animatePromiseResolve(instance, internal, true);
-
   // Listen SFONav options!
+  if (options.fake) return true;
 
   // Fetch
+  const response = await animatePromiseResolve(
+    instance,
+    internal,
+    true,
+    async () => {
+      return fetch(instance, {}, internal);
+    }
+  );
+
+  // If fetch was not executed
+  if (!response) return false;
+
+  // Values
+  const responseData = instance.data.fetch.response;
+  const responseOk = responseData?.ok || false;
+
+  // If repsone not ok
+  if (!responseOk) {
+    // Execute fail message & error
+    console.log('Fetch was not okay!');
+
+    modes.autoShowFail;
+    modes.autoHideFail;
+  }
+
+  // Define fetch
 
   // Dispatch resolve event
-  viewUtils.dispatchEvent(instance.name, 'fetched', false, {}, internal);
+  viewUtils.dispatchEvent(
+    instance.name,
+    'fetched',
+    false,
+    { success: responseData?.ok },
+    internal
+  );
+
+  // Default
+  return responseOk;
 
   /**
    *

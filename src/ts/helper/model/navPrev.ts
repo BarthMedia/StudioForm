@@ -3,11 +3,16 @@ import * as utils from './utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
+// Navigation
+import navTo from './navTo';
+
 // Export
 const errPath = (s: any) => `${helper.errorName(s)}prev.ts -> default: `;
 export default function (stateId: number, options: Options) {
   // Guard - Nav
-  if (!utils.navGuard(instance, errPath, options, { prev: true })) return false;
+  if (!utils.navGuard(instance, errPath, options)) return false;
+
+  navTo(instance, -1, options, internal, false, true);
 
   console.log("can't go previous or next if instance == done = true !");
 
