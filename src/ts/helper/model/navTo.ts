@@ -17,36 +17,23 @@ export default async function (
   slideIdentification: string | number,
   options: SFONav,
   internal = false,
-  navSubmitCommand = false,
-  navPrevCommand = false
+  navSubmitCommand = false
 ) {
-  //  + + + Preperation + + +
-
-  // Guard - 0 - Nav
-  if (
-    !utils.navGuard(
-      instance,
-      errPath,
-      options,
-      { to: true, prev: navPrevCommand },
-      true
-    )
-  )
-    return false;
+  // + + + Input + + +
 
   // Values
   const modes = instance.config.modes;
-  const isSubmit = slideIdentification === 'done';
+  const isToDone = slideIdentification === 'done';
 
-  // Guard - 1
+  // Guard - 0
   if (!['string', 'number'].includes(typeof slideIdentification)) {
     const msg = `${errPath(instance)} Invalid type of slide identification: `;
     console.error(msg, slideIdentification);
     return false;
   }
 
-  // Guard - 2 - is done!
-  if (instance.isDone && isSubmit) {
+  // Guard - 1 - is done!
+  if (instance.isDone && isToDone) {
     const msg = `${errPath(instance)} Form already submitted!`;
     console.warn(msg);
     return false;
@@ -68,22 +55,40 @@ export default async function (
   const currentId = instance.isDone ? 'done' : utils.currentSlideId(instance);
   const isPrev = false; // If "negative" value exist in prev path
 
+  //  + + + Preperation + + +
+
+  // Guard - 2 - Nav
+  if (
+    !utils.navGuard(
+      instance,
+      errPath,
+      options,
+      { to: true, prev: isPrev },
+      true
+    )
+  )
+    return false;
+
   // Await promise resolve
   if (
     modes.promiseResolve &&
     (!isPrev || modes.onPrevPromiseResolve) &&
-    (!isSubmit || modes.onSubmitPromiseResolve)
+    (!isToDone || modes.onSubmitPromiseResolve)
   ) {
     const response = await instance.promise();
     if (!response) return false;
   }
+
+  //   console.log(
+  //     "Resolve event has to include direction, 'prev, 'next, 'submit, 'custom'"
+  //   );
 
   // + + + Execution + + +
 
   // * Submission *
 
   // If next -> done
-  if (isSubmit && !navSubmitCommand) {
+  if (isToDone && !navSubmitCommand) {
     // Fetch
     const res = await navSubmit(instance, options, internal, true);
 
@@ -99,6 +104,29 @@ export default async function (
 
   // * Default *
   return true;
+
+  //   // Logic
+  //   state.sdk.slideRecord.pop();
+
+  //   // * Animate *
+
+  //   // Main
+  //   state.view.animate({
+  //     ...options,
+  //     currentSlideId: currentSlideId,
+  //     nextSlideId: next,
+  //   });
+
+  //   // Prev buttons
+  //   if (index === 0)
+  //     state.elements.prevBtns.forEach((btn: HTMLElement) => {
+  //       // Style init
+  //       helper.addSfHide(btn);
+  //     });
+
+  //   // Trigger events
+  //   helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterPrev);
+  // }
 
   // Guard
 
@@ -159,7 +187,7 @@ export default async function (
   }
 
   // Warn guard
-  if (state.sdk.isSubmitted === true) {
+  if (state.sdk.isToDoneted === true) {
     const msg = `${errPath(state)}Form already submitted!`;
     console.warn(msg);
     return msg;

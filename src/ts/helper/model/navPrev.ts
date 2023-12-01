@@ -1,84 +1,37 @@
 // Imports
 import * as utils from './utils';
+import * as viewUtils from '../view/utils';
+import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
 // Navigation
 import navTo from './navTo';
 
+// Error
+const errPath = (i: StudioFormInstance) =>
+  `${controllerUtils.errorName(i)} prev.ts:`;
+
 // Export
-const errPath = (s: any) => `${helper.errorName(s)}prev.ts -> default: `;
-export default function (stateId: number, options: Options) {
+export default async function (
+  instance: StudioFormInstance,
+  options: SFONav,
+  internal = false
+) {
   // Guard - Nav
   if (!utils.navGuard(instance, errPath, options)) return false;
 
-  navTo(instance, -1, options, internal, false, true);
-
-  console.log("can't go previous or next if instance == done = true !");
-
   // Values
-  const state = model.state[stateId];
+  const prevId = utils.currentSlideId(instance, 2) as number | undefined;
 
-  console.log(
-    "Resolve event has to include direction, 'prev, 'next, 'submit, 'custom'"
-  );
-
-  // Guard 0 - Let animations finish
-  if (
-    state.modes.waitForAnimations === true &&
-    options.doNotWaitForAnimations !== true &&
-    state.view.gsapTimeline.isRunning === true
-  ) {
-    const msg = `${errPath(state)}The animation is not yet finished!`;
-    console.warn(msg);
-    return msg;
-  }
-
-  // Warn guard
-  if (state.sdk.isSubmitted === true) {
-    const msg = `${errPath(state)}Form already submitted!`;
-    console.warn(msg);
-    return msg;
-  }
-
-  // Length === 1 guard
-  if (state.sdk.slideRecord.length <= 1) {
-    // Visual
-    state.elements.prevBtns.forEach((btn: HTMLElement) => {
-      // Style init
-      helper.addSfHide(btn);
-    });
-
+  // Guard
+  if (prevId === undefined) {
     // Programmatically
-    const msg = `${errPath(state)}Can't navigate backwards any further!`;
+    const msg = `${errPath(instance)} Can't navigate backwards any further!`;
     console.warn(msg);
-    return msg;
+    return false;
   }
 
-  // Define
-  const currentSlideId = utils.currentSlideId(instance);
-  const next: number = state.sdk.slideRecord[state.sdk.slideRecord.length - 2];
-  const index = state.sdk.slideRecord.indexOf(next);
-
-  // Logic
-  state.sdk.slideRecord.pop();
-
-  // * Animate *
-
-  // Main
-  state.view.animate({
-    ...options,
-    currentSlideId: currentSlideId,
-    nextSlideId: next,
-  });
-
-  // Prev buttons
-  if (index === 0)
-    state.elements.prevBtns.forEach((btn: HTMLElement) => {
-      // Style init
-      helper.addSfHide(btn);
-    });
-
-  // Trigger events
-  helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterPrev);
+  // Navigate
+  return await navTo(instance, prevId, options, internal);
 }

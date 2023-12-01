@@ -20,9 +20,12 @@ export const timeout = function (s: number) {
 };
 
 // Current slide id
-export const currentSlideId = function (instance: StudioFormInstance) {
+export const currentSlideId = function (
+  instance: StudioFormInstance,
+  subtract = 1
+) {
   // Return
-  return instance.record[instance.record.length - 1];
+  return instance.record[instance.record.length - subtract];
 };
 
 // Navigation guard
@@ -30,7 +33,7 @@ export const navGuard = function (
   instance: StudioFormInstance,
   errPath: (instance: StudioFormInstance) => string,
   options: SFONav,
-  { to, submit, prev }: { to?: true; submit?: true; prev?: true } = {},
+  { to, submit, prev }: { to?: true; submit?: true; prev?: boolean } = {},
   reportValidity = false
 ) {
   // Values
