@@ -19,23 +19,25 @@ export default async function (
   internal = false,
   navSubmitCommand = false
 ) {
-  // Values
-  const ghost = model.state.ghostInstances[instance.name];
-  const modes = instance.config.modes;
+  //  + + + Preperation + + +
 
-  // Guard - 0
+  // Guard - 0 - Nav
+  if (!utils.navGuard(instance, errPath, options, { to: true })) return false;
+
+  // Values
+  const modes = instance.config.modes;
+  const isSubmit = slideIdentification === 'done';
+
+  // Guard - 1
   if (!['string', 'number'].includes(typeof slideIdentification)) {
     const msg = `${errPath(instance)} Invalid type of slide identification: `;
     console.error(msg, slideIdentification);
     return false;
   }
 
-  // Warn guard - 1
-  if (
-    (modes.awaitAnimations || options.awaitAnimations) &&
-    ghost.gsapTl.transition?.isRunning
-  ) {
-    const msg = `${errPath(instance)} The animation is not yet finished!`;
+  // Guard - 2 - is done!
+  if (instance.isDone && isSubmit) {
+    const msg = `${errPath(instance)} Form already submitted!`;
     console.warn(msg);
     return false;
   }
@@ -47,27 +49,46 @@ export default async function (
   )
     slideIdentification = parseInt(slideIdentification);
 
-  // * Submission *
+  // Test if valid id
 
-  // Guard - is done!
-  if (instance.isDone && slideIdentification === 'done') {
-    const msg = `${errPath(instance)} Form already submitted!`;
-    console.warn(msg);
-    return false;
+  // Test if valid string
+  const validStrings = ['done'];
+
+  // Calculate if it is submit & animation direction
+  const currentId = instance.isDone ? 'done' : utils.currentSlideId(instance);
+  const isPrev = false; // If "negative" value exist in prev path
+
+  // Await promise resolve
+  if (
+    modes.promiseResolve &&
+    (!isPrev || modes.onPrevPromiseResolve) &&
+    (!isSubmit || modes.onSubmitPromiseResolve)
+  ) {
+    const response = await instance.promise();
+    if (!response) return false;
   }
 
-  // If done
-  if (slideIdentification === 'done' && !navSubmitCommand) {
+  // + + + Execution + + +
+
+  // * Submission *
+
+  // If next -> done
+  if (isSubmit && !navSubmitCommand) {
     // Fetch
-    const res = await navSubmit();
+    const res = await navSubmit(instance, options, internal, true);
 
     // Logic
     if (!res) return false;
   }
 
+  // * Jump back logic *
+
   // * Next / prev *
 
-  // * Animate
+  // * Animate *
+
+  // * Default *
+  return true;
 
   // Guard
 
@@ -149,8 +170,7 @@ export default async function (
   }
 
   // Define
-  const currentSlideId: number =
-    state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
+  const currentSlideId = utils.currentSlideId(instance);
   const next: number = state.sdk.slideRecord[state.sdk.slideRecord.length - 2];
   const index = state.sdk.slideRecord.indexOf(next);
 

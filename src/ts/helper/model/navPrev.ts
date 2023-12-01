@@ -6,6 +6,9 @@ import * as config from '../../config';
 // Export
 const errPath = (s: any) => `${helper.errorName(s)}prev.ts -> default: `;
 export default function (stateId: number, options: Options) {
+  // Guard - Nav
+  if (!utils.navGuard(instance, errPath, options, { prev: true })) return false;
+
   console.log("can't go previous or next if instance == done = true !");
 
   // Values
@@ -48,8 +51,7 @@ export default function (stateId: number, options: Options) {
   }
 
   // Define
-  const currentSlideId: number =
-    state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
+  const currentSlideId = utils.currentSlideId(instance);
   const next: number = state.sdk.slideRecord[state.sdk.slideRecord.length - 2];
   const index = state.sdk.slideRecord.indexOf(next);
 

@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
 import * as model from '../../model';
@@ -9,7 +10,11 @@ const errPath = (n: string) =>
   `${controllerUtils.errorName(n)} animatePromiseResolve.ts:`;
 
 // Export active / inactive
-export default async function (instance: StudioFormInstance, internal = true) {
+export default async function (
+  instance: StudioFormInstance,
+  internal = true,
+  isSubmit = false
+) {
   // Guard
   if (instance.isAwaiting)
     throw new Error(
@@ -19,7 +24,7 @@ export default async function (instance: StudioFormInstance, internal = true) {
   // Values
   const awaitAttr = 'await';
   const ghost = model.state.ghostInstances[instance.name];
-  const slide = instance.logic[instance.record[instance.record.length - 1]];
+  const slide = instance.logic[modelUtils.currentSlideId(instance)];
   function getElements(mode = 'remove') {
     // Values
     const inner = utils.createSelector(null, awaitAttr);
@@ -49,21 +54,27 @@ export default async function (instance: StudioFormInstance, internal = true) {
   ghost.root.isAwaiting = true;
 
   // Dispatch event
-  utils.dispatchEvent(
+  const promiseEvent = utils.dispatchEvent(
     instance.name,
-    'promise' + (internal ? '' : '-api'),
+    (isSubmit ? 'submit' : 'promise') + (internal ? '' : '-api'),
     true,
     {
       slide: slide,
     }
   );
 
+  // Listen to prevent default
+  if (promiseEvent.defaultPrevented) return false;
+
   // Style children with class
   utils.classListToggle(...getElements('add'));
 
   // Event listener
+  const globalConfig = model.state.api['config'];
   instance.elements.mask.addEventListener(
-    model.state.api['config'].eventPrefix + 'resolve',
+    globalConfig.eventPrefix +
+      (isSubmit ? 'fetched' : 'resolve') +
+      (internal ? '' : globalConfig.externalEventSuffix),
     e => resolve(e),
     {
       once: true,

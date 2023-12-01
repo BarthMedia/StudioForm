@@ -101,7 +101,7 @@ export const arrayProperties = [
 ];
 
 // Global configuration
-const globalConfigMain = {
+const globalConfigMain: StudioFormGlobalConfig = {
   // String
   get comboClassPrefix() {
     return (
@@ -112,11 +112,22 @@ const globalConfigMain = {
   get eventPrefix() {
     return viewUtils.getAttribute('event-prefix', document.body) || ``;
   },
+  get externalEventSuffix() {
+    return (
+      viewUtils.getAttribute('external-event-suffix', document.body) || `-api`
+    );
+  },
 
   // Boolean
   get classCascading() {
     return (
       (viewUtils.getAttribute('class-cascading', document.body) || `true`) ===
+      'true'
+    );
+  },
+  get eventBubbles() {
+    return (
+      (viewUtils.getAttribute('event-bubbles', document.body) || `true`) ===
       'true'
     );
   },
@@ -128,15 +139,15 @@ const globalConfigProxy = createReadMostlyProxy(
 const globalConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-global-config`;
 const globalConfigWrite = (e: unknown) => {
   // Values
-  const classCascadingName = 'classCascading';
   const detail = e?.['detail'];
   const property = detail?.property;
   const value = detail?.value;
+  const isBoolean = ['classCascading', 'eventBubbles'].includes(property);
 
   // Logic
   if (
-    (property === classCascadingName && typeof value === 'boolean') ||
-    (property !== classCascadingName && typeof value === 'string')
+    (isBoolean && typeof value === 'boolean') ||
+    (!isBoolean && typeof value === 'string')
   )
     document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
 };

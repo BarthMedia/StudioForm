@@ -1,4 +1,5 @@
 // Imports
+import * as utils from './utils';
 import * as viewUtils from '../view/utils';
 import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
@@ -9,7 +10,7 @@ import navTo from './navTo';
 
 // Error
 const errPath = (i: StudioFormInstance) =>
-  `${controllerUtils.errorName(i.name)} next.ts:`;
+  `${controllerUtils.errorName(i)} next.ts:`;
 
 // Export
 export default async function (
@@ -21,27 +22,10 @@ export default async function (
   const ghost = model.state.ghostInstances[instance.name];
   const modes = instance.config.modes;
   let next: number | undefined | boolean;
-  const currentSlideId = instance.record[instance.record.length - 1];
+  const currentSlideId = utils.currentSlideId(instance);
 
-  // Guard -1
-  if (ghost.suggest.doubleClick) return;
-
-  // Warn guard - 0
-  if (instance.isDone) {
-    const msg = `${errPath(instance)} Form already submitted!`;
-    console.warn(msg);
-    return false;
-  }
-
-  // Warn guard - 1
-  if (
-    (modes.awaitAnimations || options.awaitAnimations) &&
-    ghost.gsapTl.transition?.isRunning
-  ) {
-    const msg = `${errPath(instance)} The animation is not yet finished!`;
-    console.warn(msg);
-    return false;
-  }
+  // Guard - Nav
+  if (!utils.navGuard(instance, errPath, options)) return false;
 
   // * * * Logic * * *
 

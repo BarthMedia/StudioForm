@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as modelUtils from '../model/utils';
 import * as config from '../../config';
 import * as model from '../../model';
 
@@ -80,8 +81,7 @@ export default function init(instance: StudioFormInstance) {
     if (model.state.activeKeyBoardInstance !== instance.name) return;
 
     // Values
-    const currentSlide =
-      instance.logic[instance.record[instance.record.length - 1]];
+    const currentSlide = instance.logic[modelUtils.currentSlideId(instance)];
 
     // Guard 2 - Mode, step, textarea & custom input allowance
     if (

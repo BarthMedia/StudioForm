@@ -10,22 +10,33 @@ import * as model from '../../model';
 export function dispatchEvent(
   instanceName: string,
   eventName: string,
-  cancelable = true,
-  detail?: unknown
+  cancelable = false,
+  detail?: unknown,
+  internal = true
 ) {
   // Values
   const mask = model.state.instances[instanceName].elements.mask;
   let payload = detail && typeof detail === 'object' ? detail : {};
   payload = { ...payload, instanceName: instanceName };
+  const globalConfig = model.state.api['config'];
 
-  // Dispatch
-  mask.dispatchEvent(
-    new CustomEvent(model.state.api['config'].eventPrefix + eventName, {
-      bubbles: true,
+  // Event
+  const event = new CustomEvent(
+    globalConfig.eventPrefix +
+      eventName +
+      (internal ? '' : globalConfig.externalEventSuffix),
+    {
+      bubbles: globalConfig.eventBubbles,
       cancelable: cancelable,
       detail: payload,
-    })
+    }
   );
+
+  // Dispatch
+  mask.dispatchEvent(event);
+
+  // Return
+  return event;
 }
 
 // Get input key

@@ -122,16 +122,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('partial-data');
     },
 
-    // Promise / resolve
-    get promiseResolve() {
-      return getAttribute('promise-resolve', false);
-    },
-
-    // Auto resolve on prev
-    get autoResolveOnPrev() {
-      return getAttribute('auto-resolve-on-prev', false);
-    },
-
     // Remove conditionally invisible slides
     get removeConditionallyInvisibeSlides() {
       return getAttribute('remove-conditionally-invisible-slides');
@@ -140,11 +130,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // Slider mode
     get slider() {
       return mask.tagName !== 'FORM' || getAttribute('slider', false);
-    },
-
-    // Add temporary required
-    get temporaryRequirements() {
-      return getAttribute('temporary-requirements');
     },
 
     // Swap submit buttons
@@ -198,18 +183,43 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     },
 
     // Show error message
-    get autoShowErrorMessage() {
-      return getAttribute('auto-show-error-message');
+    get autoShowFail() {
+      return getAttribute('auto-show-fail');
     },
 
     // Hide error message on click
-    get autoHideErrorMessage() {
-      return getAttribute('auto-hide-error-message');
+    get autoHideFail() {
+      return getAttribute('auto-hide-fail');
     },
 
     // Report native vadility
     get reportValidity() {
       return getAttribute('report-validity');
+    },
+
+    // Report native vadility
+    get nativeReportValidity() {
+      return getAttribute('native-report-validity');
+    },
+
+    // On Prev Report native vadility
+    get onPrevReportValidity() {
+      return getAttribute('on-prev-report-validity', false);
+    },
+
+    // Promise / resolve
+    get promiseResolve() {
+      return getAttribute('promise-resolve', false);
+    },
+
+    // Auto resolve on prev
+    get onPrevPromiseResolve() {
+      return getAttribute('on-prev-promise-resolve', false);
+    },
+
+    // Auto resolve on prev
+    get onSubmitPromiseResolve() {
+      return getAttribute('on-submit-promise-resolve', false);
     },
 
     // 100% progress only on submit

@@ -1,12 +1,16 @@
 // Imports
 import * as utils from './utils';
+import * as viewUtils from '../view/utils';
 import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
+// View
+import animatePromiseResolve from '../view/animatePromiseResolve';
+
 // Error
 const errPath = (i: StudioFormInstance) =>
-  `${controllerUtils.errorName(i.name)} submit.ts:`;
+  `${controllerUtils.errorName(i)} submit.ts:`;
 
 // Export
 export default async function (
@@ -15,17 +19,48 @@ export default async function (
   internal = false,
   navToCommand = false
 ) {
+  // Guard - Nav
+  if (!utils.navGuard(instance, errPath, options, { submit: true }))
+    return false;
+
+  // Values
+  const currentSlideId = utils.currentSlideId(instance);
+
+  // Values
+  const modes = instance.config.modes;
+
+  modes.autoShowFail;
+  modes.autoHideFail;
+
+  // Respect wized reset
+  modes.reset;
+
+  // Dispatch event
+  animatePromiseResolve(instance, internal, true);
+
+  // Listen SFONav options!
+
+  // Fetch
+
+  // Dispatch resolve event
+  viewUtils.dispatchEvent(instance.name, 'fetched', false, {}, internal);
+
+  /**
+   *
+   *
+   *
+   * TODO's below
+   *
+   *
+   *
+   */
+
   console.log('If submission .ok == true, then set resolve to true or false!');
   console.log('Submission are promises and resolves!');
 
   console.log(
     'The submit / fetch call, shall actually run via this new promise / resolve architecture!'
   );
-
-  // Values
-  const state = model.state[stateId];
-  const currentSlideId: number =
-    state.sdk.slideRecord[state.sdk.slideRecord.length - 1];
 
   console.log('Console.log! New allow show error message mode!');
   console.log('MAKE IT OPTIONAL, THAT ERROR MESSAGE IS EVEN SHOWN !');
@@ -45,39 +80,6 @@ export default async function (
   console.log(`Prevent default, fires the submit event, but does never start the submission.
 
   Make StudioForm behave like this ○`);
-
-  // Slider mode guard
-  if (state.modes.isSlider === true) {
-    const msg = `${errPath(state)}Slider mode doesn't allow for submission!`;
-    console.warn(msg);
-    return msg;
-  }
-
-  // Guard 0 - Let animations finish
-  if (
-    state.modes.waitForAnimations === true &&
-    options.doNotWaitForAnimations !== true &&
-    state.view.gsapTimeline.isRunning === true
-  ) {
-    const msg = `${errPath(state)}The animation is not yet finished!`;
-    console.warn(msg);
-    return msg;
-  }
-
-  // Warn guard
-  if (state.sdk.isSubmitted === true) {
-    const msg = `${errPath(state)}Form already submitted!`;
-    console.warn(msg);
-    return msg;
-  }
-
-  // Check step requirements
-  if (
-    !state.sdk.slideRequirements(currentSlideId, options) &&
-    !options.doNotCheckSlideRequirements
-  ) {
-    return;
-  }
 
   // Hide error message
   state.elements.errorMsg.style.display = '';
@@ -161,7 +163,7 @@ export default async function (
     state.elements.errorMsg.style.display = 'block';
 
     // On click event error message
-    if (state.modes.hideErrorMessageOnClick)
+    if (modes.hideErrorMessageOnClick)
       document.body.addEventListener(
         'click',
         function () {

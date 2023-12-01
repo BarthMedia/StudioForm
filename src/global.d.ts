@@ -159,7 +159,9 @@ interface StudioFormInstance {
   // Wized API
   reset: (options?: {}) => void;
   fetch: (options?: SFOFetch) => Promise<boolean>;
-  reportValidity: (...elements: HTMLElement[]) => void; // slideRequirements -- legacy
+  reportValidity: (
+    ...elements: (HTMLElement | HTMLElement[] | NodeListOf<HTMLElement>)[]
+  ) => boolean | undefined; // slideRequirements -- legacy
 
   // Status
   isAwaiting: boolean;
@@ -320,9 +322,14 @@ interface ProxyWriteEvent {
 }
 
 type StudioFormGlobalConfig = {
+  // Strings
   comboClassPrefix: string;
   eventPrefix: string;
+  externalEventSuffix: string;
+
+  // Boolean
   classCascading: boolean;
+  eventBubbles: boolean;
 };
 
 type StudioForm =
