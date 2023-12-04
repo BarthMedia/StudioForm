@@ -375,8 +375,14 @@ export const init = (
     fetch: async (options: SFOFetch = {}) => {
       return await fetch(instanceProxy, options);
     },
-    promise: async () => {
-      return await animatePromiseResolve(instanceProxy, false);
+    promise: async (info = {}) => {
+      return await animatePromiseResolve(
+        instanceProxy,
+        false,
+        false,
+        false,
+        info
+      );
     },
     reportValidity: (...elements) => {
       // Log

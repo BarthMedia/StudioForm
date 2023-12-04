@@ -14,7 +14,8 @@ export default async function (
   instance: StudioFormInstance,
   internal = true,
   isSubmit = false,
-  asyncCallBack: () => Promise<boolean> = async () => true
+  asyncCallBack: (() => Promise<boolean>) | false | undefined,
+  info = {}
 ) {
   // Guard
   if (instance.isAwaiting)
@@ -61,6 +62,7 @@ export default async function (
     (isSubmit ? 'submit' : 'promise') + (internal ? '' : '-api'),
     true,
     {
+      ...info,
       slide: slide,
     }
   );
@@ -73,6 +75,9 @@ export default async function (
 
   // Alternative promise
   if (isSubmit) {
+    // Guard
+    if (!asyncCallBack) return false;
+
     // Values
     const val = await asyncCallBack();
     rootInstance.isAwaiting = false;

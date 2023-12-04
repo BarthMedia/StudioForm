@@ -76,7 +76,10 @@ export default async function (
     (!isToDone || modes.onSubmitPromiseResolve)
   ) {
     // Await
-    const response = await instance.promise();
+    const response = await instance.promise({
+      direction: isPrev ? 'prev' : isToDone ? 'done' : 'next',
+      id: slideIdentification,
+    });
 
     // Guard
     if (!response) return false;
