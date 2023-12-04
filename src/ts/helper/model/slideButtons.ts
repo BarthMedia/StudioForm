@@ -26,6 +26,7 @@ export default function (type: string, slide: HTMLElement) {
       element: button,
       conditional: viewUtils.getAttribute('conditional', button) || '',
       next: viewUtils.getAttribute(null, button) !== 'submit',
+      defaultText: button.innerHTML,
     };
 
     // Push

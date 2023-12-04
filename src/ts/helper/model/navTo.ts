@@ -75,7 +75,10 @@ export default async function (
     (!isPrev || modes.onPrevPromiseResolve) &&
     (!isToDone || modes.onSubmitPromiseResolve)
   ) {
+    // Await
     const response = await instance.promise();
+
+    // Guard
     if (!response) return false;
   }
 
@@ -96,9 +99,14 @@ export default async function (
     if (!res) return false;
   }
 
+  console.log(slideIdentification, ' now successfully animate this!');
+
   // * Jump back logic *
 
   // * Next / prev *
+
+  // * Accessability *
+  const areaHidden = 'aria-hidden';
 
   // * Animate *
 

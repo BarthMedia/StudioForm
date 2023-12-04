@@ -41,7 +41,7 @@ export default function (
     fail: wrapper.querySelector('.w-form-fail') as HTMLElement | null,
 
     // Fetch response
-    get error() {
+    get errors() {
       return querySelectorAll('error');
     },
 

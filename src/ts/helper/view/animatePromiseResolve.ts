@@ -52,7 +52,8 @@ export default async function (
   }
 
   // Overwrite
-  ghost.root.isAwaiting = true;
+  const rootInstance = ghost.root;
+  rootInstance.isAwaiting = true;
 
   // Dispatch event
   const promiseEvent = utils.dispatchEvent(
@@ -65,10 +66,18 @@ export default async function (
   );
 
   // Listen to prevent default
-  if (promiseEvent.defaultPrevented) return false;
+  if (promiseEvent.defaultPrevented) {
+    rootInstance.isAwaiting = false;
+    return false;
+  }
 
   // Alternative promise
-  if (isSubmit) return await asyncCallBack();
+  if (isSubmit) {
+    // Values
+    const val = await asyncCallBack();
+    rootInstance.isAwaiting = false;
+    return val;
+  }
 
   // Style children with class
   utils.classListToggle(...getElements('add'));
@@ -88,7 +97,7 @@ export default async function (
   // Define function
   function resolve(e: Event) {
     // Overwrite
-    ghost.root.isAwaiting = false;
+    rootInstance.isAwaiting = false;
 
     // Remove style children with class
     utils.classListToggle(...getElements());

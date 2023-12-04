@@ -241,6 +241,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     get fileLabelSwap() {
       return getAttribute('file-label-swap');
     },
+
+    // File dropping
+    get initDefaultStyles() {
+      return getAttribute('init-default-styles');
+    },
   };
 
   // Expose to api & handle change requests

@@ -16,7 +16,7 @@ interface StudioFormElements {
   get maxSlides(): NodeListOf<HTMLElement>;
 
   // Fetch response
-  get error(): NodeListOf<HTMLElement>;
+  get errors(): NodeListOf<HTMLElement>;
 
   // Anchor
   anchor: HTMLElement | null;
@@ -36,6 +36,7 @@ interface StudioFormButtonLogic {
   conditional: string;
   next: boolean | number;
   conditionalPrev?: true;
+  defaultText: string;
 }
 interface StudioFormSlideLogic {
   // Info
@@ -157,7 +158,7 @@ interface StudioFormInstance {
   resolve?: boolean; // sf-await get's removed // Allow for class prefix
 
   // Wized API
-  reset: (options?: {}) => void;
+  reset: (options?: SFONav) => Promise<boolean>;
   fetch: (options?: SFOFetch) => Promise<boolean>;
   reportValidity: (
     ...elements: (HTMLElement | HTMLElement[] | NodeListOf<HTMLElement>)[]
@@ -236,7 +237,7 @@ interface SFFetchData {
     result?: false | unknown;
     status: number;
     error?: {
-      message: string | unknown;
+      message: string;
       code?: string | unknown;
       details?: null | unknown;
     };

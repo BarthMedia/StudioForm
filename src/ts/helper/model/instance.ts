@@ -391,9 +391,15 @@ export const init = (
       //
       console.log('I have to built');
     },
-    reset: (options = {}) => {
-      console.log('Remove sf hide on reset !!!');
-      console.log('I have to built');
+    reset: async (options: SFONav = {}) => {
+      // Elements
+      const mask = instanceProxy.elements.mask;
+
+      // Logic
+      if (mask instanceof HTMLFormElement) mask.reset();
+
+      // Await
+      return await instanceProxy.to(0, options);
     },
 
     // - Navigation -

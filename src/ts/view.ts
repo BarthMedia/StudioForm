@@ -11,6 +11,7 @@ import animateProgress from './helper/view/animateProgress';
 import animateCurrent from './helper/view/animateCurrent';
 import observerAttachments from './helper/view/observeAttachments';
 import observeChecked from './helper/view/observeChecked';
+import { wrap } from 'gsap';
 
 // Error path
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> view.ts:`;
@@ -92,13 +93,37 @@ export default function init(state: StudioFormState) {
 
       // * Init initial style *
 
-      // Steps
-      instance.logic.forEach(slide => {
-        slide.element.style.display = 'none';
-      });
-      instance.logic[0].element.style.display = '';
+      // Values
+      const modes = instance.config.modes;
+      const initDefaultStyles = modes.initDefaultStyles;
+      const areaHidden = 'aria-hidden';
 
-      // Observe
+      // Set attribute on wrapper
+      utils.setAccessibility(
+        wrapper,
+        modes.slider ? 'carousel' : 'progressive form',
+        'region'
+      );
+
+      // Loop
+      instance.logic.forEach((slide, index, array) => {
+        // Values
+        const el = slide.element;
+
+        // Show/ hide steps
+        if (initDefaultStyles) el.style.display = 'none';
+
+        // Set attributes
+        utils.setAccessibility(el, `${index + 1} of ${array.length}`, 'group');
+        el.setAttribute(areaHidden, 'true');
+      });
+
+      // Instance 0
+      const element0 = instance.logic[0].element;
+      if (initDefaultStyles) element0.style.display = '';
+      element0.removeAttribute(areaHidden);
+
+      // * Observe *
       const observer = new MutationObserver(observe);
       observer.observe(mask, { childList: true, subtree: true });
       model.state.ghostInstances[instanceName].observer = observer;

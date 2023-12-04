@@ -6,6 +6,22 @@ import * as model from '../../model';
 
 // + Exports +
 
+// Set accessibility
+export function setAccessibility(
+  element: HTMLElement,
+  _areaLabel: string,
+  _role = 'button'
+) {
+  // Values
+  const role = 'role';
+  const areaLabel = 'aria-label';
+
+  // Logic
+  if (!element.hasAttribute(role)) element.setAttribute(role, _role);
+  if (!element.hasAttribute(areaLabel))
+    element.setAttribute(areaLabel, _areaLabel);
+}
+
 // Dispatch events
 export function dispatchEvent(
   instanceName: string,

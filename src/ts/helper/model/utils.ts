@@ -93,6 +93,7 @@ export const navGuard = function (
 
   // Test requirements
   if (
+    !options.skipRequirements &&
     reportValidity &&
     modes.reportValidity &&
     (modes.onPrevReportValidity || !prev)

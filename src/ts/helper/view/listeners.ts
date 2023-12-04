@@ -11,28 +11,49 @@ import navTo from '../model/navTo';
 
 // Export
 export default function init(instance: StudioFormInstance) {
+  // Values
+  const submitString = `Submit ${
+    instance.elements.mask.getAttribute('data-name') || 'form'
+  }`;
+
   // Slides loop
   instance.logic.forEach(slide => {
     // 1 or more buttons case
     if (slide.buttons)
-      slide.buttons.forEach(button =>
+      slide.buttons.forEach(button => {
+        // Attributes
+        utils.setAccessibility(
+          button.element,
+          typeof button.next === 'number'
+            ? `Show slide ${button.next + 1} of ${instance.logic.length}`
+            : submitString
+        );
+
+        // Event listener
         button.element.addEventListener('click', () => {
           navNext(instance, { button: button }, true);
-        })
-      );
+        });
+      });
   });
 
   // * Next buttons *
-  instance.elements.nexts.forEach(button =>
+  instance.elements.nexts.forEach(button => {
+    // Attributes
+    utils.setAccessibility(button, 'next slide');
+
+    // Event listener
     button.addEventListener('click', () => {
       navNext(instance, {}, true);
-    })
-  );
+    });
+  });
 
   // * Prev buttons *
   instance.elements.prevs.forEach(button => {
     // Style init
     utils.addSfHide(button);
+
+    // Attributes
+    utils.setAccessibility(button, 'previous slide');
 
     // SDK
     button.addEventListener('click', () => {
@@ -48,6 +69,20 @@ export default function init(instance: StudioFormInstance) {
       const slideIdentification = (
         utils.getAttribute(null, button) || ''
       ).slice(3);
+
+      // Attributes
+      utils.setAccessibility(
+        button,
+        slideIdentification === 'done'
+          ? submitString
+          : 'Show ' +
+              (/^\d+$/.test(slideIdentification)
+                ? 'slide ' +
+                  (parseInt(slideIdentification) + 1) +
+                  ' of ' +
+                  instance.logic.length
+                : slideIdentification)
+      );
 
       // Event
       button.addEventListener('click', () => {
