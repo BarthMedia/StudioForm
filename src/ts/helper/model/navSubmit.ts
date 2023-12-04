@@ -122,7 +122,9 @@ export default async function (
 
   // Call navTo
   if (!navToCommand && responseOk)
-    navTo(instance, 'done', options, internal, true);
+    await navTo(instance, 'done', options, internal, true);
+
+  console.log('redirect after time both passed!');
 
   // Default
   return responseOk;
