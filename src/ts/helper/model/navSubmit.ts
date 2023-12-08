@@ -7,6 +7,7 @@ import * as config from '../../config';
 
 // View
 import animatePromiseResolve from '../view/animatePromiseResolve';
+import reset from '../view/reset';
 
 // Fetch
 import fetch from './fetch';
@@ -34,9 +35,12 @@ export default async function (
   const modes = instance.config.modes;
 
   // Hide fail for resubmit
+  const tabindex = 'tabindex';
   const failMessageElement = instance.elements.fail;
-  if (modes.autoShowFail && failMessageElement)
+  if (modes.autoShowFail && failMessageElement) {
     failMessageElement.style.display = '';
+    failMessageElement.setAttribute(tabindex, '-1');
+  }
 
   // Listen SFONav options!
   if (options.fake) return true;
@@ -59,6 +63,7 @@ export default async function (
   // Fetch
   const response = await animatePromiseResolve(
     instance,
+    {},
     internal,
     true,
     async () => {
@@ -81,7 +86,7 @@ export default async function (
   const responseOk = responseData?.ok || false;
 
   // Respect wized reset
-  if (modes.reset) instance.reset();
+  if (modes.reset) reset(instance, internal, 0, options);
 
   // If fetch was prevented / not executed
   if (!response || modes.preventDefault) return false;
@@ -89,8 +94,10 @@ export default async function (
   // If repsone not ok
   if (!responseOk) {
     // Display block
-    if (modes.autoShowFail && failMessageElement)
-      failMessageElement.style.display = '';
+    if (modes.autoShowFail && failMessageElement) {
+      failMessageElement.style.display = 'block';
+      failMessageElement.setAttribute(tabindex, '0');
+    }
 
     // Write error messages
     instance.elements.errors.forEach(el => {
@@ -102,29 +109,26 @@ export default async function (
       document.body.addEventListener(
         'click',
         function () {
-          if (failMessageElement) failMessageElement.style.display = '';
+          if (failMessageElement) {
+            failMessageElement.style.display = '';
+            failMessageElement.setAttribute(tabindex, '-1');
+          }
         },
         { once: true }
       );
 
     // Dispatch fail event
-    viewUtils.dispatchEvent(instance.name, 'failed');
+    viewUtils.dispatchEvent(instance, 'failed', internal);
   }
 
   // Dispatch resolve event
-  viewUtils.dispatchEvent(
-    instance.name,
-    'fetched',
-    false,
-    { success: responseData?.ok },
-    internal
-  );
+  viewUtils.dispatchEvent(instance, 'fetched', internal, false, {
+    success: responseData?.ok,
+  });
 
   // Call navTo
   if (!navToCommand && responseOk)
     await navTo(instance, 'done', options, internal, true);
-
-  console.log('redirect after time both passed!');
 
   // Default
   return responseOk;

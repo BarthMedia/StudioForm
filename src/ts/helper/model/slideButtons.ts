@@ -37,12 +37,10 @@ export default function (type: string, slide: HTMLElement) {
   if (type === 'radio') {
     inputs.forEach((input, index) => {
       // Elments
-      const button = input.closest(
-        viewUtils.LABEL_SELECTOR
-      ) as HTMLElement | null;
+      const button = viewUtils.closestCascader(input);
 
       // Modify
-      modifyObj(button || input, index);
+      modifyObj(button, index);
     });
 
     // Return

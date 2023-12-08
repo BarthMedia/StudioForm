@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as modelUtils from '../model/utils';
 import * as config from '../../config';
 import * as model from '../../model';
 
@@ -33,7 +34,7 @@ export default function (instance: StudioFormInstance, timeCurrent: number) {
   }
 
   // Update completed / current state
-  const ghost = model.state.ghostInstances[instance.name];
+  const ghost = modelUtils.returnGhost(instance);
 
   // To delete
   ghost.asyncRecord.forEach(index => {

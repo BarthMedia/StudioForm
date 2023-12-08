@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as modelUtils from '../model/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
@@ -12,7 +13,7 @@ export default function (
   if (!fileInputs.length) return;
 
   // Values
-  const ghost = model.state.ghostInstances[instance.name];
+  const ghost = modelUtils.returnGhost(instance);
   const modes = instance.config.modes;
 
   // Loop
@@ -114,7 +115,7 @@ export default function (
         input.removeAttribute(attachedAttr);
 
         // Fire event
-        utils.dispatchEvent(instance.name, 'detached', false, { key: key });
+        utils.dispatchEvent(instance, 'detached', true, false, { key: key });
       }
 
       // Values
@@ -201,7 +202,7 @@ export default function (
       input.setAttribute(attachedAttr, 'true');
 
       // Fire event
-      utils.dispatchEvent(instance.name, 'attached', false, { key: key });
+      utils.dispatchEvent(instance, 'attached', true, false, { key: key });
     }
   });
 }

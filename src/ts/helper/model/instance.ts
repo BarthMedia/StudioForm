@@ -25,12 +25,16 @@ import fetch from './fetch';
 
 // View
 import animatePromiseResolve from '../view/animatePromiseResolve';
+import reset from '../view/reset';
+import reportValidity from '../view/reportValidity';
+import suggest from '../view/suggest';
 
 // Navigation
 import navNext from './navNext';
 import navPrev from './navPrev';
 import navSubmit from './navSubmit';
 import navTo from './navTo';
+import scrollTo from '../view/scrollTo';
 
 // + Define +
 
@@ -98,25 +102,16 @@ export const init = (
 ) => {
   // NOTE: TODO
   console.log(
-    'Have a more unified and clear way of listening to proxy write events!'
+    'TODO: ',
+    'Have a more unified and clear way of listening to proxy write events!',
+    'not DOM dependend, and with less boiler plate code!'
   );
 
   // Initiate events
   const event: StudioFormEvent[] = (model.state.events[instanceName] = []);
 
-  console.log(
-    'make sure, the event.defaultPrevented is respected on submit, in order to know if Wized or other js has successfully reset the form',
-    'If not default prevented, reset on your own, if that is wanted!'
-  );
-
   // Proxy write set prefix
   const proxyWriteSetPrefix = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}`;
-
-  console.log('have animate-end and animate events!');
-
-  console.log('Have fail event!');
-
-  console.log('Respect custom anchor?');
 
   // + Modes - proxy & event listener +
   const modesMain = modes(wrapper, mask);
@@ -140,7 +135,7 @@ export const init = (
 
   // Simple guard
   if (!elementsMain.slides.length) {
-    console.warn(
+    controllerUtils.warn(
       `${errPath(instanceName)} Couldn't find slides!`,
       elementsMain
     );
@@ -182,14 +177,17 @@ export const init = (
     const value = detail?.value;
     const property = detail?.property;
     const stringVals = ['ease', 'progressBarAxis'];
+    const stringAndNumberVals = ['offset'];
     const includesStringVals = stringVals.includes(property);
+    const includesStringAndNumberVals = stringAndNumberVals.includes(property);
 
     // Writing logic
     if (
-      (!includesStringVals &&
+      ((includesStringAndNumberVals || !includesStringVals) &&
         (typeof value === 'number' ||
           (property === 'direction' && value === 'off'))) ||
-      (includesStringVals && typeof value === 'string')
+      ((includesStringAndNumberVals || includesStringVals) &&
+        typeof value === 'string')
     )
       document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
   };
@@ -239,7 +237,7 @@ export const init = (
   // + Data +
 
   // Animation data
-  const animationDataMain: SFAnimationData = {};
+  const animationDataMain = {};
   const animationDataProxy = model.createReadMostlyProxy(
     animationDataMain
   ) as SFAnimationData;
@@ -251,24 +249,10 @@ export const init = (
   ) as SFFetchData;
 
   // Fetch data
-  const validityDataMain: SFValidityData[] = {};
+  const validityDataMain: SFValidityData[] = [];
   const validityDataProxy = model.createReadMostlyProxy(
     validityDataMain
   ) as SFValidityData[];
-
-  console.log(
-    '// Make it possible to easily delete fetch data',
-    'Should be a proxy though'
-  );
-
-  console.log(
-    'Getters for data. form / progress are suppiror to other methods'
-  );
-
-  console.log(
-    'Think error messages much bigger?',
-    'There is not only fetch error, but also other type of requirements error readable through data.error ?'
-  );
 
   // Files data
   const filesDataMain: SFFilesData = {};
@@ -295,12 +279,6 @@ export const init = (
   const dataProxy = model.createReadMostlyProxy(dataMain) as StudioFormData;
 
   // Hidden data fields by external users
-  console.log('Apply similar write only technique, as you have done ');
-  console.log(
-    'Only accept strings, and files',
-    "const type = (value instanceof File) ? 'file' : typeof value;"
-  );
-  console.log('Have dataForm.ts respect these hidden values!');
   const hiddenDataSecret: SFHidden = {};
   const hiddenDataMain: SFHidden = {};
   const hiddenDataProxy = model.createReadMostlyProxy(
@@ -341,31 +319,28 @@ export const init = (
   });
 
   // Suggest Proxy
+  const suggestMain: SFSuggest = {
+    clear: () => {
+      console.log('I have to built', suggest);
 
-  console.log(`
+      console.log(`
   // // Initialize suggest button
   suggestButton(state);
   `);
-
-  const suggestMain: SFSuggest = {
-    clear: () => {
-      console.log('I have to built');
     },
     next: () => {
-      console.log('I have to built');
+      console.log('I have to built', suggest);
       console.log(
         "Throw warnings if somebody try's to do this on slide, where there are no !visible! 2+ buttons"
       );
     },
     prev: () => {
-      console.log('I have to built');
+      console.log('I have to built', suggest);
     },
   };
   const suggestProxy = model.createReadMostlyProxy(suggestMain) as SFSuggest;
 
   // + Instance +
-
-  console.log("Listen to as many .defaultPrevented logic's as possible");
 
   // Create
   const instanceMain: StudioFormInstance = {
@@ -376,36 +351,18 @@ export const init = (
       return await fetch(instanceProxy, options);
     },
     promise: async (info = {}) => {
-      return await animatePromiseResolve(
-        instanceProxy,
-        false,
-        false,
-        false,
-        info
-      );
+      return await animatePromiseResolve(instanceProxy, info);
     },
     reportValidity: (...elements) => {
-      // Log
-      console.log('respect ...elements', elements);
-
-      //
-      console.log(
-        'Report vadility deverse special mode, where you can input an [] of HTMLElements',
-        'This shall then scroll to and make red / apply combo class to the described elements!'
-      );
-
-      //
-      console.log('I have to built');
+      return reportValidity(instanceProxy, false, ...elements);
     },
-    reset: async (options: SFONav = {}) => {
-      // Elements
-      const mask = instanceProxy.elements.mask;
-
-      // Logic
-      if (mask instanceof HTMLFormElement) mask.reset();
-
-      // Await
-      return await instanceProxy.to(0, options);
+    reset: async (
+      slideId: null | number | StudioFormSpreadElements = 0,
+      options: SFONav | StudioFormSpreadElements = {},
+      ...elements
+    ) => {
+      // Return
+      return await reset(instanceProxy, false, slideId, options, ...elements);
     },
 
     // - Navigation -
@@ -414,14 +371,8 @@ export const init = (
     to: async (slideIdentification, options = {}) => {
       return await navTo(instanceProxy, slideIdentification, options);
     },
-    scrollTo: (options: SFOScrollTo) => {
-      console.log(
-        "Throw error if API user try's this without supplying options!"
-      );
-      console.log(
-        'I have to be built',
-        'I think fetched event could be sweet!'
-      );
+    scrollTo: async target => {
+      return await scrollTo(instanceProxy, target);
     },
     suggest: suggestProxy,
 
@@ -487,10 +438,6 @@ export const init = (
         }
       }
 
-      console.log(
-        'Make sure to make data.fetch.{} deleteable / null! / nullable!'
-      );
-
       // Promise / resolve & submitted
       if (
         property === 'resolve' &&
@@ -502,8 +449,13 @@ export const init = (
             `${errPath(instanceName)} There is no active promise!`
           );
 
+        // Notes:
+        console.log(
+          'Make sure to make data.fetch.{} deleteable / null! / nullable!'
+        );
+
         // Dispatch
-        viewUtils.dispatchEvent(instanceName, 'resolve', false, {
+        viewUtils.dispatchEvent(instanceName, 'resolve', true, false, {
           success: value,
         });
 
@@ -521,11 +473,12 @@ export const init = (
   // + Ghost instance +
   const ghostInstanceMain: StudioFormGhostInstance = {
     // External read & sometimes write
-    animationData: animationDataMain,
+    animationData: animationDataMain as SFAnimationData,
     fetchData: fetchDataMain,
     record: recordMain,
     root: instanceMain,
     files: filesDataMain,
+    validity: validityDataMain,
 
     // Secret
     auth: authMain,
@@ -540,6 +493,8 @@ export const init = (
 
     // Events
     observer: null,
+
+    // Validity
   };
 
   // Add proxy

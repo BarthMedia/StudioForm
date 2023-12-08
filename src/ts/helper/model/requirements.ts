@@ -1,7 +1,317 @@
 // Imports
+import * as utils from './utils';
 import * as viewUtils from '../view/utils';
+import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
+
+// Error
+const errPath = (s: StudioFormInstance) =>
+  `${controllerUtils.errorName(s)} requirements.ts:`;
+
+// Helper
+const sfidAttr = `${config.PRODUCT_NAME_SHORT}-input-id`;
+
+// Notes:
+// console.log('Respect disabled attribute!');
+// console.log('Respect readonly attribute!');
+
+// Export
+export default function (instance: StudioFormInstance) {
+  // Values
+  const ghost = utils.returnGhost(instance);
+  const currentSlide = instance.logic[utils.currentSlideId(instance)];
+  const currentSlideElement = currentSlide.element;
+  const targetInputs: SFValidityData[] = [];
+
+  // Cases
+  const response = (() => {
+    // * * * Empty case * * *
+    if (currentSlide.type === 'empty') return true;
+
+    // Radio helper
+    function checkRadio(indexed = false) {
+      // Elements
+      const radios: NodeListOf<HTMLInputElement> =
+        currentSlideElement.querySelectorAll('input[type="radio"]');
+      const groups: string[] = [];
+
+      // Values
+      let returnVal = true;
+
+      // Find all available groups
+      radios.forEach(radio => {
+        if (groups.indexOf(radio.name) === -1) groups.push(radio.name);
+      });
+
+      // Group loop
+      groups.forEach(str => {
+        // Elements
+        const radios: NodeListOf<HTMLInputElement> =
+          currentSlideElement.querySelectorAll(
+            `input[type="radio"][name="${str}"]`
+          );
+
+        // Values
+        let selectedFound = false;
+
+        // Loop
+        radios.forEach(radio => {
+          if (radio.checked) selectedFound = true;
+        });
+
+        // Logic
+        if (!selectedFound) {
+          // Overwrite
+          returnVal = false;
+
+          // Push
+          radios.forEach(radio =>
+            targetInputs.push({
+              input: radio,
+              index: indexed
+                ? parseInt(radio.getAttribute(sfidAttr) || '')
+                : undefined,
+              message: 'unchecked',
+            })
+          );
+        }
+      });
+
+      // Logic
+      return returnVal;
+    }
+
+    // * * * Radio case * * *
+    if (currentSlide.type === 'radio') {
+      return checkRadio();
+    }
+
+    // * * * Standard case * * *
+    if (currentSlide.type === 'standard') {
+      // Elements
+      const inputs = currentSlideElement.querySelectorAll(
+        viewUtils.INPUTS_SELECTOR
+      ) as NodeListOf<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >;
+
+      // * Index every index correctly *
+      inputs.forEach((input, index) => {
+        input.setAttribute(sfidAttr, index + '');
+      });
+
+      // * Radio logic *
+      checkRadio(true);
+
+      // * Other input types loop *
+      inputs.forEach(input => {
+        // Don't test radios
+        if (input.type === 'radio') return;
+
+        // Required checking
+        if (!input.hasAttribute('required')) return;
+
+        // Values
+        const index = parseInt(input.getAttribute(sfidAttr) || '');
+
+        // File
+        if (input.type === 'file') {
+          // Push
+          if (!viewUtils.getAttribute('attached'))
+            targetInputs.push({
+              input: input,
+              index: index,
+              message: 'no attachments',
+            });
+
+          // Skip code below
+          return;
+        }
+
+        // Is empty
+        if (input.value === '') {
+          // Push
+          targetInputs.push({
+            input: input,
+            index: index,
+            message: 'empty',
+          });
+
+          // Skip code below
+          return;
+        }
+
+        // Validate number
+        if (input.type === 'number') {
+          // Values
+          const res = validateNumberInput(input as HTMLInputElement);
+
+          // Throw if
+          if (res !== true) {
+            // Push
+            targetInputs.push({
+              input: input,
+              index: index,
+              message: res,
+            });
+
+            // Skip code below
+            return;
+          }
+        }
+
+        // Length check
+        const lenghtRes = validateLength(input);
+        if (lenghtRes !== true) {
+          // Push
+          targetInputs.push({
+            input: input,
+            index: index,
+            message: lenghtRes,
+          });
+
+          // Skip code below
+          return;
+        }
+
+        // Regex test
+        if (input.getAttribute('pattern')) {
+          try {
+            // Values
+            const regExp = new RegExp(input.getAttribute('pattern') || '');
+
+            // Logic
+            if (!regExp.test(input.value)) {
+              // Push
+              targetInputs.push({
+                input: input,
+                index: index,
+                message: 'invalid pattern',
+                regex: regExp,
+              });
+
+              // Skip code below
+              return;
+            } else {
+              // On success skip code below
+              return;
+            }
+          } catch (err) {
+            controllerUtils.warn(
+              `${errPath(instance)} forEach() callback: Invalid regex test!`,
+              err,
+              input
+            );
+          }
+        }
+
+        // Email case
+        if (input.type === 'email') {
+          // Values
+          const regExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+          // Logic
+          if (!regExp.test(input.value)) {
+            // Push
+            targetInputs.push({
+              input: input,
+              index: index,
+              message: 'invalid email',
+              regex: regExp,
+            });
+
+            // Skip code below
+            return;
+          }
+        }
+
+        // Tel case
+        if (input.type === 'tel') {
+          // Values
+          const regExp = /^[\d\s\-\+\(\)\.\/*#]+$/;
+
+          // Logic
+          if (!regExp.test(input.value)) {
+            // Push
+            targetInputs.push({
+              input: input,
+              index: index,
+              message: 'invalid tel',
+              regex: regExp,
+            });
+
+            // Skip code below
+            return;
+          }
+        }
+
+        // Email case
+        if (input.type === 'number') {
+          // Values
+          const regExp = /^-?(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$/;
+
+          // Logic
+          if (!regExp.test(input.value)) {
+            // Push
+            targetInputs.push({
+              input: input,
+              index: index,
+              message: 'invalid number',
+              regex: regExp,
+            });
+
+            // Skip code below
+            return;
+          }
+        }
+
+        // Default - success
+      });
+
+      // Sort target input based on DOM index
+      targetInputs.sort((a, b) => a.index! - b.index!);
+
+      // * Remove input indexing *
+      inputs.forEach(input => {
+        input.removeAttribute(sfidAttr);
+      });
+
+      console.log(
+        'Figure out some internal variable way of not having to rely DOM attribute logic communication',
+        'maybe temporary key based object!'
+      );
+
+      // Logic
+      if (targetInputs.length > 0) {
+        // Logic
+        return false;
+      }
+
+      // Default
+      return true;
+    }
+
+    // * * * Custom case / If type unkown case * * *
+    if (viewUtils.getAttribute('requirements', currentSlideElement) === 'true')
+      return true;
+    else return false;
+  })();
+
+  // Root - Values
+  const validityArray = ghost.validity;
+
+  // Reset
+  validityArray.length = 0;
+
+  // Push
+  targetInputs.forEach(target =>
+    validityArray.push(model.createReadMostlyProxy(target) as SFValidityData)
+  );
+
+  // Return
+  return response;
+}
 
 // + Helper +
 
@@ -58,368 +368,45 @@ function validateNumberInput(inputElement: HTMLInputElement) {
   }
 }
 
-// Export
-const errPath = (s: any) => `${helper.errorName(s)}requirements.ts -> default`;
-const sfidAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}${config.PRODUCT_NAME_CLASS_PREFIX}input-id`;
-export default function (stateId: number, slideId: number, options: Options) {
-  // Positive guard
-  if (options.doNotCheckSlideRequirements === true) return true;
+// Notes:
 
-  // Values
-  const state = model.state[stateId];
-  const currentSlide = state.sdk.slideLogic[slideId];
-  const targetInputs: any[] = [];
+// // * * * Checkbox case * * * // Legacy
+// if (currentSlide.type === 'checkbox') {
+//   // Elements
+//   const checkboxes: NodeListOf<HTMLInputElement> =
+//     currentSlide.el.querySelectorAll('input[type="checkbox"]');
 
-  // Slider mode guard
-  if (state.modes.isSlider === true) return true;
+//   // Values
+//   let selectedFound = false;
 
-  // * * * Empty case * * *
-  if (currentSlide.type === 'empty') return true;
+//   // Loop
+//   checkboxes.forEach(checkbox => {
+//     // Logic
+//     if (checkbox.value === 'on') selectedFound = true;
+//   });
 
-  console.log('Respect disabled attribute!');
-  console.log('Respect readonly attribute!');
+//   // SDK - Default
+//   state.sdk.slideRequirementsData = targetInputs;
 
-  // // * * * Checkbox case * * * // Legacy
-  // if (currentSlide.type === 'checkbox') {
-  //   // Elements
-  //   const checkboxes: NodeListOf<HTMLInputElement> =
-  //     currentSlide.el.querySelectorAll('input[type="checkbox"]');
+//   // Logic
+//   if (selectedFound) return true;
+//   else {
+//     // Fill up targetInputs
+//     checkboxes.forEach(checkbox =>
+//       targetInputs.push({
+//         el: checkbox,
+//         msg: 'nothing checked',
+//         regExp: undefined,
+//       })
+//     );
 
-  //   // Values
-  //   let selectedFound = false;
+//     // SDK
+//     state.sdk.slideRequirementsData = targetInputs;
 
-  //   // Loop
-  //   checkboxes.forEach(checkbox => {
-  //     // Logic
-  //     if (checkbox.value === 'on') selectedFound = true;
-  //   });
+//     // Visual
+//     state.view.renderRequirements(targetInputs);
 
-  //   // SDK - Default
-  //   state.sdk.slideRequirementsData = targetInputs;
-
-  //   // Logic
-  //   if (selectedFound) return true;
-  //   else {
-  //     // Fill up targetInputs
-  //     checkboxes.forEach(checkbox =>
-  //       targetInputs.push({
-  //         el: checkbox,
-  //         msg: 'nothing checked',
-  //         regExp: undefined,
-  //       })
-  //     );
-
-  //     // SDK
-  //     state.sdk.slideRequirementsData = targetInputs;
-
-  //     // Visual
-  //     state.view.renderRequirements(targetInputs);
-
-  //     // Logic
-  //     return false;
-  //   }
-  // }
-
-  // * * * Radio case * * *
-  if (currentSlide.type === 'radio') {
-    // Elements
-    const radios: NodeListOf<HTMLInputElement> =
-      currentSlide.el.querySelectorAll('input[type="radio"]');
-
-    // Values
-    let selectedFound = false;
-
-    // Loop
-    radios.forEach(radio => {
-      // Logic
-      if (radio.hasAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}selected`))
-        selectedFound = true;
-    });
-
-    // SDK - Default
-    state.sdk.slideRequirementsData = targetInputs;
-
-    // Logic
-    if (selectedFound) return true;
-    else {
-      // Fill up targetInputs
-      radios.forEach(radio =>
-        targetInputs.push({
-          el: radio,
-          msg: 'nothing selected',
-          regExp: undefined,
-        })
-      );
-
-      // SDK
-      state.sdk.slideRequirementsData = targetInputs;
-
-      // Visual
-      state.view.renderRequirements(targetInputs);
-
-      // Logic
-      return false;
-    }
-  }
-
-  // * * * Standard case * * *
-  if (currentSlide.type === 'standard') {
-    // * Index every index correctly *
-    currentSlide.el
-      .querySelectorAll(config.INPUTS_SELECTOR)
-      .forEach(
-        (
-          input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
-          index: number
-        ) => {
-          input.setAttribute(sfidAttr, index.toString());
-        }
-      );
-
-    // * Radio logic *
-    const radios: NodeListOf<HTMLInputElement> =
-      currentSlide.el.querySelectorAll('input[type="radio"]');
-    const groups: string[] = [];
-
-    // Find all available groups
-    radios.forEach(radio => {
-      if (groups.indexOf(radio.name) === -1) groups.push(radio.name);
-    });
-
-    // Test each group if it has at least one '${config.CUSTOM_ATTRIBUTE_PREFIX}selected'
-    groups.forEach(str => {
-      // Elements
-      const radios: NodeListOf<HTMLInputElement> =
-        currentSlide.el.querySelectorAll(`input[type="radio"][name="${str}"]`);
-
-      // Values
-      let selectedFound = false;
-
-      // Loop
-      radios.forEach(radio => {
-        if (radio.hasAttribute(`${config.CUSTOM_ATTRIBUTE_PREFIX}selected`))
-          selectedFound = true;
-      });
-
-      // Logic
-      if (!selectedFound)
-        radios.forEach(radio =>
-          targetInputs.push({
-            el: radio,
-            i: parseInt(radio.getAttribute(sfidAttr) || ''),
-            msg: 'nothing selected',
-            regExp: undefined,
-          })
-        );
-    });
-
-    // * Other input types loop *
-    currentSlide.el
-      .querySelectorAll(viewUtils.INPUTS_SELECTOR)
-      .forEach(
-        (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
-          // Don't test radios
-          if (input.type === 'radio') return;
-
-          // Required checking
-          if (!input.hasAttribute('required')) return;
-
-          // Values
-          const index = parseInt(input.getAttribute(sfidAttr) || '');
-
-          // File
-          if (input.type === 'file') {
-            // Push
-            if (!input.hasAttribute(`${config.PRODUCT_NAME_LONG}-attached`))
-              targetInputs.push({
-                el: input,
-                i: index,
-                msg: 'no file(s) attached',
-                regExp: undefined,
-              });
-
-            // Skip code below
-            return;
-          }
-
-          // Is empty
-          if (input.value === '') {
-            // Push
-            targetInputs.push({
-              el: input,
-              i: index,
-              msg: 'empty',
-              regExp: undefined,
-            });
-
-            // Skip code below
-            return;
-          }
-
-          // Validate number
-          if (input.type === 'number') {
-            // Values
-            const res = validateNumberInput(input as HTMLInputElement);
-
-            // Throw if
-            if (res !== true) {
-              // Push
-              targetInputs.push({
-                el: input,
-                i: index,
-                msg: res,
-                regExp: undefined,
-              });
-
-              // Skip code below
-              return;
-            }
-          }
-
-          // Length check
-          const lenghtRes = validateLength(input);
-          if (lenghtRes !== true) {
-            // Push
-            targetInputs.push({
-              el: input,
-              i: index,
-              msg: lenghtRes,
-              regExp: undefined,
-            });
-
-            // Skip code below
-            return;
-          }
-
-          // Regex test
-          if (input.getAttribute('pattern')) {
-            try {
-              // Values
-              const regExp = new RegExp(input.getAttribute('pattern') || '');
-
-              // Logic
-              if (!regExp.test(input.value)) {
-                // Push
-                targetInputs.push({
-                  el: input,
-                  i: index,
-                  msg: 'custom regular expression',
-                  regExp: regExp,
-                });
-
-                // Skip code below
-                return;
-              } else {
-                // On success skip code below
-                return;
-              }
-            } catch (err) {
-              console.warn(
-                `${errPath(state)} -> forEach() callback: Unvalid regex test!`,
-                input
-              );
-            }
-          }
-
-          // Email case
-          if (input.type === 'email') {
-            // Values
-            const regExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-            // Logic
-            if (!regExp.test(input.value)) {
-              // Push
-              targetInputs.push({
-                el: input,
-                i: index,
-                msg: 'email',
-                regExp: regExp,
-              });
-
-              // Skip code below
-              return;
-            }
-          }
-
-          // Tel case
-          if (input.type === 'tel') {
-            // Values
-            const regExp = /^[\d\s\-\+\(\)\.\/*#]+$/;
-
-            // Logic
-            if (!regExp.test(input.value)) {
-              // Push
-              targetInputs.push({
-                el: input,
-                i: index,
-                msg: 'telephone',
-                regExp: regExp,
-              });
-
-              // Skip code below
-              return;
-            }
-          }
-
-          // Email case
-          if (input.type === 'number') {
-            // Values
-            const regExp = /^-?(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$/;
-
-            // Logic
-            if (!regExp.test(input.value)) {
-              // Push
-              targetInputs.push({
-                el: input,
-                i: index,
-                msg: 'number',
-                regExp: regExp,
-              });
-
-              // Skip code below
-              return;
-            }
-          }
-
-          // Default - success
-        }
-      );
-
-    // Sort target input based on DOM index
-    targetInputs.sort((a, b) => a.i - b.i);
-
-    // * Remove input indexing *
-    currentSlide.el
-      .querySelectorAll(config.INPUTS_SELECTOR)
-      .forEach(
-        (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
-          input.removeAttribute(sfidAttr);
-        }
-      );
-
-    // SDK
-    state.sdk.slideRequirementsData = targetInputs;
-
-    // Logic
-    if (targetInputs.length > 0) {
-      // Visual
-      state.view.renderRequirements(targetInputs);
-
-      // Logic
-      return false;
-    }
-
-    // Default
-    return true;
-  }
-
-  // * * * Custom case / If type unkown case * * *
-  if (
-    currentSlide.el.getAttribute(
-      `${config.CUSTOM_ATTRIBUTE_PREFIX}requirements`,
-      'true'
-    )
-  )
-    return true;
-  else return false;
-}
+//     // Logic
+//     return false;
+//   }
+// }

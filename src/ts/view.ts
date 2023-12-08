@@ -2,6 +2,7 @@
 
 // General
 import * as utils from './helper/view/utils';
+import * as controllerUtils from './helper/controller/utils';
 import * as config from './config';
 import * as model from './model';
 
@@ -36,7 +37,7 @@ export default function init(state: StudioFormState) {
 
       // Guard - Simple
       if (!mask) {
-        console.warn(`${errPath} Couldn't find mask!`, wrapper);
+        controllerUtils.warn(`${errPath} Couldn't find mask!`, wrapper);
         return;
       }
 

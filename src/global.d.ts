@@ -52,22 +52,6 @@ interface StudioFormSlideLogic {
   next?: false | number;
 }
 
-// interface StudioFormApiOptions {
-//   passSlideRequirements?: boolean;
-//   buttonObject?: StudioFormButtonObject;
-//   currentSlideId?: number;
-//   nextSlideId?: number;
-//   isSubmit?: boolean;
-//   scrollToTarget?: boolean;
-//   target?: HTMLElement | string;
-//   offset?: HTMLElement | string | number;
-//   attributeReferenceElement?: HTMLElement;
-//   awaitAnimations?: boolean;
-//   skipAnimations?: boolean;
-//   forceSubmissionSuccess?: boolean;
-//   callback?: (success: boolean) => void;
-// }
-
 interface SFAnimationConfig {
   // Current
   get currentMoveMultiplier(): number;
@@ -75,9 +59,12 @@ interface SFAnimationConfig {
   get currentTime(): number;
 
   // General
-  get direction(): number | string;
+  get direction(): number | 'off';
   get ease(): string;
   get equalDimensionsMultiplier(): number;
+
+  // Scroll to
+  get offset(): number | string;
 
   // Progress bar
   get progressBarAxis(): string;
@@ -109,11 +96,6 @@ interface StudioFormConfig {
 }
 
 // + Instance API options +
-
-interface SFOScrollTo {
-  target: string | HTMLElement;
-  offset?: string | HTMLElement;
-}
 
 interface SFOFetch {
   url?: string;
@@ -149,6 +131,13 @@ interface SFSuggest {
   prev: () => void;
 }
 
+type StudioFormSpreadElements = (
+  | string
+  | HTMLElement
+  | HTMLElement[]
+  | NodeListOf<HTMLElement>
+)[];
+
 // + Instance API +
 
 interface StudioFormInstance {
@@ -158,10 +147,14 @@ interface StudioFormInstance {
   resolve?: boolean; // sf-await get's removed // Allow for class prefix
 
   // Wized API
-  reset: (options?: SFONav) => Promise<boolean>;
+  reset: (
+    slideId?: null | number | StudioFormSpreadElements,
+    options?: SFONav | StudioFormSpreadElements,
+    ...elements: StudioFormSpreadElements
+  ) => Promise<boolean>;
   fetch: (options?: SFOFetch) => Promise<boolean>;
   reportValidity: (
-    ...elements: (HTMLElement | HTMLElement[] | NodeListOf<HTMLElement>)[]
+    ...elements: StudioFormSpreadElements
   ) => boolean | undefined; // slideRequirements -- legacy
 
   // Status
@@ -174,7 +167,7 @@ interface StudioFormInstance {
   next: (options?: {}) => Promise<boolean | string>;
   prev: (options?: {}) => Promise<boolean>;
   submit: (options?: { fake?: boolean }) => Promise<boolean>;
-  scrollTo: (options: SFOScrollTo) => void;
+  scrollTo: (target: string | HTMLElement) => Promise<boolean>;
   suggest: SFSuggest;
 
   // External data
@@ -218,7 +211,42 @@ interface SFProgressData {
 }
 
 interface SFAnimationData {
-  any: any;
+  // Legacy
+  currentElement: HTMLElement;
+  nextElement: HTMLElement;
+  parentElement: HTMLElement;
+  overflowElement: HTMLElement;
+  direction: number | string;
+  angle: number;
+  opacityNext: number;
+  opacityCurrent: number;
+  zIndex: number;
+  xCurrent: number;
+  yCurrent: number;
+  currentWidth: number;
+  currentHeight: number;
+  currentMoveMultiplier: number;
+  currentTime: number;
+  xNext: number;
+  yNext: number;
+  nextWidth: number;
+  nextHeight: number;
+  nextMoveMultiplier: number;
+  nextTime: number;
+  equalDimensions: number;
+  equalDimensionsMulitplier: number;
+  timeBoth: number;
+
+  // Display - New
+  currentDisplayStart: string;
+  currentDisplayEnd: string;
+  nextDisplayStart: string;
+
+  // Scroll to
+  scrollToY: number;
+  scrollToTarget: HTMLElement;
+  scrollToOffset: number;
+  scrollToContainer: HTMLElement | Window;
 }
 
 interface SFFetchData {
@@ -245,7 +273,10 @@ interface SFFetchData {
 }
 
 interface SFValidityData {
-  any: any;
+  input: HTMLElement;
+  index?: number;
+  message: string;
+  regex?: RegExp;
 }
 
 interface SFHiddenData {
@@ -262,6 +293,7 @@ interface StudioFormGhostInstance {
   record: number[];
   asyncRecord: number[];
   files: SFFilesData;
+  validity: SFValidityData[];
 
   // Animations
   slideCurrent: number | string;
@@ -274,7 +306,7 @@ interface StudioFormGhostInstance {
   // Suggest
   suggest: {
     doubleClick?: true;
-    button: HTMLElement;
+    button?: HTMLElement;
   };
 
   // Events
@@ -331,6 +363,7 @@ type StudioFormGlobalConfig = {
   // Boolean
   classCascading: boolean;
   eventBubbles: boolean;
+  warn: boolean;
 };
 
 type StudioForm =

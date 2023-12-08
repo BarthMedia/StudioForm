@@ -30,15 +30,10 @@ function main() {
   // Guard
   if (typeof api !== 'undefined' && !Array.isArray(api)) {
     console.warn(
-      `${errPath} ${config.PRODUCT_NAME_CAMEL_CASE} is being loaded multiple times. However, the functionality should not be affected.`
+      `${errPath} ${config.PRODUCT_NAME_CAMEL_CASE} is being loaded multiple times. The functionality should not be affected.`
     );
     return;
   }
-
-  console.log(
-    'Respect area-hidden and area-label attributes!',
-    'Also tabindex ??'
-  );
 
   // + Define functions +
 
@@ -50,7 +45,7 @@ function main() {
         arg(api);
       } else {
         // Warn
-        console.warn(`${errPath} `, arg, ' is not a function!');
+        utils.warn(`${errPath} `, arg, ' is not a function!');
       }
     });
   };
@@ -83,11 +78,11 @@ function main() {
         arg(api);
       } else {
         // Warn
-        console.warn(`${errPath} `, arg, ' is not a function!');
+        utils.warn(`${errPath} `, arg, ' is not a function!');
       }
     });
 
-    console.log('destroy everythign!', args);
+    console.log('destroy everything!', args);
   };
 
   // + Init internal state +

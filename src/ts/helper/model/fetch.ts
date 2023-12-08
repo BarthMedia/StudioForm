@@ -111,7 +111,7 @@ export default async function (
   // Auth token
   const authToken =
     externalOptions.authorization ||
-    model.state.ghostInstances[instance.name].auth.token ||
+    utils.returnGhost(instance).auth.token ||
     '';
   fetchOptions.headers = fetchOptions.headers || new Headers();
 
@@ -254,13 +254,13 @@ export default async function (
   }
 
   // Add to api
-  const sfApi = model.state.ghostInstances[instance.name].fetchData;
+  const sfApi = utils.returnGhost(instance).fetchData;
   sfApi.redirect = redirect;
   sfApi.request = output.request;
   sfApi.response = output.response;
 
-  // External / internal
-  if (!internal) viewUtils.dispatchEvent(instance.name, 'fetched-api', false);
+  // External api event
+  if (!internal) viewUtils.dispatchEvent(instance, 'fetched-api');
 
   // Return
   return true;

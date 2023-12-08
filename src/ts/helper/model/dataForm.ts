@@ -1,4 +1,5 @@
 // Imports
+import * as utils from './utils';
 import * as viewUtils from '../view/utils';
 import * as config from '../../config';
 import * as model from '../../model';
@@ -14,7 +15,7 @@ export default function (
     instance.elements.mask.tagName === 'FORM' ? instance.elements.mask : null
   ) as HTMLInputElement | null;
   const modes = instance.config.modes;
-  const ghost = model.state.ghostInstances[instance.name];
+  const ghost = utils.returnGhost(instance);
   const hidden = ghost.hiddenData;
 
   // Guard

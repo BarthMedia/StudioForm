@@ -1,5 +1,6 @@
 // Imports
 import * as viewUtils from '../view/utils';
+import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
 
 // Export
@@ -12,7 +13,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     let val = viewUtils.getAttribute(str, mask, wrapper);
 
     // Fallback
-    val = !val ? bool.toString() : val;
+    val = !val ? bool + '' : val;
 
     // Return
     return val === 'true';
@@ -67,9 +68,9 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
           });
 
         // Overwrite logic
-        if (found !== false) val = (found[str] as boolean).toString();
+        if (found !== false) val = (found[str] as boolean) + '';
       } catch (error) {
-        console.warn(
+        controllerUtils.warn(
           `StudioForm[${wrapper.getAttribute(
             `${config.PRODUCT_NAME_SHORT}-name`
           )}] -> modes.ts: `,
@@ -79,7 +80,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     }
 
     // Fallback
-    val = !val ? bool.toString() : val;
+    val = !val ? bool + '' : val;
 
     // Return
     return val === 'true';
@@ -95,6 +96,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // Wized reset
     get reset() {
       return returnWizedConfig('reset', false);
+    },
+
+    // Transition
+    get transition() {
+      return getAttribute('transition');
     },
 
     // Smooth reset
@@ -157,7 +163,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('scroll-to-target');
     },
 
-    // Scroll to top on animate
+    // Scroll to top on animate / transition
     get scrollToTop() {
       return getAttribute('scroll-to-top');
     },
@@ -168,13 +174,13 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     },
 
     // Scroll on requirements error
-    get scrollToError() {
-      return getAttribute('scroll-to-error');
+    get scrollToValidity() {
+      return getAttribute('scroll-to-validity');
     },
 
-    // Force scroll on requirements error
-    get forceScrollToError() {
-      return getAttribute('force-scroll-to-error', false);
+    // Force scroll on requirements Validity
+    get forceScrollToValidity() {
+      return getAttribute('force-scroll-to-validity', false);
     },
 
     // Wait for animations to finish
@@ -227,6 +233,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('count-done');
     },
 
+    // Redirect
+    get redirect() {
+      return getAttribute('redirect');
+    },
+
     // Add field data params to redirect
     get fieldParamsRedirect() {
       return getAttribute('field-params-redirect');
@@ -245,6 +256,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // File dropping
     get initDefaultStyles() {
       return getAttribute('init-default-styles');
+    },
+
+    // Temporary requirements
+    get temporaryRequirements() {
+      return getAttribute('temporary-requirements');
     },
   };
 

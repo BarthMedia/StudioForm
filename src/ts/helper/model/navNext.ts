@@ -19,7 +19,7 @@ export default async function (
   internal = false
 ) {
   // Values
-  const ghost = model.state.ghostInstances[instance.name];
+  const ghost = utils.returnGhost(instance);
   const modes = instance.config.modes;
   let next: number | undefined | boolean;
   const currentSlideId = utils.currentSlideId(instance);

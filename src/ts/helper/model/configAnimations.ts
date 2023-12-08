@@ -59,7 +59,7 @@ export default function (
   // Float
   function getFloat(str: string, _default: number, current = true) {
     // Values
-    let val = parseFloat(getAttribute(str, current) || _default.toString());
+    let val = parseFloat(getAttribute(str, current) || _default + '');
 
     // Return
     return isNaN(val) ? _default : val;
@@ -86,6 +86,15 @@ export default function (
         'equal-dimensions-multiplier',
         config.DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER
       );
+    },
+
+    // Scroll to
+    get offset() {
+      // Values
+      const val = getAttribute('offset') || config.DEFAULT_OFFSET + '';
+
+      // Return
+      return /^\d+(\.\d+)?$/.test(val) ? parseFloat(val) : val;
     },
 
     // Progress bar

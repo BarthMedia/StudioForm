@@ -6,6 +6,10 @@ import { async } from 'regenerator-runtime';
 // Custom
 import * as config from '../../config';
 import * as model from '../../model';
+import * as controllerUtils from '../controller/utils';
+
+// Vadility
+import reportValidity from '../view/reportValidity';
 
 // Timeout
 export const timeout = function (s: number) {
@@ -17,6 +21,11 @@ export const timeout = function (s: number) {
       reject(new Error(`Request took too long! Timeout after ${s} seconds`));
     }, s * 1000);
   });
+};
+
+// Return ghost
+export const returnGhost = function (instance: StudioFormInstance) {
+  return model.state.ghostInstances[instance.name];
 };
 
 // Current slide id
@@ -37,7 +46,7 @@ export const navGuard = function (
   reportValidity = false
 ) {
   // Values
-  const ghost = model.state.ghostInstances[instance.name];
+  const ghost = returnGhost(instance);
   const modes = instance.config.modes;
 
   // Instnace guard
@@ -45,7 +54,7 @@ export const navGuard = function (
     // Warn guard - 0
     if (instance.isAwaiting) {
       const msg = `${errPath(instance)} Awaiting resolve!`;
-      console.warn(msg);
+      controllerUtils.warn(msg);
       return false;
     }
 
@@ -55,7 +64,7 @@ export const navGuard = function (
       instance.isTransitioning
     ) {
       const msg = `${errPath(instance)} Animation is not yet finished!`;
-      console.warn(msg);
+      controllerUtils.warn(msg);
       return false;
     }
 
@@ -68,7 +77,7 @@ export const navGuard = function (
     // Warn guard - 3
     if (instance.isDone) {
       const msg = `${errPath(instance)} Form already submitted!`;
-      console.warn(msg);
+      controllerUtils.warn(msg);
       return false;
     }
 
@@ -80,7 +89,7 @@ export const navGuard = function (
       const msg = `${errPath(
         instance
       )} Slider mode does not allow submissions!`;
-      console.warn(msg);
+      controllerUtils.warn(msg);
       return false;
     }
 

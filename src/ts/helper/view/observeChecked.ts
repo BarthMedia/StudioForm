@@ -85,7 +85,7 @@ export default function (
     // Save initial state
     const attr = `${config.PRODUCT_NAME_SHORT}-required`;
     if (!input.hasAttribute(attr))
-      input.setAttribute(attr, input.hasAttribute('required').toString());
+      input.setAttribute(attr, input.hasAttribute('required') + '');
 
     // Getter
     function isRequired() {

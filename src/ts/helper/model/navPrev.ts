@@ -28,7 +28,7 @@ export default async function (
   if (prevId === undefined) {
     // Programmatically
     const msg = `${errPath(instance)} Can't navigate backwards any further!`;
-    console.warn(msg);
+    controllerUtils.warn(msg);
     return false;
   }
 

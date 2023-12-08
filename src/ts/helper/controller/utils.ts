@@ -6,6 +6,11 @@ import * as model from '../../model';
 
 // + Exports +
 
+// Warn
+export const warn = function (...args: unknown[]) {
+  if (model.state.api['config'].warn) console.warn(...args);
+};
+
 // Allows for loading other scripts
 export function scriptLoader(externalScript = 'foo.js', callback: () => void) {
   const scriptPromise = new Promise((resolve, reject) => {

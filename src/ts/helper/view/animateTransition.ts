@@ -1,186 +1,156 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
+import * as modelUtils from '../model/utils';
+import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
-// Export
-const errPath = (s: any) => `${helper.errorName(s)}animate.ts -> default: `;
-export default function (index: number, options: Options) {
+// Error
+const errPath = (s: StudioFormInstance) =>
+  `${controllerUtils.errorName(s)} animateTransition.ts:`;
+
+// Calculate animation data
+export const data = function (
+  instance: StudioFormInstance,
+  cId: number | 'done',
+  nId: number | 'done',
+  options: SFONav
+) {
   // Values
-  const state = model.state[index];
-  const cId = options.currentSlideId;
-  const nId = options.nextSlideId;
-  const isSubmit = options.isSubmit;
-
-  // Guard 0 - Do not animate mode
-  if (options.doNotAnimate) return;
-
-  // Guard 1
-  if (typeof cId !== 'number')
-    throw new Error(`${errPath(state)}options.currentSlideId is not a number!`);
-
-  // Guard 2
-  if (typeof nId !== 'number' && isSubmit !== true)
-    throw new Error(
-      `${errPath(
-        state
-      )}options.nextSlideId or options.isSubmit are not defined!`
-    );
-
-  // Guard 3
-  if (cId === nId) {
-    console.warn(
-      `${errPath(
-        state
-      )}options.currentSlideId (${cId}) and options.nextSlideId (${nId}) are equal!`
-    );
-    return;
-  }
-
-  // * Define *
+  const aData = modelUtils.returnGhost(instance).animationData;
+  const elements = instance.elements;
+  const formWrapper = elements.wrapper;
+  const formMask = elements.mask;
+  const formDone = elements.done;
+  const logic = instance.logic;
+  const nextIsDone = nId === 'done';
+  const currentIsDone = cId === 'done';
 
   // Elements
-  const currentSlide =
-    isSubmit !== true ? state.sdk.slideLogic[cId] : { el: state.elements.mask };
-  const nextSlide =
-    isSubmit !== true
-      ? state.sdk.slideLogic[nId!]
-      : { el: state.elements.successMsg };
-  const form: HTMLElement =
-    isSubmit !== true ? state.elements.mask : state.elements.wrapper;
-  const overflowElement: HTMLElement =
-    form.closest(
-      ['overflow-wrapper', 'overflow', 'overflow-hidden']
-        .map(str => `[${config.PRODUCT_NAME}="${str}"]`)
-        .join(', ')
-    ) ||
-    form.closest('section') ||
-    state.elements.wrapper;
+  const currentSlide = nextIsDone
+    ? formMask
+    : currentIsDone
+    ? formDone
+    : logic[cId].element;
+  const nextSlide = currentIsDone
+    ? formMask
+    : nextIsDone
+    ? formDone
+    : logic[nId].element;
+  const wrapper = [nId, cId].includes('done') ? formWrapper : formMask;
+  const overflow = (formWrapper.closest(
+    utils.createSelector(null, 'overflow')
+  ) ||
+    formWrapper.closest('section') ||
+    formWrapper) as HTMLElement;
+
+  // Guard
+  if (!currentSlide || !nextSlide)
+    throw Error(`${errPath(instance)} elements.done is not an element!`);
 
   // * Width & height *
 
   // Current
-  const currentWidth = currentSlide.el.offsetWidth;
-  const currentHeight = currentSlide.el.offsetHeight;
+  const currentWidth = currentSlide.offsetWidth;
+  const currentHeight = currentSlide.offsetHeight;
 
   // Next
-  isSubmit === true
-    ? (nextSlide.el.style.display = 'block')
-    : (nextSlide.el.style.display = '');
-  const nextWidth = nextSlide.el.offsetWidth;
-  const nextHeight = nextSlide.el.offsetHeight;
-  nextSlide.el.style.display = 'none';
+  nextSlide.style.display = nextIsDone ? 'block' : '';
+  const nextWidth = nextSlide.offsetWidth;
+  const nextHeight = nextSlide.offsetHeight;
+  nextSlide.style.display = nextIsDone ? '' : 'none';
+
+  // * Helper *
+
+  // Next or current slide var
+  const currentOrDoneSlide = nextIsDone ? nextSlide : currentSlide;
+
+  // Get attribute
+  function getAttribute(str: string, current = true) {
+    return utils.getAttribute(
+      str,
+      current ? currentOrDoneSlide : nextSlide,
+      formMask,
+      formWrapper
+    );
+  }
+
+  // Get decimal
+  function getDecimal(str: string, _default = 1, current = true) {
+    // Values
+    const val = parseFloat(getAttribute(str, current) || _default + '');
+
+    // Return
+    return isNaN(val) ? _default : val;
+  }
 
   // * Values *
 
-  // Next or current slide var
-  const nextOrCurrentSlide = isSubmit ? nextSlide : currentSlide;
-
   // Is equalDimensions
-  const edmAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-equal-dimensions-multiplier`;
   let equalDimensions =
     currentWidth === nextWidth && currentHeight === nextHeight;
-  let equalDimensionsMulitplier = parseFloat(
-    nextOrCurrentSlide.el.getAttribute(edmAttr) ||
-      state.elements.wrapper.getAttribute(edmAttr) ||
-      config.DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER.toString()
+  const equalDimensionsMulitplier = getDecimal(
+    'equal-dimensions-multiplier',
+    config.DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER
   );
-  equalDimensionsMulitplier = isNaN(equalDimensionsMulitplier)
-    ? 0
-    : equalDimensionsMulitplier;
 
   // Reverse
-  const isReverse = isSubmit !== true ? cId > nId! : false;
+  const isReverse = nextIsDone !== true ? cId > nId! : false;
 
   // Opacity
-  const soAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-opacity`;
-  let opacityCurrent = parseFloat(
-    nextOrCurrentSlide.el.getAttribute(soAttr) ||
-      state.elements.wrapper.getAttribute(soAttr) ||
-      config.DEFAULT_SLIDE_OPACITY.toString()
+  const opacityCurrent = getDecimal('opacity', config.DEFAULT_SLIDE_OPACITY);
+  const opacityNext = getDecimal(
+    'opacity',
+    config.DEFAULT_SLIDE_OPACITY,
+    false
   );
-  opacityCurrent = isNaN(opacityCurrent) ? 0 : opacityCurrent;
-  let opacityNext = parseFloat(
-    nextSlide.el.getAttribute(soAttr) ||
-      state.elements.wrapper.getAttribute(soAttr) ||
-      config.DEFAULT_SLIDE_OPACITY.toString()
-  );
-  opacityNext = isNaN(opacityNext) ? 0 : opacityNext;
 
   // Z-index
-  const sziAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-z-index`;
-  let zIndex = parseFloat(
-    nextSlide.el.getAttribute(sziAttr) ||
-      state.elements.wrapper.getAttribute(sziAttr)
-  );
-  zIndex = isNaN(zIndex) ? 1 : zIndex;
+  const zIndex = getDecimal('z-index', 1, false);
 
   // Current
-  const smcAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-move-current`;
-  let moveCurrentMultiplier = parseFloat(
-    nextOrCurrentSlide.el.getAttribute(smcAttr) ||
-      state.elements.wrapper.getAttribute(smcAttr) ||
-      config.DEFAULT_SLIDE_MOVE_CURRENT.toString()
+  const currentMoveMultiplier = getDecimal(
+    'current-move-multiplier',
+    config.DEFAULT_SLIDE_CURRENT_MOVE_MULTIPLIER
   );
-  moveCurrentMultiplier = isNaN(moveCurrentMultiplier)
-    ? 1
-    : moveCurrentMultiplier;
-  const stscAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-time-sec-current`;
-  let timeCurrent = parseFloat(
-    nextOrCurrentSlide.el.getAttribute(stscAttr) ||
-      state.elements.wrapper.getAttribute(stscAttr) ||
-      config.DEFAULT_SLIDE_TIME_CURRENT.toString()
-  );
-  timeCurrent = isNaN(timeCurrent) ? 1 : timeCurrent;
+  const currentTime = options.skipAnimations
+    ? 0
+    : getDecimal('current-time', config.DEFAULT_SLIDE_CURRENT_TIME);
 
   // Next
-  const smnAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-move-next`;
-  let moveNextMultiplier = parseFloat(
-    nextOrCurrentSlide.el.getAttribute(smnAttr) ||
-      state.elements.wrapper.getAttribute(smnAttr) ||
-      config.DEFAULT_SLIDE_MOVE_NEXT.toString()
+  const nextMoveMultiplier = getDecimal(
+    'next-move-multiplier',
+    config.DEFAULT_SLIDE_NEXT_MOVE_MULTIPLIER,
+    false
   );
-  moveNextMultiplier = isNaN(moveNextMultiplier) ? 1 : moveNextMultiplier;
-  const stcnAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-time-sec-next`;
-  let timeNext = parseFloat(
-    nextOrCurrentSlide.el.getAttribute(stcnAttr) ||
-      state.elements.wrapper.getAttribute(stcnAttr) ||
-      config.DEFAULT_SLIDE_TIME_NEXT.toString()
-  );
-  timeNext = isNaN(timeNext) ? 1 : timeNext;
+  const nextTime = options.skipAnimations
+    ? 0
+    : getDecimal('next-time', config.DEFAULT_SLIDE_NEXT_TIME, false);
 
   // Direction math
-  const sdAttr = `${config.CUSTOM_ATTRIBUTE_PREFIX}slide-direction`;
-  let direction: any =
-    nextOrCurrentSlide.el.getAttribute(sdAttr) ||
-    state.elements.wrapper.getAttribute(sdAttr);
-  const fadeOnly = direction === 'off' ? 0 : 1;
-
-  direction = parseFloat(direction);
-  direction = isNaN(direction) ? config.DEFAULT_SLIDE_DIRECTION : direction;
-  direction =
-    Math.min(Math.max(direction, 0), 359.9999) - (isReverse ? -180 : 0);
+  const fadeOnly = getAttribute('direction') === 'off' ? 0 : 1;
+  const direction = getDecimal('direction', config.DEFAULT_SLIDE_DIRECTION);
   const angle = ((direction - 90) * Math.PI) / 180;
 
   // Calculate x & y
   const xCurrent =
-    currentWidth * moveCurrentMultiplier * Math.cos(angle) * -1 * fadeOnly;
+    currentWidth * currentMoveMultiplier * Math.cos(angle) * -1 * fadeOnly;
   const yCurrent =
-    currentHeight * moveCurrentMultiplier * Math.sin(angle) * -1 * fadeOnly;
-  const xNext = nextWidth * moveNextMultiplier * Math.cos(angle) * fadeOnly;
-  const yNext = nextHeight * moveNextMultiplier * Math.sin(angle) * fadeOnly;
+    currentHeight * currentMoveMultiplier * Math.sin(angle) * -1 * fadeOnly;
+  const xNext = nextWidth * nextMoveMultiplier * Math.cos(angle) * fadeOnly;
+  const yNext = nextHeight * nextMoveMultiplier * Math.sin(angle) * fadeOnly;
 
   // Fade only logic
   if (!fadeOnly) equalDimensions = false;
 
   // * Update animationData sdk *
-  state.sdk.animationData = {
-    ...state.sdk.animationData,
-    currentElement: currentSlide.el,
-    nextElement: nextSlide.el,
-    parentElement: form,
-    overflowElement: overflowElement,
-    direction: direction,
+  Object.assign(aData, {
+    // Legacy
+    currentElement: currentSlide,
+    nextElement: nextSlide,
+    parentElement: wrapper,
+    overflowElement: overflow,
+    direction: fadeOnly ? direction : 'off',
     angle: angle,
     opacityNext: opacityNext,
     opacityCurrent: opacityCurrent,
@@ -189,64 +159,75 @@ export default function (index: number, options: Options) {
     yCurrent: yCurrent,
     currentWidth: currentWidth,
     currentHeight: currentHeight,
-    moveCurrentMultiplier: moveCurrentMultiplier,
-    timeCurrent: timeCurrent,
+    currentMoveMultiplier: currentMoveMultiplier,
+    currentTime: currentTime,
     xNext: xNext,
     yNext: yNext,
     nextWidth: nextWidth,
     nextHeight: nextHeight,
-    moveNextMultiplier: moveNextMultiplier,
-    timeNext: timeCurrent,
+    nextMoveMultiplier: nextMoveMultiplier,
+    nextTime: currentTime,
     equalDimensions: equalDimensions,
     equalDimensionsMulitplier: equalDimensionsMulitplier,
     timeBoth:
-      timeCurrent * (equalDimensions ? equalDimensionsMulitplier : 1) +
-      timeNext,
-  };
+      currentTime * (equalDimensions ? equalDimensionsMulitplier : 1) +
+      nextTime,
 
-  // * Test if current slide top is visible
-  const currentSlideTopVisible = helper.isElementTopVisible(
-    currentSlide.el,
-    state,
-    { ...options, attributeReferenceElement: currentSlide.el }
-  );
+    // New
+    currentDisplayStart: currentIsDone ? 'block' : '',
+    currentDisplayEnd: currentIsDone ? '' : 'none',
+    nextDisplayStart: nextIsDone ? 'block' : '',
+  });
+};
+
+// Export
+export const animate = function (instance: StudioFormInstance) {
+  // Values
+  const ghost = modelUtils.returnGhost(instance);
+  const aData = instance.data.animation;
+
+  // Elements
+  const currentSlide = aData.currentElement;
+  const nextSlide = aData.nextElement;
+  const wrapper = aData.parentElement;
+  const overflow = aData.overflowElement;
 
   // * Main animation *
 
   // Values
   const tl = gsap.timeline();
-  const gsapObj = state.view.gsapTimeline;
+  const gsapObj = ghost.gsapTl;
 
   // Clear existing timeline
-  if (gsapObj.isRunning) {
-    gsapObj.tl.progress(1);
-    gsapObj.tl.clear();
+  if (ghost.root.isTransitioning) {
+    gsapObj.transition?.progress(1);
+    gsapObj.transition?.clear();
   }
 
   // Values
-  gsapObj.tl = tl;
-  gsapObj.isRunning = true;
+  gsapObj.transition = tl;
+  ghost.root.isTransitioning = true;
 
   // * Initial set *
 
   // Overflow
-  tl.set(overflowElement, {
+  tl.set(overflow, {
     overflow: 'hidden',
   });
 
   // Form
-  tl.set(form, {
-    width: currentWidth,
-    height: currentHeight,
+  tl.set(wrapper, {
+    width: aData.currentWidth,
+    height: aData.currentHeight,
     position: 'relative',
   });
 
   // Current
-  tl.set(currentSlide.el, {
+  tl.set(currentSlide, {
     x: 0,
     y: 0,
     opacity: 1,
-    display: '',
+    display: aData.currentDisplayStart,
     position: 'absolute',
     left: 0,
     top: 0,
@@ -254,12 +235,12 @@ export default function (index: number, options: Options) {
   });
 
   // Next
-  tl.set(nextSlide.el, {
-    x: xNext,
-    y: yNext,
-    opacity: opacityNext,
-    zIndex: zIndex,
-    display: isSubmit !== true ? '' : 'block',
+  tl.set(nextSlide, {
+    x: aData.xNext,
+    y: aData.yNext,
+    opacity: aData.opacityNext,
+    zIndex: aData.zIndex,
+    display: aData.nextDisplayStart,
     position: 'absolute',
     left: 0,
     top: 0,
@@ -269,45 +250,47 @@ export default function (index: number, options: Options) {
   // * Timeline animation *
 
   // Current
-  tl.to(currentSlide.el, {
-    duration: timeCurrent,
-    x: xCurrent,
-    y: yCurrent,
-    opacity: opacityCurrent,
+  tl.to(currentSlide, {
+    duration: aData.currentTime,
+    x: aData.xCurrent,
+    y: aData.yCurrent,
+    opacity: aData.opacityCurrent,
   });
 
   // Form - height / width adjustment
   tl.to(
-    form,
+    wrapper,
     {
-      duration: timeCurrent,
-      width: Math.max(currentWidth, nextWidth),
-      height: Math.max(currentHeight, nextHeight),
+      duration: aData.currentTime,
+      width: Math.max(aData.currentWidth, aData.nextWidth),
+      height: Math.max(aData.currentHeight, aData.nextHeight),
     },
     `<`
   );
 
   // Next
   tl.to(
-    nextSlide.el,
+    nextSlide,
     {
-      duration: timeNext,
+      duration: aData.nextTime,
       x: 0,
       y: 0,
       opacity: 1,
     },
     `<+=${
-      equalDimensions ? timeCurrent * equalDimensionsMulitplier : timeCurrent
+      aData.equalDimensions
+        ? aData.currentTime * aData.equalDimensionsMulitplier
+        : aData.currentTime
     }`
   );
 
   // Form - height / width adjustment
   tl.to(
-    form,
+    wrapper,
     {
-      duration: timeNext,
-      width: nextWidth,
-      height: nextHeight,
+      duration: aData.nextTime,
+      width: aData.nextWidth,
+      height: aData.nextHeight,
     },
     `<`
   );
@@ -315,11 +298,11 @@ export default function (index: number, options: Options) {
   // * Reset styles *
 
   // Current
-  tl.set(currentSlide.el, {
+  tl.set(currentSlide, {
     x: '',
     y: '',
     opacity: '',
-    display: 'none',
+    display: aData.currentDisplayEnd,
     position: '',
     left: '',
     top: '',
@@ -328,7 +311,7 @@ export default function (index: number, options: Options) {
   });
 
   // Next
-  tl.set(nextSlide.el, {
+  tl.set(nextSlide, {
     x: '',
     y: '',
     opacity: '',
@@ -341,64 +324,19 @@ export default function (index: number, options: Options) {
   });
 
   // Form
-  tl.set(form, {
+  tl.set(wrapper, {
     width: '',
     height: '',
     position: '',
   });
 
-  // Remove all styling
-  // [currentSlide.el, nextSlide.el, form].forEach((el: HTMLElement) => {
-  //   el.style.removeProperty('translate');
-  //   el.style.removeProperty('rotate');
-  //   el.style.removeProperty('scale');
-  //   el.style.removeProperty('transfrom');
-  // });
-
   // Overflow
-  tl.set(overflowElement, {
+  tl.set(overflow, {
     overflow: '',
   });
 
   // Animation done call
   tl.call(() => {
-    gsapObj.isRunning = undefined;
+    ghost.root.isTransitioning = true;
   });
-
-  console.log('Respect sf-name?');
-
-  console.log(
-    'Figure out what needs to be done, accessibility wise on transition!',
-    'Also dispatchEvent wise!'
-  );
-
-  // * Other animations *
-
-  console.log('Allow to customize easing!!!!!');
-
-  // Call progress animation
-  state.view.progress(options);
-
-  // * Call anchor animation *
-  if (!state.modes.scrollIfTopNotVisible || !currentSlideTopVisible)
-    setTimeout(
-      () => {
-        state.sdk.scrollTo({
-          ...options,
-          attributeReferenceElement: nextSlide.el,
-        });
-      },
-      currentHeight < nextHeight
-        ? timeCurrent * 1000 + 1
-        : state.sdk.animationData.timeBoth * 1000 + 1
-    );
-
-  console.log('NEW SCROLL TO TOP MODE; RESPECT IT!!!!!!!!!!!!!');
-
-  // Add / remove sf-active
-  state.removeSfActive(cId);
-  state.addSfActive(nId);
-
-  // Trigger the after trigger
-  helper.triggerAllFunctions(state.view.eventsFunctionArrays.afterAnimate);
-}
+};

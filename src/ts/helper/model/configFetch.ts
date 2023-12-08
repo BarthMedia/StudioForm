@@ -39,7 +39,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     get timeout() {
       return parseFloat(
         viewUtils.getAttribute('timeout', mask, wrapper) ||
-          config.TIMEOUT_SEC.toString()
+          config.TIMEOUT_SEC + ''
       );
     },
   };

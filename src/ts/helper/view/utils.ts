@@ -3,6 +3,7 @@
 // Custom
 import * as config from '../../config';
 import * as model from '../../model';
+import * as modelUtils from '../model/utils';
 
 // + Exports +
 
@@ -24,14 +25,17 @@ export function setAccessibility(
 
 // Dispatch events
 export function dispatchEvent(
-  instanceName: string,
+  instanceName: string | StudioFormInstance,
   eventName: string,
+  internal = false,
   cancelable = false,
-  detail?: unknown,
-  internal = true
+  detail?: unknown
 ) {
   // Values
-  const mask = model.state.instances[instanceName].elements.mask;
+  const mask =
+    model.state.instances[
+      typeof instanceName === 'string' ? instanceName : instanceName.name
+    ].elements.mask;
   let payload = detail && typeof detail === 'object' ? detail : {};
   payload = { ...payload, instanceName: instanceName };
   const globalConfig = model.state.api['config'];
@@ -132,8 +136,6 @@ export function getAttribute(
 
 // Button & others selector
 export const INPUTS_SELECTOR = `input, select, textarea`;
-console.log('REBUILD LABEL INTO CASCADER, AND MAKE LABEL LESS RELEVANT!');
-export const LABEL_SELECTOR = 'label, ' + createSelector(null, 'label');
 export const BUTTON_SELECTOR =
   createSelector(null, 'submit', 'next') +
   ',.w-button' +
@@ -257,24 +259,23 @@ export const removeSfHide = (element: HTMLElement) => {
 
 // Check if element top is visible
 export function isElementTopVisible(
-  element: HTMLElement,
-  state: any,
-  options: SFOScrollTo,
+  instance: StudioFormInstance,
+  target: HTMLElement,
   isFullyVisibleMode = false
 ) {
   console.log('Think about window-scroll if that is the correct name??');
 
   // Elements
-  const scrollToElement: HTMLElement | null = state.elements.wrapper.closest(
-    createSelector(null, 'window-scroll')
+  const scrollToElement: HTMLElement | null = instance.elements.wrapper.closest(
+    createSelector(null, 'window')
   );
 
   // Get the position of the element relative to the viewport
-  const elementRect = element.getBoundingClientRect();
+  const elementRect = target.getBoundingClientRect();
   const containerRect = scrollToElement?.getBoundingClientRect();
 
   // Get offset
-  const offset = returnTargetAndOffset(state, options).offset;
+  const offset = returnScrollToOffset(instance);
 
   // Calculate the height of the scrollable container
   const containerHeight = containerRect?.height || window.innerHeight;
@@ -290,60 +291,22 @@ export function isElementTopVisible(
 }
 
 // Return target element and offset number
-export function returnTargetAndOffset(state: any, options: SFOScrollTo) {
-  // Selector
-  const sttAttr = `scroll-to-target`;
-  const targetSelector =
-    typeof options.target === 'string'
-      ? options.target
-      : undefined ||
-        getAttribute(
-          sttAttr,
-          state.elements.wrapper,
-          options.attributeReferenceElement as HTMLElement
-        ) ||
-        '';
-  const stoAttr = `scroll-to-offset`;
-  const offsetSelector =
-    typeof options.offset === 'string'
-      ? options.offset
-      : undefined ||
-        getAttribute(
-          stoAttr,
-          state.elements.wrapper,
-          options.attributeReferenceElement as HTMLElement
-        ) ||
-        '';
+export function returnScrollToOffset(instance: StudioFormInstance) {
+  // Values
+  const offsetAttr = instance.config.animations.offset;
 
-  // Elements
-  const target: HTMLElement = isElement(options.target)
-    ? options.target
-    : targetSelector !== ''
-    ? document.querySelector(targetSelector) || state.elements.wrapper
-    : state.elements.wrapper;
-  let offset: any = isElement(options.offset)
-    ? options.target
-    : offsetSelector !== ''
-    ? document.querySelector(
-        typeof options.offset === 'string' ? options.offset : offsetSelector
-      )
-    : null;
-  offset =
-    typeof options.offset === 'number'
-      ? options.offset
-      : offset?.offsetHeight || config.DEFAULT_OFFSET;
+  // Math
+  const offset =
+    typeof offsetAttr === 'number'
+      ? offsetAttr
+      : (document.querySelector(offsetAttr) as HTMLElement | null)
+          ?.offsetHeight || config.DEFAULT_OFFSET;
 
   // Return
-  return { target: target, offset: offset as number };
+  return offset;
 }
 
 // Returns true if it is a DOM element
-export function isElement(o: any) {
-  return typeof HTMLElement === 'object'
-    ? o instanceof HTMLElement // DOM2
-    : o &&
-        typeof o === 'object' &&
-        o !== null &&
-        o.nodeType === 1 &&
-        typeof o.nodeName === 'string';
+export function isElement(arg: unknown) {
+  return arg instanceof HTMLElement;
 }

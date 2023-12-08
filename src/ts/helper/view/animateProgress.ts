@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
@@ -8,7 +9,7 @@ import * as config from '../../config';
 export default function (instance: StudioFormInstance) {
   // Values
   const elements = instance.elements;
-  const ghost = model.state.ghostInstances[instance.name];
+  const ghost = modelUtils.returnGhost(instance);
 
   // Guard
   if (

@@ -93,7 +93,7 @@ export default function (instance: StudioFormInstance) {
 
       // Undefined guard
       if (typeof id !== 'number') {
-        console.warn(
+        controllerUtils.warn(
           `${errPath(
             instance.name
           )} objectLoop -> array.forEach() callback: id === undefined`,

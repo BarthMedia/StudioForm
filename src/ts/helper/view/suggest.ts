@@ -1,20 +1,20 @@
 // Imports
-import * as helper from '../helper';
+import * as utils from './utils';
+import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
 
-// + Helper +
+// + utils +
 
 // Class list toggle
 function toggle(btn: HTMLElement, mode: string) {
   // Toggle
-  helper.classListToggle({
-    el: btn,
+  utils.classListToggle({
+    element: btn,
     class: sfgClass,
     mode: mode,
     closest: {
-      parent: config.LABEL_SELECTOR,
-      allowParent: { equals: 'LABEL', tagName: true },
+      cascader: true,
     },
   });
 }
@@ -23,11 +23,13 @@ console.log(
   'Suggest has to be the logic center, that takes into account weather or not a button is set to display none or not!'
 );
 
-// Export
-const errPath = (s: any) =>
-  `${helper.errorName(s)}suggestButton.ts -> init -> `;
+// Error
+const errPath = (s: StudioFormInstance) =>
+  `${controllerUtils.errorName(s)}suggestButton.ts -> init -> `;
 const sfgClass = `suggested`;
-export default function init(state: any) {
+
+// Export
+export default function (state: any) {
   console.log(
     'On suggest, check that all buttons are actually uneuqal display none!'
   );
@@ -40,8 +42,8 @@ export default function init(state: any) {
 
   // * Add events *
   const eventFunctionArrays = state.view.eventsFunctionArrays;
-  helper.addEventsInfrastrucutre(state, 'ButtonSuggestion');
-  helper.addEventsInfrastrucutre(state, 'ButtonSuggestionClear');
+  // utils.addEventsInfrastrucutre(state, 'ButtonSuggestion');
+  // utils.addEventsInfrastrucutre(state, 'ButtonSuggestionClear');
 
   // * Code *
 
@@ -137,7 +139,7 @@ export default function init(state: any) {
     );
 
     // Trigger
-    helper.triggerAllFunctions(eventFunctionArrays.onButtonSuggestion);
+    // utils.triggerAllFunctions(eventFunctionArrays.onButtonSuggestion);
 
     // Values
     const slide = state.sdk.slideLogic[slideId];
@@ -178,14 +180,15 @@ export default function init(state: any) {
 
     // * Scroll towards button *
     if (
-      !helper.isElementTopVisible(
-        btn.el,
-        state,
-        {
-          attributeReferenceElement: slide.el,
-        },
-        true
-      )
+      true
+      // !utils.isElementTopVisible(
+      //   btn.el,
+      //   state,
+      //   {
+      //     attributeReferenceElement: slide.el,
+      //   },
+      //   true
+      // )
     )
       state.sdk.scrollTo({
         target: btn.el,
@@ -193,13 +196,13 @@ export default function init(state: any) {
       });
 
     // Trigger
-    helper.triggerAllFunctions(eventFunctionArrays.afterButtonSuggestion);
+    // utils.triggerAllFunctions(eventFunctionArrays.afterButtonSuggestion);
   }
 
   // Clear
   function clear(slideId: number, buttonId: number) {
     // Trigger
-    helper.triggerAllFunctions(eventFunctionArrays.onButtonSuggestionClear);
+    // utils.triggerAllFunctions(eventFunctionArrays.onButtonSuggestionClear);
 
     // Values
     const slide = state.sdk.slideLogic[slideId];
@@ -207,7 +210,7 @@ export default function init(state: any) {
 
     // Guard
     if (!slide || !btn) {
-      console.warn(
+      controllerUtils.warn(
         `${errPath(state)}clear: Unable to find slide and/or button!`
       );
       return;
@@ -221,6 +224,6 @@ export default function init(state: any) {
     toggle(btn.el, 'remove');
 
     // Trigger
-    helper.triggerAllFunctions(eventFunctionArrays.afterButtonSuggestionClear);
+    // utils.triggerAllFunctions(eventFunctionArrays.afterButtonSuggestionClear);
   }
 }

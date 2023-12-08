@@ -148,7 +148,7 @@ export default function (
             // Set
             button.next = index;
           } else {
-            console.warn(
+            controllerUtils.warn(
               `${errPath(
                 name
               )} -> slideLogic.forEach() callback -> slide.btns.every() callback: The partner slide for btns[${

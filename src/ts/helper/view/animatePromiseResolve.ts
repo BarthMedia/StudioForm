@@ -12,10 +12,10 @@ const errPath = (n: string) =>
 // Export active / inactive
 export default async function (
   instance: StudioFormInstance,
+  info = {},
   internal = true,
   isSubmit = false,
-  asyncCallBack: (() => Promise<boolean>) | false | undefined,
-  info = {}
+  asyncCallBack?: () => Promise<boolean>
 ) {
   // Guard
   if (instance.isAwaiting)
@@ -25,7 +25,7 @@ export default async function (
 
   // Values
   const awaitAttr = 'await';
-  const ghost = model.state.ghostInstances[instance.name];
+  const ghost = modelUtils.returnGhost(instance);
   const slide = instance.logic[modelUtils.currentSlideId(instance)];
   function getElements(mode = 'remove') {
     // Values
@@ -57,9 +57,11 @@ export default async function (
   rootInstance.isAwaiting = true;
 
   // Dispatch event
+  const globalConfig = model.state.api['config'];
   const promiseEvent = utils.dispatchEvent(
-    instance.name,
-    (isSubmit ? 'submit' : 'promise') + (internal ? '' : '-api'),
+    instance,
+    isSubmit ? 'submit' : 'promise',
+    internal,
     true,
     {
       ...info,
@@ -88,11 +90,11 @@ export default async function (
   utils.classListToggle(...getElements('add'));
 
   // Event listener
-  const globalConfig = model.state.api['config'];
   instance.elements.mask.addEventListener(
     globalConfig.eventPrefix +
-      (isSubmit ? 'fetched' : 'resolve') +
-      (internal ? '' : globalConfig.externalEventSuffix),
+      (isSubmit
+        ? 'fetched' + (internal ? '' : globalConfig.externalEventSuffix)
+        : 'resolve'),
     e => resolve(e),
     {
       once: true,

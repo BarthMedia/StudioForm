@@ -1,6 +1,7 @@
 // Imports
 import * as utils from './helper/model/utils';
 import * as viewUtils from './helper/view/utils';
+import * as controllerUtils from './helper/controller/utils';
 import * as config from './config';
 import * as instance from './helper/model/instance';
 
@@ -44,6 +45,11 @@ export const state: StudioFormState = {
     // Loop
     const allowance =
       document.body.getAttribute(config.API_WRITE_ATTRIBUTE) === 'true';
+
+    console.log(
+      'Figure out a way where you do not rely on DOM object communication!',
+      'have some sort of internal variable for this!'
+    );
 
     // Reset
     document.body.removeAttribute(config.API_WRITE_ATTRIBUTE);
@@ -131,6 +137,9 @@ const globalConfigMain: StudioFormGlobalConfig = {
       'true'
     );
   },
+  get warn() {
+    return (viewUtils.getAttribute('warn', document.body) || `true`) === 'true';
+  },
 };
 const globalConfigProxy = createReadMostlyProxy(
   globalConfigMain,
@@ -142,7 +151,9 @@ const globalConfigWrite = (e: unknown) => {
   const detail = e?.['detail'];
   const property = detail?.property;
   const value = detail?.value;
-  const isBoolean = ['classCascading', 'eventBubbles'].includes(property);
+  const isBoolean = ['classCascading', 'eventBubbles', 'warn'].includes(
+    property
+  );
 
   // Logic
   if (
@@ -240,7 +251,7 @@ export function createReadMostlyProxy(obj: object, description = 'undefined') {
       if (state.proxyWrite) return true;
 
       // Prevent any property from being set
-      console.warn(`${errPath} Setting ${proxyErr(property, value)}`);
+      controllerUtils.warn(`${errPath} Setting ${proxyErr(property, value)}`);
       return false;
     },
     deleteProperty(target, property) {
@@ -253,17 +264,17 @@ export function createReadMostlyProxy(obj: object, description = 'undefined') {
       if (state.proxyWrite) return true;
 
       // Prevent any property from being deleted
-      console.warn(`${errPath} Deleting ${proxyErr(property)}`);
+      controllerUtils.warn(`${errPath} Deleting ${proxyErr(property)}`);
       return false;
     },
     setPrototypeOf() {
       // Prevent changing the prototype
-      console.warn(`${errPath} Changing the prototype is not allowed.`);
+      controllerUtils.warn(`${errPath} Changing the prototype is not allowed.`);
       return false;
     },
     defineProperty(_, property) {
       // Prevent property definition
-      console.warn(`${errPath} Defining ${proxyErr(property)}`);
+      controllerUtils.warn(`${errPath} Defining ${proxyErr(property)}`);
       return false;
     },
   });
