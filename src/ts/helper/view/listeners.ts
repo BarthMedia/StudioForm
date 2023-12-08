@@ -12,9 +12,7 @@ import navTo from '../model/navTo';
 // Export
 export default function init(instance: StudioFormInstance) {
   // Values
-  const submitString = `Submit ${
-    instance.elements.mask.getAttribute('data-name') || 'form'
-  }`;
+  const submitString = 'submit';
 
   // Slides loop
   instance.logic.forEach(slide => {
@@ -24,9 +22,9 @@ export default function init(instance: StudioFormInstance) {
         // Attributes
         utils.setAccessibility(
           button.element,
-          typeof button.next === 'number'
-            ? `Show slide ${button.next + 1} of ${instance.logic.length}`
-            : submitString
+          typeof button.next === 'number' ? button.next : submitString,
+          null,
+          instance
         );
 
         // Event listener
@@ -39,7 +37,7 @@ export default function init(instance: StudioFormInstance) {
   // * Next buttons *
   instance.elements.nexts.forEach(button => {
     // Attributes
-    utils.setAccessibility(button, 'next slide');
+    utils.setAccessibility(button, 'next slide', null);
 
     // Event listener
     button.addEventListener('click', () => {
@@ -53,7 +51,7 @@ export default function init(instance: StudioFormInstance) {
     utils.addSfHide(button);
 
     // Attributes
-    utils.setAccessibility(button, 'previous slide');
+    utils.setAccessibility(button, 'previous slide', null);
 
     // SDK
     button.addEventListener('click', () => {
@@ -81,7 +79,8 @@ export default function init(instance: StudioFormInstance) {
                   (parseInt(slideIdentification) + 1) +
                   ' of ' +
                   instance.logic.length
-                : slideIdentification)
+                : slideIdentification),
+        null
       );
 
       // Event
@@ -158,7 +157,7 @@ export default function init(instance: StudioFormInstance) {
   // Function to be called when Escape key is pressed
   function onBackspace() {
     // Add your custom logic here
-    navNext(instance, {}, true);
+    navPrev(instance, {}, true);
     instance.suggest.clear();
   }
 

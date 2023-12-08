@@ -17,8 +17,10 @@ declare global {
   }
 }
 
-// Main
+// Error
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> controller.ts:`;
+
+// Main
 function main() {
   // Allow 3rd party args functionality
   let api = window[config.PRODUCT_NAME_CAMEL_CASE];
@@ -94,7 +96,11 @@ function main() {
 
   // Loop
   document
-    .querySelectorAll(viewUtils.createSelector(null, 'cloak'))
+    .querySelectorAll(
+      [config.PRODUCT_NAME_SHORT, config.PRODUCT_NAME_LONG]
+        .map(str => `[${str}-cloak]`)
+        .join()
+    )
     .forEach(el => {
       // Add to classList
       viewUtils.classListToggle({
@@ -121,7 +127,7 @@ gsapScript ? loaderLogic() : utils.scriptLoader(gsapSrc, loaderLogic);
 // Main
 function loaderLogic() {
   // Check if DOM is already loaded
-  if (document.readyState !== 'complete') {
+  if (document.readyState === 'loading') {
     // If DOM is not loaded, add an event listener
     document.addEventListener('DOMContentLoaded', main);
   } else {

@@ -17,11 +17,11 @@ function toggle(btn: HTMLElement, mode: string) {
       cascader: true,
     },
   });
-}
 
-console.log(
-  'Suggest has to be the logic center, that takes into account weather or not a button is set to display none or not!'
-);
+  console.log(
+    'Suggest has to be the logic center, that takes into account weather or not a button is set to display none or not!'
+  );
+}
 
 // Error
 const errPath = (s: StudioFormInstance) =>

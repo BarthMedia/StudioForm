@@ -116,7 +116,10 @@ const globalConfigMain: StudioFormGlobalConfig = {
     );
   },
   get eventPrefix() {
-    return viewUtils.getAttribute('event-prefix', document.body) || ``;
+    return (
+      viewUtils.getAttribute('event-prefix', document.body) ||
+      `${config.PRODUCT_NAME_SHORT}-`
+    );
   },
   get externalEventSuffix() {
     return (

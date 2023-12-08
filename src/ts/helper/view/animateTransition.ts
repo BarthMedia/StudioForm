@@ -96,6 +96,7 @@ export const data = function (
 
   // Reverse
   const isReverse = nextIsDone !== true ? cId > nId! : false;
+  const isReverseMultiplier = isReverse ? -1 : 1;
 
   // Opacity
   const opacityCurrent = getDecimal('opacity', config.DEFAULT_SLIDE_OPACITY);
@@ -134,11 +135,31 @@ export const data = function (
 
   // Calculate x & y
   const xCurrent =
-    currentWidth * currentMoveMultiplier * Math.cos(angle) * -1 * fadeOnly;
+    currentWidth *
+    currentMoveMultiplier *
+    Math.cos(angle) *
+    -1 *
+    fadeOnly *
+    isReverseMultiplier;
   const yCurrent =
-    currentHeight * currentMoveMultiplier * Math.sin(angle) * -1 * fadeOnly;
-  const xNext = nextWidth * nextMoveMultiplier * Math.cos(angle) * fadeOnly;
-  const yNext = nextHeight * nextMoveMultiplier * Math.sin(angle) * fadeOnly;
+    currentHeight *
+    currentMoveMultiplier *
+    Math.sin(angle) *
+    -1 *
+    fadeOnly *
+    isReverseMultiplier;
+  const xNext =
+    nextWidth *
+    nextMoveMultiplier *
+    Math.cos(angle) *
+    fadeOnly *
+    isReverseMultiplier;
+  const yNext =
+    nextHeight *
+    nextMoveMultiplier *
+    Math.sin(angle) *
+    fadeOnly *
+    isReverseMultiplier;
 
   // Fade only logic
   if (!fadeOnly) equalDimensions = false;

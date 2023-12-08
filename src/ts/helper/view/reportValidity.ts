@@ -40,17 +40,13 @@ export default function (
     return undefined;
   }
 
-  console.log(
-    'dispatch an event that things are about to be requirement tested!'
-  );
-
   // Dispatch requirements testing event
   utils.dispatchEvent(instance, 'check-requirements', internal, false);
 
   // Requirements checking
   if (requirements(instance)) return true;
 
-  // Dispatch report vadility
+  // Dispatch report Validity
   const event = utils.dispatchEvent(
     instance,
     'report-validity',
@@ -88,7 +84,7 @@ export default function (
 
     // Report native validity
     function _reportValidity() {
-      if (instance.config.modes.nativeReportVadility && element0IsInput)
+      if (instance.config.modes.nativeReportValidity && element0IsInput)
         (
           element0 as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
         ).reportValidity();
@@ -114,7 +110,7 @@ export default function (
 
     // Declare native error
     if (
-      modes.nativeReportVadility &&
+      modes.nativeReportValidity &&
       isFullyVisible &&
       !modes.forceScrollToValidity
     )

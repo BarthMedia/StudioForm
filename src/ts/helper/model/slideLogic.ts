@@ -109,12 +109,29 @@ export default function (
         if (button.next === false) return true;
 
         // Set general attrbiute
-        button.element.setAttribute(config.PRODUCT_NAME_SHORT, 'next');
+        function setButtonAccessibility(submit = true) {
+          viewUtils.setAccessibility(
+            button.element,
+            submit
+              ? 'submit'
+              : button.next === true
+              ? 'submit'
+              : (button.next as number),
+            null,
+            elements.mask,
+            true,
+            slideLogic.length
+          );
+        }
+        setButtonAccessibility(false);
 
         // Is last step guard logic
         if (slide.index >= slideLogic.length - 1) {
+          // Set
           button.next = false;
-          button.element.setAttribute(config.PRODUCT_NAME_SHORT, 'submit');
+          setButtonAccessibility();
+
+          // Return
           return true;
         }
 
@@ -157,7 +174,9 @@ export default function (
                 button.conditional
               }' (in state.elements.slides[${slide.index}]) has not been found.`
             );
-            button.element.setAttribute(config.PRODUCT_NAME_SHORT, 'submit');
+
+            // Set attributes
+            setButtonAccessibility();
             button.next = false;
           }
 

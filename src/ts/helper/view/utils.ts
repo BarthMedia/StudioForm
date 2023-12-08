@@ -10,17 +10,39 @@ import * as modelUtils from '../model/utils';
 // Set accessibility
 export function setAccessibility(
   element: HTMLElement,
-  _areaLabel: string,
-  _role = 'button'
+  _areaLabel: string | number,
+  _role: string | null,
+  instance?: HTMLElement | StudioFormInstance,
+  overwrite = false,
+  logicLength?: number
 ) {
   // Values
   const role = 'role';
   const areaLabel = 'aria-label';
 
+  // Input
+  const __role = _role ? _role : 'button';
+  const __areaLabel =
+    _areaLabel === 'submit'
+      ? `Submit ${
+          (instance instanceof HTMLElement
+            ? instance
+            : instance!.elements.mask
+          ).getAttribute('data-name') || 'form'
+        }`
+      : typeof _areaLabel === 'string'
+      ? _areaLabel
+      : `Show slide ${_areaLabel + 1} of ${
+          logicLength ? logicLength : instance!['logic'].length
+        }`;
+
+  // Strings
+
   // Logic
-  if (!element.hasAttribute(role)) element.setAttribute(role, _role);
-  if (!element.hasAttribute(areaLabel))
-    element.setAttribute(areaLabel, _areaLabel);
+  if (!element.hasAttribute(role) || overwrite)
+    element.setAttribute(role, __role);
+  if (!element.hasAttribute(areaLabel) || overwrite)
+    element.setAttribute(areaLabel, __areaLabel);
 }
 
 // Dispatch events
@@ -263,8 +285,6 @@ export function isElementTopVisible(
   target: HTMLElement,
   isFullyVisibleMode = false
 ) {
-  console.log('Think about window-scroll if that is the correct name??');
-
   // Elements
   const scrollToElement: HTMLElement | null = instance.elements.wrapper.closest(
     createSelector(null, 'window')
