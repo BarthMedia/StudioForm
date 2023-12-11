@@ -52,7 +52,7 @@ export default function init(state: StudioFormState) {
       ).replace(/[^a-zA-Z0-9-_.]/g, '_'); // Replace invalid characters with hyphens
 
       // Unique name loop
-      ['id', 'name', ...Object.keys(state.api)].forEach(str => {
+      ['id', 'name', 'cloak', ...Object.keys(state.api)].forEach(str => {
         // Skip
         if (str.toLowerCase() !== instanceName.toLowerCase()) return;
 
