@@ -19,83 +19,16 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     return val === 'true';
   }
 
-  // Return wized config
-  function returnWizedConfig(str: string, bool = true) {
-    // Values
-    let val = viewUtils.getAttribute(str, mask, wrapper);
-
-    // Try / catch wized logic
-    if (!val && obj.wized) {
-      try {
-        // Value
-        let found: false | { 'prevent-default': boolean; reset: boolean } =
-          false;
-
-        // Nested loop
-        [...window.Wized?.['config'].actions]
-          .reverse()
-          .every((action: unknown) => {
-            // Match
-            let match: false | { 'prevent-default': boolean; reset: boolean } =
-              false;
-
-            // Loop
-            if (action?.['attributes'])
-              action['attributes'].forEach((attribute: unknown) => {
-                // Logic loop
-                if (
-                  attribute?.['name'] ===
-                  viewUtils.getAttributeOr(mask, 'wized', 'w-el')
-                ) {
-                  if (action)
-                    action['actions'].forEach((action: unknown) => {
-                      // Logic
-                      if (action?.['event'] === 'submit') {
-                        match = {
-                          'prevent-default': action['preventDefault'] || false,
-                          reset: action['resetForm'] || false,
-                        };
-                      }
-                    });
-                }
-              });
-
-            // Guard
-            if (match === false) return true;
-
-            // Overwrite
-            found = match;
-          });
-
-        // Overwrite logic
-        if (found !== false) val = (found[str] as boolean) + '';
-      } catch (error) {
-        controllerUtils.warn(
-          `StudioForm[${wrapper.getAttribute(
-            `${config.PRODUCT_NAME_SHORT}-name`
-          )}] -> modes.ts: `,
-          error
-        );
-      }
-    }
-
-    // Fallback
-    val = !val ? bool + '' : val;
-
-    // Return
-    return val === 'true';
-  }
-
   // * Modes *
   const obj = {
-    // Wized active
-    get wized() {
-      return window.Wized && (mask.getAttribute('wized') || '') !== '';
-    },
-
     // Wized reset
     get reset() {
-      return returnWizedConfig('reset', false);
+      return getAttribute('reset', false);
+    },
+
+    // Wized / prevent default
+    get preventDefault() {
+      return getAttribute('prevent-default', false);
     },
 
     // Transition
@@ -106,11 +39,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // Smooth reset
     get smoothReset() {
       return getAttribute('smooth-reset');
-    },
-
-    // Wized / prevent default
-    get preventDefault() {
-      return returnWizedConfig('prevent-default', false);
     },
 
     // Allow keyboard

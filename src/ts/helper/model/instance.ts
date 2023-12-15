@@ -27,7 +27,7 @@ import fetch from './fetch';
 import animatePromiseResolve from '../view/animatePromiseResolve';
 import reset from '../view/reset';
 import reportValidity from '../view/reportValidity';
-import suggest from '../view/suggest';
+import Focus from '../view/focus';
 
 // Navigation
 import navNext from './navNext';
@@ -318,27 +318,27 @@ export const init = (
     event.push({ name: hiddenWriteName, function: hiddenWrite });
   });
 
-  // Suggest Proxy
-  const suggestMain: SFSuggest = {
+  // Focus Proxy
+  const focusMain: SFFocus = {
     clear: () => {
-      console.log('I have to built', suggest);
+      console.log('I have to built', Focus);
 
       console.log(`
-  // // Initialize suggest button
-  suggestButton(state);
+  // // Initialize Focus button
+  FocusButton(state);
   `);
     },
     next: () => {
-      console.log('I have to built', suggest);
+      console.log('I have to built', Focus);
       console.log(
         "Throw warnings if somebody try's to do this on slide, where there are no !visible! 2+ buttons"
       );
     },
     prev: () => {
-      console.log('I have to built', suggest);
+      console.log('I have to built', Focus);
     },
   };
-  const suggestProxy = model.createReadMostlyProxy(suggestMain) as SFSuggest;
+  const focusProxy = model.createReadMostlyProxy(focusMain) as SFFocus;
 
   // + Instance +
 
@@ -374,7 +374,7 @@ export const init = (
     scrollTo: async target => {
       return await scrollTo(instanceProxy, target);
     },
-    suggest: suggestProxy,
+    focus: focusProxy,
 
     // Native actions
     prev: async (options = {}) => {
@@ -487,7 +487,7 @@ export const init = (
     // Internal
     asyncRecord: [],
     gsapTl: {},
-    suggest: {},
+    Focus: {},
     slideCurrent: 0 as number | string,
     slideNext: 0 as number | string,
 

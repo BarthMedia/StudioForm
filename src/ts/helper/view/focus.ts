@@ -18,6 +18,8 @@ function toggle(btn: HTMLElement, mode: string) {
     },
   });
 
+  console.log('Change this from sf-suggest to sf-focus');
+
   console.log(
     'Suggest has to be the logic center, that takes into account weather or not a button is set to display none or not!'
   );
@@ -26,7 +28,7 @@ function toggle(btn: HTMLElement, mode: string) {
 // Error
 const errPath = (s: StudioFormInstance) =>
   `${controllerUtils.errorName(s)}suggestButton.ts -> init -> `;
-const sfgClass = `suggested`;
+const sfgClass = `focus`;
 
 // Export
 export default function (state: any) {

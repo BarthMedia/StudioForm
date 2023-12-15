@@ -29,6 +29,8 @@ export default function (type: string, slide: HTMLElement) {
       defaultText: button.innerHTML,
     };
 
+    console.log("u can't have prev buttons be wrongly selected again!");
+
     // Push
     arr.push(obj);
   }

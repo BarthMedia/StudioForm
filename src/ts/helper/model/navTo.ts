@@ -243,10 +243,15 @@ export default async function (
   // * Redirect *
   const redirect = instance.data.fetch.redirect;
   if (isToDone && modes.redirect && redirect)
-    setTimeout(() => {
-      // Redirect
-      location.href = redirect;
-    }, aData.timeBoth);
+    console.log(
+      "Make redirect-timeout (default = aData.timeBoth / aData.time) asdjustable, so that you can better build 'fetched' ->  3,2,1   functionality",
+      'Restructure naming logic of animation Data !!!'
+    );
+
+  setTimeout(() => {
+    // Redirect
+    location.href = redirect;
+  }, aData.timeBoth * 1000);
 
   // * Default *
   return true;

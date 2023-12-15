@@ -20,6 +20,11 @@ export default function (
   // Values
   const slideLogic: StudioFormSlideLogic[] = [];
 
+  console.log(
+    'rework conditional next and conditional into the new .to() structure!',
+    'unify systems, reduce file weight. Power up!'
+  );
+
   // Init loop
   for (let i = 0, n = elements.slides.length; i < n; i++) {
     // Elements

@@ -125,7 +125,7 @@ interface SFHidden {
   [name: string]: string | File;
 }
 
-interface SFSuggest {
+interface SFFocus {
   clear: () => void;
   next: () => void;
   prev: () => void;
@@ -168,7 +168,7 @@ interface StudioFormInstance {
   prev: (options?: {}) => Promise<boolean>;
   submit: (options?: { fake?: boolean }) => Promise<boolean>;
   scrollTo: (target: string | HTMLElement) => Promise<boolean>;
-  suggest: SFSuggest;
+  focus: SFFocus;
 
   // External data
   hidden: SFHidden;
@@ -303,8 +303,8 @@ interface StudioFormGhostInstance {
     transition?: gsap.core.Timeline;
   };
 
-  // Suggest
-  suggest: {
+  // Focus
+  Focus: {
     doubleClick?: true;
     button?: HTMLElement;
   };

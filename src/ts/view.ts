@@ -52,7 +52,15 @@ export default function init(state: StudioFormState) {
       ).replace(/[^a-zA-Z0-9-_.]/g, '_'); // Replace invalid characters with hyphens
 
       // Unique name loop
-      ['id', 'name', 'cloak', ...Object.keys(state.api)].forEach(str => {
+      [
+        'id',
+        'name',
+        'to',
+        'cloak',
+        'value',
+        'required',
+        ...Object.keys(state.api),
+      ].forEach(str => {
         // Skip
         if (str.toLowerCase() !== instanceName.toLowerCase()) return;
 
@@ -107,9 +115,10 @@ export default function init(state: StudioFormState) {
       );
 
       // Loop
-      instance.logic.forEach((slide, index, array) => {
+      const slides = instance.elements.slides;
+      slides.forEach((slide, index, array) => {
         // Values
-        const el = slide.element;
+        const el = slide;
 
         // Show/ hide steps
         if (initDefaultStyles) el.style.display = 'none';
@@ -120,7 +129,7 @@ export default function init(state: StudioFormState) {
       });
 
       // Instance 0
-      const element0 = instance.logic[0].element;
+      const element0 = slides[0];
       if (initDefaultStyles) element0.style.display = '';
       element0.removeAttribute(areaHidden);
 

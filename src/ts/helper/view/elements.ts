@@ -102,6 +102,14 @@ export default function (
       // Values
       const instance = model.state.instances[instanceName];
 
+      console.log(
+        "TO's will be removed from here and from listeners!",
+        'They will become a sole property of slideLogic',
+        'and along side next and submit buttons, they will create the logic heart of StudioForm',
+        'it will be [sf-to="slide identifier"]',
+        'instead of [sf="to-slide-identifier"]'
+      );
+
       // Generate to's
       const lists: {
         nodeList: NodeListOf<HTMLElement>;
