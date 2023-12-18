@@ -16,6 +16,8 @@ export const data = function (
   nId: number | 'done',
   options: SFONav
 ) {
+  console.log('Turn timeBoth into totalTime!');
+
   // Values
   const aData = modelUtils.returnGhost(instance).animationData;
   const elements = instance.elements;

@@ -25,6 +25,10 @@ export default function (
     'unify systems, reduce file weight. Power up!'
   );
 
+  console.log(
+    'remove next conditional, and make next be overwritable via sf-to'
+  );
+
   // Init loop
   for (let i = 0, n = elements.slides.length; i < n; i++) {
     // Elements
