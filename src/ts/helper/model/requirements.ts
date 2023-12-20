@@ -2,6 +2,7 @@
 import * as utils from './utils';
 import * as viewUtils from '../view/utils';
 import * as controllerUtils from '../controller/utils';
+import * as attributeUtils from '../view/utilsAttributes';
 import * as model from '../../model';
 import * as config from '../../config';
 
@@ -11,10 +12,6 @@ const errPath = (s: StudioFormInstance) =>
 
 // Helper
 const sfidAttr = `${config.PRODUCT_NAME_SHORT}-input-id`;
-
-// Notes:
-// console.log('Respect disabled attribute!');
-// console.log('Respect readonly attribute!');
 
 // Export
 export default function (instance: StudioFormInstance) {
@@ -118,7 +115,7 @@ export default function (instance: StudioFormInstance) {
         // File
         if (input.type === 'file') {
           // Push
-          if (!viewUtils.getAttribute('attached'))
+          if (!attributeUtils.getAttribute('attached'))
             targetInputs.push({
               input: input,
               index: index,
@@ -291,11 +288,6 @@ export default function (instance: StudioFormInstance) {
       // Default
       return true;
     }
-
-    // * * * Custom case / If type unkown case * * *
-    if (viewUtils.getAttribute('requirements', currentSlideElement) === 'true')
-      return true;
-    else return false;
   })();
 
   // Root - Values
@@ -367,46 +359,3 @@ function validateNumberInput(inputElement: HTMLInputElement) {
     return 'Please enter a valid number.';
   }
 }
-
-// Notes:
-
-// // * * * Checkbox case * * * // Legacy
-// if (currentSlide.type === 'checkbox') {
-//   // Elements
-//   const checkboxes: NodeListOf<HTMLInputElement> =
-//     currentSlide.el.querySelectorAll('input[type="checkbox"]');
-
-//   // Values
-//   let selectedFound = false;
-
-//   // Loop
-//   checkboxes.forEach(checkbox => {
-//     // Logic
-//     if (checkbox.value === 'on') selectedFound = true;
-//   });
-
-//   // SDK - Default
-//   state.sdk.slideRequirementsData = targetInputs;
-
-//   // Logic
-//   if (selectedFound) return true;
-//   else {
-//     // Fill up targetInputs
-//     checkboxes.forEach(checkbox =>
-//       targetInputs.push({
-//         el: checkbox,
-//         msg: 'nothing checked',
-//         regExp: undefined,
-//       })
-//     );
-
-//     // SDK
-//     state.sdk.slideRequirementsData = targetInputs;
-
-//     // Visual
-//     state.view.renderRequirements(targetInputs);
-
-//     // Logic
-//     return false;
-//   }
-// }

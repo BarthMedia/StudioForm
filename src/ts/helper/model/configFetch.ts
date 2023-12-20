@@ -1,5 +1,5 @@
 // Imports
-import * as viewUtils from '../view/utils';
+import * as attributeUtils from '../view/utilsAttributes';
 import * as config from '../../config';
 import * as model from '../../model';
 
@@ -12,7 +12,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
   // Attribute
   function getAttribute(str: string, native = true) {
     // Values
-    let val = viewUtils.getAttribute(str, mask, wrapper);
+    let val = attributeUtils.getAttribute(str, mask, wrapper);
     if (!val && native) val = mask.getAttribute(str);
 
     // Return
@@ -38,7 +38,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     },
     get timeout() {
       return parseFloat(
-        viewUtils.getAttribute('timeout', mask, wrapper) ||
+        attributeUtils.getAttribute('timeout', mask, wrapper) ||
           config.TIMEOUT_SEC + ''
       );
     },

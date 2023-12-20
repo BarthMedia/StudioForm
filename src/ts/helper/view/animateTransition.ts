@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as attributeUtils from './utilsAttributes';
 import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
@@ -69,7 +70,7 @@ export const data = function (
 
   // Get attribute
   function getAttribute(str: string, current = true) {
-    return utils.getAttribute(
+    return attributeUtils.getAttribute(
       str,
       current ? currentOrDoneSlide : nextSlide,
       formMask,
@@ -97,7 +98,8 @@ export const data = function (
   );
 
   // Reverse
-  const isReverse = nextIsDone !== true ? cId > nId! : false;
+  const isReverse =
+    currentIsDone === true || nextIsDone !== true ? cId > nId! : false;
   const isReverseMultiplier = isReverse ? -1 : 1;
 
   // Opacity

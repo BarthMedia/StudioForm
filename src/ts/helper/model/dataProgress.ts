@@ -1,11 +1,14 @@
 // + Imports +
 import * as model from '../../model';
 import * as config from '../../config';
+import * as utils from './utils';
 import * as controllerUtils from '../controller/utils';
 
-// + Exports +
+// Error
 const errPath = (n: string) =>
   `${controllerUtils.errorName(n)} calculateProgress.ts:`;
+
+// + Exports +
 export default function (instance: StudioFormInstance) {
   // Values
   const slideLogic = instance.logic;
@@ -14,7 +17,7 @@ export default function (instance: StudioFormInstance) {
   // - Return longest or shortest path to the first possible submit -
 
   // Values
-  const latestRecordId = slideRecord[slideRecord.length - 1],
+  const latestRecordId = utils.currentSlideId(instance),
     slideRecordLength = slideRecord.length;
   let min = slideLogic.length,
     max = 0,
@@ -25,80 +28,42 @@ export default function (instance: StudioFormInstance) {
   // Loop function
   function objectLoop(object: StudioFormSlideLogic) {
     // Values
-    let array = returnNextSlideIds(object);
+    const array = returnNextSlideIds(object);
 
     // Math
     count++;
     tmpCount++;
 
     // Handle multi slides logic
-    if ([...array].filter(item => item !== false).length > 1) {
+    if ([...array].filter(item => item !== 'done').length > 1) {
       // a tree split
       treeArray.push(tmpCount);
       tmpCount = 0;
+
+      console.log(
+        'CURRENTLY OUT OF SERVICE!',
+        'new sf-to logic has to be built!'
+      );
     }
-
-    // Update values
-    let securityConditional = false;
-    if (object.buttons !== false) {
-      object.buttons.every(button => {
-        // Guard
-        if (button.next !== false && button.next !== undefined) return true;
-
-        // Update values
-        max = Math.max(max, count);
-        min = Math.min(min, count);
-        count = 0;
-
-        // Add base value to tree
-        treeArray.forEach(n => {
-          count += n;
-        });
-
-        // Trim back a leaf
-        treeArray.pop();
-
-        // Security conditional
-        securityConditional = true;
-        return false;
-      });
-    } else {
-      // Guard
-      if (object.next === false || object.next === undefined) {
-        // Update values
-        max = Math.max(max, count);
-        min = Math.min(min, count);
-        count = 0;
-
-        // Add base value to tree
-        treeArray.forEach(n => {
-          count += n;
-        });
-
-        // Trim back a leaf
-        treeArray.pop();
-
-        // Security conditional
-        securityConditional = true;
-      }
-    }
-
-    // Security conditional
-    if (securityConditional) return;
 
     // Action loop
     array.forEach(id => {
       // False guard
-      if (id === false) return;
+      if (id === 'done') {
+        // Update values
+        max = Math.max(max, count);
+        min = Math.min(min, count);
+        count = 0;
 
-      // Undefined guard
-      if (typeof id !== 'number') {
-        controllerUtils.warn(
-          `${errPath(
-            instance.name
-          )} objectLoop -> array.forEach() callback: id === undefined`,
-          object
-        );
+        // Add base value to tree
+        treeArray.forEach(n => {
+          count += n;
+        });
+
+        // Trim back a leaf
+        treeArray.pop();
+
+        // Return
         return;
       }
 
@@ -110,12 +75,22 @@ export default function (instance: StudioFormInstance) {
   // Return buttons
   function returnNextSlideIds(object: StudioFormSlideLogic) {
     // Value
-    let arr: (number | boolean | undefined)[] = [];
+    let arr: (number | 'done')[] = [];
 
     if (object.buttons)
       object.buttons.forEach(button => {
-        if (arr.indexOf(button.next) === -1 && !button.conditionalPrev) {
-          arr.push(button.next);
+        // Values
+        const nextId = button.next;
+        const noDoneArray = [...arr].filter(
+          item => item !== 'done'
+        ) as number[];
+        const allowPush =
+          nextId === 'done' ||
+          (noDoneArray[noDoneArray.length - 1] || 0) < nextId;
+
+        // Push logic
+        if (arr.indexOf(nextId) === -1 && allowPush) {
+          arr.push(nextId);
         }
       });
     else {

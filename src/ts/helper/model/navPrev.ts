@@ -18,6 +18,9 @@ export default async function (
   options: SFONav,
   internal = false
 ) {
+  // Guard
+  if (!instance.config.modes.allowPrev) return false;
+
   // Guard - Nav
   if (!utils.navGuard(instance, errPath, options)) return false;
 

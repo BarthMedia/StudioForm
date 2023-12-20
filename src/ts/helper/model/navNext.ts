@@ -21,7 +21,7 @@ export default async function (
   // Values
   const ghost = utils.returnGhost(instance);
   const modes = instance.config.modes;
-  let next: number | undefined | boolean;
+  let next: number | 'done' = 'done';
   const currentSlideId = utils.currentSlideId(instance);
 
   // Guard - Nav
@@ -51,7 +51,7 @@ export default async function (
       // Loop for suggested button
       currentSlide.buttons.every(button => {
         // Logic
-        if (button.element === ghost.suggest.button) {
+        if (button.element === ghost.focus.button) {
           // Update
           next = button.next;
           suggestedButtonFound = true;
@@ -67,7 +67,7 @@ export default async function (
       // If not found suggest the first button
       if (!suggestedButtonFound) {
         // Suggest button[0]
-        if (modes.autoSuggestButtons) instance.suggest.next();
+        if (modes.autoSuggestButtons) instance.focus.next();
 
         console.log(
           'Make / await ',
@@ -83,22 +83,8 @@ export default async function (
 
   // * Logic *
 
-  // Undefined edgecase
-  if (next === undefined) next = false;
-
-  // Guard
-  if (typeof next !== 'number' && next !== false)
-    throw new Error(
-      `${errPath(instance)}: Unable to find a logical next slide!`
-    );
-
   // Success
-  return await navTo(
-    instance,
-    next === false ? 'done' : next,
-    options,
-    internal
-  );
+  return await navTo(instance, next, options, internal);
 
   // // If next === false call submit event
   // if (next === false) {

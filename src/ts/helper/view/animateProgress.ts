@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as attributeUtils from './utilsAttributes';
 import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
@@ -42,7 +43,8 @@ export default function (instance: StudioFormInstance) {
     gsapTl.progress.isRunning = true;
 
     // Values
-    const direction = utils.getAttribute('axis', el) || aData.progressBarAxis;
+    const direction =
+      attributeUtils.getAttribute('axis', el) || aData.progressBarAxis;
     const isX = direction.indexOf('x') > -1;
     const isY = direction.indexOf('y') > -1;
 

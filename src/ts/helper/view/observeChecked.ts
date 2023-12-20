@@ -2,6 +2,7 @@
 import * as config from '../../config';
 import elements from './elements';
 import * as utils from './utils';
+import * as attributeUtils from './utilsAttributes';
 
 // utils
 const sfsVal = 'checked';
@@ -113,10 +114,12 @@ export default function (
       // Checkbox group
       if (inputs.length > 1) {
         // Values
-        let min = parseInt(utils.getAttribute('min', ...inputs) || '1');
+        let min = parseInt(
+          attributeUtils.getAttribute('min', ...inputs) || '1'
+        );
         min = isNaN(min) ? 1 : min;
         let max: number | null = parseInt(
-          utils.getAttribute('max', ...inputs) || ''
+          attributeUtils.getAttribute('max', ...inputs) || ''
         );
         max = isNaN(max) ? null : max;
 
@@ -140,7 +143,7 @@ export default function (
 
       // Toggle
       if (checked) {
-        input.value = utils.getAttribute('value', input) || 'on';
+        input.value = attributeUtils.getAttribute('value', input) || 'on';
         toggle(input, 'add');
       } else {
         input.value =

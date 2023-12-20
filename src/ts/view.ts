@@ -2,6 +2,7 @@
 
 // General
 import * as utils from './helper/view/utils';
+import * as attributeUtils from './helper/view/utilsAttributes';
 import * as controllerUtils from './helper/controller/utils';
 import * as config from './config';
 import * as model from './model';
@@ -27,7 +28,7 @@ export default function init(state: StudioFormState) {
       const wrapper = (
         el.tagName === 'FORM'
           ? el.parentElement
-          : utils.getAttribute(null, el as HTMLElement) === 'mask' &&
+          : attributeUtils.getAttribute(null, el as HTMLElement) === 'mask' &&
             !el.classList.contains('w-form')
           ? el.parentElement
           : el
@@ -47,8 +48,13 @@ export default function init(state: StudioFormState) {
 
       // Instance name
       let instanceName = (
-        utils.getAttributeOr(mask, 'data-name', 'name', 'id', 'class') ||
-        mask.tagName
+        attributeUtils.getAttributeOr(
+          mask,
+          'data-name',
+          'name',
+          'id',
+          'class'
+        ) || mask.tagName
       ).replace(/[^a-zA-Z0-9-_.]/g, '_'); // Replace invalid characters with hyphens
 
       // Unique name loop

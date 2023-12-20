@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as attributeUtils from './utilsAttributes';
 import * as modelUtils from '../model/utils';
 import * as config from '../../config';
 import * as model from '../../model';
@@ -59,37 +60,6 @@ export default function init(instance: StudioFormInstance) {
     });
   });
 
-  // * To buttons *
-  instance.elements.tos.forEach(obj => {
-    // Loop
-    obj.nodeList.forEach(button => {
-      // Values
-      const slideIdentification = (
-        utils.getAttribute(null, button) || ''
-      ).slice(3);
-
-      // Attributes
-      utils.setAccessibility(
-        button,
-        slideIdentification === 'done'
-          ? submitString
-          : 'Show ' +
-              (/^\d+$/.test(slideIdentification)
-                ? 'slide ' +
-                  (parseInt(slideIdentification) + 1) +
-                  ' of ' +
-                  instance.logic.length
-                : slideIdentification),
-        null
-      );
-
-      // Event
-      button.addEventListener('click', () => {
-        navTo(instance, slideIdentification, {}, true);
-      });
-    });
-  });
-
   // * Keyboard events *
 
   // Hover / set active form
@@ -125,7 +95,11 @@ export default function init(instance: StudioFormInstance) {
     if (
       !instance.config.modes.keyboardEvents ||
       target instanceof HTMLTextAreaElement ||
-      utils.getAttribute('keyboard-events', target, currentSlide.element)
+      attributeUtils.getAttribute(
+        'keyboard-events',
+        target,
+        currentSlide.element
+      )
     )
       return;
 

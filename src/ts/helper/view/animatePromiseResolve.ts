@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as attributeUtils from './utilsAttributes';
 import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
@@ -38,7 +39,8 @@ export default async function (
 
     // Select
     const slideEl = slide.element;
-    if (utils.getAttribute(null, slideEl) === awaitAttr) elements.push(slideEl);
+    if (attributeUtils.getAttribute(null, slideEl) === awaitAttr)
+      elements.push(slideEl);
     slideEl
       .querySelectorAll(inner)
       .forEach(el => elements.push(el as HTMLElement));

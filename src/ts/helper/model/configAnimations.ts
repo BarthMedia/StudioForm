@@ -1,5 +1,5 @@
 // Imports
-import * as viewUtils from '../view/utils';
+import * as attributeUtils from '../view/utilsAttributes';
 import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
 import * as model from '../../model';
@@ -45,7 +45,7 @@ export default function (
       );
 
     // Values
-    let val = viewUtils.getAttribute(
+    let val = attributeUtils.getAttribute(
       str,
       current ? slideCurrent : slideNext,
       mask,

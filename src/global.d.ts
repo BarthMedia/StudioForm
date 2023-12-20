@@ -24,18 +24,12 @@ interface StudioFormElements {
   // External buttons
   get prevs(): NodeListOf<HTMLElement>;
   get nexts(): HTMLElement[];
-  get tos(): {
-    nodeList: NodeListOf<HTMLElement>;
-    values: string[];
-  }[];
 }
 
 interface StudioFormButtonLogic {
   index: number;
   element: HTMLElement;
-  conditional: string;
-  next: boolean | number;
-  conditionalPrev?: true;
+  get next(): 'done' | number;
   defaultText: string;
 }
 interface StudioFormSlideLogic {
@@ -47,9 +41,7 @@ interface StudioFormSlideLogic {
 
   // Logic
   buttons: false | StudioFormButtonLogic[];
-  conditional: string;
-  conditionalNext: boolean | string | undefined;
-  next?: false | number;
+  get next(): 'done' | number;
 }
 
 interface SFAnimationConfig {
@@ -304,7 +296,7 @@ interface StudioFormGhostInstance {
   };
 
   // Focus
-  Focus: {
+  focus: {
     doubleClick?: true;
     button?: HTMLElement;
   };

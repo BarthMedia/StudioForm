@@ -30,11 +30,8 @@ export default function (slide: HTMLElement) {
 
   // Type
   let type = 'standard';
-  // if (isCheckboxOnly) type = 'checkbox'; // Legacy
   if (isRadioOnly) type = 'radio';
   if (isEmpty) type = 'empty';
-  const typeAttr = viewUtils.getAttribute('slide-type') || '';
-  if (typeAttr !== '') type = typeAttr;
 
   // Return
   return type;

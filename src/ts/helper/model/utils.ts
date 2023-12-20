@@ -7,6 +7,8 @@ import { async } from 'regenerator-runtime';
 import * as config from '../../config';
 import * as model from '../../model';
 import * as controllerUtils from '../controller/utils';
+import * as viewUtils from '../view/utils';
+import * as attributeUtils from '../view/utilsAttributes';
 
 // Vadility
 import reportValidity from '../view/reportValidity';
@@ -21,6 +23,111 @@ export const timeout = function (s: number) {
       reject(new Error(`Request took too long! Timeout after ${s} seconds`));
     }, s * 1000);
   });
+};
+
+// Return next to
+export const returnLogicTo = function (
+  instanceName: string,
+  slideId: number,
+  referenceElement: HTMLElement,
+  instanceLength: number
+) {
+  // Values
+  const instance = model.state.instances[instanceName];
+
+  // Sf to overwriting
+  const to = attributeUtils.getAttribute('to', referenceElement);
+  const toVal = to
+    ? returnTo(
+        instance,
+        to,
+        (i: StudioFormInstance) =>
+          controllerUtils.errorName(i) + ' model/utils.ts:'
+      )
+    : false;
+
+  // Overwrite
+  slideId += 1;
+
+  // Values
+  const val =
+    toVal !== false
+      ? toVal
+      : attributeUtils.getAttribute(null, referenceElement) === 'submit'
+      ? 'done'
+      : instanceLength - 1 > slideId
+      ? slideId
+      : 'done';
+
+  // Return
+  return val;
+};
+
+// Calculate to
+export const returnTo = function (
+  instance: StudioFormInstance,
+  slideIdentification: string | number,
+  errPath: (i: StudioFormInstance) => string
+) {
+  // Values
+  const isToDone = slideIdentification === 'done';
+  const currentId = instance.isDone ? 'done' : currentSlideId(instance);
+
+  // Guard - 0
+  if (!['string', 'number'].includes(typeof slideIdentification)) {
+    const msg = `${errPath(instance)} Invalid type of slide identification: `;
+    console.error(msg, slideIdentification);
+    return false;
+  }
+
+  // Manipulate to number
+  if (
+    typeof slideIdentification === 'string' &&
+    /^\d+$/.test(slideIdentification)
+  )
+    slideIdentification = parseInt(slideIdentification);
+
+  // Test if valid string or valid number
+  if (!isToDone) {
+    // Values
+    let found = false;
+    const isString = typeof slideIdentification === 'string';
+
+    // Loop
+    instance.logic.every(slide => {
+      // Logic
+      if (slide[isString ? 'name' : 'index'] === slideIdentification) {
+        // Overwrite
+        if (isString) slideIdentification = slide.index;
+        found = true;
+
+        // Break
+        return false;
+      }
+
+      // Default
+      return true;
+    });
+
+    // Guard - 1 - invalid search key
+    if (!found) {
+      const msg = `${errPath(instance)} Invalid slide identification: `;
+      console.error(msg, slideIdentification);
+      return false;
+    }
+  }
+
+  // Guard - 1 - is equal!
+  if (currentId === slideIdentification) {
+    const msg = `${errPath(
+      instance
+    )} New slide identification cannot equal the current slide identification!`;
+    controllerUtils.warn(msg);
+    return false;
+  }
+
+  // Return
+  return slideIdentification as 'done' | number;
 };
 
 // Return ghost
@@ -72,7 +179,7 @@ export const navGuard = function (
     if (to) return true;
 
     // Guard - 2
-    if (ghost.suggest.doubleClick) return false;
+    if (ghost.focus.doubleClick) return false;
 
     // Warn guard - 3
     if (instance.isDone) {

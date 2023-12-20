@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as attributeUtils from './utilsAttributes';
 import * as modelUtils from '../model/utils';
 import * as model from '../../model';
 import * as config from '../../config';
@@ -138,7 +139,9 @@ export default function (
       // Functions
       function getAttribute(string: string) {
         // Values
-        const val = parseFloat(utils.getAttribute(string, input, label) || '');
+        const val = parseFloat(
+          attributeUtils.getAttribute(string, input, label) || ''
+        );
 
         // Return
         return isNaN(val) ? null : val;
@@ -187,8 +190,10 @@ export default function (
 
       // Values
       const name = allowedFiles.map(file => file.name).join(', ');
-      const prefix = utils.getAttribute('swap-prefix', input, label) || '';
-      const suffix = utils.getAttribute('swap-suffix', input, label) || '';
+      const prefix =
+        attributeUtils.getAttribute('swap-prefix', input, label) || '';
+      const suffix =
+        attributeUtils.getAttribute('swap-suffix', input, label) || '';
       const fileName = prefix + name + suffix;
 
       // Swap

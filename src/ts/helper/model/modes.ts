@@ -1,7 +1,9 @@
 // Imports
-import * as viewUtils from '../view/utils';
+import * as utils from './utils';
+import * as attributeUtils from '../view/utilsAttributes';
 import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
+import * as model from '../../model';
 
 // Export
 export default function (wrapper: HTMLElement, mask: HTMLElement) {
@@ -9,8 +11,8 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
 
   // Attribute
   function getAttribute(str: string, bool = true) {
-    // Values
-    let val = viewUtils.getAttribute(str, mask, wrapper);
+    // Val
+    let val = attributeUtils.getSlideMaskWrapperAttribute(str, mask, wrapper);
 
     // Fallback
     val = !val ? bool + '' : val;
@@ -29,6 +31,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // Wized / prevent default
     get preventDefault() {
       return getAttribute('prevent-default', false);
+    },
+
+    // Disallow prev
+    get allowPrev() {
+      return getAttribute('allow-prev');
     },
 
     // Transition

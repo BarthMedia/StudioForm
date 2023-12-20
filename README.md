@@ -74,7 +74,8 @@ _Make sure you have Git installed: [https://git-scm.com/downloads](https://git-s
 6. Set the remote URL using `git remote set-url origin https://github.com/USER/REPO.git`.
 7. Push your changes to GitHub using `git push origin main`.
 
-git pull `https://github.com/USER/REPO.git` main
+git pull https://github.com/BarthMedia/StudioForm.git main
+
 (For updating your local git incase someone made changes to the GitHub version in the mean times)
 
 ### Additional Handy Git Functions

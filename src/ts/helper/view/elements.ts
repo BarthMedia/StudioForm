@@ -96,39 +96,6 @@ export default function (
       });
       return nexts;
     },
-
-    // To's
-    get tos() {
-      // Values
-      const instance = model.state.instances[instanceName];
-
-      console.log(
-        "TO's will be removed from here and from listeners!",
-        'They will become a sole property of slideLogic',
-        'and along side next and submit buttons, they will create the logic heart of StudioForm',
-        'it will be [sf-to="slide identifier"]',
-        'instead of [sf="to-slide-identifier"]'
-      );
-
-      // Generate to's
-      const lists: {
-        nodeList: NodeListOf<HTMLElement>;
-        values: string[];
-      }[] = [];
-      for (let i = 0, n = obj.slides.length; i < n; i++) {
-        // Values
-        const name = instance.logic[i].name;
-        const strings = [`to-${i}`];
-        if (name) strings.unshift(`to-${name}`);
-
-        // Push
-        lists.push({
-          nodeList: querySelectorAll(`to-${i}`, ...strings),
-          values: strings,
-        });
-      }
-      return lists;
-    },
   };
 
   // Return

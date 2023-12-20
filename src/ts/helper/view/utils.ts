@@ -4,8 +4,14 @@
 import * as config from '../../config';
 import * as model from '../../model';
 import * as modelUtils from '../model/utils';
+import * as attributeUtils from './utilsAttributes';
 
 // + Exports +
+
+// Returns true if it is a DOM element
+export function isElement(arg: unknown) {
+  return arg instanceof HTMLElement;
+}
 
 // Set accessibility
 export function setAccessibility(
@@ -84,76 +90,15 @@ export function dispatchEvent(
 // Get input key
 export function getInputKey(input: HTMLInputElement) {
   return (
-    getAttributeOr(input, 'data-name', 'name', 'id', 'class', 'type') ||
-    input.tagName
+    attributeUtils.getAttributeOr(
+      input,
+      'data-name',
+      'name',
+      'id',
+      'class',
+      'type'
+    ) || input.tagName
   ).replace(/[!'()*]/g, '_');
-}
-
-// Get attribute ||
-export function getAttributeOr(element: HTMLElement, ...strings: string[]) {
-  // Values
-  let returnVal: string | null = null;
-
-  // Loop
-  strings.every(str => {
-    // Values
-    const val = element.getAttribute(str);
-
-    // Logic
-    if (val) {
-      returnVal = val;
-      return false;
-    }
-
-    // Default
-    return true;
-  });
-
-  // Return
-  return returnVal as string | null;
-}
-
-// Get attribute strings
-export function getAttributeStrings(str: string | null) {
-  return [
-    `${config.PRODUCT_NAME_SHORT}${str === null ? '' : `-${str}`}`,
-    `${config.PRODUCT_NAME_LONG}${str === null ? '' : `-${str}`}`,
-  ];
-}
-
-// Get attribute
-export function getAttribute(
-  str: string | null,
-  ...elements: (HTMLElement | null)[]
-) {
-  // Values
-  const querys = getAttributeStrings(str);
-  let val: string | null = null;
-
-  // Loop
-  querys.forEach(str => {
-    // Values
-    let attr: string | null = null;
-
-    // Loop
-    elements.every(el => {
-      // Logic
-      const getAttr = el?.getAttribute(str);
-      if (getAttr) {
-        attr = getAttr;
-        return false;
-      }
-
-      // Default
-      return true;
-    });
-
-    // Overwrite
-    if (attr) val = attr;
-  });
-
-  // Return
-  return val as string | null;
 }
 
 // Button & others selector
@@ -161,7 +106,7 @@ export const INPUTS_SELECTOR = `input, select, textarea`;
 export const BUTTON_SELECTOR =
   createSelector(null, 'submit', 'next') +
   ',.w-button' +
-  createSelector(null, 'no-next', 'no-button')
+  createSelector(null, 'no-next', 'no-button', 'prev')
     .split(',')
     .map(str => `:not(${str})`)
     .join('');
@@ -324,9 +269,4 @@ export function returnScrollToOffset(instance: StudioFormInstance) {
 
   // Return
   return offset;
-}
-
-// Returns true if it is a DOM element
-export function isElement(arg: unknown) {
-  return arg instanceof HTMLElement;
 }

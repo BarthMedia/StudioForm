@@ -1,6 +1,7 @@
 // Imports
 import * as utils from './helper/model/utils';
 import * as viewUtils from './helper/view/utils';
+import * as attributeUtils from './helper/view/utilsAttributes';
 import * as controllerUtils from './helper/controller/utils';
 import * as config from './config';
 import * as instance from './helper/model/instance';
@@ -100,9 +101,7 @@ export const arrayProperties = [
   'instances',
   'keys',
   'length',
-  'pop',
   'push',
-  'shift',
   'version',
 ];
 
@@ -111,37 +110,40 @@ const globalConfigMain: StudioFormGlobalConfig = {
   // String
   get comboClassPrefix() {
     return (
-      viewUtils.getAttribute('combo-class-prefix', document.body) ||
+      attributeUtils.getAttribute('combo-class-prefix', document.body) ||
       `${config.PRODUCT_NAME_SHORT}-`
     );
   },
   get eventPrefix() {
     return (
-      viewUtils.getAttribute('event-prefix', document.body) ||
+      attributeUtils.getAttribute('event-prefix', document.body) ||
       `${config.PRODUCT_NAME_SHORT}-`
     );
   },
   get externalEventSuffix() {
     return (
-      viewUtils.getAttribute('external-event-suffix', document.body) || `-api`
+      attributeUtils.getAttribute('external-event-suffix', document.body) ||
+      `-api`
     );
   },
 
   // Boolean
   get classCascading() {
     return (
-      (viewUtils.getAttribute('class-cascading', document.body) || `true`) ===
-      'true'
+      (attributeUtils.getAttribute('class-cascading', document.body) ||
+        `true`) === 'true'
     );
   },
   get eventBubbles() {
     return (
-      (viewUtils.getAttribute('event-bubbles', document.body) || `true`) ===
-      'true'
+      (attributeUtils.getAttribute('event-bubbles', document.body) ||
+        `true`) === 'true'
     );
   },
   get warn() {
-    return (viewUtils.getAttribute('warn', document.body) || `true`) === 'true';
+    return (
+      (attributeUtils.getAttribute('warn', document.body) || `true`) === 'true'
+    );
   },
 };
 const globalConfigProxy = createReadMostlyProxy(
@@ -192,24 +194,6 @@ export const init = (
     },
     get length() {
       return this.keys.length;
-    },
-    pop: function () {
-      if (this.length > 0) {
-        const lastKey = this.keys[this.keys.length - 1];
-        this.destroy(lastKey);
-        return lastKey;
-      } else {
-        return undefined; // No instances to pop
-      }
-    },
-    shift: function () {
-      if (this.length > 0) {
-        const firstKey = this.keys[0];
-        this.destroy(firstKey);
-        return firstKey;
-      } else {
-        return undefined; // No instances to shift
-      }
     },
     forEach: function (
       callback: (

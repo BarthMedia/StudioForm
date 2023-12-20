@@ -6,7 +6,14 @@ import * as model from '../../model';
 import * as config from '../../config';
 
 // Export
-export default function (type: string, slide: HTMLElement) {
+export default function (
+  type: string,
+  slide: HTMLElement,
+  slideId: number,
+  instanceName: string,
+  mask: HTMLElement,
+  slideLogicLength: number
+) {
   // Elements
   const inputs = slide.querySelectorAll(
     viewUtils.INPUTS_SELECTOR
@@ -24,10 +31,27 @@ export default function (type: string, slide: HTMLElement) {
     const obj: StudioFormButtonLogic = {
       index: i,
       element: button,
-      conditional: viewUtils.getAttribute('conditional', button) || '',
-      next: viewUtils.getAttribute(null, button) !== 'submit',
+      get next() {
+        return utils.returnLogicTo(
+          instanceName,
+          slideId,
+          button,
+          slideLogicLength
+        );
+      },
       defaultText: button.innerHTML,
     };
+
+    // Accessibility
+    const next = obj.next;
+    viewUtils.setAccessibility(
+      button,
+      next === 'done' ? 'submit' : next,
+      null,
+      mask,
+      true,
+      slideLogicLength
+    );
 
     console.log("u can't have prev buttons be wrongly selected again!");
 
