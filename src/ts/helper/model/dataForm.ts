@@ -98,6 +98,8 @@ export default function (
       const fileValue = value ? value : ghost.files[key];
       const isFile = fileValue instanceof File;
 
+      console.log('Fix File selector edge case with non label files');
+
       // Guard
       if (!fileValue) return;
 

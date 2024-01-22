@@ -98,7 +98,7 @@ export function getInputKey(input: HTMLInputElement) {
       'class',
       'type'
     ) || input.tagName
-  ).replace(/[!'()*]/g, '_');
+  ).replace(/[?&!'()*]/g, '_');
 }
 
 // Button & others selector

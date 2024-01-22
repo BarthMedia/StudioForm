@@ -175,22 +175,26 @@ export default async function (
 
     // * Test if current slide top is visible
 
-    // Logic
-    const currentSlideTopVisible = viewUtils.isElementTopVisible(
-      instance,
-      currentSlide
-    );
-
     // * Call anchor animation *
-    if (!modes.scrollIfTopNotVisible || !currentSlideTopVisible)
-      setTimeout(
-        () => {
+    setTimeout(
+      () => {
+        // Variable
+        const currentSlideTopVisible = viewUtils.isElementTopVisible(
+          instance,
+          currentSlide
+        );
+
+        // Logic
+        if (
+          modes.forceScrollToTop ||
+          (modes.scrollToTop && !currentSlideTopVisible)
+        )
           scrollTo(instance, aData.nextElement, internal);
-        },
-        aData.currentHeight < aData.nextHeight
-          ? aData.currentTime * 1000 + 1
-          : aData.timeBoth * 1000 + 1
-      );
+      },
+      aData.currentHeight < aData.nextHeight
+        ? aData.currentTime * 1000 + 1
+        : aData.totalTime * 1000 + 1
+    );
   }
 
   // Combo clases
@@ -199,15 +203,10 @@ export default async function (
   // * Redirect *
   const redirect = instance.data.fetch.redirect;
   if (isToDone && modes.redirect && redirect) {
-    console.log(
-      "Make redirect-timeout (default = aData.timeBoth / aData.time) asdjustable, so that you can better build 'fetched' ->  3,2,1   functionality",
-      'Restructure naming logic of animation Data !!!'
-    );
-
     setTimeout(() => {
       // Redirect
       location.href = redirect;
-    }, aData.timeBoth * 1000);
+    }, instance.config.animations.redirectDelay * 1000);
   }
 
   // * Default *

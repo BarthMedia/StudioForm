@@ -130,8 +130,18 @@ export default function (
     get nextOpacity() {
       return getFloat('next-opacity', config.DEFAULT_SLIDE_OPACITY, false);
     },
-    get nextZIndex() {
-      return getFloat('next-z-index', 1, false);
+    get zIndex() {
+      return getFloat('z-index', 1);
+    },
+
+    // Redirect
+    get redirectDelay() {
+      // Values
+      const totalTime =
+        model.state.instances[instanceName].data.animation.totalTime;
+
+      // Return
+      return getFloat('redirect-delay', totalTime);
     },
   };
 

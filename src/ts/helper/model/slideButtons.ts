@@ -53,8 +53,6 @@ export default function (
       slideLogicLength
     );
 
-    console.log("u can't have prev buttons be wrongly selected again!");
-
     // Push
     arr.push(obj);
   }

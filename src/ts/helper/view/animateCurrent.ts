@@ -6,8 +6,6 @@ import * as model from '../../model';
 
 // Export active / inactive
 export default function (instance: StudioFormInstance, timeCurrent: number) {
-  // + Define +
-
   // Toggle main
   function toggle(index: number, mode: string, _class: string) {
     // Values
@@ -47,7 +45,7 @@ export default function (instance: StudioFormInstance, timeCurrent: number) {
   // Values
   ghost.asyncRecord = [...instance.record];
   const tmpRecord = [...instance.record];
-  const currentIndex = tmpRecord.pop();
+  const currentIndex = instance.isDone ? null : tmpRecord.pop();
 
   // Add completed
   tmpRecord.forEach(index => {

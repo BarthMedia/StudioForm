@@ -114,12 +114,19 @@ export default function (instance: StudioFormInstance) {
 
         // File
         if (input.type === 'file') {
-          // Push
-          if (!attributeUtils.getAttribute('attached'))
+          // Push if label exists
+          if (document.querySelector(`[for="${input.id}"]`)) {
+            if (!attributeUtils.getAttribute('attached'))
+              targetInputs.push({
+                input: input,
+                index: index,
+                message: 'no attachments',
+              });
+          } else if (input.value === '')
             targetInputs.push({
               input: input,
               index: index,
-              message: 'no attachments',
+              message: 'no files',
             });
 
           // Skip code below

@@ -17,9 +17,8 @@ export const data = function (
   nId: number | 'done',
   options: SFONav
 ) {
-  console.log('Turn timeBoth into totalTime!');
-
   // Values
+  const aConfig = instance.config.animations;
   const aData = modelUtils.returnGhost(instance).animationData;
   const elements = instance.elements;
   const formWrapper = elements.wrapper;
@@ -92,10 +91,7 @@ export const data = function (
   // Is equalDimensions
   let equalDimensions =
     currentWidth === nextWidth && currentHeight === nextHeight;
-  const equalDimensionsMulitplier = getDecimal(
-    'equal-dimensions-multiplier',
-    config.DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER
-  );
+  const equalDimensionsMulitplier = aConfig.equalDimensionsMultiplier;
 
   // Reverse
   const isReverse =
@@ -103,39 +99,24 @@ export const data = function (
   const isReverseMultiplier = isReverse ? -1 : 1;
 
   // Opacity
-  const opacityCurrent = getDecimal('opacity', config.DEFAULT_SLIDE_OPACITY);
-  const opacityNext = getDecimal(
-    'opacity',
-    config.DEFAULT_SLIDE_OPACITY,
-    false
-  );
+  const opacityCurrent = aConfig.currentOpacity;
+  const opacityNext = aConfig.nextOpacity;
 
   // Z-index
-  const zIndex = getDecimal('z-index', 1, false);
+  const zIndex = aConfig.zIndex;
 
   // Current
-  const currentMoveMultiplier = getDecimal(
-    'current-move-multiplier',
-    config.DEFAULT_SLIDE_CURRENT_MOVE_MULTIPLIER
-  );
-  const currentTime = options.skipAnimations
-    ? 0
-    : getDecimal('current-time', config.DEFAULT_SLIDE_CURRENT_TIME);
+  const currentMoveMultiplier = aConfig.currentMoveMultiplier;
+  const currentTime = options.skipAnimations ? 0 : aConfig.currentTime;
 
   // Next
-  const nextMoveMultiplier = getDecimal(
-    'next-move-multiplier',
-    config.DEFAULT_SLIDE_NEXT_MOVE_MULTIPLIER,
-    false
-  );
-  const nextTime = options.skipAnimations
-    ? 0
-    : getDecimal('next-time', config.DEFAULT_SLIDE_NEXT_TIME, false);
+  const nextMoveMultiplier = aConfig.nextMoveMultiplier;
+  const nextTime = options.skipAnimations ? 0 : aConfig.nextTime;
 
   // Direction math
-  const fadeOnly = getAttribute('direction') === 'off' ? 0 : 1;
-  const direction = getDecimal('direction', config.DEFAULT_SLIDE_DIRECTION);
-  const angle = ((direction - 90) * Math.PI) / 180;
+  const direction = aConfig.direction;
+  const fadeOnly = direction === 'off' ? 0 : 1;
+  const angle = ((direction === 'off' ? 0 : direction - 90) * Math.PI) / 180;
 
   // Calculate x & y
   const xCurrent =
@@ -170,37 +151,41 @@ export const data = function (
 
   // * Update animationData sdk *
   Object.assign(aData, {
-    // Legacy
+    // Elements
     currentElement: currentSlide,
     nextElement: nextSlide,
     parentElement: wrapper,
     overflowElement: overflow,
+
+    // General
     direction: fadeOnly ? direction : 'off',
     angle: angle,
-    opacityNext: opacityNext,
-    opacityCurrent: opacityCurrent,
     zIndex: zIndex,
-    xCurrent: xCurrent,
-    yCurrent: yCurrent,
+    equalDimensions: equalDimensions,
+    equalDimensionsMulitplier: equalDimensionsMulitplier,
+    totalTime:
+      currentTime * (equalDimensions ? equalDimensionsMulitplier : 1) +
+      nextTime,
+
+    // Current
+    currentX: xCurrent,
+    currentY: yCurrent,
+    currentOpacity: opacityCurrent,
     currentWidth: currentWidth,
     currentHeight: currentHeight,
     currentMoveMultiplier: currentMoveMultiplier,
     currentTime: currentTime,
-    xNext: xNext,
-    yNext: yNext,
+    currentDisplayStart: currentIsDone ? 'block' : '',
+    currentDisplayEnd: currentIsDone ? '' : 'none',
+
+    // Next
+    nextX: xNext,
+    nextY: yNext,
+    nextOpacity: opacityNext,
     nextWidth: nextWidth,
     nextHeight: nextHeight,
     nextMoveMultiplier: nextMoveMultiplier,
     nextTime: currentTime,
-    equalDimensions: equalDimensions,
-    equalDimensionsMulitplier: equalDimensionsMulitplier,
-    timeBoth:
-      currentTime * (equalDimensions ? equalDimensionsMulitplier : 1) +
-      nextTime,
-
-    // New
-    currentDisplayStart: currentIsDone ? 'block' : '',
-    currentDisplayEnd: currentIsDone ? '' : 'none',
     nextDisplayStart: nextIsDone ? 'block' : '',
   });
 };
@@ -261,9 +246,9 @@ export const animate = function (instance: StudioFormInstance) {
 
   // Next
   tl.set(nextSlide, {
-    x: aData.xNext,
-    y: aData.yNext,
-    opacity: aData.opacityNext,
+    x: aData.nextX,
+    y: aData.nextY,
+    opacity: aData.nextOpacity,
     zIndex: aData.zIndex,
     display: aData.nextDisplayStart,
     position: 'absolute',
@@ -277,9 +262,9 @@ export const animate = function (instance: StudioFormInstance) {
   // Current
   tl.to(currentSlide, {
     duration: aData.currentTime,
-    x: aData.xCurrent,
-    y: aData.yCurrent,
-    opacity: aData.opacityCurrent,
+    x: aData.currentX,
+    y: aData.currentY,
+    opacity: aData.currentOpacity,
   });
 
   // Form - height / width adjustment
@@ -362,6 +347,6 @@ export const animate = function (instance: StudioFormInstance) {
 
   // Animation done call
   tl.call(() => {
-    ghost.root.isTransitioning = true;
+    ghost.root.isTransitioning = false;
   });
 };

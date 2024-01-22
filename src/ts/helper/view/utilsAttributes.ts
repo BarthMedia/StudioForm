@@ -10,8 +10,8 @@ import * as modelUtils from '../model/utils';
 // Get smw attribute
 export function getSlideMaskWrapperAttribute(
   str: string,
-  wrapper: HTMLElement,
-  mask: HTMLElement
+  mask: HTMLElement,
+  wrapper: HTMLElement
 ) {
   // Elements
   const sfId = getAttribute('id', wrapper);
@@ -78,6 +78,8 @@ export function getAttribute(
     elements.every(el => {
       // Logic
       const getAttr = el?.getAttribute(str);
+
+      // Logic
       if (getAttr) {
         attr = getAttr;
         return false;

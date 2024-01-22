@@ -32,6 +32,9 @@ export const returnLogicTo = function (
   referenceElement: HTMLElement,
   instanceLength: number
 ) {
+  // Overwrite
+  slideId += 1;
+
   // Values
   const instance = model.state.instances[instanceName];
 
@@ -46,16 +49,13 @@ export const returnLogicTo = function (
       )
     : false;
 
-  // Overwrite
-  slideId += 1;
-
   // Values
   const val =
     toVal !== false
       ? toVal
       : attributeUtils.getAttribute(null, referenceElement) === 'submit'
       ? 'done'
-      : instanceLength - 1 > slideId
+      : instanceLength > slideId
       ? slideId
       : 'done';
 
@@ -157,7 +157,7 @@ export const navGuard = function (
   const modes = instance.config.modes;
 
   // Instnace guard
-  const pass = () => {
+  const pass = (() => {
     // Warn guard - 0
     if (instance.isAwaiting) {
       const msg = `${errPath(instance)} Awaiting resolve!`;
@@ -202,7 +202,7 @@ export const navGuard = function (
 
     // Default
     return true;
-  };
+  })();
 
   // Return
   if (!pass) return false;

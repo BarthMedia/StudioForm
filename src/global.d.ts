@@ -54,6 +54,7 @@ interface SFAnimationConfig {
   get direction(): number | 'off';
   get ease(): string;
   get equalDimensionsMultiplier(): number;
+  get zIndex(): number;
 
   // Scroll to
   get offset(): number | string;
@@ -65,7 +66,9 @@ interface SFAnimationConfig {
   get nextMoveMultiplier(): number;
   get nextOpacity(): number;
   get nextTime(): number;
-  get nextZIndex(): number;
+
+  // Redirect
+  get redirectDelay(): number;
 }
 
 interface SFFetchConfig {
@@ -203,35 +206,39 @@ interface SFProgressData {
 }
 
 interface SFAnimationData {
-  // Legacy
+  // Elements
   currentElement: HTMLElement;
   nextElement: HTMLElement;
   parentElement: HTMLElement;
   overflowElement: HTMLElement;
+
+  // General
   direction: number | string;
   angle: number;
-  opacityNext: number;
-  opacityCurrent: number;
   zIndex: number;
-  xCurrent: number;
-  yCurrent: number;
+  equalDimensions: number;
+  equalDimensionsMulitplier: number;
+  totalTime: number;
+
+  // Current
+  currentX: number;
+  currentY: number;
+  currentOpacity: number;
   currentWidth: number;
   currentHeight: number;
   currentMoveMultiplier: number;
   currentTime: number;
-  xNext: number;
-  yNext: number;
+  currentDisplayStart: string;
+  currentDisplayEnd: string;
+
+  // Next
+  nextX: number;
+  nextY: number;
+  nextOpacity: number;
   nextWidth: number;
   nextHeight: number;
   nextMoveMultiplier: number;
   nextTime: number;
-  equalDimensions: number;
-  equalDimensionsMulitplier: number;
-  timeBoth: number;
-
-  // Display - New
-  currentDisplayStart: string;
-  currentDisplayEnd: string;
   nextDisplayStart: string;
 
   // Scroll to
@@ -315,7 +322,7 @@ interface StudioFormEvent {
 }
 
 type StudioFormState = {
-  // Keyboard activity
+  // Active instance:
   activeKeyBoardInstance: string;
 
   // Storage / "garbage collection"

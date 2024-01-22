@@ -27,7 +27,7 @@ import fetch from './fetch';
 import animatePromiseResolve from '../view/animatePromiseResolve';
 import reset from '../view/reset';
 import reportValidity from '../view/reportValidity';
-import Focus from '../view/focus';
+import focus from '../view/focus';
 
 // Navigation
 import navNext from './navNext';
@@ -321,7 +321,7 @@ export const init = (
   // Focus Proxy
   const focusMain: SFFocus = {
     clear: () => {
-      console.log('I have to built', Focus);
+      console.log('I have to built', focus);
 
       console.log(`
   // // Initialize Focus button
@@ -329,13 +329,13 @@ export const init = (
   `);
     },
     next: () => {
-      console.log('I have to built', Focus);
+      console.log('I have to built', focus);
       console.log(
         "Throw warnings if somebody try's to do this on slide, where there are no !visible! 2+ buttons"
       );
     },
     prev: () => {
-      console.log('I have to built', Focus);
+      console.log('I have to built', focus);
     },
   };
   const focusProxy = model.createReadMostlyProxy(focusMain) as SFFocus;

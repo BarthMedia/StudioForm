@@ -120,7 +120,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
 
     // Wait for animations to finish
     get awaitAnimations() {
-      return getAttribute('await-animations');
+      return getAttribute('await-animations', false);
     },
 
     // Show error message

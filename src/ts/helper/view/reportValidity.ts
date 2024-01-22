@@ -27,14 +27,20 @@ export default function (
 
   // New feature guard
   if (elements.length) {
-    // Log
-    console.log('This feature is yet to be built! \n ---- \n');
+    // Values
+    const _elements: HTMLElement[] = [];
 
-    console.log(
-      'turn elements with help of helper functions into actual straight forward array of elements!'
-    );
+    // Loop
+    elements.forEach(element => {
+      // Is string
+      if (typeof element === 'string')
+        document
+          .querySelectorAll(element)
+          .forEach(node => _elements.push(node as HTMLElement));
+    });
 
     // Just animate towards the list and apply the combo classes!
+    renderValidity(_elements);
 
     // Return
     return undefined;

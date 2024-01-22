@@ -74,10 +74,6 @@ export default function init(instance: StudioFormInstance) {
 
   // * Keyboard *
   document.addEventListener('keydown', (event: KeyboardEvent) => {
-    console.log(
-      'activeKeyBoardInstance is irrelevant, make sure that event parent has identical sf-id!'
-    );
-
     // Elements
     const target =
       event.target instanceof HTMLInputElement ||

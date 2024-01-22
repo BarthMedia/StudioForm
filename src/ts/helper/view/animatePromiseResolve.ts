@@ -77,6 +77,9 @@ export default async function (
     return false;
   }
 
+  // Style children with class
+  utils.classListToggle(...getElements('add'));
+
   // Alternative promise
   if (isSubmit) {
     // Guard
@@ -85,11 +88,13 @@ export default async function (
     // Values
     const val = await asyncCallBack();
     rootInstance.isAwaiting = false;
+
+    // Remove style children with class
+    utils.classListToggle(...getElements());
+
+    // Return
     return val;
   }
-
-  // Style children with class
-  utils.classListToggle(...getElements('add'));
 
   // Event listener
   instance.elements.mask.addEventListener(
