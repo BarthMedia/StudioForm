@@ -179,16 +179,13 @@ export default async function (
     setTimeout(
       () => {
         // Variable
-        const currentSlideTopVisible = viewUtils.isElementTopVisible(
+        const wrapperTopVisible = viewUtils.isElementTopVisible(
           instance,
-          currentSlide
+          instance.elements.wrapper
         );
 
         // Logic
-        if (
-          modes.forceScrollToTop ||
-          (modes.scrollToTop && !currentSlideTopVisible)
-        )
+        if (modes.forceScrollToTop || (modes.scrollToTop && !wrapperTopVisible))
           scrollTo(instance, aData.nextElement, internal);
       },
       aData.currentHeight < aData.nextHeight

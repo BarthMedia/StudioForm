@@ -15,15 +15,6 @@ export default async function (
   _target: HTMLElement | string,
   internal = false
 ) {
-  // Notes:
-  // console.log(
-  //   'Have a scroll finished event',
-  //   'scroll-done',
-  //   'Make sure scroll is done correctly'
-  // );
-
-  // console.log('Respect custom anchor?');
-
   // Elements
   const target =
     typeof _target === 'string'
