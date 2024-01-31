@@ -98,7 +98,9 @@ export default function (
       const fileValue = value ? value : ghost.files[key];
       const isFile = fileValue instanceof File;
 
-      console.log('Fix File selector edge case with non label files');
+      console.log(
+        'Fix File selector edge case with non label files --- also. Checkboxed and radios should not rely on sf-checked but on .checked === true'
+      );
 
       // Guard
       if (!fileValue) return;
