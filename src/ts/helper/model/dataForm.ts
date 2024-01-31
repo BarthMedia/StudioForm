@@ -75,7 +75,7 @@ export default function (
       // Radio edgecase
       if (
         input.type === 'radio' &&
-        !input.hasAttribute(`${config.PRODUCT_NAME_SHORT}-selected`)
+        !input.hasAttribute(`${config.PRODUCT_NAME_SHORT}-checked`)
       )
         return;
 
