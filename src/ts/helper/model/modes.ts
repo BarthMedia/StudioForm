@@ -175,7 +175,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
 
     // Add field data params to redirect
     get fieldParamsRedirect() {
-      return getAttribute('field-params-redirect');
+      return getAttribute('field-params-redirect', false);
     },
 
     // File dropping
