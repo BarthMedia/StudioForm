@@ -156,6 +156,7 @@ export default async function (
   transition.data(instance, currentId, nextId, options);
 
   // * Transition event
+  console.log('Dispatch the direction & more info');
   const event = viewUtils.dispatchEvent(instance, 'transition', internal, true);
   const doNotAnimateTranistion = !modes.transition || event.defaultPrevented;
 

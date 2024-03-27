@@ -111,6 +111,7 @@ export default function (instance: StudioFormInstance) {
 
         // Values
         const index = parseInt(input.getAttribute(sfidAttr) || '');
+        const inputValue = input.value.trim();
 
         // File
         if (input.type === 'file') {
@@ -122,7 +123,7 @@ export default function (instance: StudioFormInstance) {
                 index: index,
                 message: 'no attachments',
               });
-          } else if (input.value === '')
+          } else if (inputValue === '')
             targetInputs.push({
               input: input,
               index: index,
@@ -134,7 +135,7 @@ export default function (instance: StudioFormInstance) {
         }
 
         // Is empty
-        if (input.value === '') {
+        if (inputValue === '') {
           // Push
           targetInputs.push({
             input: input,
@@ -186,7 +187,7 @@ export default function (instance: StudioFormInstance) {
             const regExp = new RegExp(input.getAttribute('pattern') || '');
 
             // Logic
-            if (!regExp.test(input.value)) {
+            if (!regExp.test(inputValue)) {
               // Push
               targetInputs.push({
                 input: input,
@@ -216,7 +217,7 @@ export default function (instance: StudioFormInstance) {
           const regExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
           // Logic
-          if (!regExp.test(input.value)) {
+          if (!regExp.test(inputValue)) {
             // Push
             targetInputs.push({
               input: input,
@@ -236,7 +237,7 @@ export default function (instance: StudioFormInstance) {
           const regExp = /^[\d\s\-\+\(\)\.\/*#]+$/;
 
           // Logic
-          if (!regExp.test(input.value)) {
+          if (!regExp.test(inputValue)) {
             // Push
             targetInputs.push({
               input: input,
@@ -256,7 +257,7 @@ export default function (instance: StudioFormInstance) {
           const regExp = /^-?(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$/;
 
           // Logic
-          if (!regExp.test(input.value)) {
+          if (!regExp.test(inputValue)) {
             // Push
             targetInputs.push({
               input: input,

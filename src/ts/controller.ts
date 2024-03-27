@@ -120,8 +120,8 @@ function main() {
 
 // GSAP
 const gsapSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.3/gsap.min.js';
-const gsapScript = document.querySelector(`script[src="${gsapSrc}"]`);
+  'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
+const gsapScript = document.querySelector('script[src*="/gsap.min.js"]');
 gsapScript ? loaderLogic() : utils.scriptLoader(gsapSrc, loaderLogic);
 
 // Main

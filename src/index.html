@@ -13,7 +13,10 @@
     <link rel="stylesheet" href="src/sass/main.css" /> -->
     <!-- <script type="module" src="js/controller.js"></script> -->
     <script type="module" src="ts/controller.ts"></script>
-    <webflow_io auto-redirect="false" src="https://bmg-studio.webflow.io/test-form"></webflow_io>
+    <webflow_io
+      auto-redirect="false"
+      src="https://bmg-studio-v1.webflow.io/test-form"
+    ></webflow_io>
     <webflow_documentation false></webflow_documentation>
 
     <title>[BMG.studio] - Studio Form</title>
@@ -54,7 +57,7 @@
           '[bmg-elemnet="SNIPPET_PLACEHOLDER"]'
         ),
         webflowIo = document.querySelector('webflow_io'),
-        webflowDoc = document.querySelector('webflow_documentation')
+        webflowDoc = document.querySelector('webflow_documentation');
 
       // Values
       const jsSrc = script.src,
@@ -76,29 +79,26 @@
       );
 
       // Logic
-      if ( webflowIo.getAttribute('auto-redirect') == 'true' )
-      {
+      if (webflowIo.getAttribute('auto-redirect') == 'true') {
         // Elements
-        const h1 = document.querySelector('h1')
+        const h1 = document.querySelector('h1');
 
-        // Values 
-        const url = `${ webflowDocUrl }?w_io=${ webflowSrc }&h_url=${ jsSrc }&d_title=${ document.title }`
+        // Values
+        const url = `${webflowDocUrl}?w_io=${webflowSrc}&h_url=${jsSrc}&d_title=${document.title}`;
 
         // Actions
-        h1.innerText = 'Redirecting...'
-        window.location.href = webflowSrc
-      }
-      else if ( webflowDoc.hasAttribute('true') )
-      {
+        h1.innerText = 'Redirecting...';
+        window.location.href = webflowSrc;
+      } else if (webflowDoc.hasAttribute('true')) {
         // Elements
-        const h1 = document.querySelector('h1')
+        const h1 = document.querySelector('h1');
 
-        // Values 
-        const url = `${ webflowDocUrl }?w_io=${ webflowSrc }&h_url=${ jsSrc }&d_title=${ document.title }`
+        // Values
+        const url = `${webflowDocUrl}?w_io=${webflowSrc}&h_url=${jsSrc}&d_title=${document.title}`;
 
         // Actions
-        h1.innerText = 'Redirecting...'
-        window.location.href = url
+        h1.innerText = 'Redirecting...';
+        window.location.href = url;
       }
     </script>
   </body>
