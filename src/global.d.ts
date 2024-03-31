@@ -112,7 +112,6 @@ interface SFONav {
   awaitAnimations?: boolean;
   skipAnimations?: boolean;
   skipRequirements?: boolean;
-  skipPromise?: boolean; // Default to true if fake is true
 }
 
 // + Instance API other +

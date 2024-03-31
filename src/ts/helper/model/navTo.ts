@@ -68,7 +68,9 @@ export default async function (
     return false;
 
   // Await promise resolve
+  const direction = isPrev ? 'prev' : isToDone ? 'done' : 'next';
   if (
+    !options.fake &&
     modes.promiseResolve &&
     (!isPrev || modes.onPrevPromiseResolve) &&
     (!isToDone || modes.onSubmitPromiseResolve)
@@ -77,7 +79,7 @@ export default async function (
     const response = await animatePromiseResolve(
       instance,
       {
-        direction: isPrev ? 'prev' : isToDone ? 'done' : 'next',
+        direction: direction,
         current: currentId,
         next: slideIdentification,
       },
@@ -155,16 +157,21 @@ export default async function (
   // * Calculate animation properties
   transition.data(instance, currentId, nextId, options);
 
-  // * Transition event
-  console.log('Dispatch the direction & more info');
-  const event = viewUtils.dispatchEvent(instance, 'transition', internal, true);
-  const doNotAnimateTranistion = !modes.transition || event.defaultPrevented;
-
   // * Animate *
 
   // Elements & values
   const aData = instance.data.animation;
   const currentSlide = aData.currentElement;
+
+  // * Transition event
+  const event = viewUtils.dispatchEvent(
+    instance,
+    'transition',
+    internal,
+    true,
+    { currentSlide: currentSlide, direction: direction }
+  );
+  const doNotAnimateTranistion = !modes.transition || event.defaultPrevented;
 
   // Main
   if (!doNotAnimateTranistion) {

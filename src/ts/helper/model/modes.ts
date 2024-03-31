@@ -160,7 +160,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
 
     // Auto resolve on prev
     get onSubmitPromiseResolve() {
-      return getAttribute('on-submit-promise-resolve', false);
+      return getAttribute('on-submit-promise-resolve');
     },
 
     // 100% progress only on submit

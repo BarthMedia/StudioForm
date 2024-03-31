@@ -444,15 +444,12 @@ export const init = (
         (typeof value === 'boolean' || typeof value === 'undefined')
       ) {
         // Guard
-        if (!instanceProxy.isAwaiting)
-          throw new Error(
-            `${errPath(instanceName)} There is no active promise!`
-          );
+        if (!instanceProxy.isAwaiting) return false;
 
         // Notes:
-        console.log(
-          'Make sure to make data.fetch.{} deleteable / null! / nullable!'
-        );
+        // console.log(
+        //   'Make sure to make data.fetch.{} deleteable / null! / nullable!'
+        // );
 
         // Dispatch
         viewUtils.dispatchEvent(instanceName, 'resolve', true, false, {
