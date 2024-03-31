@@ -73,11 +73,7 @@ export default function (
           : false;
 
       // Radio edgecase
-      if (
-        input.type === 'radio' &&
-        !input.hasAttribute(`${config.PRODUCT_NAME_SHORT}-checked`)
-      )
-        return;
+      if (input.type === 'radio' && !input.checked) return;
 
       // Logic
       addVals(key, value);
@@ -98,9 +94,7 @@ export default function (
       const fileValue = value ? value : ghost.files[key];
       const isFile = fileValue instanceof File;
 
-      console.log(
-        'Fix File selector edge case with non label files --- also. Checkboxed and radios should not rely on sf-checked but on .checked === true'
-      );
+      console.log('Fix File selector edge case with non label files ');
 
       // Guard
       if (!fileValue) return;

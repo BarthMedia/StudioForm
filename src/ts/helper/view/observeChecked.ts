@@ -21,10 +21,10 @@ export default function (
   // Class list toggle
   function toggle(input: HTMLInputElement, mode = 'remove') {
     // Add / remove checked
-    const attr = `${config.PRODUCT_NAME_SHORT}-checked`;
-    mode === 'add'
-      ? input.setAttribute(attr, 'true')
-      : input.removeAttribute(attr);
+    // const attr = `${config.PRODUCT_NAME_SHORT}-checked`;
+    // mode === 'add'
+    //   ? input.setAttribute(attr, 'true')
+    //   : input.removeAttribute(attr);
 
     // Toggle
     utils.classListToggle({
