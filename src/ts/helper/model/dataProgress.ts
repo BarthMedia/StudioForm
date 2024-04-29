@@ -17,111 +17,143 @@ export default function (instance: StudioFormInstance) {
   // - Return longest or shortest path to the first possible submit -
 
   // Values
-  const latestRecordId = utils.currentSlideId(instance),
-    slideRecordLength = slideRecord.length;
-  let min = slideLogic.length,
-    max = 0,
-    count = 0,
-    tmpCount = 0,
-    treeArray: number[] = [];
+  const currentRecordId = utils.currentSlideId(instance);
 
-  // Loop function
-  function objectLoop(object: StudioFormSlideLogic) {
+  // Define interfaces for the graph and its components
+  interface Graph {
+    [key: string]: (string | number)[];
+  }
+
+  interface QueueNode {
+    node: string;
+    path: string[];
+  }
+
+  // Define a graph representation, usually an adjacency list
+  const graph: Graph = {};
+  function createGraph(slideId: number) {
     // Values
-    const array = returnNextSlideIds(object);
+    const slide: StudioFormSlideLogic | undefined = slideLogic[slideId];
 
-    // Math
-    count++;
-    tmpCount++;
+    // Guard
+    if (!slide) return;
 
-    // Handle multi slides logic
-    if ([...array].filter(item => item !== 'done').length > 1) {
-      // a tree split
-      treeArray.push(tmpCount);
-      tmpCount = 0;
+    // Values
+    const arr: Set<number | 'done'> = new Set();
+    slide.buttons
+      ? slide.buttons.map(button => arr.add(button.next))
+      : arr.add(slide.next);
+    arr.forEach(item => {
+      if (item != 'done' && item <= slideId) {
+        arr.delete(item);
+      }
+    });
 
-      console.log(
-        'CURRENTLY OUT OF SERVICE!',
-        'new sf-to logic has to be built!'
-      );
-    }
+    // "Push" unique values
+    graph[slideId] = Array.from(arr);
 
-    // Action loop
-    array.forEach(id => {
-      // False guard
-      if (id === 'done') {
-        // Update values
-        max = Math.max(max, count);
-        min = Math.min(min, count);
-        count = 0;
+    // Loop
+    createGraph(slideId + 1);
+  }
+  createGraph(currentRecordId);
 
-        // Add base value to tree
-        treeArray.forEach(n => {
-          count += n;
-        });
+  function shortestPath(
+    graph: Graph,
+    startNode: string,
+    endNode: string
+  ): string[] | null {
+    // Initialize a queue for BFS and a set to keep track of visited nodes
+    const queue: QueueNode[] = [{ node: startNode, path: [startNode] }];
+    const visited: Set<string> = new Set();
 
-        // Trim back a leaf
-        treeArray.pop();
+    // Loop until the queue is empty
+    while (queue.length > 0) {
+      // Dequeue a node from the queue
+      const { node, path } = queue.shift()!;
 
-        // Return
-        return;
+      // Mark the node as visited
+      visited.add(node);
+
+      // Check if the current node is the target node
+      if (node === endNode) {
+        return path; // Return the path to the target node
       }
 
-      // Iniciate loop
-      objectLoop(slideLogic[id]);
-    });
-  }
-
-  // Return buttons
-  function returnNextSlideIds(object: StudioFormSlideLogic) {
-    // Value
-    let arr: (number | 'done')[] = [];
-
-    if (object.buttons)
-      object.buttons.forEach(button => {
-        // Values
-        const nextId = button.next;
-        const noDoneArray = [...arr].filter(
-          item => item !== 'done'
-        ) as number[];
-        const allowPush =
-          nextId === 'done' ||
-          (noDoneArray[noDoneArray.length - 1] || 0) < nextId;
-
-        // Push logic
-        if (arr.indexOf(nextId) === -1 && allowPush) {
-          arr.push(nextId);
+      // Enqueue adjacent nodes that haven't been visited yet
+      for (const neighbor of graph[node]) {
+        if (!visited.has(String(neighbor))) {
+          // Add the neighbor node to the queue along with the path taken to reach it
+          queue.push({
+            node: String(neighbor),
+            path: [...path, String(neighbor)],
+          });
         }
-      });
-    else {
-      arr.push(object.next);
+      }
     }
 
-    // Return
-    return arr;
+    // If no path is found, return null
+    return null;
   }
 
-  // Intiliaze loop
-  objectLoop(slideLogic[latestRecordId]);
+  function longestPath(
+    graph: Graph,
+    startNode: string,
+    endNode: string
+  ): string[] | null {
+    // Initialize a queue for BFS
+    const queue: QueueNode[] = [{ node: startNode, path: [startNode] }];
+    let longestPath: string[] | null = null;
 
-  // Finetune math values
-  min += slideRecordLength - 1;
-  max += slideRecordLength - 1;
-  const addition =
-    instance.config.modes.countDone && !instance.config.modes.slider ? 1 : 0;
+    // Loop until the queue is empty
+    while (queue.length > 0) {
+      // Dequeue a node from the queue
+      const { node, path } = queue.shift()!;
+
+      // Check if the current node is the target node
+      if (node === endNode) {
+        longestPath = path; // Update the longest path
+      }
+
+      // Skip
+      if (node == 'done') continue;
+
+      // Enqueue adjacent nodes
+      for (const neighbor of graph[node]) {
+        // Add the neighbor node to the queue along with the path taken to reach it
+        queue.push({
+          node: String(neighbor),
+          path: [...path, String(neighbor)],
+        });
+      }
+    }
+
+    // Return the longest path found
+    return longestPath;
+  }
+
+  // Values
+  const graphStartKey = currentRecordId.toString();
+  const slideRecordLength = slideRecord.length;
+  const pathToDoneS = shortestPath(graph, graphStartKey, 'done');
+  const pathToDoneL = longestPath(graph, graphStartKey, 'done');
+
+  // Math
+  const min = slideRecordLength - 1 + pathToDoneS?.length!;
+  const max = slideRecordLength - 1 + pathToDoneL?.length!;
 
   // Logic
   const returnVal: SFProgressData = {
     fast: {
-      percentage: (slideRecordLength / (min + addition)) * 100,
+      percentage: (slideRecordLength / min) * 100,
       path: min,
     },
     slow: {
-      percentage: (slideRecordLength / (max + addition)) * 100,
+      percentage: (slideRecordLength / max) * 100,
       path: max,
     },
     traversed: slideRecordLength,
   };
 
+  // Return
   return returnVal;
 }

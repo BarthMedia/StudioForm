@@ -27,6 +27,9 @@ export default async function (
   // Guard - Nav
   if (!utils.navGuard(instance, errPath, options)) return false;
 
+  // Double click guard
+  if (ghost.focus.doubleClick) return false;
+
   // * * * Logic * * *
 
   // Button click case
@@ -68,12 +71,6 @@ export default async function (
       if (!suggestedButtonFound) {
         // Suggest button[0]
         if (modes.autoSuggestButtons) instance.focus.next();
-
-        console.log(
-          'Make / await ',
-          'internal / external button suggestion',
-          'Make external api event suffix changelable in global settings'
-        );
 
         // Skip code below
         return 'suggest';

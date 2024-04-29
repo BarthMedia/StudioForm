@@ -112,8 +112,8 @@ export const returnTo = function (
     // Guard - 1 - invalid search key
     if (!found) {
       const msg = `${errPath(instance)} Invalid slide identification: `;
-      console.error(msg, slideIdentification);
-      return false;
+      controllerUtils.warn(msg, slideIdentification);
+      return 'done';
     }
   }
 

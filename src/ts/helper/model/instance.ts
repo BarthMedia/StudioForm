@@ -27,7 +27,7 @@ import fetch from './fetch';
 import animatePromiseResolve from '../view/animatePromiseResolve';
 import reset from '../view/reset';
 import reportValidity from '../view/reportValidity';
-import focus from '../view/focus';
+import * as focus from '../view/focus';
 
 // Navigation
 import navNext from './navNext';
@@ -51,7 +51,7 @@ export const destroy = (instanceName: string) => {
   // Think about tracking all the currently applied sf-classes.
   // And how to remove them smoothly! think sf-completed & sf-current
 
-  //
+  // TODOs
   console.log('Reset checkboxes on destroy!');
 
   console.log(
@@ -66,15 +66,15 @@ export const destroy = (instanceName: string) => {
     'click the form, and try to resolve a potential fetch!'
   );
 
-  // Values
-  const events = model.state.events;
-
   // Log
   console.log('I gotta add all these event listeners along the the way');
   console.log('I gotta destroy these event listeners!');
 
+  // Values
+  const events = model.state;
+
   // Remove DOM reference
-  const sfNameAttr = `${config.PRODUCT_NAME_SHORT}-name`;
+  const sfNameAttr = `${config.PRODUCT_NAME_SHORT}-id`;
   document
     .querySelector(`[${sfNameAttr}="${instanceName}"]`)
     ?.removeAttribute(sfNameAttr);
@@ -100,32 +100,20 @@ export const init = (
   wrapper: HTMLElement,
   mask: HTMLElement
 ) => {
-  // NOTE: TODO
-  console.log(
-    'TODO: ',
-    'Have a more unified and clear way of listening to proxy write events!',
-    'not DOM dependend, and with less boiler plate code!'
-  );
-
-  // Initiate events
-  const event: StudioFormEvent[] = (model.state.events[instanceName] = []);
-
-  // Proxy write set prefix
-  const proxyWriteSetPrefix = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}`;
+  // Values
+  const proxyCallbacks: SFProxyCallbacks = {};
 
   // + Modes - proxy & event listener +
   const modesMain = modes(wrapper, mask);
   const modesProxy = model.createReadMostlyProxy(
     modesMain,
-    `${instanceName}-modes`
+    `modes`,
+    instanceName
   ) as SFModesConfig;
-  const modesWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}-modes`;
-  const modesWrite = (e: unknown) => {
-    if (typeof e?.['detail']?.value === 'boolean')
-      document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
-  };
-  document.body.addEventListener(modesWriteName, modesWrite);
-  event.push({ name: modesWriteName, function: modesWrite });
+
+  const modesWrite = (data: ProxyWriteEventData) =>
+    typeof data.value === 'boolean';
+  proxyCallbacks[`set-modes`] = modesWrite;
 
   // + Elements +
   const elementsMain = elements(modesProxy, instanceName, wrapper, mask);
@@ -168,61 +156,51 @@ export const init = (
   );
   const animationsConfigProxy = model.createReadMostlyProxy(
     animationsConfigMain,
-    `${instanceName}-animations-config`
+    `animations-config`,
+    instanceName
   ) as SFAnimationConfig;
-  const animationsConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}-animations-config`;
-  const animationsConfigWrite = (e: unknown) => {
+
+  const animationsConfigWrite = (data: ProxyWriteEventData) => {
     // Values
-    const detail = e?.['detail'];
-    const value = detail?.value;
-    const property = detail?.property;
+    const value = data.value;
+    const property = data.property.toString();
     const stringVals = ['ease', 'progressBarAxis'];
     const stringAndNumberVals = ['offset'];
     const includesStringVals = stringVals.includes(property);
     const includesStringAndNumberVals = stringAndNumberVals.includes(property);
 
     // Writing logic
-    if (
+    return (
       ((includesStringAndNumberVals || !includesStringVals) &&
         (typeof value === 'number' ||
           (property === 'direction' && value === 'off'))) ||
       ((includesStringAndNumberVals || includesStringVals) &&
         typeof value === 'string')
-    )
-      document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+    );
   };
-  document.body.addEventListener(
-    animationsConfigWriteName,
-    animationsConfigWrite
-  );
-  event.push({
-    name: animationsConfigWriteName,
-    function: animationsConfigWrite,
-  });
+  proxyCallbacks[`set-animations-config`] = animationsConfigWrite;
 
   // Generate fetch config
   const fetchConfigMain: SFFetchConfig = fetchConfig(wrapper, mask);
   const fetchConfigProxy = model.createReadMostlyProxy(
     fetchConfigMain,
-    `${instanceName}-fetch-config`
+    `fetch-config`,
+    instanceName
   ) as SFFetchConfig;
-  const fetchConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-${instanceName}-fetch-config`;
-  const fetchConfigWrite = (e: unknown) => {
+
+  const fetchConfigWrite = (data: ProxyWriteEventData) => {
     // Values
     let allowance = false;
-    const isTimeout = e?.['detail']?.property === 'timeout';
+    const isTimeout = data.property === 'timeout';
 
     // Writing logic
-    if (isTimeout && typeof e?.['detail']?.value === 'number') allowance = true;
-    else if (!isTimeout && typeof e?.['detail']?.value === 'string')
-      allowance = true;
+    if (isTimeout && typeof data.value === 'number') allowance = true;
+    else if (!isTimeout && typeof data.value === 'string') allowance = true;
 
     // Write
-    if (allowance)
-      document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+    return allowance;
   };
-  document.body.addEventListener(fetchConfigWriteName, fetchConfigWrite);
-  event.push({ name: fetchConfigWriteName, function: fetchConfigWrite });
+  proxyCallbacks[`set-fetch-config`] = fetchConfigWrite;
 
   // Config
   const configMain: StudioFormConfig = {
@@ -283,16 +261,16 @@ export const init = (
   const hiddenDataMain: SFHidden = {};
   const hiddenDataProxy = model.createReadMostlyProxy(
     hiddenDataMain,
-    `${instanceName}-hidden`
+    `hidden`,
+    instanceName
   ) as SFHidden;
 
   // Writing events
   ['set', 'delete'].forEach(str => {
-    const hiddenWriteName = `${config.PRODUCT_NAME_SHORT}-api-${str}-${instanceName}-hidden`;
-    const hiddenWrite = (e: unknown) => {
+    const hiddenWrite = (data: ProxyWriteEventData) => {
       // Values
-      const property = e?.['detail']?.property as string | symbol;
-      const value = e?.['detail']?.value as unknown;
+      const property = data.property;
+      const value = data.value;
       let write = false;
 
       // + Logic +
@@ -312,30 +290,22 @@ export const init = (
       }
 
       // Write
-      if (write) document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+      return write;
     };
-    document.body.addEventListener(hiddenWriteName, hiddenWrite);
-    event.push({ name: hiddenWriteName, function: hiddenWrite });
+
+    proxyCallbacks[`${str}-hidden`] = hiddenWrite;
   });
 
   // Focus Proxy
   const focusMain: SFFocus = {
     clear: () => {
-      console.log('I have to built', focus);
-
-      console.log(`
-  // // Initialize Focus button
-  FocusButton(state);
-  `);
+      focus.clear(instanceProxy);
     },
     next: () => {
-      console.log('I have to built', focus);
-      console.log(
-        "Throw warnings if somebody try's to do this on slide, where there are no !visible! 2+ buttons"
-      );
+      focus.next(instanceProxy);
     },
     prev: () => {
-      console.log('I have to built', focus);
+      focus.prev(instanceProxy);
     },
   };
   const focusProxy = model.createReadMostlyProxy(focusMain) as SFFocus;
@@ -405,7 +375,8 @@ export const init = (
   };
   const instanceProxy = model.createReadMostlyProxy(
     instanceMain,
-    `${instanceName}-instance`
+    `instance`,
+    instanceName
   ) as StudioFormInstance;
 
   // Auhtorization storage
@@ -415,11 +386,10 @@ export const init = (
 
   // Writing events
   ['set', 'delete'].forEach(str => {
-    const instanceWriteName = `${config.PRODUCT_NAME_SHORT}-api-${str}-${instanceName}-instance`;
-    const instanceWrite = (e: unknown) => {
+    const instanceWrite = (data: ProxyWriteEventData) => {
       // Values
-      const property = e?.['detail']?.property as string | symbol;
-      const value = e?.['detail']?.value as unknown;
+      const property = data.property;
+      const value = data.value;
       let write = false;
 
       // + Logic +
@@ -461,10 +431,9 @@ export const init = (
       }
 
       // Write
-      if (write) document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+      return write;
     };
-    document.body.addEventListener(instanceWriteName, instanceWrite);
-    event.push({ name: instanceWriteName, function: instanceWrite });
+    proxyCallbacks[`${str}-instance`] = instanceWrite;
   });
 
   // + Ghost instance +
@@ -484,9 +453,14 @@ export const init = (
     // Internal
     asyncRecord: [],
     gsapTl: {},
-    focus: {},
     slideCurrent: 0 as number | string,
     slideNext: 0 as number | string,
+
+    // Focus
+    focus: {},
+
+    // Proxy
+    proxyCallbacks: proxyCallbacks,
 
     // Events
     observer: null,
@@ -499,88 +473,3 @@ export const init = (
   model.state.instances[instanceName] = instanceProxy;
   model.state.api[instanceName] = model.state.instances[instanceName];
 };
-
-/**
- *
- * Legacy
- *
- */
-
-// // Function
-// export function init(wrapper: HTMLElement, index: number) {
-//   // Values
-//   const obj: any = {};
-
-//   // + Define +
-
-//   // ELements
-//   obj.elements = {};
-//   obj.elements.wrapper = wrapper;
-
-//   // * SDK *
-
-//   // Base
-//   obj.sdk = {};
-//   obj.sdk.i = index;
-
-//   // Custom code
-//   obj.sdk.events = {};
-
-//   // Animation data
-//   obj.sdk.animationData = {};
-
-//   // 3rd party
-//   obj.sdk.register = {};
-
-//   // Progress
-//   obj.sdk.slideRecord = [0];
-
-//   // Modes
-//   modes(obj);
-
-//   // View init
-//   obj.view = {};
-//   obj.view.sfInactiveArray = [];
-//   obj.view.eventsFunctionArrays = {};
-//   obj.view.gsapTimeline = {};
-//   obj.view.gsapProgressBarTimeline = {};
-
-//   // Model functions
-//   obj.model = {};
-
-//   // * Add callbacks to model *
-
-//   // Generate slide logic
-//   obj.model.generateSlideLogic = function () {
-//     slideLogic(index);
-//   };
-
-//   // Post data
-//   obj.sdk.data = {};
-//   obj.model.post = async function () {
-//     return post(index);
-//   };
-
-//   // Calculate progress
-//   obj.model.generateProgressData = function () {
-//     const data = calculateProgress(index);
-//     obj.sdk.pathProgressData = data;
-//   };
-
-//   // Check step requirements
-//   const eventFunctionArrays = obj.view.eventsFunctionArrays;
-//   su.addEventsInfrastrucutre(obj, 'CheckSlideRequirements');
-//   obj.sdk.slideRequirementsData = {};
-//   obj.sdk.slideRequirements = function (
-//     slideId: number,
-//     options: Options = {}
-//   ) {
-//     helper.triggerAllFunctions(eventFunctionArrays.onCheckSlideRequirements);
-//     const res = requirements(index, slideId, options);
-//     helper.triggerAllFunctions(eventFunctionArrays.afterCheckSlideRequirements);
-//     return res;
-//   };
-
-//   // Push
-//   state.push(obj);
-// }

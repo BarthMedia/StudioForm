@@ -151,7 +151,7 @@ export function createSelector(
 type classListToggleArgs = {
   element: HTMLElement;
   otherEls?: HTMLElement[];
-  mode: string;
+  mode: 'add' | 'remove';
   class: string;
   closest?: {
     cascader: boolean;
@@ -209,7 +209,7 @@ const sfhOptions = {
     cascader: true,
   },
 };
-function _sfHide(element: HTMLElement, mode: string) {
+function _sfHide(element: HTMLElement, mode: 'add' | 'remove') {
   // Toogle
   classListToggle({ ...sfhOptions, element: element, mode: mode });
 }

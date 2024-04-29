@@ -163,11 +163,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('on-submit-promise-resolve');
     },
 
-    // 100% progress only on submit
-    get countDone() {
-      return getAttribute('count-done');
-    },
-
     // Redirect
     get redirect() {
       return getAttribute('redirect');

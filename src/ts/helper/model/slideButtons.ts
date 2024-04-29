@@ -43,15 +43,17 @@ export default function (
     };
 
     // Accessibility
-    const next = obj.next;
-    viewUtils.setAccessibility(
-      button,
-      next === 'done' ? 'submit' : next,
-      null,
-      mask,
-      true,
-      slideLogicLength
-    );
+    setTimeout(() => {
+      const next = obj.next;
+      viewUtils.setAccessibility(
+        button,
+        next === 'done' ? 'submit' : next,
+        null,
+        mask,
+        true,
+        slideLogicLength
+      );
+    }, config.INITIAL_PROGRESS_BAR_ANIMATION_DELAY * 1000);
 
     // Push
     arr.push(obj);

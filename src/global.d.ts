@@ -273,7 +273,6 @@ interface SFFetchData {
 
 interface SFValidityData {
   input: HTMLElement;
-  index?: number;
   message: string;
   regex?: RegExp;
 }
@@ -302,14 +301,19 @@ interface StudioFormGhostInstance {
     transition?: gsap.core.Timeline;
   };
 
+  // Proxy
+  proxyCallbacks: SFProxyCallbacks;
+
   // Focus
-  focus: {
-    doubleClick?: true;
-    button?: HTMLElement;
-  };
+  focus: SFGhostFocus;
 
   // Events
   observer: MutationObserver | null;
+}
+
+interface SFGhostFocus {
+  doubleClick?: true;
+  button?: HTMLElement;
 }
 
 interface StudioFormEvents {
@@ -325,9 +329,6 @@ type StudioFormState = {
   // Active instance:
   activeKeyBoardInstance: string;
 
-  // Storage / "garbage collection"
-  events: StudioFormEvents;
-
   // Backbone
   ghostInstances: { [instanceName: string]: StudioFormGhostInstance };
   instances: { [instanceName: string]: StudioFormInstance };
@@ -341,16 +342,24 @@ type StudioFormState = {
   api: StudioForm;
   proxy: StudioForm;
   get proxyWrite(): boolean;
+  proxyCallbacks: SFProxyCallbacks;
 };
+
+interface SFProxyCallbacks {
+  [eventName: string]: (data: ProxyWriteEventData) => boolean;
+}
+
+interface ProxyWriteEventData {
+  target: object;
+  property: string | symbol;
+  value?: unknown;
+}
 
 interface ProxyWriteEvent {
   mode: string;
-  description: string;
-  data: {
-    target: object;
-    property: string | symbol;
-    value?: unknown;
-  };
+  identifier?: string;
+  instanceName?: string;
+  data: ProxyWriteEventData;
 }
 
 type StudioFormGlobalConfig = {

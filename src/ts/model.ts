@@ -11,9 +11,6 @@ export const state: StudioFormState = {
   // Keyboard controls
   activeKeyBoardInstance: '',
 
-  // Storage / "garbage collection"
-  events: {},
-
   // Instances
   ghostInstances: {},
   instances: {},
@@ -29,31 +26,28 @@ export const state: StudioFormState = {
   api: {},
   proxy: {},
 
+  // Proxy callbacks
+  proxyCallbacks: {},
+
   // Get proxy write event
   get proxyWrite() {
-    // Dispatch body event
-    document.body.dispatchEvent(
-      new CustomEvent(
-        `${config.PRODUCT_NAME_SHORT}-api-${proxyWriteEvent.mode}-${proxyWriteEvent.description}`,
-        {
-          bubbles: false,
-          cancelable: true,
-          detail: proxyWriteEvent.data,
-        }
-      )
-    );
+    // Values
+    const eventCallbacks =
+      state.ghostInstances[proxyWriteEvent.instanceName || '']
+        ?.proxyCallbacks || state.proxyCallbacks;
+    const eventCallback =
+      eventCallbacks[
+        proxyWriteEvent.mode + '-' + (proxyWriteEvent.identifier || '')
+      ];
 
-    // Loop
-    const allowance =
-      document.body.getAttribute(config.API_WRITE_ATTRIBUTE) === 'true';
+    // Guard
+    if (!eventCallback) {
+      return false;
+    }
 
-    console.log(
-      'Figure out a way where you do not rely on DOM object communication!',
-      'have some sort of internal variable for this!'
-    );
-
-    // Reset
-    document.body.removeAttribute(config.API_WRITE_ATTRIBUTE);
+    // Callback
+    const eventCallbackResponse = eventCallback(proxyWriteEvent.data);
+    const allowance = eventCallbackResponse;
 
     // Actually fullfill operation
     if (allowance && proxyWriteEvent.data.property !== 'resolve') {
@@ -78,7 +72,7 @@ export const state: StudioFormState = {
       }
 
       // Hidden values
-      if (proxyWriteEvent.description.endsWith('hidden')) {
+      if (proxyWriteEvent.identifier?.endsWith('hidden')) {
         if (typeof value === 'string' || value instanceof File) {
           data.target[property] = true;
         } else {
@@ -150,24 +144,22 @@ const globalConfigProxy = createReadMostlyProxy(
   globalConfigMain,
   'global-config'
 ) as StudioFormGlobalConfig;
-const globalConfigWriteName = `${config.PRODUCT_NAME_SHORT}-api-set-global-config`;
-const globalConfigWrite = (e: unknown) => {
+
+const globalConfigWrite = (data: ProxyWriteEventData) => {
   // Values
-  const detail = e?.['detail'];
-  const property = detail?.property;
-  const value = detail?.value;
+  const property = data.property;
+  const value = data.value;
   const isBoolean = ['classCascading', 'eventBubbles', 'warn'].includes(
-    property
+    property.toString()
   );
 
-  // Logic
-  if (
+  // Return logic
+  return (
     (isBoolean && typeof value === 'boolean') ||
     (!isBoolean && typeof value === 'string')
-  )
-    document.body.setAttribute(config.API_WRITE_ATTRIBUTE, 'true');
+  );
 };
-document.body.addEventListener(globalConfigWriteName, globalConfigWrite);
+state.proxyCallbacks[`set-global-config`] = globalConfigWrite;
 
 // Initialize
 export const init = (
@@ -226,13 +218,18 @@ const proxyErr = (property: string | symbol, value: unknown = undefined) =>
 const errPath = `${config.PRODUCT_NAME_CAMEL_CASE} -> model.ts:`;
 
 // Create read only proxy
-export function createReadMostlyProxy(obj: object, description = 'undefined') {
+export function createReadMostlyProxy(
+  obj: object,
+  identifier?: string,
+  instanceName?: string
+) {
   return new Proxy(obj, {
     set(target, property, value) {
       // Write access
       proxyWriteEvent = {
         mode: 'set',
-        description: description,
+        identifier: identifier,
+        instanceName: instanceName,
         data: { target, property, value },
       };
       if (state.proxyWrite) return true;
@@ -245,7 +242,8 @@ export function createReadMostlyProxy(obj: object, description = 'undefined') {
       // Write access
       proxyWriteEvent = {
         mode: 'set',
-        description: description,
+        identifier: identifier,
+        instanceName: instanceName,
         data: { target, property },
       };
       if (state.proxyWrite) return true;

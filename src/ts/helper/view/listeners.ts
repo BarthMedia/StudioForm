@@ -132,33 +132,33 @@ export default function init(instance: StudioFormInstance) {
   function onBackspace() {
     // Add your custom logic here
     navPrev(instance, {}, true);
-    console.log(
-      'look into why backspace navigation is possible on done?',
-      'make sure .to() is not empowered!'
-    );
+    // console.log(
+    //   'look into why backspace navigation is possible on done?',
+    //   'make sure .to() is not empowered!'
+    // );
     instance.focus.clear();
   }
 
   // Function to be called when Enter key is pressed
-  function onEnter() {
+  async function onEnter() {
     // Add your custom logic here
-    navNext(instance, {}, true);
-    instance.focus.clear();
+    const res = await navNext(instance, {}, true);
+    if (res === true) instance.focus.clear();
   }
 
   // Function to be called when Left Arrow key is pressed
   function onArrowLeft() {
-    console.log('You shall now work on shift tab!');
+    // console.log('You shall now work on shift tab!');
 
     // Add your custom logic here
-    navNext(instance, {}, true);
+    instance.focus.prev();
   }
 
   // Function to be called when Right Arrow key is pressed
   function onArrowRight() {
-    console.log('You shall now work on tab!');
+    // console.log('You shall now work on tab!');
 
     // Add your custom logic here
-    navPrev(instance, {}, true);
+    instance.focus.next();
   }
 }

@@ -19,15 +19,24 @@ export default function (instance: StudioFormInstance) {
   const ghost = utils.returnGhost(instance);
   const currentSlide = instance.logic[utils.currentSlideId(instance)];
   const currentSlideElement = currentSlide.element;
-  const targetInputs: SFValidityData[] = [];
+  const targetRadios: SFValidityData[] = [];
+  let targetInputs: SFValidityData[] = [];
+  let firstInputIsRadio = true;
 
   // Cases
   const response = (() => {
     // * * * Empty case * * *
-    if (currentSlide.type === 'empty') return true;
+    if (currentSlide.type === 'empty') {
+      // TODO
+      console.log(
+        "TODO: In the long run there should only be type radio and type standard. Also let's make sure this is determined on a getter basis()"
+      );
+
+      return true;
+    }
 
     // Radio helper
-    function checkRadio(indexed = false) {
+    function checkRadio() {
       // Elements
       const radios: NodeListOf<HTMLInputElement> =
         currentSlideElement.querySelectorAll('input[type="radio"]');
@@ -64,11 +73,8 @@ export default function (instance: StudioFormInstance) {
 
           // Push
           radios.forEach(radio =>
-            targetInputs.push({
+            targetRadios.push({
               input: radio,
-              index: indexed
-                ? parseInt(radio.getAttribute(sfidAttr) || '')
-                : undefined,
               message: 'unchecked',
             })
           );
@@ -93,24 +99,18 @@ export default function (instance: StudioFormInstance) {
         HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
       >;
 
-      // * Index every index correctly *
-      inputs.forEach((input, index) => {
-        input.setAttribute(sfidAttr, index + '');
-      });
-
-      // * Radio logic *
-      checkRadio(true);
-
       // * Other input types loop *
-      inputs.forEach(input => {
+      inputs.forEach((input, index) => {
         // Don't test radios
         if (input.type === 'radio') return;
+
+        // Test firstInputIsRadio
+        if (!index) firstInputIsRadio = false;
 
         // Required checking
         if (!input.hasAttribute('required')) return;
 
         // Values
-        const index = parseInt(input.getAttribute(sfidAttr) || '');
         const inputValue = input.value.trim();
 
         // File
@@ -120,13 +120,12 @@ export default function (instance: StudioFormInstance) {
             if (!attributeUtils.getAttribute('attached'))
               targetInputs.push({
                 input: input,
-                index: index,
+
                 message: 'no attachments',
               });
           } else if (inputValue === '')
             targetInputs.push({
               input: input,
-              index: index,
               message: 'no files',
             });
 
@@ -139,7 +138,6 @@ export default function (instance: StudioFormInstance) {
           // Push
           targetInputs.push({
             input: input,
-            index: index,
             message: 'empty',
           });
 
@@ -157,7 +155,6 @@ export default function (instance: StudioFormInstance) {
             // Push
             targetInputs.push({
               input: input,
-              index: index,
               message: res,
             });
 
@@ -172,7 +169,6 @@ export default function (instance: StudioFormInstance) {
           // Push
           targetInputs.push({
             input: input,
-            index: index,
             message: lenghtRes,
           });
 
@@ -191,7 +187,7 @@ export default function (instance: StudioFormInstance) {
               // Push
               targetInputs.push({
                 input: input,
-                index: index,
+
                 message: 'invalid pattern',
                 regex: regExp,
               });
@@ -221,7 +217,6 @@ export default function (instance: StudioFormInstance) {
             // Push
             targetInputs.push({
               input: input,
-              index: index,
               message: 'invalid email',
               regex: regExp,
             });
@@ -241,7 +236,6 @@ export default function (instance: StudioFormInstance) {
             // Push
             targetInputs.push({
               input: input,
-              index: index,
               message: 'invalid tel',
               regex: regExp,
             });
@@ -261,7 +255,6 @@ export default function (instance: StudioFormInstance) {
             // Push
             targetInputs.push({
               input: input,
-              index: index,
               message: 'invalid number',
               regex: regExp,
             });
@@ -274,18 +267,13 @@ export default function (instance: StudioFormInstance) {
         // Default - success
       });
 
+      // * Radio logic *
+      checkRadio();
+
       // Sort target input based on DOM index
-      targetInputs.sort((a, b) => a.index! - b.index!);
-
-      // * Remove input indexing *
-      inputs.forEach(input => {
-        input.removeAttribute(sfidAttr);
-      });
-
-      console.log(
-        'Figure out some internal variable way of not having to rely DOM attribute logic communication',
-        'maybe temporary key based object!'
-      );
+      targetInputs = firstInputIsRadio
+        ? targetRadios.concat(targetInputs)
+        : targetInputs.concat(targetRadios);
 
       // Logic
       if (targetInputs.length > 0) {
