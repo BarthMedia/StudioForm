@@ -17,7 +17,7 @@ export const DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER = 0.5;
 export const DEFAULT_OFFSET = 16;
 
 // Version
-export const VERSION = '1.2.9';
+export const VERSION = '1.2.10';
 
 // Hidden string
 export const HIDDEN = '* * * HIDDEN * * *';

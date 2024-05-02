@@ -145,11 +145,11 @@ export default function (instance: StudioFormInstance) {
   const returnVal: SFProgressData = {
     fast: {
       percentage: (slideRecordLength / min) * 100,
-      path: min,
+      path: min - 1,
     },
     slow: {
       percentage: (slideRecordLength / max) * 100,
-      path: max,
+      path: max - 1,
     },
     traversed: slideRecordLength,
   };
