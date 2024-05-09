@@ -10,12 +10,15 @@ export default function (
   instance: StudioFormInstance,
   fileInputs: HTMLInputElement[]
 ) {
-  // Guard
-  if (!fileInputs.length) return;
-
   // Values
   const ghost = modelUtils.returnGhost(instance);
   const modes = instance.config.modes;
+
+  // (Alaba) Guard
+  if (!modes.observeAttachments) return;
+
+  // Guard
+  if (!fileInputs.length) return;
 
   // Loop
   fileInputs.forEach(input => {

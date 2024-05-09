@@ -192,6 +192,16 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     get temporaryRequirements() {
       return getAttribute('temporary-requirements');
     },
+
+    // Observe checkboxes
+    get observeCheckboxes() {
+      return getAttribute('observe-checkboxes');
+    },
+
+    // Observe file inputs
+    get observeAttachments() {
+      return getAttribute('observe-attachments');
+    },
   };
 
   // Expose to api & handle change requests

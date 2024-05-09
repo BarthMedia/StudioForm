@@ -13,6 +13,12 @@ export default function (
   radioInputs: HTMLInputElement[],
   checkboxInputs: HTMLInputElement[]
 ) {
+  // Values
+  const modes = instance.config.modes;
+
+  // (Alaba) Guard
+  if (!modes.observeCheckboxes) return;
+
   // Guard
   if (!checkboxInputs.length && !radioInputs.length) return;
 

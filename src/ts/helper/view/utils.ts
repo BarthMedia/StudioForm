@@ -151,7 +151,7 @@ export function createSelector(
 type classListToggleArgs = {
   element: HTMLElement;
   otherEls?: HTMLElement[];
-  mode: 'add' | 'remove';
+  mode: string;
   class: string;
   closest?: {
     cascader: boolean;
