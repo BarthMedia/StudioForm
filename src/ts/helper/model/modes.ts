@@ -193,9 +193,9 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('temporary-requirements');
     },
 
-    // Observe checkboxes
-    get observeCheckboxes() {
-      return getAttribute('observe-checkboxes');
+    // Observe checkboxes & radios
+    get observeChecked() {
+      return getAttribute('observe-checked');
     },
 
     // Observe file inputs

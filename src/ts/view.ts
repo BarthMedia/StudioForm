@@ -195,9 +195,11 @@ export default function init(state: StudioFormState) {
           });
         else nodeLoop(mask!.childNodes);
 
-        // Fire
-        observerAttachments(instance!, newFileInputs);
-        observeChecked(instance!, newRadioInputs, newCheckboxInputs);
+        // Fire | (Alaba) Guard
+        if (modes.observeAttachments)
+          observerAttachments(instance!, newFileInputs);
+        if (modes.observeChecked)
+          observeChecked(instance!, newRadioInputs, newCheckboxInputs);
       }
 
       // * Init main event listeners *

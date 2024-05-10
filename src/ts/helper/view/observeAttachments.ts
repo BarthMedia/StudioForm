@@ -14,9 +14,6 @@ export default function (
   const ghost = modelUtils.returnGhost(instance);
   const modes = instance.config.modes;
 
-  // (Alaba) Guard
-  if (!modes.observeAttachments) return;
-
   // Guard
   if (!fileInputs.length) return;
 
