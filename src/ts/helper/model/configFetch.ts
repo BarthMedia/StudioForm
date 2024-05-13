@@ -10,13 +10,13 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
   // action, method, accept, contentType, redirect
 
   // Attribute
-  function getAttribute(str: string, native = true) {
+  function getAttribute(str: string, native = true, alternativeValue?: string) {
     // Values
     let val = attributeUtils.getAttribute(str, mask, wrapper);
     if (!val && native) val = mask.getAttribute(str);
 
     // Return
-    return val || '';
+    return val || alternativeValue || '';
   }
 
   // Object
@@ -41,6 +41,9 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
         attributeUtils.getAttribute('timeout', mask, wrapper) ||
           config.TIMEOUT_SEC + ''
       );
+    },
+    get valueSeparator() {
+      return getAttribute('value-separator', false, ', ');
     },
   };
 

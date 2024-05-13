@@ -15,6 +15,7 @@ export default function (
     instance.elements.mask.tagName === 'FORM' ? instance.elements.mask : null
   ) as HTMLInputElement | null;
   const modes = instance.config.modes;
+  const fetchConfig = instance.config.fetch;
   const ghost = utils.returnGhost(instance);
   const hidden = ghost.hiddenData;
 
@@ -26,7 +27,7 @@ export default function (
   let files: { key: string; value: File }[] = [];
 
   // Data mode
-  let complex = (form.getAttribute('action') || '') === '' || !modes.simpleData;
+  let complex = fetchConfig.action == '' || !modes.simpleData;
   if (generateUrlSearchParams) complex = false;
 
   // Define payload
@@ -70,7 +71,7 @@ export default function (
           ? input.type === 'password' && !internal
             ? config.HIDDEN
             : input.value
-          : false;
+          : input;
 
       // Radio edgecase
       if (input.type === 'radio' && !input.checked) return;
@@ -81,20 +82,27 @@ export default function (
   });
 
   // Define helper
-  function addVals(key: string, value: string | false | File) {
+  function addVals(key: string, value: string | HTMLInputElement | File) {
     // Logic
-    if (typeof value === 'string') {
+    if (typeof value == 'string') {
       if (value !== '')
         fields.push({
           key: key,
           value: value,
         });
     } else {
-      // Values
-      const fileValue = value ? value : ghost.files[key];
-      const isFile = fileValue instanceof File;
+      // HTML Values
+      const valueIsFile = value instanceof File;
+      let htmlValue: FileList | File | null = valueIsFile ? value : null;
+      if (!valueIsFile) {
+        const filesValue = value.files;
+        htmlValue = !value.multiple && filesValue ? filesValue[0] : filesValue;
+      }
 
-      console.log('Fix File selector edge case with non label files ');
+      // Values
+      const ghostFile = ghost.files[key];
+      const fileValue = ghostFile ? ghostFile : htmlValue;
+      const isFile = fileValue instanceof File;
 
       // Guard
       if (!fileValue) return;
@@ -108,13 +116,17 @@ export default function (
         // Push
         files.push({
           key: key,
-          value: isNull ? fileValue : fileValue[index],
+          value: isNull ? fileValue : fileValue![index],
         });
       }
 
       // Single file
       if (isFile) push(null);
-      else fileValue.forEach((_, index) => push(index));
+      else {
+        for (let index = 0; index < fileValue.length; index++) {
+          push(index);
+        }
+      }
     }
   }
 
@@ -158,12 +170,21 @@ export default function (
   ].forEach(obj => {
     // Loop
     obj.data.forEach((datum: { key: string; value: string | File }) => {
+      // Values
+      const complexKey = `${obj.name}[${datum.key}]`;
+
+      // Logic
       if (!complex || isUniqueKey(datum.key))
-        payload.push(
-          complex
-            ? { key: `${obj.name}[${datum.key}]`, value: datum.value }
-            : datum
-        );
+        payload.push(complex ? { key: complexKey, value: datum.value } : datum);
+      // Complex = true & key not unquite case
+      else if (obj.name == 'fields') {
+        // Values
+        const index = payload.findIndex(obj => obj.key == complexKey);
+        const object = payload[index];
+
+        // Set
+        object.value = object.value + fetchConfig.valueSeparator + datum.value;
+      }
     });
   });
 

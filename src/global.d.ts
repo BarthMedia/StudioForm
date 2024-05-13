@@ -78,6 +78,7 @@ interface SFFetchConfig {
   get contentType(): string;
   get redirect(): string;
   get timeout(): number;
+  get valueSeparator(): string;
 }
 
 interface SFModesConfig {
