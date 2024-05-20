@@ -25,7 +25,6 @@ import fetch from './fetch';
 
 // View
 import animatePromiseResolve from '../view/animatePromiseResolve';
-import reset from '../view/reset';
 import reportValidity from '../view/reportValidity';
 import * as focus from '../view/focus';
 
@@ -39,59 +38,6 @@ import scrollTo from '../view/scrollTo';
 // + Define +
 
 // + Export +
-
-// Destroy
-export const destroy = (instanceName: string) => {
-  // Values
-  const ghostInstances = model.state.ghostInstances;
-
-  // Disconnect observer
-  ghostInstances[instanceName].observer?.disconnect();
-
-  // Think about tracking all the currently applied sf-classes.
-  // And how to remove them smoothly! think sf-completed & sf-current
-
-  // TODOs
-  console.log('Reset checkboxes on destroy!');
-
-  console.log(
-    'Have a one time event listener',
-    'All events have to be able to be properly garbage collected?',
-    "Maybe sort's itself",
-    'But probably garbage collection is very important'
-  );
-
-  console.log(
-    'instead of saving saving once events, ',
-    'click the form, and try to resolve a potential fetch!'
-  );
-
-  // Log
-  console.log('I gotta add all these event listeners along the the way');
-  console.log('I gotta destroy these event listeners!');
-
-  // Values
-  const events = model.state;
-
-  // Remove DOM reference
-  const sfNameAttr = `${config.PRODUCT_NAME_SHORT}-id`;
-  document
-    .querySelector(`[${sfNameAttr}="${instanceName}"]`)
-    ?.removeAttribute(sfNameAttr);
-
-  // Loop
-  events[instanceName].forEach(arg =>
-    document.body.removeEventListener(arg.name, arg.function)
-  );
-
-  // Delete
-  delete events[instanceName];
-
-  // Delete instance
-  delete ghostInstances[instanceName];
-  delete model.state.instances[instanceName];
-  delete model.state.api[instanceName];
-};
 
 // Init
 const errPath = (n: string) => `${controllerUtils.errorName(n)} instance.ts:`;
@@ -326,14 +272,6 @@ export const init = (
     reportValidity: (...elements) => {
       return reportValidity(instanceProxy, false, ...elements);
     },
-    reset: async (
-      slideId: null | number | StudioFormSpreadElements = 0,
-      options: SFONav | StudioFormSpreadElements = {},
-      ...elements
-    ) => {
-      // Return
-      return await reset(instanceProxy, false, slideId, options, ...elements);
-    },
 
     // - Navigation -
 
@@ -416,11 +354,6 @@ export const init = (
         // Guard
         if (!instanceProxy.isAwaiting) return false;
 
-        // Notes:
-        // console.log(
-        //   'Make sure to make data.fetch.{} deleteable / null! / nullable!'
-        // );
-
         // Dispatch
         viewUtils.dispatchEvent(instanceName, 'resolve', true, false, {
           success: value,
@@ -464,6 +397,7 @@ export const init = (
 
     // Events
     observer: null,
+    events: [],
 
     // Validity
   };

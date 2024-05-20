@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as eventListenerUtils from './utilsEventListener';
 import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
@@ -91,7 +92,12 @@ export default async function (
     }
 
     // Listen for the 'scroll' event on the scrolling container (usually the scrollToContainer)
-    scrollToContainer.addEventListener('scroll', scrollListener);
+    eventListenerUtils.addEventListener(
+      instance,
+      scrollToContainer,
+      'scroll',
+      scrollListener
+    );
 
     // Animate
     scrollToContainer.scrollTo({

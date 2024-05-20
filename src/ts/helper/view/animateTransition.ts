@@ -50,6 +50,9 @@ export const data = function (
   if (!currentSlide || !nextSlide)
     throw Error(`${errPath(instance)} elements.done is not an element!`);
 
+  // From Done case
+  if (currentIsDone) logic[nId].element.style.display = '';
+
   // * Width & height *
 
   // Current
@@ -64,28 +67,6 @@ export const data = function (
 
   // * Helper *
 
-  // Next or current slide var
-  const currentOrDoneSlide = nextIsDone ? nextSlide : currentSlide;
-
-  // Get attribute
-  function getAttribute(str: string, current = true) {
-    return attributeUtils.getAttribute(
-      str,
-      current ? currentOrDoneSlide : nextSlide,
-      formMask,
-      formWrapper
-    );
-  }
-
-  // Get decimal
-  function getDecimal(str: string, _default = 1, current = true) {
-    // Values
-    const val = parseFloat(getAttribute(str, current) || _default + '');
-
-    // Return
-    return isNaN(val) ? _default : val;
-  }
-
   // * Values *
 
   // Is equalDimensions
@@ -95,7 +76,7 @@ export const data = function (
 
   // Reverse
   const isReverse =
-    currentIsDone === true || nextIsDone !== true ? cId > nId! : false;
+    currentIsDone == true || (nextIsDone != true ? cId > nId! : false);
   const isReverseMultiplier = isReverse ? -1 : 1;
 
   // Opacity
@@ -115,8 +96,8 @@ export const data = function (
 
   // Direction math
   const direction = aConfig.direction;
-  const fadeOnly = direction === 'off' ? 0 : 1;
-  const angle = ((direction === 'off' ? 0 : direction - 90) * Math.PI) / 180;
+  const fadeOnly = direction == 'off' ? 0 : 1;
+  const angle = ((direction == 'off' ? 0 : direction - 90) * Math.PI) / 180;
 
   // Calculate x & y
   const xCurrent =
@@ -344,6 +325,12 @@ export const animate = function (instance: StudioFormInstance) {
   tl.set(overflow, {
     overflow: '',
   });
+
+  // To Done case
+  if (nextSlide == instance.elements.done)
+    tl.set(instance.elements.slides[modelUtils.currentSlideId(instance)], {
+      display: 'none',
+    });
 
   // Animation done call
   tl.call(() => {

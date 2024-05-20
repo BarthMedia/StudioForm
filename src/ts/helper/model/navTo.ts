@@ -169,7 +169,7 @@ export default async function (
     'transition',
     internal,
     true,
-    { currentSlide: currentSlide, direction: direction }
+    { current: currentId, next: nextId, direction: direction }
   );
   const doNotAnimateTranistion = !modes.transition || event.defaultPrevented;
 
@@ -207,7 +207,7 @@ export default async function (
 
   // * Redirect *
   const redirect = instance.data.fetch.redirect;
-  if (isToDone && modes.redirect && redirect) {
+  if (isToDone && redirect) {
     setTimeout(() => {
       // Redirect
       location.href = redirect;

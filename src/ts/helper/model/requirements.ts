@@ -25,16 +25,6 @@ export default function (instance: StudioFormInstance) {
 
   // Cases
   const response = (() => {
-    // * * * Empty case * * *
-    if (currentSlide.type === 'empty') {
-      // TODO
-      console.log(
-        "TODO: In the long run there should only be type radio and type standard. Also let's make sure this is determined on a getter basis()"
-      );
-
-      return true;
-    }
-
     // Radio helper
     function checkRadio() {
       // Elements

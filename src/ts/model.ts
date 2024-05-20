@@ -40,6 +40,39 @@ export const state: StudioFormState = {
         proxyWriteEvent.mode + '-' + (proxyWriteEvent.identifier || '')
       ];
 
+    // If StudioForm instance deletion
+    if (
+      proxyWriteEvent.identifier == 'root' &&
+      proxyWriteEvent.mode == 'delete'
+    ) {
+      // Values
+      const property = proxyWriteEvent.data.property.toString();
+      const instance = state.instances[property];
+
+      // Guard
+      if (!instance) return false;
+
+      // Values
+      const ghost = state.ghostInstances[property];
+
+      // Disconnect observers & event listeners
+      ghost.observer?.disconnect();
+      ghost.events.forEach(([element, eventName, callback]) =>
+        element.removeEventListener(eventName, callback)
+      );
+
+      // Reset dom attributes
+      viewUtils.unsetAccessibility(instance);
+
+      // Remove every thing else
+      delete state.ghostInstances[property];
+      delete state.api[property];
+      delete state.instances[property];
+
+      // Return
+      return true;
+    }
+
     // Guard
     if (!eventCallback) {
       return false;
@@ -89,7 +122,6 @@ export const state: StudioFormState = {
 // Non-instance keys
 export const arrayProperties = [
   'config',
-  'destroy',
   'forEach',
   'init',
   'instances',
@@ -162,11 +194,7 @@ const globalConfigWrite = (data: ProxyWriteEventData) => {
 state.proxyCallbacks[`set-global-config`] = globalConfigWrite;
 
 // Initialize
-export const init = (
-  push: (...args: unknown[]) => void,
-  init: (...initAllNewOrReInitNamesOrReInitAll: unknown[]) => void,
-  destroy: (...allOrNames: unknown[]) => void
-) => {
+export const init = (push: (...args: unknown[]) => void, init: () => void) => {
   // + Create proxy window api +
 
   // Values
@@ -175,7 +203,6 @@ export const init = (
     version: config.VERSION,
     push: push,
     init: init,
-    destroy: destroy,
 
     // Config
     config: globalConfigProxy,
@@ -241,7 +268,7 @@ export function createReadMostlyProxy(
     deleteProperty(target, property) {
       // Write access
       proxyWriteEvent = {
-        mode: 'set',
+        mode: 'delete',
         identifier: identifier,
         instanceName: instanceName,
         data: { target, property },

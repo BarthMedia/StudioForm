@@ -13,6 +13,36 @@ export function isElement(arg: unknown) {
   return arg instanceof HTMLElement;
 }
 
+// Unset accessibility
+export function unsetAccessibility(instance: StudioFormInstance) {
+  // Values
+  const attributes = ['role', 'aria-label'];
+  const elements = instance.elements;
+  const array = [
+    elements.wrapper,
+    elements.mask,
+    ...instance.logic.flatMap(slide => {
+      // Values
+      let arr = [slide.element];
+
+      // Push loop
+      if (slide.buttons)
+        arr = [...arr, ...slide.buttons.map(button => button.element)];
+
+      // Return
+      return arr;
+    }),
+  ];
+
+  // Loop
+  array.forEach(element => {
+    attributes.forEach(attr => element.removeAttribute(attr));
+  });
+
+  // Remove sf-id
+  elements.wrapper.removeAttribute(`${config.PRODUCT_NAME_SHORT}-id`);
+}
+
 // Set accessibility
 export function setAccessibility(
   element: HTMLElement,

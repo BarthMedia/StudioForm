@@ -53,42 +53,13 @@ function main() {
   };
 
   // Init
-  const init = (...args: unknown[]) => {
-    // Values -- initAllNewOrReInitNamesOrReInitAll
-    if (args.length === 0) {
-      args = [false];
-    }
-
-    // Reinit logic
-    if (!(args.length === 1 && args[0] === false)) destroy(...args);
-
+  const init = () => {
     // Initialize
     view(model.state);
   };
 
-  // Destroy
-  const destroy = (...args: unknown[]) => {
-    // Values -- allOrNames
-    if (args.length === 0) {
-      args = [false];
-    }
-
-    // Loop
-    args.forEach((arg, i) => {
-      if (typeof arg === 'function') {
-        // Execute the function
-        arg(api);
-      } else {
-        // Warn
-        utils.warn(`${errPath} `, arg, ' is not a function!');
-      }
-    });
-
-    console.log('destroy everything!', args);
-  };
-
   // + Init internal state +
-  model.init(push, init, destroy);
+  model.init(push, init);
   api = model.state.proxy;
 
   // Add

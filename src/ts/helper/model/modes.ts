@@ -120,7 +120,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
 
     // Wait for animations to finish
     get awaitAnimations() {
-      return getAttribute('await-animations', true);
+      return getAttribute('await-animations', false);
     },
 
     // Show error message
@@ -163,11 +163,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('on-submit-promise-resolve');
     },
 
-    // Redirect
-    get redirect() {
-      return getAttribute('redirect');
-    },
-
     // Add field data params to redirect
     get fieldParamsRedirect() {
       return getAttribute('field-params-redirect', false);
@@ -186,11 +181,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // File dropping
     get initDefaultStyles() {
       return getAttribute('init-default-styles');
-    },
-
-    // Temporary requirements
-    get temporaryRequirements() {
-      return getAttribute('temporary-requirements');
     },
 
     // Observe checkboxes & radios

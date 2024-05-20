@@ -12,9 +12,7 @@ export default function (slide: HTMLElement) {
   const buttons = slide.querySelectorAll(viewUtils.BUTTON_SELECTOR);
 
   // Values
-  const isEmpty = inputs.length < 1;
   let isRadioOnly = buttons.length < 1;
-  let isCheckboxOnly = true;
 
   // Radio loop
   if (isRadioOnly)
@@ -22,16 +20,9 @@ export default function (slide: HTMLElement) {
       if (input.getAttribute('type') !== 'radio') isRadioOnly = false;
     });
 
-  // Checkbox loop
-  if (isCheckboxOnly)
-    inputs.forEach(input => {
-      if (input.getAttribute('type') !== 'checkbox') isCheckboxOnly = false;
-    });
-
   // Type
   let type = 'standard';
   if (isRadioOnly) type = 'radio';
-  if (isEmpty) type = 'empty';
 
   // Return
   return type;

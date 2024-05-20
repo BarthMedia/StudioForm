@@ -7,7 +7,6 @@ import * as config from '../../config';
 
 // View
 import animatePromiseResolve from '../view/animatePromiseResolve';
-import reset from '../view/reset';
 
 // Fetch
 import fetch from './fetch';
@@ -84,9 +83,6 @@ export default async function (
   // Values
   const responseData = instance.data.fetch.response;
   const responseOk = responseData?.ok || false;
-
-  // Respect wized reset
-  if (modes.reset) reset(instance, internal, 0, options);
 
   // If fetch was prevented / not executed
   if (!response || modes.preventDefault) return false;

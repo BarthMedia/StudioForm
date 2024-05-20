@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as eventListenerUtils from './utilsEventListener';
 import * as attributeUtils from './utilsAttributes';
 import * as modelUtils from '../model/utils';
 import * as model from '../../model';
@@ -33,34 +34,39 @@ export default function (
     // File drop events
     ['dragover', 'dragleave', 'drop'].forEach((str, index) => {
       // Listen
-      label.addEventListener(str, function (event) {
-        // Guard
-        if (!modes.fileDrop) return;
+      eventListenerUtils.addEventListener(
+        instance,
+        label,
+        str,
+        function (event) {
+          // Guard
+          if (!modes.fileDrop) return;
 
-        // Functionality
-        event.preventDefault();
+          // Functionality
+          event?.preventDefault();
 
-        // Switch
-        switch (index) {
-          case 0: {
-            dragOver('add');
-            break;
-          }
-          case 1: {
-            dragOver();
-            break;
-          }
-          case 2: {
-            dragOver();
-            handleFiles((event as DragEvent).dataTransfer?.files);
-            break;
+          // Switch
+          switch (index) {
+            case 0: {
+              dragOver('add');
+              break;
+            }
+            case 1: {
+              dragOver();
+              break;
+            }
+            case 2: {
+              dragOver();
+              handleFiles((event as DragEvent).dataTransfer?.files);
+              break;
+            }
           }
         }
-      });
+      );
     });
 
     // Click
-    label.addEventListener('click', _ => {
+    eventListenerUtils.addEventListener(instance, label, 'click', _ => {
       // Guard
       if (!modes.fileDrop) return;
 
@@ -69,7 +75,7 @@ export default function (
     });
 
     // Input change event listener
-    input.addEventListener('change', _ => {
+    eventListenerUtils.addEventListener(instance, input, 'change', _ => {
       handleFiles(input.files);
     });
 

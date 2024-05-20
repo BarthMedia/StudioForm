@@ -1,6 +1,7 @@
 // Imports
 import * as utils from './utils';
 import * as attributeUtils from './utilsAttributes';
+import * as eventListenerUtils from './utilsEventListener';
 import * as modelUtils from '../model/utils';
 import * as config from '../../config';
 import * as model from '../../model';
@@ -29,9 +30,14 @@ export default function init(instance: StudioFormInstance) {
         );
 
         // Event listener
-        button.element.addEventListener('click', () => {
-          navNext(instance, { button: button }, true);
-        });
+        eventListenerUtils.addEventListener(
+          instance,
+          button.element,
+          'click',
+          () => {
+            navNext(instance, { button: button }, true);
+          }
+        );
       });
   });
 
@@ -41,7 +47,7 @@ export default function init(instance: StudioFormInstance) {
     utils.setAccessibility(button, 'next slide', null);
 
     // Event listener
-    button.addEventListener('click', () => {
+    eventListenerUtils.addEventListener(instance, button, 'click', () => {
       navNext(instance, {}, true);
     });
   });
@@ -55,7 +61,7 @@ export default function init(instance: StudioFormInstance) {
     utils.setAccessibility(button, 'previous slide', null);
 
     // SDK
-    button.addEventListener('click', () => {
+    eventListenerUtils.addEventListener(instance, button, 'click', () => {
       navPrev(instance, {}, true);
     });
   });
@@ -63,79 +69,83 @@ export default function init(instance: StudioFormInstance) {
   // * Keyboard events *
 
   // Hover / set active form
-  instance.elements.wrapper.addEventListener('mouseover', () => {
-    // Overwrite
-    model.state.activeKeyBoardInstance = instance.name;
-  });
+  eventListenerUtils.addEventListener(
+    instance,
+    instance.elements.wrapper,
+    'mouseover',
+    () => {
+      // Overwrite
+      model.state.activeKeyBoardInstance = instance.name;
+    }
+  );
 
   // Init on sdk 0
   if (model.state.api.keys[0] === instance.name)
     model.state.activeKeyBoardInstance = instance.name;
 
   // * Keyboard *
-  document.addEventListener('keydown', (event: KeyboardEvent) => {
-    // Elements
-    const target =
-      event.target instanceof HTMLInputElement ||
-      event.target instanceof HTMLTextAreaElement
-        ? event.target
-        : null;
+  eventListenerUtils.addEventListener(
+    instance,
+    document,
+    'keydown',
+    (event: unknown) => {
+      // Guard 0
+      if (!(event instanceof KeyboardEvent)) return;
 
-    // Guard 1 - Is active instance
-    if (model.state.activeKeyBoardInstance !== instance.name) return;
+      // Elements
+      const target =
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+          ? event.target
+          : null;
 
-    // Values
-    const currentSlide = instance.logic[modelUtils.currentSlideId(instance)];
+      // Guard 1 - Is active instance
+      if (model.state.activeKeyBoardInstance !== instance.name) return;
 
-    // Guard 2 - Mode, step, textarea & custom input allowance
-    if (
-      !instance.config.modes.keyboardEvents ||
-      target instanceof HTMLTextAreaElement ||
-      attributeUtils.getAttribute(
-        'keyboard-events',
-        target,
-        currentSlide.element
+      // Guard 2 - Mode, step, textarea & custom input allowance
+      if (
+        !instance.config.modes.keyboardEvents ||
+        target instanceof HTMLTextAreaElement
       )
-    )
-      return;
+        return;
 
-    // Standard webflow input types
-    const inputTypes = ['text', 'email', 'password', 'tel', 'number'];
+      // Guard 3 - Instance is submitted
+      if (instance.isDone) return;
 
-    // Switch
-    if (event.key === 'Backspace') {
-      // Guard
-      if (inputTypes.includes(target?.type || '')) return;
+      // Standard webflow input types
+      const inputTypes = ['text', 'email', 'password', 'tel', 'number'];
 
-      // Trigger
-      onBackspace();
-    } else if (event.key === 'Enter') {
-      // Guard
+      // Switch
+      if (event.key === 'Backspace') {
+        // Guard
+        if (inputTypes.includes(target?.type || '')) return;
 
-      // Trigger
-      onEnter();
-    } else if (event.key === 'ArrowLeft') {
-      // Guard
+        // Trigger
+        onBackspace();
+      } else if (event.key === 'Enter') {
+        // Guard
 
-      // Trigger
-      onArrowLeft();
-    } else if (event.key === 'ArrowRight') {
-      // Guard
-      if (inputTypes.includes(target?.type || '')) return;
+        // Trigger
+        onEnter();
+      } else if (event.key === 'ArrowLeft') {
+        // Guard
 
-      // Trigger
-      onArrowRight();
+        // Trigger
+        onArrowLeft();
+      } else if (event.key === 'ArrowRight') {
+        // Guard
+        if (inputTypes.includes(target?.type || '')) return;
+
+        // Trigger
+        onArrowRight();
+      }
     }
-  });
+  );
 
   // Function to be called when Escape key is pressed
   function onBackspace() {
     // Add your custom logic here
     navPrev(instance, {}, true);
-    // console.log(
-    //   'look into why backspace navigation is possible on done?',
-    //   'make sure .to() is not empowered!'
-    // );
     instance.focus.clear();
   }
 

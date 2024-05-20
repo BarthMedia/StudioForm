@@ -31,7 +31,7 @@ export default function (
   }
 
   // Attribute
-  function getAttribute(str: string, current = true) {
+  function getAttribute(str: string, current = false) {
     // Values
     const instance = model.state.instances[instanceName];
     const ghost = model.state.ghostInstances[instanceName];
@@ -57,7 +57,7 @@ export default function (
   }
 
   // Float
-  function getFloat(str: string, _default: number, current = true) {
+  function getFloat(str: string, _default: number, current = false) {
     // Values
     let val = parseFloat(getAttribute(str, current) || _default + '');
 
@@ -91,7 +91,7 @@ export default function (
     // Scroll to
     get offset() {
       // Values
-      const val = getAttribute('offset') || config.DEFAULT_OFFSET + '';
+      const val = getAttribute('offset', true) || config.DEFAULT_OFFSET + '';
 
       // Return
       return /^\d+(\.\d+)?$/.test(val) ? parseFloat(val) : val;
@@ -99,36 +99,36 @@ export default function (
 
     // Progress bar
     get progressBarAxis() {
-      return getAttribute('progress-bar-axis') || 'x';
+      return getAttribute('progress-bar-axis', true) || 'x';
     },
 
     // current / current
     get currentMoveMultiplier() {
       return getFloat(
         'current-move-multiplier',
-        config.DEFAULT_SLIDE_CURRENT_MOVE_MULTIPLIER
+        config.DEFAULT_SLIDE_CURRENT_MOVE_MULTIPLIER,
+        true
       );
     },
     get currentTime() {
-      return getFloat('current-time', config.DEFAULT_SLIDE_CURRENT_TIME);
+      return getFloat('current-time', config.DEFAULT_SLIDE_CURRENT_TIME, true);
     },
     get currentOpacity() {
-      return getFloat('current-opacity', config.DEFAULT_SLIDE_OPACITY);
+      return getFloat('current-opacity', config.DEFAULT_SLIDE_OPACITY, true);
     },
 
     // Next / next
     get nextMoveMultiplier() {
       return getFloat(
         'next-move-multiplier',
-        config.DEFAULT_SLIDE_NEXT_MOVE_MULTIPLIER,
-        false
+        config.DEFAULT_SLIDE_NEXT_MOVE_MULTIPLIER
       );
     },
     get nextTime() {
-      return getFloat('next-time', config.DEFAULT_SLIDE_NEXT_TIME, false);
+      return getFloat('next-time', config.DEFAULT_SLIDE_NEXT_TIME);
     },
     get nextOpacity() {
-      return getFloat('next-opacity', config.DEFAULT_SLIDE_OPACITY, false);
+      return getFloat('next-opacity', config.DEFAULT_SLIDE_OPACITY);
     },
     get zIndex() {
       return getFloat('z-index', 1);
@@ -141,7 +141,7 @@ export default function (
         model.state.instances[instanceName].data.animation.totalTime;
 
       // Return
-      return getFloat('redirect-delay', totalTime);
+      return getFloat('redirect-delay', totalTime, true);
     },
   };
 

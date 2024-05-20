@@ -143,11 +143,6 @@ interface StudioFormInstance {
   resolve?: boolean; // sf-await get's removed // Allow for class prefix
 
   // Wized API
-  reset: (
-    slideId?: null | number | StudioFormSpreadElements,
-    options?: SFONav | StudioFormSpreadElements,
-    ...elements: StudioFormSpreadElements
-  ) => Promise<boolean>;
   fetch: (options?: SFOFetch) => Promise<boolean>;
   reportValidity: (
     ...elements: StudioFormSpreadElements
@@ -310,7 +305,14 @@ interface StudioFormGhostInstance {
 
   // Events
   observer: MutationObserver | null;
+  events: StudioFormGhostInstanceEvents[];
 }
+
+type StudioFormGhostInstanceEvents = [
+  HTMLElement | Document | (Window & typeof globalThis),
+  string,
+  (event?: Event) => void
+];
 
 interface SFGhostFocus {
   doubleClick?: true;

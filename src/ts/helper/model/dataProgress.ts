@@ -5,8 +5,8 @@ import * as utils from './utils';
 import * as controllerUtils from '../controller/utils';
 
 // Error
-const errPath = (n: string) =>
-  `${controllerUtils.errorName(n)} calculateProgress.ts:`;
+// const errPath = (n: string) =>
+//   `${controllerUtils.errorName(n)} calculateProgress.ts:`;
 
 // + Exports +
 export default function (instance: StudioFormInstance) {

@@ -2,6 +2,7 @@
 import * as config from '../../config';
 import elements from './elements';
 import * as utils from './utils';
+import * as eventListenerUtils from './utilsEventListener';
 import * as attributeUtils from './utilsAttributes';
 
 // utils
@@ -58,9 +59,9 @@ export default function (
     const cascader = utils.closestCascader(input);
 
     // Event listener
-    cascader.addEventListener('click', e => {
+    eventListenerUtils.addEventListener(instance, cascader, 'click', e => {
       // Guard
-      if (e.target?.['tagName'] !== 'INPUT') return;
+      if (e?.target?.['tagName'] !== 'INPUT') return;
 
       // Elements
       const inputs = closestSlide(input)?.querySelectorAll(
@@ -156,9 +157,9 @@ export default function (
     const cascader = utils.closestCascader(input);
 
     // Event listener
-    cascader.addEventListener('click', e => {
+    eventListenerUtils.addEventListener(instance, cascader, 'click', e => {
       // Guard
-      if (e.target?.['tagName'] !== 'INPUT') return;
+      if (e?.target?.['tagName'] !== 'INPUT') return;
 
       // Toggle
       checkState(input.checked);
