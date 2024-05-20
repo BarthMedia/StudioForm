@@ -23,16 +23,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
 
   // * Modes *
   const obj = {
-    // Wized reset
-    get reset() {
-      return getAttribute('reset', false);
-    },
-
-    // Wized / prevent default
-    get preventDefault() {
-      return getAttribute('prevent-default', false);
-    },
-
     // Disallow prev
     get allowPrev() {
       return getAttribute('allow-prev');

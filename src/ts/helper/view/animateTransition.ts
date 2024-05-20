@@ -27,6 +27,7 @@ export const data = function (
   const logic = instance.logic;
   const nextIsDone = nId === 'done';
   const currentIsDone = cId === 'done';
+  const ghost = modelUtils.returnGhost(instance);
 
   // Elements
   const currentSlide = nextIsDone
@@ -45,6 +46,10 @@ export const data = function (
   ) ||
     formWrapper.closest('section') ||
     formWrapper) as HTMLElement;
+
+  // Set ghost
+  ghost.slideCurrent = cId;
+  ghost.slideNext = nId;
 
   // Guard
   if (!currentSlide || !nextSlide)

@@ -85,7 +85,7 @@ export default async function (
   const responseOk = responseData?.ok || false;
 
   // If fetch was prevented / not executed
-  if (!response || modes.preventDefault) return false;
+  if (!response) return false;
 
   // If repsone not ok
   if (!responseOk) {

@@ -35,8 +35,8 @@ export default function (
     // Values
     const instance = model.state.instances[instanceName];
     const ghost = model.state.ghostInstances[instanceName];
-    const slideNext = returnSlideEl(instance, ghost);
-    const slideCurrent = returnSlideEl(instance, ghost, 'Next');
+    const slideCurrent = returnSlideEl(instance, ghost);
+    const slideNext = returnSlideEl(instance, ghost, 'Next');
 
     // Guard
     if (!slideNext || !slideCurrent)
