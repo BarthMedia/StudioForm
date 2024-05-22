@@ -34,13 +34,13 @@ export default function (instance: StudioFormInstance) {
     const gsapTl = ghost.gsapTl;
 
     // Clear existing timeline
-    if (gsapTl.progress?.isRunning) {
-      gsapTl.progress.tl.clear();
+    if (ghost.root.isTransitioning) {
+      gsapTl.progress?.pause();
+      gsapTl.progress?.clear();
     }
 
     // Values
     gsapTl.progress = tl;
-    gsapTl.progress.isRunning = true;
 
     // Values
     const direction =
@@ -56,9 +56,6 @@ export default function (instance: StudioFormInstance) {
       height: isY ? (instance.isDone ? 100 : pData.slow.percentage) + '%' : '',
     };
     tl.to(el, val);
-    tl.call(() => {
-      if (gsapTl.progress) gsapTl.progress.isRunning = undefined;
-    });
   });
 
   // * Display slides info *

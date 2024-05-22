@@ -295,6 +295,7 @@ interface StudioFormGhostInstance {
   gsapTl: {
     progress?: gsap.core.Timeline;
     transition?: gsap.core.Timeline;
+    current?: gsap.core.Timeline;
   };
 
   // Proxy
