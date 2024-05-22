@@ -226,8 +226,9 @@ export const animate = function (instance: StudioFormInstance) {
     display: aData.currentDisplayStart,
     position: 'absolute',
     left: 0,
-    top: 0,
+    top: '50%',
     right: 0,
+    marginTop: -aData.currentHeight / 2,
   });
 
   // Next
@@ -239,8 +240,9 @@ export const animate = function (instance: StudioFormInstance) {
     display: aData.nextDisplayStart,
     position: 'absolute',
     left: 0,
-    top: 0,
+    top: '50%',
     right: 0,
+    marginTop: -aData.nextHeight / 2,
   });
 
   // * Timeline animation *
@@ -304,6 +306,7 @@ export const animate = function (instance: StudioFormInstance) {
     top: '',
     right: '',
     bottom: '',
+    marginTop: '',
   });
 
   // Next
@@ -317,6 +320,7 @@ export const animate = function (instance: StudioFormInstance) {
     top: '',
     right: '',
     bottom: '',
+    marginTop: '',
   });
 
   // Form
