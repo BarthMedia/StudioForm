@@ -54,24 +54,24 @@ export default function (instance: StudioFormInstance, timeCurrent: number) {
   });
 
   // Current
-  if (typeof currentIndex != 'number') return;
+  if (typeof currentIndex == 'number') {
+    // Values
+    const tl = gsap.timeline();
+    const gsapTl = ghost.gsapTl;
 
-  // Values
-  const tl = gsap.timeline();
-  const gsapTl = ghost.gsapTl;
+    // Clear existing timeline
+    if (ghost.root.isTransitioning) {
+      gsapTl.current?.progress(1);
+      gsapTl.current?.clear();
+    }
 
-  // Clear existing timeline
-  if (ghost.root.isTransitioning) {
-    gsapTl.current?.progress(1);
-    gsapTl.current?.clear();
+    // Values
+    gsapTl.current = tl;
+
+    // Write current timeline
+    tl.to({}, { duration: timeCurrent });
+    tl.call(() => {
+      quickToggle(currentIndex, false, true);
+    });
   }
-
-  // Values
-  gsapTl.current = tl;
-
-  // Write current timeline
-  tl.to({}, { duration: timeCurrent });
-  tl.call(() => {
-    quickToggle(currentIndex, false, true);
-  });
 }
