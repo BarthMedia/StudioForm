@@ -90,12 +90,14 @@ export function dispatchEvent(
   detail?: unknown
 ) {
   // Values
-  const mask =
-    model.state.instances[
-      typeof instanceName === 'string' ? instanceName : instanceName.name
-    ].elements.mask;
+  const instanceNameNew =
+    typeof instanceName === 'string' ? instanceName : instanceName.name;
+  const instance = model.state.instances[instanceNameNew];
+
+  // Values
+  const mask = instance.elements.mask;
   let payload = detail && typeof detail === 'object' ? detail : {};
-  payload = { ...payload, instanceName: instanceName };
+  payload = { ...payload, instanceName: instanceName, instance: instance };
   const globalConfig = model.state.api['config'];
 
   // Event
