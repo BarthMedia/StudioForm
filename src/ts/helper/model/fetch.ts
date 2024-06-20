@@ -7,7 +7,7 @@ import * as config from '../../config';
 import dataForm from './dataForm';
 
 // Helper
-const errPath = (n: string) => `${controllerUtils.errorName(n)} post.ts:`;
+const errPath = (n: string) => `${controllerUtils.errorName(n)} fetch.ts:`;
 
 // Export
 export default async function (
@@ -15,9 +15,13 @@ export default async function (
   externalOptions: SFOFetch,
   internal = false
 ) {
+  // Recaptcha
+  const recaptchaToken = await instance.recaptcha();
+  if (recaptchaToken) instance.hidden.recaptcha = recaptchaToken;
+
   // Values
-  const formBlock = instance.elements.wrapper;
-  const form = instance.elements.mask as HTMLFormElement;
+  // const formBlock = instance.elements.wrapper;
+  // const form = instance.elements.mask as HTMLFormElement;
   const formData = externalOptions.formData || dataForm(instance, true);
   const isFiles = formData instanceof FormData;
   const fetchConfig = instance.config.fetch;

@@ -152,6 +152,9 @@ const globalConfigMain: StudioFormGlobalConfig = {
       `-api`
     );
   },
+  get recaptchaKey() {
+    return attributeUtils.getAttribute('recaptcha-key', document.body) || '';
+  },
 
   // Boolean
   get classCascading() {

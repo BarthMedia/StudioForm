@@ -182,6 +182,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     get observeAttachments() {
       return getAttribute('observe-attachments');
     },
+
+    // ReCAPTCHA allowed
+    get recaptcha() {
+      return getAttribute('recaptcha');
+    },
   };
 
   // Expose to api & handle change requests

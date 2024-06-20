@@ -22,6 +22,7 @@ import fetchConfig from './configFetch';
 import dataForm from './dataForm';
 import dataProgress from './dataProgress';
 import fetch from './fetch';
+import recaptcha from './recaptcha';
 
 // View
 import animatePromiseResolve from '../view/animatePromiseResolve';
@@ -271,6 +272,9 @@ export const init = (
     },
     reportValidity: (...elements) => {
       return reportValidity(instanceProxy, false, ...elements);
+    },
+    recaptcha: async () => {
+      return await recaptcha(instanceProxy);
     },
 
     // - Navigation -

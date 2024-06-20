@@ -147,6 +147,7 @@ interface StudioFormInstance {
   reportValidity: (
     ...elements: StudioFormSpreadElements
   ) => boolean | undefined; // slideRequirements -- legacy
+  recaptcha: () => Promise<string | undefined>;
 
   // Status
   isAwaiting: boolean;
@@ -371,6 +372,7 @@ type StudioFormGlobalConfig = {
   comboClassPrefix: string;
   eventPrefix: string;
   externalEventSuffix: string;
+  recaptchaKey: string;
 
   // Boolean
   classCascading: boolean;

@@ -14,6 +14,7 @@ declare global {
     gsap: typeof gsap;
     [config.PRODUCT_NAME_CAMEL_CASE]: StudioForm;
     Wized: unknown;
+    grecaptcha: unknown;
   }
 }
 
