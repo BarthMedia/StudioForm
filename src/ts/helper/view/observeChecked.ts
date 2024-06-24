@@ -2,7 +2,7 @@
 import * as config from '../../config';
 import elements from './elements';
 import * as utils from './utils';
-import * as eventListenerUtils from './utilsEventListener';
+import * as eventListenerUtils from './utilsEvents';
 import * as attributeUtils from './utilsAttributes';
 
 // utils

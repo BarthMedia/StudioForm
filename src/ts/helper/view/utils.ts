@@ -81,44 +81,6 @@ export function setAccessibility(
     element.setAttribute(areaLabel, __areaLabel);
 }
 
-// Dispatch events
-export function dispatchEvent(
-  instanceName: string | StudioFormInstance,
-  eventName: string,
-  internal = false,
-  cancelable = false,
-  detail?: unknown
-) {
-  // Values
-  const instanceNameNew =
-    typeof instanceName === 'string' ? instanceName : instanceName.name;
-  const instance = model.state.instances[instanceNameNew];
-
-  // Values
-  const mask = instance.elements.mask;
-  let payload = detail && typeof detail === 'object' ? detail : {};
-  payload = { ...payload, instanceName: instanceName, instance: instance };
-  const globalConfig = model.state.api['config'];
-
-  // Event
-  const event = new CustomEvent(
-    globalConfig.eventPrefix +
-      eventName +
-      (internal ? '' : globalConfig.externalEventSuffix),
-    {
-      bubbles: globalConfig.eventBubbles,
-      cancelable: cancelable,
-      detail: payload,
-    }
-  );
-
-  // Dispatch
-  mask.dispatchEvent(event);
-
-  // Return
-  return event;
-}
-
 // Get input key
 export function getInputKey(input: HTMLInputElement) {
   return (

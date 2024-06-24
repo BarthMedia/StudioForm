@@ -33,11 +33,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('transition');
     },
 
-    // Smooth reset
-    get smoothReset() {
-      return getAttribute('smooth-reset');
-    },
-
     // Allow keyboard
     get keyboardEvents() {
       return getAttribute('keyboard-events');
@@ -71,11 +66,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // Calculate progress
     get calculateProgress() {
       return getAttribute('calculate-progress', false);
-    },
-
-    // Auto remove suggested button
-    get autoRemoveButtonSuggestion() {
-      return getAttribute('auto-remove-button-suggestion');
     },
 
     // Auto  suggested buttons
@@ -163,12 +153,7 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('file-drop');
     },
 
-    // File dropping
-    get fileLabelSwap() {
-      return getAttribute('file-label-swap');
-    },
-
-    // File dropping
+    // Init default styles
     get initDefaultStyles() {
       return getAttribute('init-default-styles');
     },

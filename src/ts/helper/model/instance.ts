@@ -3,6 +3,7 @@
 // Root
 import * as utils from './utils';
 import * as viewUtils from '../view/utils';
+import * as eventUtils from '../view/utilsEvents';
 import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
 import * as model from '../../model';
@@ -359,7 +360,7 @@ export const init = (
         if (!instanceProxy.isAwaiting) return false;
 
         // Dispatch
-        viewUtils.dispatchEvent(instanceName, 'resolve', true, false, {
+        eventUtils.dispatchEvent(instanceName, 'resolve', true, false, {
           success: value,
         });
 

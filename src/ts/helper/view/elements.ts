@@ -45,24 +45,6 @@ export default function (
       return querySelectorAll('error');
     },
 
-    // Anchor
-    get anchor() {
-      // Values
-      let element: HTMLElement | null = null;
-      const elements = querySelectorAll('anchor');
-
-      // Loop
-      for (let i = 0, n = elements.length; i < n; i++) {
-        if (utils.isElement(elements[i]) && elements[i].offsetParent !== null) {
-          element = elements[i];
-          break;
-        }
-      }
-
-      // Return
-      return element;
-    },
-
     // Progress
     get progressBars() {
       return querySelectorAll('progress-bar');

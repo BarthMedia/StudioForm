@@ -1,7 +1,8 @@
 // Imports
 import * as utils from './utils';
-import * as eventListenerUtils from './utilsEventListener';
+import * as eventListenerUtils from './utilsEvents';
 import * as attributeUtils from './utilsAttributes';
+import * as eventUtils from './utilsEvents';
 import * as modelUtils from '../model/utils';
 import * as model from '../../model';
 import * as config from '../../config';
@@ -22,9 +23,12 @@ export default function (
   fileInputs.forEach(input => {
     // Elements
     const label = document.querySelector(`[for="${input.id}"]`) as HTMLElement;
+    const swapLabel = label?.querySelector(
+      utils.createSelector(null, 'swap-label')
+    ) as HTMLElement | null;
 
     // Values
-    const originalText = label?.innerHTML;
+    const originalText = swapLabel?.innerHTML;
 
     // Null guard
     if (!utils.isElement(label)) return;
@@ -71,7 +75,7 @@ export default function (
       if (!modes.fileDrop) return;
 
       // Functionality
-      handleFiles(null);
+      if (!input.files?.length) handleFiles(null);
     });
 
     // Input change event listener
@@ -112,7 +116,7 @@ export default function (
         uploaded('remove');
 
         // Label text
-        if (modes.fileLabelSwap) label.innerHTML = originalText;
+        if (swapLabel && originalText) swapLabel.innerHTML = originalText;
 
         // Report vadility
         if (isVadilityError) instance.reportValidity(label);
@@ -122,7 +126,9 @@ export default function (
         input.removeAttribute(attachedAttr);
 
         // Fire event
-        utils.dispatchEvent(instance, 'detached', true, false, { key: key });
+        eventUtils.dispatchEvent(instance, 'detached', true, false, {
+          key: key,
+        });
       }
 
       // Values
@@ -195,7 +201,9 @@ export default function (
       }
 
       // Values
-      const name = allowedFiles.map(file => file.name).join(', ');
+      const name = allowedFiles
+        .map(file => file.name)
+        .join(instance.config.fetch.valueSeparator);
       const prefix =
         attributeUtils.getAttribute('swap-prefix', input, label) || '';
       const suffix =
@@ -203,7 +211,7 @@ export default function (
       const fileName = prefix + name + suffix;
 
       // Swap
-      if (modes.fileLabelSwap) label.innerHTML = fileName;
+      if (swapLabel) swapLabel.innerHTML = fileName;
       uploaded('add');
 
       // Add files
@@ -213,7 +221,7 @@ export default function (
       input.setAttribute(attachedAttr, 'true');
 
       // Fire event
-      utils.dispatchEvent(instance, 'attached', true, false, { key: key });
+      eventUtils.dispatchEvent(instance, 'attached', true, false, { key: key });
     }
   });
 }

@@ -1,6 +1,7 @@
 // Imports
 import * as utils from './utils';
 import * as viewUtils from '../view/utils';
+import * as eventUtils from '../view/utilsEvents';
 import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
 import * as config from '../../config';
@@ -114,11 +115,11 @@ export default async function (
       );
 
     // Dispatch fail event
-    viewUtils.dispatchEvent(instance, 'failed', internal);
+    eventUtils.dispatchEvent(instance, 'failed', internal);
   }
 
   // Dispatch resolve event
-  viewUtils.dispatchEvent(instance, 'fetched', internal, false, {
+  eventUtils.dispatchEvent(instance, 'fetched', internal, false, {
     success: responseData?.ok,
   });
 

@@ -1,6 +1,7 @@
 // Imports
 import * as utils from './utils';
 import * as attributeUtils from './utilsAttributes';
+import * as eventUtils from './utilsEvents';
 import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
 import * as config from '../../config';
@@ -53,34 +54,18 @@ export default async function (
       return { element: el, mode: mode, class: awaitAttr };
     });
   }
-
-  // Overwrite
-  const rootInstance = ghost.root;
-  rootInstance.isAwaiting = true;
-
-  // Dispatch event
   const globalConfig = model.state.api['config'];
-  const promiseEvent = utils.dispatchEvent(
-    instance,
-    isSubmit ? 'submit' : 'promise',
-    internal,
-    true,
-    {
-      ...info,
-      slide: slide,
-    }
-  );
+  const rootInstance = ghost.root;
 
-  // Listen to prevent default
-  if (promiseEvent.defaultPrevented) {
-    rootInstance.isAwaiting = false;
-    return false;
-  }
+  // * Old dispatch position *
+
+  // Set await / overwrite
+  rootInstance.isAwaiting = true;
 
   // Style children with class
   utils.classListToggle(...getElements('add'));
 
-  // Alternative promise
+  // Submit / alternative promise
   if (isSubmit) {
     // Guard
     if (!asyncCallBack) return false;
@@ -96,17 +81,14 @@ export default async function (
     return val;
   }
 
-  // Event listener
-  instance.elements.mask.addEventListener(
-    globalConfig.eventPrefix +
-      (isSubmit
-        ? 'fetched' + (internal ? '' : globalConfig.externalEventSuffix)
-        : 'resolve'),
-    e => resolve(e),
-    {
-      once: true,
-    }
-  );
+  // Promise
+  let promisedResolve: (value: boolean) => void = () => {};
+  let preMatureResolve = false;
+  async function asyncFunction(): Promise<boolean> {
+    return new Promise<boolean>(resolve => {
+      promisedResolve = resolve;
+    });
+  }
 
   // Define function
   function resolve(e: Event) {
@@ -117,16 +99,51 @@ export default async function (
     utils.classListToggle(...getElements());
 
     // Return
-    promisedResolve(e['detail']?.success);
+    const result = e['detail']?.success;
+    preMatureResolve = result;
+    promisedResolve(result);
   }
 
-  // Promise
-  let promisedResolve: (value: boolean) => void = () => {};
-  async function asyncFunction(): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      promisedResolve = resolve;
-    });
+  // Resolve event listener
+  const mask = instance.elements.mask;
+  const resolveEventType =
+    globalConfig.eventPrefix +
+    (isSubmit
+      ? 'fetched' + (internal ? '' : globalConfig.externalEventSuffix)
+      : 'resolve');
+
+  // Listen
+  mask.addEventListener(resolveEventType, resolve, {
+    once: true,
+  });
+
+  // Dispatch event
+  const promiseEvent = eventUtils.dispatchEvent(
+    instance,
+    isSubmit ? 'submit' : 'promise',
+    internal,
+    true,
+    {
+      ...info,
+      slide: slide,
+    }
+  );
+
+  // Listen to prevent default
+  if (promiseEvent.defaultPrevented) {
+    // Remove style children with class
+    utils.classListToggle(...getElements());
+
+    // Remove event listener
+    mask.removeEventListener(resolveEventType, resolve);
+
+    // Reset await
+    rootInstance.isAwaiting = false;
+    return false;
   }
+
+  // New premature resolve
+  if (preMatureResolve) return true;
 
   // Usage
   return await asyncFunction();

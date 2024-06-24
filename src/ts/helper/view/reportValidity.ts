@@ -1,5 +1,6 @@
 // Imports
 import * as utils from './utils';
+import * as eventUtils from './utilsEvents';
 import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
 import * as model from '../../model';
@@ -22,8 +23,8 @@ export default function (
   ...elements: StudioFormSpreadElements
 ) {
   // Values
-  const record = instance.record;
-  const slideEl = instance.logic[modelUtils.currentSlideId(instance)].element;
+  // const record = instance.record;
+  // const slideEl = instance.logic[modelUtils.currentSlideId(instance)].element;
 
   // New feature guard
   if (elements.length) {
@@ -47,13 +48,13 @@ export default function (
   }
 
   // Dispatch requirements testing event
-  utils.dispatchEvent(instance, 'check-requirements', internal, false);
+  eventUtils.dispatchEvent(instance, 'check-requirements', internal, false);
 
   // Requirements checking
   if (requirements(instance)) return true;
 
   // Dispatch report Validity
-  const event = utils.dispatchEvent(
+  const event = eventUtils.dispatchEvent(
     instance,
     'report-validity',
     internal,
@@ -155,79 +156,3 @@ export default function (
     }, 1);
   }
 }
-
-// Notes: Old
-
-// modes.nativeReportValidity;
-
-// // Guard
-// if (data.length < 1) {
-//   controllerUtils.warn(`${errPath(state)}The supplied data is empty!`);
-//   return;
-// }
-
-// // * Temporary required swap *
-// let requiredSwapReset = () => {};
-// if (state.modes.temporaryRequired && !data[0].el.hasAttribute('required')) {
-//   // Timeout clear
-//   if (state.requiredSwapResetTimeout) {
-//     clearTimeout(state.requiredSwapResetTimeout);
-//     state.requiredSwapResetTimeoutFunction();
-//   }
-
-//   // Define
-//   function f(mode: string) {
-//     // Values
-//     const args = ['required'];
-//     if (mode === 'set') args.push('');
-
-//     // Fire
-//     data[0].el[mode + 'Attribute'](...args);
-//   }
-
-//   // Init
-//   f('set');
-
-//   // Overwrite
-//   requiredSwapReset = () => {
-//     f('remove');
-//   };
-// }
-
-// // * Scroll to the first element and if not visible *
-
-// // Calculate
-// const target: HTMLElement =
-//   data[0].el.closest(config.LABEL_SELECTOR) || data[0].el;
-// const isFullyVisible = helper.isElementTopVisible(
-//   target,
-//   state,
-//   {
-//     attributeReferenceElement: slideEl,
-//   },
-//   true
-// );
-
-// // Define
-// function reportValidity() {
-//   try {
-//     data[0].el.reportValidity();
-//     state.requiredSwapResetTimeoutFunction = requiredSwapReset;
-//     state.requiredSwapResetTimeout = setTimeout(
-//       requiredSwapReset,
-//       config.TIMEOUT_SEC * 1000
-//     );
-//   } catch (err) {
-//     controllerUtils.warn(
-//       `${errPath(
-//         state
-//       )}data[0].el.reportValidity() produces unexpected error!`,
-//       err
-//     );
-//   }
-// }
-
-// // Trigger events
-// helper.triggerAllFunctions(
-//   state.view.eventsFunctionArrays.afterRenderRequirements
-// );

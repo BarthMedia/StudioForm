@@ -1,8 +1,9 @@
 // Imports
 import * as utils from './utils';
-import * as eventListenerUtils from './utilsEventListener';
+import * as eventListenerUtils from './utilsEvents';
 import * as modelUtils from '../model/utils';
 import * as controllerUtils from '../controller/utils';
+import * as eventUtils from './utilsEvents';
 import * as model from '../../model';
 import * as config from '../../config';
 
@@ -71,7 +72,12 @@ export default async function (
   if (scrollTargetReached()) return true;
 
   // Event
-  const event = utils.dispatchEvent(instance, 'scroll-start', internal, true);
+  const event = eventUtils.dispatchEvent(
+    instance,
+    'scroll-start',
+    internal,
+    true
+  );
 
   // Guard
   if (event.defaultPrevented) return false;
@@ -86,7 +92,7 @@ export default async function (
         scrollToContainer.removeEventListener('scroll', scrollListener);
 
         // Resolve the promise with the value true
-        utils.dispatchEvent(instance, 'scroll-end', internal);
+        eventUtils.dispatchEvent(instance, 'scroll-end', internal);
         resolve(true);
       }
     }

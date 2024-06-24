@@ -2,6 +2,7 @@
 import * as utils from './utils';
 import * as controllerUtils from '../controller/utils';
 import * as viewUtils from '../view/utils';
+import * as eventUtils from '../view/utilsEvents';
 import * as model from '../../model';
 import * as config from '../../config';
 
@@ -161,10 +162,10 @@ export default async function (
 
   // Elements & values
   const aData = instance.data.animation;
-  const currentSlide = aData.currentElement;
+  // const currentSlide = aData.currentElement;
 
   // * Transition event
-  const event = viewUtils.dispatchEvent(
+  const event = eventUtils.dispatchEvent(
     instance,
     'transition',
     internal,

@@ -2,6 +2,7 @@
 import * as utils from './utils';
 import * as controllerUtils from '../controller/utils';
 import * as viewUtils from '../view/utils';
+import * as eventUtils from '../view/utilsEvents';
 import * as model from '../../model';
 import * as config from '../../config';
 import dataForm from './dataForm';
@@ -264,7 +265,7 @@ export default async function (
   sfApi.response = output.response;
 
   // External api event
-  if (!internal) viewUtils.dispatchEvent(instance, 'fetched-api');
+  if (!internal) eventUtils.dispatchEvent(instance, 'fetched-api');
 
   // Return
   return true;

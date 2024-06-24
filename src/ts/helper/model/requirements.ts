@@ -21,7 +21,6 @@ export default function (instance: StudioFormInstance) {
   const currentSlideElement = currentSlide.element;
   const targetRadios: SFValidityData[] = [];
   let targetInputs: SFValidityData[] = [];
-  let firstInputIsRadio = true;
 
   // Cases
   const response = (() => {
@@ -93,9 +92,6 @@ export default function (instance: StudioFormInstance) {
       inputs.forEach((input, index) => {
         // Don't test radios
         if (input.type === 'radio') return;
-
-        // Test firstInputIsRadio
-        if (!index) firstInputIsRadio = false;
 
         // Required checking
         if (!input.hasAttribute('required')) return;
@@ -261,6 +257,13 @@ export default function (instance: StudioFormInstance) {
       checkRadio();
 
       // Sort target input based on DOM index
+      let firstInputIsRadio = false;
+      try {
+        const position = targetRadios[0].input.compareDocumentPosition(
+          targetInputs[0].input
+        );
+        firstInputIsRadio = !!(position & Node.DOCUMENT_POSITION_FOLLOWING);
+      } catch {}
       targetInputs = firstInputIsRadio
         ? targetRadios.concat(targetInputs)
         : targetInputs.concat(targetRadios);

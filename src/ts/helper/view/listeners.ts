@@ -1,7 +1,7 @@
 // Imports
 import * as utils from './utils';
 import * as attributeUtils from './utilsAttributes';
-import * as eventListenerUtils from './utilsEventListener';
+import * as eventListenerUtils from './utilsEvents';
 import * as modelUtils from '../model/utils';
 import * as config from '../../config';
 import * as model from '../../model';

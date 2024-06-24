@@ -18,9 +18,6 @@ interface StudioFormElements {
   // Fetch response
   get errors(): NodeListOf<HTMLElement>;
 
-  // Anchor
-  anchor: HTMLElement | null;
-
   // External buttons
   get prevs(): NodeListOf<HTMLElement>;
   get nexts(): HTMLElement[];
