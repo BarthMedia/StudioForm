@@ -65,22 +65,6 @@ export default async function (
   // Style children with class
   utils.classListToggle(...getElements('add'));
 
-  // Submit / alternative promise
-  if (isSubmit) {
-    // Guard
-    if (!asyncCallBack) return false;
-
-    // Values
-    const val = await asyncCallBack();
-    rootInstance.isAwaiting = false;
-
-    // Remove style children with class
-    utils.classListToggle(...getElements());
-
-    // Return
-    return val;
-  }
-
   // Promise
   let promisedResolve: (value: boolean) => void = () => {};
   let preMatureResolve = false;
@@ -144,6 +128,22 @@ export default async function (
 
   // New premature resolve
   if (preMatureResolve) return true;
+
+  // Submit / alternative promise
+  if (isSubmit) {
+    // Guard
+    if (!asyncCallBack) return false;
+
+    // Values
+    const val = await asyncCallBack();
+    rootInstance.isAwaiting = false;
+
+    // Remove style children with class
+    utils.classListToggle(...getElements());
+
+    // Return
+    return val;
+  }
 
   // Usage
   return await asyncFunction();
