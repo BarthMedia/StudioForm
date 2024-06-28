@@ -291,7 +291,7 @@ interface StudioFormGhostInstance {
   slideCurrent: number | string;
   slideNext: number | string;
   gsapTl: {
-    progress?: gsap.core.Timeline;
+    progress: (gsap.core.Timeline | undefined)[];
     transition?: gsap.core.Timeline;
     current?: gsap.core.Timeline;
   };

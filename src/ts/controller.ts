@@ -95,14 +95,14 @@ const gsapSrc =
   'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
 const gsapScript = document.querySelector('script[src*="/gsap.min.js"]');
 gsapScript
-  ? () => {
+  ? (() => {
       const gsapCheckInterval = setInterval(() => {
         if (window.gsap) {
           clearInterval(gsapCheckInterval);
           loaderLogic();
         }
       }, 4);
-    }
+    })()
   : utils.scriptLoader(gsapSrc, loaderLogic);
 
 // Main

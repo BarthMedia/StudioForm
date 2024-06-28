@@ -27,20 +27,22 @@ export default function (instance: StudioFormInstance) {
   const pData = instance.data.progress;
   const aData = instance.config.animations;
 
+  // Set tl array
+  const gsapTl = ghost.gsapTl;
+
   // Animate progress bars
-  elements.progressBars.forEach(el => {
+  elements.progressBars.forEach((el, i) => {
     // Values
     const tl = gsap.timeline();
-    const gsapTl = ghost.gsapTl;
 
     // Clear existing timeline
     if (ghost.root.isTransitioning) {
-      gsapTl.progress?.pause();
-      gsapTl.progress?.clear();
+      gsapTl.progress[i]?.pause();
+      gsapTl.progress[i]?.clear();
     }
 
     // Values
-    gsapTl.progress = tl;
+    gsapTl.progress[i] = tl;
 
     // Values
     const direction =

@@ -390,7 +390,7 @@ export const init = (
 
     // Internal
     asyncRecord: [],
-    gsapTl: {},
+    gsapTl: { progress: [] },
     slideCurrent: 0 as number | string,
     slideNext: 0 as number | string,
 
