@@ -93,11 +93,7 @@ export const init = (
 
   // Slide record
   const recordMain = [0];
-  const recordProxy = model.createReadMostlyProxy(
-    recordMain,
-    'record',
-    instanceName
-  ) as number[];
+  const recordProxy = model.createReadMostlyProxy(recordMain) as number[];
 
   // + Config +
 
