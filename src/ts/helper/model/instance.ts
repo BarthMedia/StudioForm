@@ -24,6 +24,7 @@ import dataForm from './dataForm';
 import dataProgress from './dataProgress';
 import fetch from './fetch';
 import recaptcha from './recaptcha';
+import record from './record';
 
 // View
 import animatePromiseResolve from '../view/animatePromiseResolve';
@@ -92,7 +93,11 @@ export const init = (
 
   // Slide record
   const recordMain = [0];
-  const recordProxy = model.createReadMostlyProxy(recordMain) as number[];
+  const recordProxy = model.createReadMostlyProxy(
+    recordMain,
+    'record',
+    instanceName
+  ) as number[];
 
   // + Config +
 
@@ -336,6 +341,9 @@ export const init = (
       let write = false;
 
       // + Logic +
+
+      // Record
+      if (property == 'record') write = record(data);
 
       // Authorization
       if (

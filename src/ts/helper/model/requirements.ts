@@ -10,9 +10,6 @@ import * as config from '../../config';
 const errPath = (s: StudioFormInstance) =>
   `${controllerUtils.errorName(s)} requirements.ts:`;
 
-// Helper
-const sfidAttr = `${config.PRODUCT_NAME_SHORT}-input-id`;
-
 // Export
 export default function (instance: StudioFormInstance) {
   // Values

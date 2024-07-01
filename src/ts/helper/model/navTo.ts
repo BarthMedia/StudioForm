@@ -28,7 +28,8 @@ export default async function (
   slideIdentification: string | number,
   options: SFONav,
   internal = false,
-  navSubmitCommand = false
+  navSubmitCommand = false,
+  writeRecordCommand = false
 ) {
   // + + + Input + + +
 
@@ -126,12 +127,9 @@ export default async function (
       return true;
     });
 
-    // Logic
-    if (recordSurpassed === false) ghost.record.push(nextId);
-    else {
-      // Slice
-      ghost.record.length = recordSurpassed + 1;
-    }
+    // Slice logic
+    if (recordSurpassed !== false) ghost.record.length = recordSurpassed;
+    ghost.record.push(nextId);
   }
 
   // * Accessability *
@@ -180,7 +178,7 @@ export default async function (
     transition.animate(instance);
 
     // Progress bar
-    animateProgress(instance);
+    if (!writeRecordCommand) animateProgress(instance);
 
     // * Test if current slide top is visible
 
@@ -204,7 +202,7 @@ export default async function (
   }
 
   // Combo clases
-  animateCurrent(instance, aData.currentTime);
+  if (!writeRecordCommand) animateCurrent(instance, aData.currentTime);
 
   // * Redirect *
   const redirect = instance.data.fetch.redirect;
