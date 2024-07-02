@@ -65,6 +65,7 @@ export default function init(state: StudioFormState) {
         'cloak',
         'value',
         'required',
+        'attached',
         ...Object.keys(state.api),
       ].forEach(str => {
         // Skip

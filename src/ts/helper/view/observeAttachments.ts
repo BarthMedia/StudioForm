@@ -218,7 +218,7 @@ export default function (
       ghost.files[key] = !isMultiple
         ? allowedFiles[0]
         : (model.createReadMostlyProxy(allowedFiles) as File[]);
-      input.setAttribute(attachedAttr, 'true');
+      input.setAttribute(attachedAttr, '');
 
       // Fire event
       eventUtils.dispatchEvent(instance, 'attached', true, false, { key: key });
