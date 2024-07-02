@@ -80,7 +80,7 @@ export function getAttribute(
       const getAttr = el?.getAttribute(str);
 
       // Logic
-      if (typeof getAttr == 'string') {
+      if (getAttr) {
         attr = getAttr;
         return false;
       }
@@ -90,7 +90,7 @@ export function getAttribute(
     });
 
     // Overwrite
-    if (attr !== null) val = attr;
+    if (attr) val = attr;
   });
 
   // Return
