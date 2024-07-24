@@ -70,10 +70,10 @@ export default async function (
       // If not found suggest the first button
       if (!suggestedButtonFound) {
         // Suggest button[0]
-        if (modes.autoSuggestButtons) instance.focus.next();
+        if (modes.autoFocusButtons) instance.focus.next();
 
         // Skip code below
-        return 'suggest';
+        return 'focused';
       }
     }
   }

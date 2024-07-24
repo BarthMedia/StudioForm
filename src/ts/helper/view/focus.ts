@@ -17,7 +17,7 @@ function addOneTimeClickListener(btn: HTMLElement) {
   // Event listener
   document.body.addEventListener(
     'click',
-    function blurEventHandler() {
+    function () {
       // Call addFocus with add=false
       if (focusGhost.button == btn) {
         delete focusGhost.button;
@@ -39,20 +39,22 @@ function addFocus(btn: HTMLElement, add = true) {
     btn.click();
 
     // Close allowace
-    delete focusGhost.doubleClick;
+    setTimeout(() => {
+      delete focusGhost.doubleClick;
 
-    // Tagname logic
-    const focusableBtn: HTMLElement | null = ['INPUT', 'A'].includes(
-      btn.tagName
-    )
-      ? btn
-      : btn.querySelector('input, a');
+      // Tagname logic
+      const focusableBtn: HTMLElement | null = ['INPUT', 'A'].includes(
+        btn.tagName
+      )
+        ? btn
+        : btn.querySelector('input, a');
 
-    // Focus
-    focusableBtn?.focus();
+      // Focus
+      focusableBtn?.focus();
 
-    // Add focus loss listener
-    addOneTimeClickListener(btn);
+      // Add focus loss listener
+      addOneTimeClickListener(btn);
+    }, 1);
   }
 
   // Toggle

@@ -69,8 +69,8 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     },
 
     // Auto  suggested buttons
-    get autoSuggestButtons() {
-      return getAttribute('auto-suggest-buttons');
+    get autoFocusButtons() {
+      return getAttribute('auto-focus-buttons');
     },
 
     // Active scroll to
