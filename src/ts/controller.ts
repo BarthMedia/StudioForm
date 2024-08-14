@@ -108,13 +108,13 @@ gsapScript
 // Main
 function loaderLogic() {
   // Check if DOM is already loaded
-  if (document.readyState === 'loading') {
+  if (document.readyState == 'loading') {
     // If DOM is not loaded, add an event listener
-    console.log('Ready state loading?');
     document.addEventListener('DOMContentLoaded', main);
+  } else if (document.readyState == 'interactive') {
+    window.addEventListener('load', main);
   } else {
     // If DOM is already loaded, immediately call the callback
-    console.log(document.readyState, 'Other state loading?');
-    setTimeout(main, 10);
+    main();
   }
 }
