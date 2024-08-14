@@ -66,7 +66,7 @@ export default function (
     inputs.forEach(input => {
       // Values
       const key = viewUtils.getInputKey(input);
-      const value =
+      let value =
         input.type !== 'file'
           ? input.type === 'password' && !internal
             ? config.HIDDEN
@@ -75,6 +75,12 @@ export default function (
 
       // Radio edgecase
       if (input.type === 'radio' && !input.checked) return;
+
+      // Checkbox edgecase
+      if (modes.booleanCheckboxValues && input.type === 'checkbox') {
+        if (value == 'on') value = 'true';
+        if (value == 'off') value = 'false';
+      }
 
       // Logic
       addVals(key, value);

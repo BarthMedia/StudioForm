@@ -48,6 +48,21 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('partial-data');
     },
 
+    // Boolean Checkbox Values allowed
+    get booleanCheckboxValues() {
+      return getAttribute('boolean-checkbox-values', false);
+    },
+
+    // Observe checkboxes & radios
+    get observeChecked() {
+      return getAttribute('observe-checked');
+    },
+
+    // Observe file inputs
+    get observeAttachments() {
+      return getAttribute('observe-attachments');
+    },
+
     // Remove conditionally invisible slides
     get removeConditionallyInvisibeSlides() {
       return getAttribute('remove-conditionally-invisible-slides');
@@ -156,16 +171,6 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
     // Init default styles
     get initDefaultStyles() {
       return getAttribute('init-default-styles');
-    },
-
-    // Observe checkboxes & radios
-    get observeChecked() {
-      return getAttribute('observe-checked');
-    },
-
-    // Observe file inputs
-    get observeAttachments() {
-      return getAttribute('observe-attachments');
     },
 
     // ReCAPTCHA allowed
