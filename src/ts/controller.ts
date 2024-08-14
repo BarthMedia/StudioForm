@@ -113,6 +113,6 @@ function loaderLogic() {
     document.addEventListener('DOMContentLoaded', main);
   } else {
     // If DOM is already loaded, immediately call the callback
-    main();
+    setTimeout(main, 1);
   }
 }
