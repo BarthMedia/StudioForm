@@ -111,8 +111,6 @@ function loaderLogic() {
   if (document.readyState == 'loading') {
     // If DOM is not loaded, add an event listener
     document.addEventListener('DOMContentLoaded', main);
-  } else if (document.readyState == 'interactive') {
-    window.addEventListener('load', main);
   } else {
     // If DOM is already loaded, immediately call the callback
     main();
