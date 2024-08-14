@@ -110,9 +110,11 @@ function loaderLogic() {
   // Check if DOM is already loaded
   if (document.readyState === 'loading') {
     // If DOM is not loaded, add an event listener
+    console.log('Ready state loading?');
     document.addEventListener('DOMContentLoaded', main);
   } else {
     // If DOM is already loaded, immediately call the callback
-    setTimeout(main, 1);
+    console.log(document.readyState, 'Other state loading?');
+    setTimeout(main, 10);
   }
 }
