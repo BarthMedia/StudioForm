@@ -188,21 +188,48 @@ export const init = (
   ) as SFFilesData;
 
   // Data
-  const dataMain: StudioFormData = {
+  const dataMain: StudioFormData | (() => void) = function () {
+    const arr = Array.from(
+      (
+        dataForm(instanceProxy, true, false, true) as FormData | URLSearchParams
+      ).entries()
+    );
+    return arr.reduce((acc, [key, value]) => {
+      if (acc[key]) {
+        acc[key] = Array.isArray(acc[key])
+          ? [...acc[key], value]
+          : [acc[key], value];
+      } else {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+  };
+
+  // Adding properties to the function object
+  Object.assign(dataMain, {
     animation: animationDataProxy,
     fetch: fetchDataProxy,
     files: filesDataProxy,
-    get form() {
-      return dataForm(instanceProxy);
-    },
-    get params() {
-      return dataForm(instanceProxy, false, true) as URLSearchParams | false;
-    },
-    get progress() {
-      return dataProgress(instanceProxy);
-    },
     validity: validityDataProxy,
-  };
+  });
+  Object.defineProperties(dataMain, {
+    form: {
+      get() {
+        return dataForm(instanceProxy);
+      },
+    },
+    params: {
+      get() {
+        return dataForm(instanceProxy, false, true) as URLSearchParams | false;
+      },
+    },
+    progress: {
+      get() {
+        return dataProgress(instanceProxy);
+      },
+    },
+  });
   const dataProxy = model.createReadMostlyProxy(dataMain) as StudioFormData;
 
   // Hidden data fields by external users

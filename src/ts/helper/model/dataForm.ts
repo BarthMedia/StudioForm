@@ -8,7 +8,8 @@ import * as model from '../../model';
 export default function (
   instance: StudioFormInstance,
   internal = false,
-  generateUrlSearchParams = false
+  generateUrlSearchParams = false,
+  instanceDataMainInvocation = false
 ) {
   // Elements
   const form = (
@@ -28,7 +29,7 @@ export default function (
 
   // Data mode
   let complex = fetchConfig.action == '' || !modes.simpleData;
-  if (generateUrlSearchParams) complex = false;
+  if (generateUrlSearchParams || instanceDataMainInvocation) complex = false;
 
   // Define payload
   const payload = (
@@ -55,7 +56,12 @@ export default function (
   // Find all fields
   instance.logic.forEach(slide => {
     // Guard
-    if (modes.partialData && !instance.record.includes(slide.index)) return;
+    if (
+      !instanceDataMainInvocation &&
+      modes.partialData &&
+      !instance.record.includes(slide.index)
+    )
+      return;
 
     // Elements
     const inputs = slide.element.querySelectorAll(
