@@ -35,7 +35,7 @@ export default function (
     wrapper: wrapper,
     mask: mask,
     get slides() {
-      return mask.childNodes as NodeListOf<HTMLElement>;
+      return mask.querySelectorAll(':scope > *') as NodeListOf<HTMLElement>;
     },
     done: wrapper.querySelector('.w-form-done') as HTMLElement | null,
     fail: wrapper.querySelector('.w-form-fail') as HTMLElement | null,

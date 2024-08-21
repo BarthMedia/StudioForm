@@ -31,12 +31,6 @@ export default function (
     // Elements
     const slide = elements.slides[i];
 
-    // Guard
-    if (!viewUtils.isElement(slide))
-      throw new Error(
-        `${errPath(instanceName)} Slide[${i}] is not a valid HTML element!`
-      );
-
     // Swap submit buttons
     swapSubmitButtons(slide, modes);
 
