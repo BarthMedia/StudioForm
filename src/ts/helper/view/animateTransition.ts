@@ -190,8 +190,6 @@ export const animate = function (instance: StudioFormInstance) {
 
   // * Main animation *
 
-  console.log('Center height as well!');
-
   // Values
   const tl = gsap.timeline();
   const gsapObj = ghost.gsapTl;
