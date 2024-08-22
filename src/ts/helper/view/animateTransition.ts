@@ -190,6 +190,8 @@ export const animate = function (instance: StudioFormInstance) {
 
   // * Main animation *
 
+  console.log('Center height as well!');
+
   // Values
   const tl = gsap.timeline();
   const gsapObj = ghost.gsapTl;
@@ -225,10 +227,11 @@ export const animate = function (instance: StudioFormInstance) {
     opacity: 1,
     display: aData.currentDisplayStart,
     position: 'absolute',
-    left: 0,
+    left: '50%',
     top: '50%',
     right: 0,
     marginTop: -aData.currentHeight / 2,
+    marginLeft: -aData.currentWidth / 2,
   });
 
   // Next
@@ -239,10 +242,11 @@ export const animate = function (instance: StudioFormInstance) {
     zIndex: aData.zIndex,
     display: aData.nextDisplayStart,
     position: 'absolute',
-    left: 0,
+    left: '50%',
     top: '50%',
     right: 0,
     marginTop: -aData.nextHeight / 2,
+    marginLeft: -aData.nextWidth / 2,
   });
 
   // * Timeline animation *
@@ -307,6 +311,7 @@ export const animate = function (instance: StudioFormInstance) {
     right: '',
     bottom: '',
     marginTop: '',
+    marginLeft: '',
   });
 
   // Next
@@ -321,6 +326,7 @@ export const animate = function (instance: StudioFormInstance) {
     right: '',
     bottom: '',
     marginTop: '',
+    marginLeft: '',
   });
 
   // Form
