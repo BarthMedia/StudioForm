@@ -34,8 +34,10 @@ export default function init(instance: StudioFormInstance) {
           instance,
           button.element,
           'click',
-          () => {
-            navNext(instance, { button: button }, true);
+          e => {
+            if (e?.target?.['tagName'] != 'INPUT') {
+              navNext(instance, { button: button }, true);
+            }
           }
         );
       });
@@ -158,16 +160,12 @@ export default function init(instance: StudioFormInstance) {
 
   // Function to be called when Left Arrow key is pressed
   function onArrowLeft() {
-    // console.log('You shall now work on shift tab!');
-
     // Add your custom logic here
     instance.focus.prev();
   }
 
   // Function to be called when Right Arrow key is pressed
   function onArrowRight() {
-    // console.log('You shall now work on tab!');
-
     // Add your custom logic here
     instance.focus.next();
   }
