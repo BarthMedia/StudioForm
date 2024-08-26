@@ -306,7 +306,7 @@ export const init = (
     reportValidity: (...elements) => {
       return reportValidity(instanceProxy, false, ...elements);
     },
-    validate: (element?: HTMLElement) => {
+    validate: (element?: HTMLInputElement) => {
       return requirements(instanceProxy, element);
     },
     recaptcha: async () => {
