@@ -135,10 +135,6 @@ export default function (
       }
 
       // Values
-      const acceptedTypes =
-        (input.accept || '') === ''
-          ? undefined
-          : input.accept.split(',').map(str => str.trim());
       const isMultiple = input.multiple;
       const key = utils.getInputKey(input);
 
@@ -178,14 +174,13 @@ export default function (
         if (!isMultiple && i) break;
 
         // Only push if accepted
-        if (!acceptedTypes || acceptedTypes.includes(file.type)) {
-          // Min & max size
-          if (minSize !== null && file.size < minSize) continue;
-          if (maxSize !== null && file.size > maxSize) continue;
 
-          // Success
-          allowedFiles.push(file);
-        }
+        // Min & max size
+        if (minSize !== null && file.size < minSize) continue;
+        if (maxSize !== null && file.size > maxSize) continue;
+
+        // Success
+        allowedFiles.push(file);
       }
 
       // Test file numbers
