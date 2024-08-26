@@ -33,6 +33,9 @@ export default function (
     // Null guard
     if (!utils.isElement(label)) return;
 
+    // WF input guard
+    if (input.classList.contains(config.WF_CLASS_FILE_UPLOAD_INPUT)) return;
+
     // + Event listeners +
 
     // File drop events
@@ -140,7 +143,7 @@ export default function (
       const key = utils.getInputKey(input);
 
       // Guard
-      if (!files) {
+      if (!files || !files.length) {
         // Falsy
         falsy();
 

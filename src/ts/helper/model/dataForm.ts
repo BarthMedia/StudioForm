@@ -9,7 +9,8 @@ export default function (
   instance: StudioFormInstance,
   internal = false,
   generateUrlSearchParams = false,
-  instanceDataMainInvocation = false
+  instanceDataMainInvocation = false,
+  instanceDataMainInvocationSlideIndex: null | number = null
 ) {
   // Elements
   const form = (
@@ -25,7 +26,7 @@ export default function (
 
   // Values
   const fields: { key: string; value: string }[] = [];
-  let files: { key: string; value: File }[] = [];
+  let files: { key: string; value: File | string }[] = [];
 
   // Data mode
   let complex = fetchConfig.action == '' || !modes.simpleData;
@@ -55,6 +56,13 @@ export default function (
 
   // Find all fields
   instance.logic.forEach(slide => {
+    // instanceDataMainInvocationSlideIndex Guard
+    if (
+      instanceDataMainInvocationSlideIndex !== null &&
+      slide.index !== instanceDataMainInvocationSlideIndex
+    )
+      return;
+
     // Guard
     if (
       !instanceDataMainInvocation &&
@@ -105,16 +113,26 @@ export default function (
     } else {
       // HTML Values
       const valueIsFile = value instanceof File;
-      let htmlValue: FileList | File | null = valueIsFile ? value : null;
+      let isWfFileUpload = false;
+      let htmlValue: FileList | File | String | null = valueIsFile
+        ? value
+        : null;
       if (!valueIsFile) {
+        // Standard input element
         const filesValue = value.files;
         htmlValue = !value.multiple && filesValue ? filesValue[0] : filesValue;
+
+        // WF input element
+        if (value.classList.contains('w-file-upload-input')) {
+          isWfFileUpload = true;
+          htmlValue = value.getAttribute('data-value');
+        }
       }
 
       // Values
       const ghostFile = ghost.files[key];
-      const fileValue = ghostFile ? ghostFile : htmlValue;
-      const isFile = fileValue instanceof File;
+      const fileValue = ghostFile && !isWfFileUpload ? ghostFile : htmlValue;
+      const isFileList = fileValue instanceof FileList;
 
       // Guard
       if (!fileValue) return;
@@ -133,7 +151,7 @@ export default function (
       }
 
       // Single file
-      if (isFile) push(null);
+      if (!isFileList) push(null);
       else {
         for (let index = 0; index < fileValue.length; index++) {
           push(index);
@@ -159,7 +177,7 @@ export default function (
 
   // Values
   const isFiles = files.length > 0;
-  const formData = isFiles ? new FormData() : new URLSearchParams();
+  const formData = isFiles && !complex ? new FormData() : new URLSearchParams();
 
   // Create a Set to keep track of unique keys
   const uniqueKeys = new Set();
@@ -178,7 +196,7 @@ export default function (
   // Prepare
   [
     { name: 'fields', data: fields },
-    { name: 'files', data: files },
+    { name: 'fileUploads', data: files },
   ].forEach(obj => {
     // Loop
     obj.data.forEach((datum: { key: string; value: string | File }) => {

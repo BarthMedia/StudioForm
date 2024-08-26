@@ -33,11 +33,12 @@ export default function (
 
     // Loop
     elements.forEach(element => {
-      // Is string
+      // Is not list
       if (typeof element === 'string')
-        document
-          .querySelectorAll(element)
-          .forEach(node => _elements.push(node as HTMLElement));
+        element = document.querySelectorAll(element);
+      if (element instanceof HTMLElement) element = [element];
+
+      element.forEach((node: HTMLElement) => _elements.push(node));
     });
 
     // Just animate towards the list and apply the combo classes!
@@ -46,6 +47,8 @@ export default function (
     // Return
     return undefined;
   }
+
+  console.log('???', instance, internal, elements);
 
   // Dispatch requirements testing event
   eventUtils.dispatchEvent(instance, 'check-requirements', internal, false);

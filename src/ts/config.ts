@@ -17,7 +17,7 @@ export const DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER = 0.5;
 export const DEFAULT_OFFSET = 16;
 
 // Version
-export const VERSION = '1.3.17';
+export const VERSION = '1.4.0';
 
 // Hidden string
 export const HIDDEN = '* * * HIDDEN * * *';
@@ -26,6 +26,9 @@ export const HIDDEN = '* * * HIDDEN * * *';
 export const PRODUCT_NAME_LONG = 'studio-form';
 export const PRODUCT_NAME_SHORT = 'sf';
 export const PRODUCT_NAME_CAMEL_CASE = 'StudioForm';
+
+// WF class name
+export const WF_CLASS_FILE_UPLOAD_INPUT = 'w-file-upload-input';
 
 // API write event
 export const API_WRITE_ATTRIBUTE = 'sf-api-write';

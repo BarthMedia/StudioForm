@@ -144,6 +144,7 @@ interface StudioFormInstance {
   reportValidity: (
     ...elements: StudioFormSpreadElements
   ) => boolean | undefined; // slideRequirements -- legacy
+  validate: (element?: HTMLInputElement) => boolean | undefined;
   recaptcha: () => Promise<string | undefined>;
 
   // Status

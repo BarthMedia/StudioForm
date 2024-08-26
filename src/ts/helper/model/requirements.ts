@@ -11,7 +11,10 @@ const errPath = (s: StudioFormInstance) =>
   `${controllerUtils.errorName(s)} requirements.ts:`;
 
 // Export
-export default function (instance: StudioFormInstance) {
+export default function (
+  instance: StudioFormInstance,
+  apiElement?: HTMLInputElement | HTMLInputElement[]
+) {
   // Values
   const ghost = utils.returnGhost(instance);
   const currentSlide = instance.logic[utils.currentSlideId(instance)];
@@ -19,20 +22,40 @@ export default function (instance: StudioFormInstance) {
   const targetRadios: SFValidityData[] = [];
   let targetInputs: SFValidityData[] = [];
 
+  // Element guard
+  if (apiElement) {
+    // Guards
+    if (!currentSlideElement.contains(apiElement as HTMLInputElement))
+      throw new Error(`${errPath(instance)} Element not within current slide!`);
+    if (
+      !viewUtils.INPUTS_SELECTOR.toUpperCase()
+        .split(', ')
+        .includes((apiElement as HTMLInputElement).tagName)
+    )
+      throw new Error(`${errPath(instance)} Element can not be validated!`);
+
+    // Overwrite
+    apiElement = [apiElement as HTMLInputElement];
+  }
+
   // Cases
   const response = (() => {
     // Radio helper
     function checkRadio() {
       // Elements
-      const radios: NodeListOf<HTMLInputElement> =
+      let radios: NodeListOf<HTMLInputElement> | HTMLInputElement[] =
         currentSlideElement.querySelectorAll('input[type="radio"]');
       const groups: string[] = [];
+
+      // Elements edgecase
+      if (apiElement && (apiElement[0] as HTMLInputElement).type == 'radio')
+        radios = apiElement as HTMLInputElement[];
 
       // Values
       let returnVal = true;
 
       // Find all available groups
-      radios.forEach(radio => {
+      radios.forEach((radio: HTMLInputElement) => {
         if (groups.indexOf(radio.name) === -1) groups.push(radio.name);
       });
 
@@ -79,175 +102,183 @@ export default function (instance: StudioFormInstance) {
     // * * * Standard case * * *
     if (currentSlide.type === 'standard') {
       // Elements
-      const inputs = currentSlideElement.querySelectorAll(
+      let inputs = currentSlideElement.querySelectorAll(
         viewUtils.INPUTS_SELECTOR
-      ) as NodeListOf<
-        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-      >;
+      ) as
+        | NodeListOf<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+        | HTMLInputElement[];
+
+      // Elements edgecase
+      if (apiElement) inputs = apiElement;
 
       // * Other input types loop *
-      inputs.forEach((input, index) => {
-        // Don't test radios
-        if (input.type === 'radio') return;
+      inputs.forEach(
+        (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
+          // Don't test radios
+          if (input.type === 'radio') return;
 
-        // Required checking
-        if (!input.hasAttribute('required')) return;
+          // Required checking
+          if (!input.hasAttribute('required')) return;
 
-        // Values
-        const inputValue = input.value.trim();
+          // Values
+          const inputValue = input.value.trim();
 
-        // File
-        if (input.type === 'file') {
-          // Push if label exists
-          if (document.querySelector(`[for="${input.id}"]`)) {
-            if (!input.hasAttribute(`${config.PRODUCT_NAME_SHORT}-attached`))
+          // File
+          if (input.type == 'file') {
+            // Push if label exists
+            if (
+              document.querySelector(`[for="${input.id}"]`) &&
+              !input.classList.contains(config.WF_CLASS_FILE_UPLOAD_INPUT)
+            ) {
+              if (!input.hasAttribute(`${config.PRODUCT_NAME_SHORT}-attached`))
+                targetInputs.push({
+                  input: input,
+                  message: 'no attachments',
+                });
+            } else if (!inputValue)
               targetInputs.push({
                 input: input,
-                message: 'no attachments',
+                message: 'no files',
               });
-          } else if (inputValue === '')
-            targetInputs.push({
-              input: input,
-              message: 'no files',
-            });
 
-          // Skip code below
-          return;
-        }
+            // Skip code below
+            return;
+          }
 
-        // Is empty
-        if (inputValue === '') {
-          // Push
-          targetInputs.push({
-            input: input,
-            message: 'empty',
-          });
-
-          // Skip code below
-          return;
-        }
-
-        // Validate number
-        if (input.type === 'number') {
-          // Values
-          const res = validateNumberInput(input as HTMLInputElement);
-
-          // Throw if
-          if (res !== true) {
+          // Is empty
+          if (!inputValue) {
             // Push
             targetInputs.push({
               input: input,
-              message: res,
+              message: 'empty',
             });
 
             // Skip code below
             return;
           }
-        }
 
-        // Length check
-        const lenghtRes = validateLength(input);
-        if (lenghtRes !== true) {
-          // Push
-          targetInputs.push({
-            input: input,
-            message: lenghtRes,
-          });
-
-          // Skip code below
-          return;
-        }
-
-        // Regex test
-        if (input.getAttribute('pattern')) {
-          try {
+          // Validate number
+          if (input.type === 'number') {
             // Values
-            const regExp = new RegExp(input.getAttribute('pattern') || '');
+            const res = validateNumberInput(input as HTMLInputElement);
+
+            // Throw if
+            if (res !== true) {
+              // Push
+              targetInputs.push({
+                input: input,
+                message: res,
+              });
+
+              // Skip code below
+              return;
+            }
+          }
+
+          // Length check
+          const lenghtRes = validateLength(input);
+          if (lenghtRes !== true) {
+            // Push
+            targetInputs.push({
+              input: input,
+              message: lenghtRes,
+            });
+
+            // Skip code below
+            return;
+          }
+
+          // Regex test
+          if (input.getAttribute('pattern')) {
+            try {
+              // Values
+              const regExp = new RegExp(input.getAttribute('pattern') || '');
+
+              // Logic
+              if (!regExp.test(inputValue)) {
+                // Push
+                targetInputs.push({
+                  input: input,
+
+                  message: 'invalid pattern',
+                  regex: regExp,
+                });
+
+                // Skip code below
+                return;
+              } else {
+                // On success skip code below
+                return;
+              }
+            } catch (err) {
+              controllerUtils.warn(
+                `${errPath(instance)} forEach() callback: Invalid regex test!`,
+                err,
+                input
+              );
+            }
+          }
+
+          // Email case
+          if (input.type === 'email') {
+            // Values
+            const regExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
             // Logic
             if (!regExp.test(inputValue)) {
               // Push
               targetInputs.push({
                 input: input,
-
-                message: 'invalid pattern',
+                message: 'invalid email',
                 regex: regExp,
               });
 
               // Skip code below
               return;
-            } else {
-              // On success skip code below
+            }
+          }
+
+          // Tel case
+          if (input.type === 'tel') {
+            // Values
+            const regExp = /^[\d\s\-\+\(\)\.\/*#]+$/;
+
+            // Logic
+            if (!regExp.test(inputValue)) {
+              // Push
+              targetInputs.push({
+                input: input,
+                message: 'invalid tel',
+                regex: regExp,
+              });
+
+              // Skip code below
               return;
             }
-          } catch (err) {
-            controllerUtils.warn(
-              `${errPath(instance)} forEach() callback: Invalid regex test!`,
-              err,
-              input
-            );
           }
-        }
 
-        // Email case
-        if (input.type === 'email') {
-          // Values
-          const regExp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+          // Email case
+          if (input.type === 'number') {
+            // Values
+            const regExp = /^-?(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$/;
 
-          // Logic
-          if (!regExp.test(inputValue)) {
-            // Push
-            targetInputs.push({
-              input: input,
-              message: 'invalid email',
-              regex: regExp,
-            });
+            // Logic
+            if (!regExp.test(inputValue)) {
+              // Push
+              targetInputs.push({
+                input: input,
+                message: 'invalid number',
+                regex: regExp,
+              });
 
-            // Skip code below
-            return;
+              // Skip code below
+              return;
+            }
           }
+
+          // Default - success
         }
-
-        // Tel case
-        if (input.type === 'tel') {
-          // Values
-          const regExp = /^[\d\s\-\+\(\)\.\/*#]+$/;
-
-          // Logic
-          if (!regExp.test(inputValue)) {
-            // Push
-            targetInputs.push({
-              input: input,
-              message: 'invalid tel',
-              regex: regExp,
-            });
-
-            // Skip code below
-            return;
-          }
-        }
-
-        // Email case
-        if (input.type === 'number') {
-          // Values
-          const regExp = /^-?(\d+|\d{1,3}(,\d{3})*)(\.\d+)?$/;
-
-          // Logic
-          if (!regExp.test(inputValue)) {
-            // Push
-            targetInputs.push({
-              input: input,
-              message: 'invalid number',
-              regex: regExp,
-            });
-
-            // Skip code below
-            return;
-          }
-        }
-
-        // Default - success
-      });
+      );
 
       // * Radio logic *
       checkRadio();

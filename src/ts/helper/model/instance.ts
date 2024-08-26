@@ -37,6 +37,7 @@ import navPrev from './navPrev';
 import navSubmit from './navSubmit';
 import navTo from './navTo';
 import scrollTo from '../view/scrollTo';
+import requirements from './requirements';
 
 // + Define +
 
@@ -188,23 +189,26 @@ export const init = (
   ) as SFFilesData;
 
   // Data
-  const dataMain: StudioFormData | (() => void) = function () {
-    const arr = Array.from(
-      (
-        dataForm(instanceProxy, true, false, true) as FormData | URLSearchParams
-      ).entries()
-    );
-    return arr.reduce((acc, [key, value]) => {
-      if (acc[key]) {
-        acc[key] = Array.isArray(acc[key])
-          ? [...acc[key], value]
-          : [acc[key], value];
-      } else {
-        acc[key] = value;
-      }
-      return acc;
-    }, {});
-  };
+  const dataMain: StudioFormData | ((slideIndex: number | null) => object) =
+    function (slideIndex = null) {
+      const arr = Array.from(
+        (
+          dataForm(instanceProxy, true, false, true, slideIndex) as
+            | FormData
+            | URLSearchParams
+        ).entries()
+      );
+      return arr.reduce((acc, [key, value]) => {
+        if (acc[key]) {
+          acc[key] = Array.isArray(acc[key])
+            ? [...acc[key], value]
+            : [acc[key], value];
+        } else {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+    };
 
   // Adding properties to the function object
   Object.assign(dataMain, {
@@ -301,6 +305,9 @@ export const init = (
     },
     reportValidity: (...elements) => {
       return reportValidity(instanceProxy, false, ...elements);
+    },
+    validate: (element?: HTMLElement) => {
+      return requirements(instanceProxy, element);
     },
     recaptcha: async () => {
       return await recaptcha(instanceProxy);
