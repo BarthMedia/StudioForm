@@ -48,8 +48,6 @@ export default function (
     return undefined;
   }
 
-  console.log('???', instance, internal, elements);
-
   // Dispatch requirements testing event
   eventUtils.dispatchEvent(instance, 'check-requirements', internal, false);
 
