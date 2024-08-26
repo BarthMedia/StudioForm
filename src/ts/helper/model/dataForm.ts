@@ -31,6 +31,7 @@ export default function (
   // Data mode
   let complex = fetchConfig.action == '' || !modes.simpleData;
   if (generateUrlSearchParams || instanceDataMainInvocation) complex = false;
+  let isWfFileUpload = false;
 
   // Define payload
   const payload = (
@@ -113,7 +114,6 @@ export default function (
     } else {
       // HTML Values
       const valueIsFile = value instanceof File;
-      let isWfFileUpload = false;
       let htmlValue: FileList | File | String | null = valueIsFile
         ? value
         : null;
@@ -123,7 +123,7 @@ export default function (
         htmlValue = !value.multiple && filesValue ? filesValue[0] : filesValue;
 
         // WF input element
-        if (value.classList.contains('w-file-upload-input')) {
+        if (value.classList.contains(config.WF_CLASS_FILE_UPLOAD_INPUT)) {
           isWfFileUpload = true;
           htmlValue = value.getAttribute('data-value');
         }
@@ -177,7 +177,8 @@ export default function (
 
   // Values
   const isFiles = files.length > 0;
-  const formData = isFiles && !complex ? new FormData() : new URLSearchParams();
+  const formData =
+    isFiles && !isWfFileUpload ? new FormData() : new URLSearchParams();
 
   // Create a Set to keep track of unique keys
   const uniqueKeys = new Set();
