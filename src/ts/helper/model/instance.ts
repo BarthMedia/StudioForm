@@ -185,8 +185,36 @@ export const init = (
   // Files data
   const filesDataMain: SFFilesData = {};
   const filesDataProxy = model.createReadMostlyProxy(
-    filesDataMain
+    filesDataMain,
+    'files',
+    instanceName
   ) as SFFilesData;
+
+  // Writing events
+  ['set', 'delete'].forEach(str => {
+    const filesWrite = (data: ProxyWriteEventData) => {
+      // Values
+      const value = data.value;
+      let write = false;
+
+      // Files
+
+      // Write
+      if (value instanceof File) {
+        write = true;
+      }
+
+      // Delete
+      if (typeof value === 'undefined') {
+        write = true;
+      }
+
+      // Write
+      return write;
+    };
+
+    proxyCallbacks[`${str}-files`] = filesWrite;
+  });
 
   // Data
   const dataMain: StudioFormData | ((slideIndex: number | null) => object) =
