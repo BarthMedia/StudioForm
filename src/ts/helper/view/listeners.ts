@@ -35,9 +35,8 @@ export default function init(instance: StudioFormInstance) {
           button.element,
           'click',
           e => {
-            if (e?.target?.['tagName'] != 'INPUT') {
-              navNext(instance, { button: button }, true);
-            }
+            if (e?.target?.['querySelector']('input')) return;
+            navNext(instance, { button: button }, true);
           }
         );
       });
