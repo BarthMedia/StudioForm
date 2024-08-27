@@ -309,8 +309,8 @@ export const init = (
     clear: () => {
       focus.clear(instanceProxy);
     },
-    next: () => {
-      focus.next(instanceProxy);
+    next: (triggerType?: 'enter') => {
+      focus.next(instanceProxy, triggerType);
     },
     prev: () => {
       focus.prev(instanceProxy);

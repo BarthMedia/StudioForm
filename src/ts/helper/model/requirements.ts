@@ -25,14 +25,13 @@ export default function (
   // Element guard
   if (apiElement) {
     // Guards
-    if (!currentSlideElement.contains(apiElement as HTMLInputElement))
-      throw new Error(`${errPath(instance)} Element not within current slide!`);
+    if (!currentSlideElement.contains(apiElement as HTMLInputElement)) return;
     if (
       !viewUtils.INPUTS_SELECTOR.toUpperCase()
         .split(', ')
         .includes((apiElement as HTMLInputElement).tagName)
     )
-      throw new Error(`${errPath(instance)} Element can not be validated!`);
+      return;
 
     // Overwrite
     apiElement = [apiElement as HTMLInputElement];

@@ -49,7 +49,7 @@ export default function init(instance: StudioFormInstance) {
 
     // Event listener
     eventListenerUtils.addEventListener(instance, button, 'click', () => {
-      navNext(instance, {}, true);
+      navNext(instance, {}, true, 'enter');
     });
   });
 
@@ -153,7 +153,7 @@ export default function init(instance: StudioFormInstance) {
   // Function to be called when Enter key is pressed
   async function onEnter() {
     // Add your custom logic here
-    const res = await navNext(instance, {}, true);
+    const res = await navNext(instance, {}, true, 'enter');
     if (res === true) instance.focus.clear();
   }
 

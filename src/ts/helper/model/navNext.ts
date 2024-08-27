@@ -16,7 +16,8 @@ const errPath = (i: StudioFormInstance) =>
 export default async function (
   instance: StudioFormInstance,
   options: SFONav,
-  internal = false
+  internal = false,
+  triggerType?: 'enter'
 ) {
   // Values
   const ghost = utils.returnGhost(instance);
@@ -70,7 +71,7 @@ export default async function (
       // If not found suggest the first button
       if (!suggestedButtonFound) {
         // Suggest button[0]
-        if (modes.autoFocusButtons) instance.focus.next();
+        if (modes.autoFocusButtons) instance.focus.next(triggerType);
 
         // Skip code below
         return 'focused';

@@ -76,8 +76,8 @@ export function clear(instance: StudioFormInstance) {
 }
 
 // Next
-export function next(instance: StudioFormInstance) {
-  main(instance, 'next');
+export function next(instance: StudioFormInstance, triggerType?: 'enter') {
+  main(instance, 'next', triggerType);
 }
 
 // Prev
@@ -86,7 +86,11 @@ export function prev(instance: StudioFormInstance) {
 }
 
 // Main
-function main(instance: StudioFormInstance, mode: 'clear' | 'next' | 'prev') {
+function main(
+  instance: StudioFormInstance,
+  mode: 'clear' | 'next' | 'prev',
+  triggerType?: 'enter'
+) {
   // Values
   const ghost = model.state.ghostInstances[instance.name].focus;
   const slide = instance.logic[modelUtils.currentSlideId(instance)];
@@ -116,6 +120,12 @@ function main(instance: StudioFormInstance, mode: 'clear' | 'next' | 'prev') {
             .querySelector('input[type="radio"]:checked')
             ?.closest('label')
         : null;
+
+    // Radio & enter edgecase
+    if (radio && triggerType == 'enter') {
+      radio.click();
+      return;
+    }
 
     const btn = radio || buttons[0].element;
     addFocus(btn);

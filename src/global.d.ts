@@ -120,7 +120,7 @@ interface SFHidden {
 
 interface SFFocus {
   clear: () => void;
-  next: () => void;
+  next: (triggerType?: 'enter') => void;
   prev: () => void;
 }
 
