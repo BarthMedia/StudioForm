@@ -25,7 +25,6 @@ export default function (
   // Element guard
   if (apiElement) {
     // Guards
-    if (!currentSlideElement.contains(apiElement as HTMLInputElement)) return;
     if (
       !viewUtils.INPUTS_SELECTOR.toUpperCase()
         .split(', ')
