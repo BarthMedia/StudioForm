@@ -194,6 +194,7 @@ export const init = (
   ['set', 'delete'].forEach(str => {
     const filesWrite = (data: ProxyWriteEventData) => {
       // Values
+      const property = data.property.toString();
       const value = data.value;
       let write = false;
 
@@ -201,11 +202,13 @@ export const init = (
 
       // Write
       if (value instanceof File) {
+        filesDataMain[property] = value;
         write = true;
       }
 
       // Delete
       if (typeof value === 'undefined') {
+        delete filesDataMain[property];
         write = true;
       }
 
