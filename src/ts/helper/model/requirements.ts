@@ -41,7 +41,7 @@ export default function (
     // Radio helper
     function checkRadio() {
       // Guard
-      if (!instance.config.modes.requireRadios) return;
+      if (!instance.config.modes.requireRadios) return true;
 
       // Elements
       let radios: NodeListOf<HTMLInputElement> | HTMLInputElement[] =
