@@ -58,6 +58,11 @@ export default function (wrapper: HTMLElement, mask: HTMLElement) {
       return getAttribute('observe-checked');
     },
 
+    // Require radios
+    get requireRadios() {
+      return getAttribute('require-radios', true);
+    },
+
     // Observe file inputs
     get observeAttachments() {
       return getAttribute('observe-attachments');

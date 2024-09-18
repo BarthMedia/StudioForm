@@ -40,6 +40,9 @@ export default function (
   const response = (() => {
     // Radio helper
     function checkRadio() {
+      // Guard
+      if (!instance.config.modes.requireRadios) return;
+
       // Elements
       let radios: NodeListOf<HTMLInputElement> | HTMLInputElement[] =
         currentSlideElement.querySelectorAll('input[type="radio"]');
