@@ -78,9 +78,13 @@ export default function (
       // Default return
       return getFloat('direction', config.DEFAULT_SLIDE_DIRECTION);
     },
+    get directionAlignment() {
+      return getAttribute('direction-alignment') || 'center';
+    },
     get ease() {
       return getAttribute('ease') || 'power1.out';
     },
+
     get equalDimensionsMultiplier() {
       return getFloat(
         'equal-dimensions-multiplier',

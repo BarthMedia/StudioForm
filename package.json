@@ -1,6 +1,6 @@
 {
   "name": "@bmg.studio/form",
-  "version": "1.4.9",
+  "version": "1.4.10",
   "description": "Universal, multi-slide, conditional webflow form creation script",
   "jsdelivr": "./sf.js",
   "default": "src/index.html",

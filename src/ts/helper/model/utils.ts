@@ -188,17 +188,17 @@ export const navGuard = function (
       return false;
     }
 
-    // Is submit
-    if (submit) return true;
-
     // Warn guard - 4 - Slider mode guard
-    if (modes.slider) {
+    if (submit && modes.slider) {
       const msg = `${errPath(
         instance
       )} Slider mode does not allow submissions!`;
       controllerUtils.warn(msg);
       return false;
     }
+
+    // Is submit
+    if (submit) return true;
 
     // Default
     return true;

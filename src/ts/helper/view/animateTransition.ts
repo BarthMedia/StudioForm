@@ -61,13 +61,15 @@ export const data = function (
   // * Width & height *
 
   // Current
-  const currentWidth = currentSlide.offsetWidth;
-  const currentHeight = currentSlide.offsetHeight;
+  const currentRect = currentSlide.getBoundingClientRect();
+  const currentWidth = currentRect.width;
+  const currentHeight = currentRect.height;
 
   // Next
   nextSlide.style.display = nextIsDone ? 'block' : '';
-  const nextWidth = nextSlide.offsetWidth;
-  const nextHeight = nextSlide.offsetHeight;
+  const nextRect = nextSlide.getBoundingClientRect();
+  const nextWidth = nextRect.width;
+  const nextHeight = nextRect.height;
   nextSlide.style.display = nextIsDone ? '' : 'none';
 
   // * Helper *
@@ -180,7 +182,8 @@ export const data = function (
 export const animate = function (instance: StudioFormInstance) {
   // Values
   const ghost = modelUtils.returnGhost(instance);
-  const aData = instance.data.animation;
+  let aData = instance.data.animation;
+  let dAlignment = instance.config.animations.directionAlignment;
 
   // Elements
   const currentSlide = aData.currentElement;
@@ -218,33 +221,40 @@ export const animate = function (instance: StudioFormInstance) {
     position: 'relative',
   });
 
+  // Values
+  const marginTopMultiplierValue =
+    dAlignment == 'top' ? 0 : dAlignment == 'center' ? 0.5 : 1;
+  const topValue = `${100 * marginTopMultiplierValue}%`;
+
   // Current
   tl.set(currentSlide, {
     x: 0,
     y: 0,
+    width: aData.currentWidth,
+    height: aData.currentHeight,
     opacity: 1,
     display: aData.currentDisplayStart,
     position: 'absolute',
     left: '50%',
-    top: '50%',
-    right: 0,
-    marginTop: -aData.currentHeight / 2,
-    marginLeft: -aData.currentWidth / 2,
+    top: topValue,
+    marginTop: -aData.currentHeight * marginTopMultiplierValue,
+    marginLeft: -aData.currentWidth * 0.5,
   });
 
   // Next
   tl.set(nextSlide, {
     x: aData.nextX,
     y: aData.nextY,
+    width: aData.nextWidth,
+    height: aData.nextHeight,
     opacity: aData.nextOpacity,
     zIndex: aData.zIndex,
     display: aData.nextDisplayStart,
     position: 'absolute',
     left: '50%',
-    top: '50%',
-    right: 0,
-    marginTop: -aData.nextHeight / 2,
-    marginLeft: -aData.nextWidth / 2,
+    top: topValue,
+    marginTop: -aData.nextHeight * marginTopMultiplierValue,
+    marginLeft: -aData.nextWidth * 0.5,
   });
 
   // * Timeline animation *
@@ -306,7 +316,6 @@ export const animate = function (instance: StudioFormInstance) {
     position: '',
     left: '',
     top: '',
-    right: '',
     bottom: '',
     marginTop: '',
     marginLeft: '',
@@ -321,7 +330,6 @@ export const animate = function (instance: StudioFormInstance) {
     position: '',
     left: '',
     top: '',
-    right: '',
     bottom: '',
     marginTop: '',
     marginLeft: '',
