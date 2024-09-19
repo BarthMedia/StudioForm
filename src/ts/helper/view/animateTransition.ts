@@ -311,6 +311,8 @@ export const animate = function (instance: StudioFormInstance) {
   tl.set(currentSlide, {
     x: '',
     y: '',
+    width: '',
+    height: '',
     opacity: '',
     display: aData.currentDisplayEnd,
     position: '',
@@ -325,6 +327,8 @@ export const animate = function (instance: StudioFormInstance) {
   tl.set(nextSlide, {
     x: '',
     y: '',
+    width: '',
+    height: '',
     opacity: '',
     zIndex: '',
     position: '',
