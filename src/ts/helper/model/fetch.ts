@@ -58,7 +58,7 @@ export default async function (
     apiUrl = new URL(apiUrl);
   } catch (error) {
     console.error(
-      `${errPath(instance.name)}: Invalid action URL:`,
+      `${errPath(instance.name)}: Action URL invalid:`,
       error.message
     );
     return false;
@@ -196,53 +196,51 @@ export default async function (
   // Try / catch
   try {
     // Fetch operation
-    const response = await Promise.race([
+    const response = (await Promise.race([
       fetch(url, fetchOptions),
       utils.timeout(fetchConfig.timeout),
-    ]);
+    ])) as Response;
 
-    if (response instanceof Response) {
-      // Values
-      const headers = new Headers(response.headers);
-      const contentType = response.headers.get('Content-Type');
-      const contentTypeSwitch = contentType?.toLowerCase();
-      let result: unknown;
+    // Values
+    const headers = new Headers(response.headers);
+    const contentType = response.headers.get('Content-Type');
+    const contentTypeSwitch = contentType?.toLowerCase();
+    let result: unknown;
 
-      // Guard
-      if (!contentTypeSwitch) throw new Error(`Couldn't find "Content-Type"`);
+    // Guard
+    if (!contentTypeSwitch) throw new Error(`Couldn't find "Content-Type"`);
 
-      // Logic
-      switch (true) {
-        case contentTypeSwitch.indexOf('json') > -1:
-          result = await response.json();
-          break;
-        case contentTypeSwitch.indexOf('text') > -1:
-          result = await response.text();
-          break;
-        case contentTypeSwitch.indexOf('form') > -1:
-          result = await response.formData();
-          break;
-        default:
-          result = await response.blob();
-      }
+    // Logic
+    switch (true) {
+      case contentTypeSwitch.indexOf('json') > -1:
+        result = await response.json();
+        break;
+      case contentTypeSwitch.indexOf('text') > -1:
+        result = await response.text();
+        break;
+      case contentTypeSwitch.indexOf('form') > -1:
+        result = await response.formData();
+        break;
+      default:
+        result = await response.blob();
+    }
 
-      // Successful fetch
-      output.response = {
-        ok: response.ok,
-        headers: headers,
-        contentType: contentType as string,
-        result: result,
-        status: response.status,
+    // Successful fetch
+    output.response = {
+      ok: response.ok,
+      headers: headers,
+      contentType: contentType as string,
+      result: result,
+      status: response.status,
+    };
+
+    // If error
+    if (!response.ok)
+      output.response.error = {
+        message: result?.['message'] ?? 'An error occurred during the fetch.',
+        code: result?.['code'] ?? response.status,
+        details: result?.['payload'] ?? null,
       };
-
-      // If error
-      if (!response.ok)
-        output.response.error = {
-          message: result?.['message'] ?? 'An error occurred during the fetch.',
-          code: result?.['code'] ?? response.status,
-          details: result?.['payload'] ?? null,
-        };
-    } else throw new Error('Invalid response');
   } catch (error) {
     // Handle fetch or parsing errors
     output.response = {

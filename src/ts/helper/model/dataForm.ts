@@ -34,6 +34,7 @@ export default function (
   let isWfFileUpload = false;
 
   // Define payload
+  const wfFlow = form.getAttribute('data-wf-flow');
   const payload = (
     complex
       ? [
@@ -49,9 +50,13 @@ export default function (
             value: form.getAttribute('data-wf-element-id') || '',
           },
           { key: 'source', value: location.href },
+          { key: 'wfFlow', value: wfFlow },
         ]
       : []
   ) as { key: string; value: string | File }[];
+
+  // Wf flow edge case
+  if (!wfFlow) payload.pop();
 
   // * Loop *
 
