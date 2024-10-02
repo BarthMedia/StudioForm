@@ -25,8 +25,8 @@ export const data = function (
   const formMask = elements.mask;
   const formDone = elements.done;
   const logic = instance.logic;
-  const nextIsDone = nId === 'done';
-  const currentIsDone = cId === 'done';
+  const currentIsDone = cId == 'done';
+  const nextIsDone = nId == 'done';
   const ghost = modelUtils.returnGhost(instance);
 
   // Elements
@@ -82,8 +82,7 @@ export const data = function (
   const equalDimensionsMulitplier = aConfig.equalDimensionsMultiplier;
 
   // Reverse
-  const isReverse =
-    currentIsDone == true || (nextIsDone != true ? cId > nId! : false);
+  const isReverse = currentIsDone == true || (nextIsDone ? false : cId > nId);
   const isReverseMultiplier = isReverse ? -1 : 1;
 
   // Opacity

@@ -36,7 +36,6 @@ export default async function (
   // Values
   const modes = instance.config.modes;
   const ghost = utils.returnGhost(instance);
-  const isToDone = slideIdentification === 'done';
   const currentId = instance.isDone ? 'done' : utils.currentSlideId(instance);
   const currentIdIsNumber = currentId !== 'done';
 
@@ -50,6 +49,7 @@ export default async function (
   slideIdentification = testSlideIdentification;
 
   // Calculate if it is submit & animation direction
+  const isToDone = slideIdentification === 'done';
   const nextId =
     typeof slideIdentification === 'number' ? slideIdentification : 'done';
   const nextIdIsNumber = nextId !== 'done';
