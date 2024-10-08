@@ -31,7 +31,6 @@ export default async function (
     return false;
 
   // Values
-  const currentSlideId = utils.currentSlideId(instance);
   const modes = instance.config.modes;
 
   // Hide fail for resubmit
@@ -45,21 +44,6 @@ export default async function (
   // Listen SFONav options!
   if (options.fake) return true;
 
-  // Set all submit buttons to data-wait
-  const waitAttr = 'data-wait';
-  const currentButtons = instance.logic[currentSlideId].buttons;
-  if (currentButtons)
-    currentButtons.forEach(btn => {
-      // Values
-      const wait = btn.element.getAttribute(waitAttr) || '';
-
-      // Guard
-      if (wait === '') return;
-
-      // Overwrite text
-      btn.element.innerHTML = wait;
-    });
-
   // Fetch
   const response = await animatePromiseResolve(
     instance,
@@ -70,16 +54,6 @@ export default async function (
       return fetch(instance, {}, internal);
     }
   );
-
-  // Reset buttons
-  if (currentButtons)
-    currentButtons.forEach(btn => {
-      // Guard
-      if ((btn.element.getAttribute(waitAttr) || '') === '') return;
-
-      // Overwrite text
-      btn.element.innerHTML = btn.defaultText;
-    });
 
   // Values
   const responseData = instance.data.fetch.response;

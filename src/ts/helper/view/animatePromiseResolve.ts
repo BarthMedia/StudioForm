@@ -28,7 +28,8 @@ export default async function (
   // Values
   const awaitAttr = 'await';
   const ghost = modelUtils.returnGhost(instance);
-  const slide = instance.logic[modelUtils.currentSlideId(instance)];
+  const currentSlideId = modelUtils.currentSlideId(instance);
+  const slide = instance.logic[currentSlideId];
   function getElements(mode = 'remove') {
     // Values
     const inner = utils.createSelector(null, awaitAttr);
@@ -57,6 +58,21 @@ export default async function (
   const globalConfig = model.state.api['config'];
   const rootInstance = ghost.root;
 
+  // Set all submit buttons to data-wait
+  const waitAttr = 'data-wait';
+  const currentButtons = instance.logic[currentSlideId].buttons;
+  if (currentButtons)
+    currentButtons.forEach(btn => {
+      // Values
+      const wait = btn.element.getAttribute(waitAttr);
+
+      // Guard
+      if (!wait) return;
+
+      // Overwrite text
+      btn.element.innerHTML = wait;
+    });
+
   // * Old dispatch position *
 
   // Set await / overwrite
@@ -72,20 +88,6 @@ export default async function (
     return new Promise<boolean>(resolve => {
       promisedResolve = resolve;
     });
-  }
-
-  // Define function
-  function resolve(e: Event) {
-    // Overwrite
-    rootInstance.isAwaiting = false;
-
-    // Remove style children with class
-    utils.classListToggle(...getElements());
-
-    // Return
-    const result = e['detail']?.success;
-    preMatureResolve = result;
-    promisedResolve(result);
   }
 
   // Resolve event listener
@@ -115,15 +117,18 @@ export default async function (
 
   // Listen to prevent default
   if (promiseEvent.defaultPrevented) {
-    // Remove style children with class
-    utils.classListToggle(...getElements());
-
-    // Remove event listener
-    mask.removeEventListener(resolveEventType, resolve);
-
-    // Reset await
-    rootInstance.isAwaiting = false;
-    return false;
+    return await resolve();
+    // // Remove style children with class
+    // utils.classListToggle(...getElements());
+    //
+    // // Overwrite
+    // rootInstance.isAwaiting = false;
+    //
+    // // Remove event listener
+    // mask.removeEventListener(resolveEventType, resolve);
+    //
+    // // Reset await
+    // return false;
   }
 
   // New premature resolve
@@ -131,17 +136,60 @@ export default async function (
 
   // Submit / alternative promise
   if (isSubmit) {
-    // Guard
-    if (!asyncCallBack) return false;
+    return await resolve(undefined, asyncCallBack);
+    // // Guard
+    // if (!asyncCallBack) return false;
+    //
+    // // Values
+    // const val = await asyncCallBack();
+    //
+    // // Remove style children with class
+    // utils.classListToggle(...getElements());
+    //
+    // // Overwrite
+    // rootInstance.isAwaiting = false;
+    //
+    // // Return
+    // return val;
+  }
 
-    // Values
-    const val = await asyncCallBack();
-    rootInstance.isAwaiting = false;
+  // Define function
+  async function resolve(
+    preMatureEvent?: Event,
+    submitCallBack?: () => Promise<boolean>
+  ) {
+    // Submit case
+    let val = false;
+    if (submitCallBack) val = await submitCallBack();
+
+    // * standard behaviour *
 
     // Remove style children with class
     utils.classListToggle(...getElements());
 
-    // Return
+    // Overwrite
+    rootInstance.isAwaiting = false;
+
+    // Reset buttons
+    if (currentButtons)
+      currentButtons.forEach(btn => {
+        // Guard
+        if (!btn.element.getAttribute(waitAttr)) return;
+
+        // Overwrite text
+        btn.element.innerHTML = btn.defaultText;
+      });
+
+    // * standard behaviour *
+
+    // Premature return
+    if (preMatureEvent) {
+      const result = preMatureEvent['detail']?.success;
+      preMatureResolve = result;
+      promisedResolve(result);
+    }
+
+    // Defaulted case
     return val;
   }
 
