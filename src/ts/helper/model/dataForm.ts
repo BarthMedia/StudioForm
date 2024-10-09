@@ -97,7 +97,10 @@ export default function (
       if (input.type === 'radio' && !input.checked) return;
 
       // Checkbox edgecase
-      if (modes.booleanCheckboxValues && input.type === 'checkbox') {
+      if (
+        (instanceDataMainInvocation || modes.booleanCheckboxValues) &&
+        input.type === 'checkbox'
+      ) {
         if (value == 'on') value = 'true';
         if (value == 'off') value = 'false';
       }
