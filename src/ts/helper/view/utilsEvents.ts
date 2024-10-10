@@ -42,9 +42,9 @@ export function dispatchEvent(
   const payload: { [name: string]: any } =
     detail && typeof detail === 'object' ? detail : {};
   payload.instance = instance;
-  if (payload.next !== undefined)
+  if (typeof payload.next == 'number')
     payload.nextName = instance.logic[payload.next].name;
-  if (payload.current !== undefined)
+  if (typeof payload.current == 'number')
     payload.currentName = instance.logic[payload.current].name;
   const globalConfig = model.state.api['config'];
 
