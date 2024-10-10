@@ -39,8 +39,13 @@ export function dispatchEvent(
 
   // Values
   const mask = instance.elements.mask;
-  let payload = detail && typeof detail === 'object' ? detail : {};
-  payload = { ...payload, instance: instance };
+  const payload: { [name: string]: any } =
+    detail && typeof detail === 'object' ? detail : {};
+  payload.instance = instance;
+  if (payload.next !== undefined)
+    payload.nextName = instance.logic[payload.next].name;
+  if (payload.current !== undefined)
+    payload.currentName = instance.logic[payload.current].name;
   const globalConfig = model.state.api['config'];
 
   // Event

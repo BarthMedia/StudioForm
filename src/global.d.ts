@@ -49,7 +49,7 @@ interface SFAnimationConfig {
 
   // General
   get direction(): number | 'off';
-  get directionAlignment(): 'top' | 'center' | 'bottom';
+  get directionAlignment(): string; // 'top' | 'center' | 'bottom';
   get ease(): string;
   get equalDimensionsMultiplier(): number;
   get zIndex(): number;

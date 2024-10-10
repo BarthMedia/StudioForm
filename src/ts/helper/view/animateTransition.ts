@@ -66,11 +66,13 @@ export const data = function (
   const currentHeight = currentRect.height;
 
   // Next
+  currentSlide.style.display = currentIsDone ? '' : 'none';
   nextSlide.style.display = nextIsDone ? 'block' : '';
   const nextRect = nextSlide.getBoundingClientRect();
   const nextWidth = nextRect.width;
   const nextHeight = nextRect.height;
   nextSlide.style.display = nextIsDone ? '' : 'none';
+  currentSlide.style.display = currentIsDone ? 'block' : '';
 
   // * Helper *
 

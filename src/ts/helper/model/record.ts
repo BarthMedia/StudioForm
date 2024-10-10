@@ -4,6 +4,7 @@ import * as controllerUtils from '../controller/utils';
 import navTo from './navTo';
 import animateProgress from '../view/animateProgress';
 import animateCurrent from '../view/animateCurrent';
+import * as model from '../../model';
 
 // Helper
 // const errPath = (n: string) => `${controllerUtils.errorName(n)} record.ts:`;
@@ -15,6 +16,8 @@ export default function (data: ProxyWriteEventData) {
   const value = data.value;
   const maxVal = instance.logic.length - 1;
   const ghost = utils.returnGhost(instance);
+  const config = model.state.api['config'];
+  const instanceProxy = model.state.api[instance.name] as StudioFormInstance;
 
   // + Test +
 
@@ -33,8 +36,15 @@ export default function (data: ProxyWriteEventData) {
 
   // + Success +
   (async () => {
+    // Temp mute warnings
+    const doWarn = config.warn;
+    config.warn = false;
+
+    // Resolve if needed
+    instanceProxy.resolve = false;
+
     // Navigate
-    await navTo(
+    navTo(
       instance,
       value[value.length - 1],
       { skipRequirements: true },
@@ -42,6 +52,14 @@ export default function (data: ProxyWriteEventData) {
       false,
       true
     );
+
+    // Resolve if needed
+    instanceProxy.resolve = true;
+
+    // Remove temp mute warnings
+    setTimeout(() => {
+      config.warn = doWarn;
+    }, 1);
 
     // Write loop
     ghost.record.length = 0;
