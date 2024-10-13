@@ -101,6 +101,11 @@ export default function (
       return /^\d+(\.\d+)?$/.test(val) ? parseFloat(val) : val;
     },
 
+    // Time
+    get time() {
+      return getFloat('current-time', config.DEFAULT_SLIDE_TIME);
+    },
+
     // Progress bar
     get progressBarAxis() {
       return getAttribute('progress-bar-axis', true) || 'x';
@@ -115,7 +120,7 @@ export default function (
       );
     },
     get currentTime() {
-      return getFloat('current-time', config.DEFAULT_SLIDE_CURRENT_TIME, true);
+      return getFloat('current-time', obj.time / 2, true);
     },
     get currentOpacity() {
       return getFloat('current-opacity', config.DEFAULT_SLIDE_OPACITY, true);
@@ -129,7 +134,7 @@ export default function (
       );
     },
     get nextTime() {
-      return getFloat('next-time', config.DEFAULT_SLIDE_NEXT_TIME);
+      return getFloat('next-time', obj.time / 2);
     },
     get nextOpacity() {
       return getFloat('next-opacity', config.DEFAULT_SLIDE_OPACITY);

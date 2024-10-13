@@ -174,7 +174,7 @@ export const data = function (
     nextWidth: nextWidth,
     nextHeight: nextHeight,
     nextMoveMultiplier: nextMoveMultiplier,
-    nextTime: currentTime,
+    nextTime: nextTime,
     nextDisplayStart: nextIsDone ? 'block' : '',
   });
 };

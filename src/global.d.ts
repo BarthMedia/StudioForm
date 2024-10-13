@@ -48,6 +48,7 @@ interface SFAnimationConfig {
   get currentTime(): number;
 
   // General
+  get time(): number;
   get direction(): number | 'off';
   get directionAlignment(): string; // 'top' | 'center' | 'bottom';
   get ease(): string;

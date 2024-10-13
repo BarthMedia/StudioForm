@@ -9,15 +9,14 @@ export const DEFAULT_SLIDE_DIRECTION = 90;
 export const DEFAULT_SLIDE_OPACITY = 0;
 export const DEFAULT_SLIDE_CURRENT_MOVE_MULTIPLIER = 1;
 export const DEFAULT_SLIDE_NEXT_MOVE_MULTIPLIER = 1;
-export const DEFAULT_SLIDE_CURRENT_TIME = 0.5;
-export const DEFAULT_SLIDE_NEXT_TIME = 0.5;
+export const DEFAULT_SLIDE_TIME = 1;
 export const DEFAULT_SLIDE_EQUAL_DIMENSIONS_MULTIPLIER = 0.5;
 
 // Anchor
 export const DEFAULT_OFFSET = 16;
 
 // Version
-export const VERSION = '1.4.19';
+export const VERSION = '1.4.20';
 
 // Hidden string
 export const HIDDEN = '* * * HIDDEN * * *';
