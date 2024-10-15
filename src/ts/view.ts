@@ -33,8 +33,8 @@ export default function init(state: StudioFormState) {
           ? el.parentElement
           : el
       ) as HTMLElement;
-      const mask = (wrapper.querySelector('form') ||
-        wrapper.querySelector('*')) as HTMLElement | null;
+      const mask = (wrapper.querySelector(':scope > form') ||
+        wrapper.firstElementChild) as HTMLElement | null;
 
       // Guard - Simple
       if (!mask) {
