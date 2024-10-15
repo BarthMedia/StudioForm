@@ -103,7 +103,7 @@ export default function (
 
     // Time
     get time() {
-      return getFloat('current-time', config.DEFAULT_SLIDE_TIME);
+      return getFloat('time', config.DEFAULT_SLIDE_TIME);
     },
 
     // Progress bar
