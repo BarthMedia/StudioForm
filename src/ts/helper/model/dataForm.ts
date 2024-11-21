@@ -80,44 +80,41 @@ export default function (
     // Elements
     const inputs = slide.element.querySelectorAll(
       viewUtils.INPUTS_SELECTOR
-    ) as NodeListOf<HTMLInputElement>;
+    ) as NodeListOf<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 
     // Loop
-    inputs.forEach(
-      (input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) => {
-        // Values
-        const key = viewUtils.getInputKey(input);
-        let value =
-          input.type !== 'file'
-            ? input.type == 'password' && !internal
-              ? config.HIDDEN
-              : input.value
-            : input;
+    inputs.forEach(input => {
+      // Values
+      const key = viewUtils.getInputKey(input);
+      let value =
+        input.type !== 'file'
+          ? input.type == 'password' && !internal
+            ? config.HIDDEN
+            : input.value
+          : input;
 
-        // Radio edgecase
-        if (input.type == 'radio' && !(input as HTMLInputElement).checked)
-          return;
+      // Radio edgecase
+      if (input.type == 'radio' && !(input as HTMLInputElement).checked) return;
 
-        // Checkbox edgecase
-        if (
-          (instanceDataMainInvocation || modes.booleanCheckboxValues) &&
-          input.type == 'checkbox'
-        ) {
-          if (value == 'on') value = 'true';
-          if (value == 'off') value = 'false';
-        }
-
-        // Logic
-        addVals(key, value as string | HTMLInputElement);
-
-        // Multi select edge case
-        if (input instanceof HTMLSelectElement && input.multiple) {
-          Array.from(input.selectedOptions).forEach((option, index) => {
-            if (index) addVals(key, option.value);
-          });
-        }
+      // Checkbox edgecase
+      if (
+        (instanceDataMainInvocation || modes.booleanCheckboxValues) &&
+        input.type == 'checkbox'
+      ) {
+        if (value == 'on') value = 'true';
+        if (value == 'off') value = 'false';
       }
-    );
+
+      // Logic
+      addVals(key, value as string | HTMLInputElement);
+
+      // Multi select edge case
+      if (input instanceof HTMLSelectElement && input.multiple) {
+        Array.from(input.selectedOptions).forEach((option, index) => {
+          if (index) addVals(key, option.value);
+        });
+      }
+    });
   });
 
   // Define helper
