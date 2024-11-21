@@ -48,7 +48,7 @@ export default function (
     return undefined;
   }
 
-  console.log('Am I happening??');
+  console.log('Am I happening??'); // TODO:
 
   // Dispatch requirements testing event
   eventUtils.dispatchEvent(instance, 'check-requirements', internal, false);

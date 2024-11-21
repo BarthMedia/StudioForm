@@ -82,7 +82,9 @@ export function setAccessibility(
 }
 
 // Get input key
-export function getInputKey(input: HTMLInputElement) {
+export function getInputKey(
+  input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+) {
   return (
     attributeUtils.getAttributeOr(
       input,
