@@ -36,8 +36,13 @@ export default function init(instance: StudioFormInstance) {
           'click',
           e => {
             const t = e?.target as HTMLElement | null;
-            const l = t?.tagName == 'LABEL' ? t : t?.closest('label');
-            if (l && t?.tagName != 'INPUT') return;
+            if (!t) return;
+            const btn = t.querySelector('button') || t;
+            if (btn.tagName == 'BUTTON') {
+              e?.preventDefault();
+            }
+            const l = t.tagName == 'LABEL' ? t : t.closest('label');
+            if (l && t.tagName != 'INPUT') return;
             navNext(instance, { button: button }, true);
           }
         );

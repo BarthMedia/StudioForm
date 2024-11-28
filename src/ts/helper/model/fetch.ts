@@ -17,8 +17,14 @@ export default async function (
   internal = false
 ) {
   // Recaptcha
-  const recaptchaToken = await instance.recaptcha();
-  if (recaptchaToken) instance.hidden.recaptcha = recaptchaToken;
+  const grecaptchaToken = await instance.recaptcha();
+  if (grecaptchaToken) instance.hidden.recaptcha = grecaptchaToken;
+
+  // @ts-ignore
+  if (window.turnstile) {
+    // @ts-ignore
+    instance.hidden['cf-turnstile-response'] = turnstile.getResponse();
+  }
 
   // Values
   // const formBlock = instance.elements.wrapper;

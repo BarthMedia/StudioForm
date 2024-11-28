@@ -85,16 +85,18 @@ export function setAccessibility(
 export function getInputKey(
   input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
 ) {
-  return (
-    attributeUtils.getAttributeOr(
-      input,
-      'data-name',
-      'name',
-      'id',
-      'class',
-      'type'
-    ) || input.tagName
-  ).replace(/[?&!'()*]/g, '_');
+  return encodeURIComponent(
+    (
+      attributeUtils.getAttributeOr(
+        input,
+        'data-name',
+        'name',
+        'id',
+        'class',
+        'type'
+      ) || input.tagName
+    ).trim()
+  );
 }
 
 // Button & others selector
