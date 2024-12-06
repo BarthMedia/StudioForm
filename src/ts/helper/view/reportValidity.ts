@@ -34,6 +34,7 @@ export default function (
     // Loop
     elements.forEach(element => {
       // Is not list
+      if (!element) return;
       if (typeof element === 'string')
         element = document.querySelectorAll(element);
       if (element instanceof HTMLElement) element = [element];
