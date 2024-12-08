@@ -96,7 +96,13 @@ export function getInputKey(
         'type'
       ) || input.tagName
     ).trim()
-  );
+  )
+    .replace(/%5B/g, '[') // Preserve [
+    .replace(/%5D/g, ']') // Preserve ]
+    .replace(/%2E/g, '.') // Preserve .
+    .replace(/%3A/g, ':') // Preserve :
+    .replace(/%24/g, '$') // Preserve $
+    .replace(/%40/g, '@'); // Preserve @
 }
 
 // Button & others selector
